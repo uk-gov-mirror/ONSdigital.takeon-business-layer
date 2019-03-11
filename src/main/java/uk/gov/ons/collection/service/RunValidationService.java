@@ -5,12 +5,12 @@ import org.springframework.stereotype.Service;
 import uk.gov.ons.collection.entity.ReturnedValidationOutputs;
 
 @Service
-public class RunVaas {
+public class RunValidationService {
 
     @Autowired
-    RunVaasProxy runVaasProxy;
+    RunValidationServiceProxy runValidationServiceProxy;
 
     public ReturnedValidationOutputs runValidation(String body){
-        return runVaasProxy.runVaas(body);
+        return runValidationServiceProxy.runVaas(body);
     }
 }
