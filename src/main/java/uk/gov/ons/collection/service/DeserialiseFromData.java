@@ -25,12 +25,12 @@ public class DeserialiseFromData {
     }
 
     public List<UpdatedFormData> parseJsonObjects(){
-        for(int index = 0; index < updatedResponseData.length(); index++){
-            UpdatedFormData updatedFormData = new UpdatedFormData();
-            String jsonKey = updatedResponseData.getJSONObject(index).keys().next();
-            updatedFormData.setKey(jsonKey);
-            updatedFormData.setResponse(updatedResponseData.getJSONObject(index).getString(jsonKey));
-            updatedFormDataList.add(updatedFormData);
+        for(int index = 0; index < updatedFormData.length(); index++){
+            UpdatedFormData updatedFormDataObject = new UpdatedFormData();
+            String jsonKey = updatedFormData.getJSONObject(index).keys().next();
+            updatedFormDataObject.setKey(jsonKey);
+            updatedFormDataObject.setResponse(updatedFormData.getJSONObject(index).getString(jsonKey));
+            updatedFormDataList.add(updatedFormDataObject);
         }
         return updatedFormDataList;
     }

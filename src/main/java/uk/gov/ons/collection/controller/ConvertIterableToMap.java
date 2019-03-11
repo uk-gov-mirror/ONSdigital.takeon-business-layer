@@ -25,9 +25,7 @@ public class ConvertIterableToMap {
             detailContainer.add(responses.get(i));
             //detailContainer.add(instances.get(i));
             questionDetailMap.put(questionCodes.get(i), detailContainer);
-
         }
-
         return questionDetailMap;
     }
 }
