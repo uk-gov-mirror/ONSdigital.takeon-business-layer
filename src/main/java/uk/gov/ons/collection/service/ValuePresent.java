@@ -31,7 +31,6 @@ public class ValuePresent {
     private Iterable<ContributorEntity> contributorEntities;
     private Iterable<QuestionResponseEntity> questionResponseEntities;
     private Iterable<ValidationFormEntity> validationConfig;
-    private List<ValidationFormEntity> validationConfigEntitiesToReturn = new ArrayList<>();
     private final String algo = "https://api.algpoc.com/v1/algo/dllmorgan/ValidationValuePresent/1.0.0";
 
 //    public ValuePresent(){}
@@ -65,24 +64,9 @@ public class ValuePresent {
         uri = new Helpers().buildUriParameters(reference, period, survey);
     }
 
-    public void prepareData(){
-        getContributor();
-        getResponses();
-        getValidationConfig();
-        for(QuestionResponseEntity responseEntity: questionResponseEntities){
-            for(ValidationFormEntity validationFormEntity: validationConfig){
-                if(responseEntity.getQuestionCode().equals(validationFormEntity.getQuestionCode())){
-                    System.out.println(responseEntity.toString());
-                    System.out.println(validationFormEntity.toString()+"\n");
-                    validationFormEntity.setCurrentResponse(responseEntity.getResponse());
-                    validationConfigEntitiesToReturn.add(validationFormEntity);
-                }
-            }
-        }
-    }
-
     public Iterable<ValidationFormEntity> matchResponsesToConfig(Iterable<QuestionResponseEntity> responses,
                                                    Iterable<ValidationFormEntity> config){
+        List<ValidationFormEntity> validationConfigEntitiesToReturn = new ArrayList<>();
         System.out.println("match responses: "+responses);
         System.out.println("match responses: "+config);
         for(QuestionResponseEntity questionResponseEntity: responses){
@@ -93,23 +77,24 @@ public class ValuePresent {
                 }
             }
         }
+        System.out.println("Current Config list: "+validationConfigEntitiesToReturn);
         return validationConfigEntitiesToReturn;
     }
 
-    public Iterable<ValidationFormEntity> runAlgoValidation(){
-        for(ValidationFormEntity validationFormEntity: validationConfigEntitiesToReturn){
-            System.out.println(validationFormEntity.toString());
-            CallAlgorithmia callAlgorithmia = new CallAlgorithmia(algo, validationFormEntity.getPayload());
-            // System.out.println("Calling service: "+callAlgorithmia.callService());
-            validationFormEntity.setIsTriggered(callAlgorithmia.callService());
-        }
-        System.out.println(validationConfigEntitiesToReturn);
-        return validationConfigEntitiesToReturn;
-    }
+//    public Iterable<ValidationFormEntity> runAlgoValidation(){
+//        for(ValidationFormEntity validationFormEntity: validationConfigEntitiesToReturn){
+//            System.out.println(validationFormEntity.toString());
+//            CallAlgorithmia callAlgorithmia = new CallAlgorithmia(algo, validationFormEntity.getPayload());
+//            // System.out.println("Calling service: "+callAlgorithmia.callService());
+//            validationFormEntity.setIsTriggered(callAlgorithmia.callService());
+//        }
+//        System.out.println(validationConfigEntitiesToReturn);
+//        return runValidation(validationConfigEntitiesToReturn);
+//    }
 
-    public Iterable<ValidationFormEntity> runValidation(){
+    public Iterable<ValidationFormEntity> runValidation(Iterable<ValidationFormEntity> validationConfig){
         System.out.println("RUNNING VALIDATION");
-        for(ValidationFormEntity validationFormEntity: validationConfigEntitiesToReturn){
+        for(ValidationFormEntity validationFormEntity: validationConfig){
             System.out.println(validationFormEntity.getCurrentResponse());
             String payload = "{\"value\":" + "\""+validationFormEntity.getCurrentResponse()+"\""+"}";
             System.out.println(payload);
@@ -117,7 +102,6 @@ public class ValuePresent {
             System.out.println(returnedValidationOutputs.toString());
             validationFormEntity.setIsTriggered(returnedValidationOutputs.isTriggered());
         }
-        System.out.println(validationConfigEntitiesToReturn);
-        return validationConfigEntitiesToReturn;
+        return validationConfig;
     }
 }

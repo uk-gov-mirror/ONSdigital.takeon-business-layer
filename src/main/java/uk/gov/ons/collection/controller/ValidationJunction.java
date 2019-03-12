@@ -6,8 +6,8 @@ import uk.gov.ons.collection.entity.ValidationEntity;
 import uk.gov.ons.collection.entity.ValidationFormEntity;
 import uk.gov.ons.collection.service.ValuePresent;
 
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+
 @Service
 public class ValidationJunction {
     private String validationCode;
@@ -24,12 +24,14 @@ public class ValidationJunction {
     public Iterable<ValidationFormEntity> pickValidationApi(ValidationFormEntity validationFormEntity, Map<String, String> parameters){
         validationCode = validationFormEntity.getValidationCode();
         urlParameters = parameters;
+        List<ValidationFormEntity> validationFormEntityList = new ArrayList<>(Arrays.asList(validationFormEntity));
+        System.out.println("List: "+validationFormEntityList);
         switch(validationCode){
             case "VP":
                 valuePresent.buildUri(urlParameters);
                 valuePresent.getContributor();
-                valuePresent.matchResponsesToConfig(valuePresent.getResponses(), valuePresent.getValidationConfig());
-                return valuePresent.runValidation();
+                return valuePresent.matchResponsesToConfig(valuePresent.getResponses(),  validationFormEntityList);
+                //valuePresent.runValidation();
             case "POPM":
                 break;
             case "POPZC":

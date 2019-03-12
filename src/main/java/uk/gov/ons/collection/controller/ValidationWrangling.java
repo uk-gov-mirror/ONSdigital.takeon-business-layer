@@ -57,9 +57,9 @@ public class ValidationWrangling {
            // System.out.println(element);
             //ValidationJunction validationJunction = new ValidationJunction(element, matrixVars);
             validationFormEntitiesToReturn.add(validationJunction.pickValidationApi(element, matrixVars));
-            return validationFormEntitiesToReturn;
+            // return validationFormEntitiesToReturn;
         }
-        return null;
+        return validationFormEntitiesToReturn;
     }
 
 }
