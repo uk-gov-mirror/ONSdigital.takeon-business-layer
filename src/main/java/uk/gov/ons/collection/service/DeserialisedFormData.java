@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class DeserialiseFromData {
+public class DeserialisedFormData {
 
     private JSONArray updatedFormData;
     private UpdatedFormData newFormData;
@@ -20,7 +20,7 @@ public class DeserialiseFromData {
     private List<UpdatedFormData> constructedObjects = new ArrayList<>();
     private List<QuestionResponseEntity> currentlyHeldResponses;
 
-    public DeserialiseFromData(JSONArray formData){
+    public DeserialisedFormData(JSONArray formData){
         updatedFormData = formData;
     }
 

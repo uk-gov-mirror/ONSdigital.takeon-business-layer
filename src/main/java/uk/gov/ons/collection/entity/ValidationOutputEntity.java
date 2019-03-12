@@ -70,6 +70,9 @@ public class ValidationOutputEntity implements ValidationEntity {
     @JsonIgnore
     private String questionCode;
 
+    @JsonIgnore
+    private String payload = "{ 'value': " + getCurrentResponse() + "}";
+
     public String getCurrentResponse() {
         return currentResponse;
     }

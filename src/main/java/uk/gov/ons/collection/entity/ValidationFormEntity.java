@@ -1,6 +1,7 @@
 package uk.gov.ons.collection.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
@@ -11,6 +12,7 @@ import java.sql.Timestamp;
 @Entity
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 @RequiredArgsConstructor
 @Table(name = "validationform", schema = "dev01")
@@ -62,5 +64,14 @@ public class ValidationFormEntity implements ValidationEntity {
 
     @Column(name = "lastupdateddate", length = 7)
     private Timestamp lastUpdatedDate;
+
+    @JsonIgnore
+    private String isTriggered;
+
+    @JsonIgnore
+    private String currentResponse;
+
+    @JsonIgnore
+    private String payload = "{\"value\": " +"\"" + getCurrentResponse()+"\"" + "}";
 
 }

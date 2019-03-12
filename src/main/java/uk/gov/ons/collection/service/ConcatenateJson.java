@@ -1,6 +1,7 @@
 package uk.gov.ons.collection.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import uk.gov.ons.collection.entity.UpdatedFormData;
 import uk.gov.ons.collection.entity.ValidationOutputEntity;
 
@@ -9,28 +10,28 @@ import java.util.*;
 public class ConcatenateJson {
 
     private Iterable<ValidationOutputEntity> heldValidationOutputs;
-    private String formDataFromUi;
+    private JSONArray formDataFromUi;
+    private List<UpdatedFormData> updatedFormDataList = new ArrayList<>();
+    private List<UpdatedFormData> constructedObjects = new ArrayList<>();
 
     public ConcatenateJson(Iterable<ValidationOutputEntity> validationOutputEntities,
-                                                           String updatedFormData){
+                           JSONObject formData){
         heldValidationOutputs = validationOutputEntities;
-        formDataFromUi = updatedFormData;
+        formDataFromUi = formData.getJSONArray("Updated Responses");
     }
 
-//    public List<UpdatedFormData> setFormQcodeAndInstance() {
-//        List<UpdatedFormData> outputFormData = new ArrayList<>();
-//    }
-//    public List<ValidationOutputEntity> setQuestionCodeAndResponse(){
-//        List<ValidationOutputEntity> validationOutputEntitiesToReturn = new ArrayList<>();
-//        for(ValidationOutputEntity element: heldValidationOutputs){
-//            for(UpdatedFormData question: formDataFromUi){
-//                if(Objects.equals(element.getQuestionCode(), question.getQuestionCode())){
-//                    element.setQuestionCode(question.getQuestionCode());
-//                    element.setCurrentResponse(question.getResponse());
-//                    validationOutputEntitiesToReturn.add(element);
-//                }
-//            }
-//        }
-//        return validationOutputEntitiesToReturn;
-//    }
+    public Iterable<ValidationOutputEntity> setFormFields(){
+        DeserialisedFormData deserialisedFormData = new DeserialisedFormData(formDataFromUi);
+        updatedFormDataList = deserialisedFormData.parseJsonObjects();
+        constructedObjects = deserialisedFormData.constructUpdatedObjectsFromKey(updatedFormDataList);
+        for(ValidationOutputEntity element: heldValidationOutputs){
+            for(UpdatedFormData form: constructedObjects){
+                if (Objects.equals(element.getQuestionCode(), form.getQuestionCode())){
+                    element.setCurrentResponse(form.getResponse());
+                }
+            }
+        }
+        return heldValidationOutputs;
+    }
+
 }

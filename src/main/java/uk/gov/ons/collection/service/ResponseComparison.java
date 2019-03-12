@@ -1,10 +1,7 @@
 package uk.gov.ons.collection.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import uk.gov.ons.collection.entity.OriginalFormData;
 import uk.gov.ons.collection.entity.QuestionResponseEntity;
 import uk.gov.ons.collection.entity.UpdatedFormData;
 
@@ -36,7 +33,7 @@ public class ResponseComparison {
     }
 
     public List<UpdatedFormData> getOnlyUpdatedResponses(){
-        DeserialiseFromData deserialisedFormData = new DeserialiseFromData(updatedResponseData);
+        DeserialisedFormData deserialisedFormData = new DeserialisedFormData(updatedResponseData);
         updatedFormDataList = deserialisedFormData.parseJsonObjects();
         constructedObjects = deserialisedFormData.constructUpdatedObjectsFromKey(updatedFormDataList);
         return getUpdatedResponses();
