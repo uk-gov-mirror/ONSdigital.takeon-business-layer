@@ -1,62 +1,124 @@
 package uk.gov.ons.collection.entity;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.math.BigDecimal;
 
+@Builder
+@Getter
+@Setter
 public class ContributorEntity {
 
-    private Integer formId;
-    private String reference;
-    private String period;
-    private String survey;
-    private String status;
-    private String receiptDate;
-    private String lockedBy;
-    private String lockedDate;
-    private String createdBy;
-    private String createdDate;
-    private String lastUpdatedBy;
-    private String lastUpdatedDate;
-    private String formType;
-    private String checkletter;
-    private String frozenSicOutdated;
-    private String ruSicOutdated;
-    private String frozenSic;
-    private String ruSic;
-    private Integer frozenEmployees;
-    private Integer employees;
-    private Integer frozenEmployment;
-    private Integer employment;
-    private BigDecimal frozenFteEmployment;
-    private BigDecimal fteEmployment;
-    private Integer frozenTurnover;
-    private Integer turnover;
-    private String enterpriseReference;
-    private String wowEnterpriseReference;
-    private String cellNumber;
-    private String currency;
-    private String vatReference;
-    private String payeReference;
-    private String companyRegistrationNumber;
-    private Integer numberLiveLocalUnits;
-    private Integer numberLiveVat;
-    private Integer numberLivepaye;
-    private String legalStatus;
-    private String reportingUnitMarker;
-    private String region;
-    private String birthDate;
-    private String enterpriseName;
-    private String name;
-    private String address;
-    private String postcode;
-    private String tradingStyle;
-    private String contact;
-    private String telephone;
-    private String fax;
-    private String selectionType;
-    private String inclusionExclusion;
+    public Integer formId;
+    public String reference;
+    public String period;
+    public String survey;
+    public String status;
+    public String receiptDate;
+    public String lockedBy;
+    public String lockedDate;
+    public String createdBy;
+    public String createdDate;
+    public String lastUpdatedBy;
+    public String lastUpdatedDate;
+    public String formType;
+    public String checkletter;
+    public String frozenSicOutdated;
+    public String ruSicOutdated;
+    public String frozenSic;
+    public String ruSic;
+    public Integer frozenEmployees;
+    public Integer employees;
+    public Integer frozenEmployment;
+    public Integer employment;
+    public BigDecimal frozenFteEmployment;
+    public BigDecimal fteEmployment;
+    public Integer frozenTurnover;
+    public Integer turnover;
+    public String enterpriseReference;
+    public String wowEnterpriseReference;
+    public String cellNumber;
+    public String currency;
+    public String vatReference;
+    public String payeReference;
+    public String companyRegistrationNumber;
+    public Integer numberLiveLocalUnits;
+    public Integer numberLiveVat;
+    public Integer numberLivepaye;
+    public String legalStatus;
+    public String reportingUnitMarker;
+    public String region;
+    public String birthDate;
+    public String enterpriseName;
+    public String name;
+    public String address;
+    public String postcode;
+    public String tradingStyle;
+    public String contact;
+    public String telephone;
+    public String fax;
+    public String selectionType;
+    public String inclusionExclusion;
+
+    public ContributorEntity(Integer formId, String reference, String period, String survey, String status, String receiptDate, String lockedBy, String lockedDate, String createdBy, String createdDate, String lastUpdatedBy, String lastUpdatedDate, String formType, String checkletter, String frozenSicOutdated, String ruSicOutdated, String frozenSic, String ruSic, Integer frozenEmployees, Integer employees, Integer frozenEmployment, Integer employment, BigDecimal frozenFteEmployment, BigDecimal fteEmployment, Integer frozenTurnover, Integer turnover, String enterpriseReference, String wowEnterpriseReference, String cellNumber, String currency, String vatReference, String payeReference, String companyRegistrationNumber, Integer numberLiveLocalUnits, Integer numberLiveVat, Integer numberLivepaye, String legalStatus, String reportingUnitMarker, String region, String birthDate, String enterpriseName, String name, String address, String postcode, String tradingStyle, String contact, String telephone, String fax, String selectionType, String inclusionExclusion) {
+        this.formId = formId;
+        this.reference = reference;
+        this.period = period;
+        this.survey = survey;
+        this.status = status;
+        this.receiptDate = receiptDate;
+        this.lockedBy = lockedBy;
+        this.lockedDate = lockedDate;
+        this.createdBy = createdBy;
+        this.createdDate = createdDate;
+        this.lastUpdatedBy = lastUpdatedBy;
+        this.lastUpdatedDate = lastUpdatedDate;
+        this.formType = formType;
+        this.checkletter = checkletter;
+        this.frozenSicOutdated = frozenSicOutdated;
+        this.ruSicOutdated = ruSicOutdated;
+        this.frozenSic = frozenSic;
+        this.ruSic = ruSic;
+        this.frozenEmployees = frozenEmployees;
+        this.employees = employees;
+        this.frozenEmployment = frozenEmployment;
+        this.employment = employment;
+        this.frozenFteEmployment = frozenFteEmployment;
+        this.fteEmployment = fteEmployment;
+        this.frozenTurnover = frozenTurnover;
+        this.turnover = turnover;
+        this.enterpriseReference = enterpriseReference;
+        this.wowEnterpriseReference = wowEnterpriseReference;
+        this.cellNumber = cellNumber;
+        this.currency = currency;
+        this.vatReference = vatReference;
+        this.payeReference = payeReference;
+        this.companyRegistrationNumber = companyRegistrationNumber;
+        this.numberLiveLocalUnits = numberLiveLocalUnits;
+        this.numberLiveVat = numberLiveVat;
+        this.numberLivepaye = numberLivepaye;
+        this.legalStatus = legalStatus;
+        this.reportingUnitMarker = reportingUnitMarker;
+        this.region = region;
+        this.birthDate = birthDate;
+        this.enterpriseName = enterpriseName;
+        this.name = name;
+        this.address = address;
+        this.postcode = postcode;
+        this.tradingStyle = tradingStyle;
+        this.contact = contact;
+        this.telephone = telephone;
+        this.fax = fax;
+        this.selectionType = selectionType;
+        this.inclusionExclusion = inclusionExclusion;
+    }
+
+    public ContributorEntity(){}
 
     // Getters & Setters
-
+/*
     public String getReference() {
         return reference;
     }
@@ -462,4 +524,5 @@ public class ContributorEntity {
     public void setInclusionExclusion(String inclusionExclusion) {
         this.inclusionExclusion = inclusionExclusion;
     }
+    */
 }

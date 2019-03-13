@@ -1,47 +1,33 @@
 package uk.gov.ons.collection.test;
 import cucumber.api.java.Before;
-import org.junit.runner.RunWith;
 
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import cucumber.api.java.en.When;
 import cucumber.api.java.en.Then;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.client.ResourceAccessException;
 
-import org.springframework.web.context.WebApplicationContext;
-import uk.gov.ons.collection.BusinessLayer;
 import uk.gov.ons.collection.controller.ContributorController;
 import uk.gov.ons.collection.entity.ContributorEntity;
-import uk.gov.ons.collection.service.ContributorProxy;
 import uk.gov.ons.collection.service.ContributorService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.withJsonPath;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.Mockito.when;
@@ -88,12 +74,12 @@ public class ContributorIntegrationTest {
     @When("^the client makes a (.+) call to (.+)$")
     public void the_client_makes_a_GET_call_to_contributor(String typeOfCall, String call) throws Throwable {
         //this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
-        ContributorEntity contributorEntity = new ContributorEntity();
+        ContributorEntity contributorEntityFFS = new ContributorEntity();
         //Iterable<ContributorEntity> variable = Mockito.mock(List.class);
         Iterable<ContributorEntity> variable = new ArrayList<>();
-        contributorEntity.setPeriod("201812");
-        contributorEntity.setReference("12345678910");
-        contributorEntity.setSurvey("111");
+        contributorEntityFFS.setPeriod("201812");
+        contributorEntityFFS.setReference("12345678910");
+        contributorEntityFFS.setSurvey("111");
         when(contributorService.generalSearch("period=201712")).thenReturn(variable);
         uri = Host + port + call;
 
@@ -116,12 +102,12 @@ public class ContributorIntegrationTest {
     @Then("^the client receives status code of (\\d+)$")
     public void the_client_receives_status_code_of(int statusCode) throws Throwable {
         //final HttpStatus currentStatusCode = latestResponse.getTheResponse().getStatusCode();
-        ContributorEntity contributorEntity = new ContributorEntity();
+        ContributorEntity contributorEntityFFS = new ContributorEntity();
         //Iterable<ContributorEntity> variable = Mockito.mock(List.class);
         Iterable<ContributorEntity> variable = new ArrayList<>();
-        contributorEntity.setPeriod("201812");
-        contributorEntity.setReference("12345678910");
-        contributorEntity.setSurvey("111");
+        contributorEntityFFS.setPeriod("201812");
+        contributorEntityFFS.setReference("12345678910");
+        contributorEntityFFS.setSurvey("111");
         when(contributorService.generalSearch("period=201712")).thenReturn(variable);
         //assertThat(result.getResponse().getStatus(), equalTo(statusCode));
         mockMvc.perform(get(uri)).andDo(print()).andExpect(status().isOk()).andDo(print()).andReturn();
@@ -129,12 +115,12 @@ public class ContributorIntegrationTest {
 
     @Then("^the response should contain at least (\\d+) entity$")
     public void the_response_should_contain_at_least_entity(int entityCount) throws Throwable {
-        ContributorEntity contributorEntity = new ContributorEntity();
+        ContributorEntity contributorEntityFFS = new ContributorEntity();
         //Iterable<ContributorEntity> variable = Mockito.mock(List.class);
         Iterable<ContributorEntity> variable = new ArrayList<>();
-        contributorEntity.setPeriod("201812");
-        contributorEntity.setReference("12345678910");
-        contributorEntity.setSurvey("111");
+        contributorEntityFFS.setPeriod("201812");
+        contributorEntityFFS.setReference("12345678910");
+        contributorEntityFFS.setSurvey("111");
         when(contributorService.generalSearch("period=201712")).thenReturn(variable);
         mockMvc.perform(get(uri)).andExpect(jsonPath("$.*", hasSize(greaterThanOrEqualTo(entityCount)))).andReturn();
 
@@ -149,12 +135,12 @@ public class ContributorIntegrationTest {
     @Then("^the response entity at (\\d+) should contain \"([^\"]*)\" with value \"([^\"]*)\"$")
     public void the_response_entity_at_should_contain_with_value(int location, String key, String value) throws Throwable {
         String jsonContent = "[{'" + key  + "':'" + value +"'}]";
-        ContributorEntity contributorEntity = new ContributorEntity();
+        ContributorEntity contributorEntityFFS = new ContributorEntity();
         //Iterable<ContributorEntity> variable = Mockito.mock(List.class);
-        Iterable<ContributorEntity> variable = new ArrayList<>(Arrays.asList(contributorEntity));
-        contributorEntity.setPeriod(value);
-        contributorEntity.setReference(value);
-        contributorEntity.setSurvey(value);
+        Iterable<ContributorEntity> variable = new ArrayList<>(Arrays.asList(contributorEntityFFS));
+        contributorEntityFFS.setPeriod(value);
+        contributorEntityFFS.setReference(value);
+        contributorEntityFFS.setSurvey(value);
         when(contributorService.generalSearch("")).thenReturn(variable);
         this.mockMvc.perform(get(uri)).andDo(print()).andExpect(status().isOk()).andExpect(content().json(jsonContent)).andReturn();
     }

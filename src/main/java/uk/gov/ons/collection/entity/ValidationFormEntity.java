@@ -74,4 +74,9 @@ public class ValidationFormEntity implements ValidationEntity {
     @JsonIgnore
     private String payload = "{\"value\": " +"\"" + getCurrentResponse()+"\"" + "}";
 
+    @JsonIgnore
+    private String errorMessage;
+
+
+
 }

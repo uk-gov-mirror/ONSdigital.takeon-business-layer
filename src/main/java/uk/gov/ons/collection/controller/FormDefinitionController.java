@@ -9,7 +9,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.ons.collection.entity.ContributorEntity;
 import uk.gov.ons.collection.entity.FormDefintionEntity;
-import uk.gov.ons.collection.service.ContributorService;
 import uk.gov.ons.collection.service.FormDefinitionService;
 
 import java.util.ArrayList;

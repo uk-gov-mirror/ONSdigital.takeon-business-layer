@@ -1,4 +1,4 @@
-package uk.gov.ons.collection.service;
+package uk.gov.ons.collection.test;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +33,7 @@ class ValuePresentTest {
 ////
 ////        validationFormEntityList.add(validationFormEntity);
 ////
-////        ValuePresent valuePresent = new ValuePresent();
+////        ValuePresentWrangler valuePresent = new ValuePresentWrangler();
 ////
 ////        valuePresent.getContributor();
 ////        valuePresent.runValidation();
