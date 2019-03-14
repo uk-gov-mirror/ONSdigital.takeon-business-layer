@@ -83,7 +83,7 @@ public class ValuePresentWrangler {
                 }
             }
         }
-        System.out.println("Current Config list: "+validationConfigEntitiesToReturn);
+        System.out.println("Current Config list: "+ validationConfigEntitiesToReturn);
         return validationConfigEntitiesToReturn;
     }
 

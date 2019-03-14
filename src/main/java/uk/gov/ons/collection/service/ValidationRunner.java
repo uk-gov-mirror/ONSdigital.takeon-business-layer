@@ -4,10 +4,12 @@ import uk.gov.ons.collection.entity.ContributorEntity;
 import uk.gov.ons.collection.entity.FormDefintionEntity;
 import uk.gov.ons.collection.entity.QuestionResponseEntity;
 import uk.gov.ons.collection.entity.ValidationFormEntity;
+import uk.gov.ons.collection.utilities.Helpers;
 import uk.gov.ons.collection.utilities.ParseIterable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ValidationRunner {
 
@@ -44,13 +46,18 @@ public class ValidationRunner {
         }
         return rules;
     }
-
-    public List<QuestionResponseEntity> addResponses(){
-        Iterable<FormDefintionEntity> formDefintionEntities = dataLoader.loadFormDefinition(reference, period, survey);
-        List<FormDefintionEntity> defintionEntityList = new ParseIterable().parseIterable(formDefintionEntities);
+    // Make sure we have a full set of questions and not just the ones that currently have responses.
+    public List<QuestionResponseEntity> checkAllQuestionsPresent(){
         Iterable<QuestionResponseEntity> questionResponseEntities = dataLoader.loadResponses(reference, period, survey);
-        List<QuestionResponseEntity> questionResponseEntityList = new ParseIterable().parseIterable(questionResponseEntities);
+        Map<Integer, List<String>> mapOfInstancesAndResponses = new Helpers().placeIntoMap(new ParseIterable().parseIterable(questionResponseEntities));
         return null;
+    }
+
+    public boolean checkQuestionCodeAndInstnaceIsPresent(int instance, String questionCode, Map<Integer, List<String>> questionResponses){
+        if(questionResponses.get(instance).contains(questionCode)){
+            return true;
+        }
+        return false;
     }
 
 

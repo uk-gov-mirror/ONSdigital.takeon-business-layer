@@ -1,6 +1,7 @@
 package uk.gov.ons.collection.service;
 
 import uk.gov.ons.collection.entity.ContributorEntity;
+import uk.gov.ons.collection.entity.FormDefintionEntity;
 import uk.gov.ons.collection.entity.QuestionResponseEntity;
 import uk.gov.ons.collection.entity.ValidationFormEntity;
 
@@ -28,7 +29,12 @@ public class DataLoaderTest implements DataLoader {
     }
 
     @Override
-    public Iterable<QuestionResponseEntity> loadResponses() {
+    public Iterable<QuestionResponseEntity> loadResponses(String reference, String period, String survey) {
+        return null;
+    }
+
+    @Override
+    public Iterable<FormDefintionEntity> loadFormDefinition(String reference, String period, String survey) {
         return null;
     }
 }

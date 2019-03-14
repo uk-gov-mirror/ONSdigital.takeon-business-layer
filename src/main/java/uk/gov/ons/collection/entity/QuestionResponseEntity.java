@@ -1,7 +1,15 @@
 package uk.gov.ons.collection.entity;
 
-import java.sql.Timestamp;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.sql.Timestamp;
+@Builder
+@Getter
+@Setter
+@AllArgsConstructor
 public class QuestionResponseEntity {
 
     private String reference;
@@ -103,6 +111,8 @@ public class QuestionResponseEntity {
     public void setLastUpdatedBy(String lastUpdatedBy) {
         this.lastUpdatedBy = lastUpdatedBy;
     }
+
+    public QuestionResponseEntity(){};
 
     @Override
     public String toString() {
