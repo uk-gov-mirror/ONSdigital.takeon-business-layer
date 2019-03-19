@@ -31,7 +31,7 @@ public class ValidationWranglerController {
     }
 
     @GetMapping("/value-present/{args}")
-    public Iterable<ReturnedValidationOutputs> runValuePresent(@MatrixVariable Map<String, String> matrixVars){
+    public Iterable<ValidationFormEntity> runValuePresent(@MatrixVariable Map<String, String> matrixVars){
 
         String reference = matrixVars.get("reference");
         String period = matrixVars.get("period");
@@ -41,7 +41,7 @@ public class ValidationWranglerController {
         valuePresentWrangler.runVpWrangler();
         Iterable<ValidationFormEntity> validationFormEntities = valuePresentWrangler.setPayloadAndReturnFormEntities();
 
-        return new ValuePresentRunner(validationFormEntities);
+        return new ValuePresentRunner(validationFormEntities).callValidationService();
     }
 
 }

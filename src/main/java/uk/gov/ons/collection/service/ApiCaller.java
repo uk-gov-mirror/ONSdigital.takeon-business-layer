@@ -8,5 +8,5 @@ public interface ApiCaller {
     <T> Iterable<T> loadValidationConfig(int formId);
     Iterable<QuestionResponseEntity> loadResponses(String reference, String period, String survey);
     Iterable<FormDefintionEntity> loadFormDefinition(String reference, String period, String survey);
-    Iterable<ReturnedValidationOutputs> callValidationApi(String ruleName, String reference, String period, String survey);
+    Iterable<ValidationFormEntity> callValidationApi(String ruleName, String reference, String period, String survey);
 }

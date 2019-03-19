@@ -67,6 +67,5 @@ public class ValidationRunner {
         // Iterable<QuestionResponseEntity> completeIterableOfQcodes = checkAllQcodesPresent();
         List<String> listOfRules = getUniqueListOfRule(formId);
         pickRulesToRun(listOfRules);
-
     }
 }

@@ -50,7 +50,7 @@ public class ApiCallerSQL implements ApiCaller {
     }
 
     @Override
-    public Iterable<ReturnedValidationOutputs> callValidationApi(String ruleName, String reference, String period, String survey) {
+    public Iterable<ValidationFormEntity> callValidationApi(String ruleName, String reference, String period, String survey) {
         if(ruleName.equals("VP")){
               return apiCallerService.callValidationApi(new Helpers().buildUriParameters(reference, period, survey));
 //            valuePresentWrangler.getContributor(contributors);
