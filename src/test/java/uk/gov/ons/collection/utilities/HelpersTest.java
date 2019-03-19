@@ -16,9 +16,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class HelpersTest {
 
-    @Autowired
-    ValidationRunner validationRunner;
-
     @Test
     void placeIntoMap_twoInstances_OneQuestionCode() {
         Helpers helpers = new Helpers();
@@ -136,7 +133,7 @@ class HelpersTest {
     List<QuestionResponseEntity> testResponses = new ArrayList<>();
     Iterable<FormDefintionEntity> testFormDef = new ArrayList<>();
     List<QuestionResponseEntity> testOutputs = new ArrayList<>();
-    ApiCallerTest dataLoaderTest = new ApiCallerTest(testResponses, testFormDef, "");
+    ApiCallerTest dataLoaderTest = new ApiCallerTest().builder().questionResponse(testResponses).definitionEntities(testFormDef).build();
 
     void setup_checkAllQuestionsPresent(){
 

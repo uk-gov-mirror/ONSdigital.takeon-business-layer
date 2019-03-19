@@ -11,21 +11,10 @@ public class ApiCallerTest implements ApiCaller {
     private Iterable<ContributorEntity> contributors;
     private Iterable<ValidationFormEntity> validationConfig;
     private Iterable<QuestionResponseEntity> questionResponse;
-    private Iterable<FormDefintionEntity> defintionEntities;
+    private Iterable<FormDefintionEntity> definitionEntities;
     private Iterable<ValidationFormEntity> returnedValidationOutputs;
 
-    public ApiCallerTest(Iterable<ContributorEntity> contributors, Iterable<ValidationFormEntity> validationConfig) {
-        this.contributors = contributors;
-        this.validationConfig = validationConfig;
-    }
-
-    public ApiCallerTest() {
-    }
-
-    public ApiCallerTest(Iterable<QuestionResponseEntity> questionResponse, Iterable<FormDefintionEntity> defintionEntities, String blank) {
-        this.questionResponse = questionResponse;
-        this.defintionEntities = defintionEntities;
-    }
+    public ApiCallerTest() {}
 
     @Override
     public Iterable<ContributorEntity> loadContributors(String reference, String period, String survey) {
@@ -44,7 +33,7 @@ public class ApiCallerTest implements ApiCaller {
 
     @Override
     public Iterable<FormDefintionEntity> loadFormDefinition(String reference, String period, String survey) {
-        return defintionEntities;
+        return definitionEntities;
     }
 
     @Override

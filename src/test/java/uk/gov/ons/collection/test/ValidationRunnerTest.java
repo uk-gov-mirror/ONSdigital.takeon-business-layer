@@ -1,14 +1,12 @@
 package uk.gov.ons.collection.test;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import uk.gov.ons.collection.entity.ContributorEntity;
 import uk.gov.ons.collection.entity.ValidationFormEntity;
 import uk.gov.ons.collection.service.ApiCallerTest;
 import uk.gov.ons.collection.service.ValidationRunner;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,28 +14,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ValidationRunnerTest {
 
-
     @Test
     void Given1Contributor_getformid() {
-        ContributorEntity contributor = new ContributorEntity().builder().formid(5).build();
         ArrayList<ContributorEntity> testContributors = new ArrayList<>();
-        testContributors.add(contributor);
-        ApiCallerTest dataLoader = new ApiCallerTest(testContributors,null);
+        testContributors.add(new ContributorEntity().builder().formid(5).build());
+        ApiCallerTest dataLoader = new ApiCallerTest().builder().contributors(testContributors).build();
         ValidationRunner runner = new ValidationRunner("","","",dataLoader);
-        // validationRunner.setReferencePeriodSurvey("","","",dataLoader);
         assertEquals(5,runner.getFormIdFromForm());
     }
 
     @Test
     void Given2Contributor_getformid_ReturnsFirstOneInList() {
         ArrayList<ContributorEntity> testContributors = new ArrayList<>();
+        testContributors.add(new ContributorEntity().builder().formid(5).build());
+        testContributors.add(new ContributorEntity().builder().formid(6).build());
+        ApiCallerTest dataLoader = new ApiCallerTest().builder().contributors(testContributors).build();
 
-        ContributorEntity contributor = new ContributorEntity().builder().formid(5).build();
-        testContributors.add(contributor);
-        contributor = new ContributorEntity().builder().formid(6).build();
-        testContributors.add(contributor);
-
-        ApiCallerTest dataLoader = new ApiCallerTest(testContributors,null);
         ValidationRunner runner = new ValidationRunner("","","",dataLoader);
         assertEquals(5,runner.getFormIdFromForm());
     }
@@ -45,7 +37,7 @@ class ValidationRunnerTest {
     @Test
     void Given0Contributor_getformid_Return0() {
         ArrayList<ContributorEntity> testContributors = new ArrayList<>();
-        ApiCallerTest dataLoader = new ApiCallerTest(testContributors,null);
+        ApiCallerTest dataLoader = new ApiCallerTest().builder().contributors(testContributors).build();
         ValidationRunner runner = new ValidationRunner("","","",dataLoader);
         assertEquals(0,runner.getFormIdFromForm());
     }
