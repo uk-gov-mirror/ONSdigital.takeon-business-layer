@@ -1,8 +1,12 @@
 package uk.gov.ons.collection.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+
 import javax.persistence.Column;
 import javax.persistence.Id;
-
+@Builder
+@AllArgsConstructor
 public class FormDefintionEntity {
 
     private Integer formId;
@@ -94,4 +98,8 @@ public class FormDefintionEntity {
     public void setLastUpdatedDate(String lastUpdatedDate) {
         this.lastUpdatedDate = lastUpdatedDate;
     }
+
+    public FormDefintionEntity() {
+    }
+
 }

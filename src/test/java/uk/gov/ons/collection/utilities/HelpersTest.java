@@ -1,7 +1,11 @@
 package uk.gov.ons.collection.utilities;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import uk.gov.ons.collection.entity.FormDefintionEntity;
 import uk.gov.ons.collection.entity.QuestionResponseEntity;
+import uk.gov.ons.collection.service.ApiCallerTest;
+import uk.gov.ons.collection.service.ValidationRunner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,8 +16,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class HelpersTest {
 
+    @Autowired
+    ValidationRunner validationRunner;
+
     @Test
-    void twoInstances_OneQuestionCode() {
+    void placeIntoMap_twoInstances_OneQuestionCode() {
         Helpers helpers = new Helpers();
         List<QuestionResponseEntity> testResponses = new ArrayList<>();
         QuestionResponseEntity questionResponseEntity = new QuestionResponseEntity().builder().instance(3).questionCode("143").build();
@@ -34,7 +41,7 @@ class HelpersTest {
     }
 
     @Test
-    void oneInstances_TwoQuestionCode() {
+    void placeIntoMap_oneInstances_TwoQuestionCode() {
         Helpers helpers = new Helpers();
         // List that gets passed to helper function
         List<QuestionResponseEntity> testResponses = new ArrayList<>();
@@ -56,7 +63,7 @@ class HelpersTest {
     }
 
     @Test
-    void threeInstances_TwoQuestionCode() {
+    void placeIntoMap_threeInstances_TwoQuestionCode() {
         Helpers helpers = new Helpers();
         // List that gets passed to helper function
         List<QuestionResponseEntity> testResponses = new ArrayList<>();
@@ -87,7 +94,7 @@ class HelpersTest {
     }
 
     @Test
-    void threeInstances_SixQuestionCode() {
+    void placeIntoMap_threeInstances_SixQuestionCode() {
         Helpers helpers = new Helpers();
         // List that gets passed to helper function
         List<QuestionResponseEntity> testResponses = new ArrayList<>();
@@ -124,5 +131,54 @@ class HelpersTest {
         outputMap.put(2, testList_three);
 
         assertEquals(helpers.placeIntoMap(testResponses), outputMap);
+    }
+
+    List<QuestionResponseEntity> testResponses = new ArrayList<>();
+    Iterable<FormDefintionEntity> testFormDef = new ArrayList<>();
+    List<QuestionResponseEntity> testOutputs = new ArrayList<>();
+    ApiCallerTest dataLoaderTest = new ApiCallerTest(testResponses, testFormDef, "");
+
+    void setup_checkAllQuestionsPresent(){
+
+        // List of test responses
+        testResponses.add(new QuestionResponseEntity().builder().questionCode("132").response("Response for 132").build());
+        testResponses.add(new QuestionResponseEntity().builder().questionCode("032").response("Response for 032").build());
+        testResponses.add(new QuestionResponseEntity().builder().questionCode("001").response("Response for 001").build());
+        // Basic form definition
+        ((ArrayList<FormDefintionEntity>) testFormDef).add(new FormDefintionEntity().builder().questionCode("132").build());
+        ((ArrayList<FormDefintionEntity>) testFormDef).add(new FormDefintionEntity().builder().questionCode("032").build());
+        ((ArrayList<FormDefintionEntity>) testFormDef).add(new FormDefintionEntity().builder().questionCode("001").build());
+        ((ArrayList<FormDefintionEntity>) testFormDef).add(new FormDefintionEntity().builder().questionCode("999").build());
+        // Setup output list of responses
+        testOutputs.add(new QuestionResponseEntity().builder().questionCode("132").response("Response for 132").build());
+        testOutputs.add(new QuestionResponseEntity().builder().questionCode("032").response("Response for 032").build());
+        testOutputs.add(new QuestionResponseEntity().builder().questionCode("001").response("Response for 001").build());
+        testOutputs.add(new QuestionResponseEntity().builder().questionCode("999").response("").build());
+
+    }
+
+    @Test
+    void checkAllQuestionsPresent_incompleteListOfResponses() {
+        setup_checkAllQuestionsPresent();
+        assertEquals(new Helpers().checkAllQuestionsPresent(dataLoaderTest, "","","")
+                .toString(), testOutputs.toString());
+    }
+
+    @Test
+    void checkQuestionCodePresent_shouldBePresent_returnsTrue(){
+        setup_checkAllQuestionsPresent();
+        assertTrue(new Helpers().checkQuestionCodePresent("132", testResponses));
+    }
+
+    @Test
+    void checkQuestionCodePresent_shouldNotBePresent_returnsFalse(){
+        setup_checkAllQuestionsPresent();
+        assertFalse(new Helpers().checkQuestionCodePresent("999", testResponses));
+    }
+
+    @Test
+    void checkQuestionCodePresent_nullShouldNotBePresent_returnsFalse(){
+        setup_checkAllQuestionsPresent();
+        assertFalse(new Helpers().checkQuestionCodePresent(null, testResponses));
     }
 }

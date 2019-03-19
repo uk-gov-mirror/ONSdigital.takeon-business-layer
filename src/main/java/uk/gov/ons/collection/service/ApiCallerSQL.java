@@ -1,15 +1,12 @@
 package uk.gov.ons.collection.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.gov.ons.collection.entity.ContributorEntity;
-import uk.gov.ons.collection.entity.FormDefintionEntity;
-import uk.gov.ons.collection.entity.QuestionResponseEntity;
-import uk.gov.ons.collection.entity.ValidationFormEntity;
+import org.springframework.stereotype.Service;
+import uk.gov.ons.collection.entity.*;
 import uk.gov.ons.collection.utilities.Helpers;
 
-import java.util.List;
-
-public class DataLoaderSQL implements DataLoader {
+@Service
+public class ApiCallerSQL implements ApiCaller {
 
     @Autowired
     ValidationConfigService validationConfigService;
@@ -22,6 +19,15 @@ public class DataLoaderSQL implements DataLoader {
 
     @Autowired
     CurrentResponseService currentResponseService;
+
+    @Autowired
+    ValuePresentWrangler valuePresentWrangler;
+
+    @Autowired
+    RunValidationService validationService;
+
+    @Autowired
+    ApiCallerService apiCallerService;
 
     @Override
     public Iterable<ContributorEntity> loadContributors(String reference, String period, String survey) {
@@ -41,5 +47,19 @@ public class DataLoaderSQL implements DataLoader {
     @Override
     public Iterable<FormDefintionEntity> loadFormDefinition(String reference, String period, String survey){
         return formDefinitionService.getForm(new Helpers().buildUriParameters(reference, period, survey));
+    }
+
+    @Override
+    public Iterable<ReturnedValidationOutputs> callValidationApi(String ruleName, String reference, String period, String survey) {
+        if(ruleName.equals("VP")){
+              return apiCallerService.callValidationApi(new Helpers().buildUriParameters(reference, period, survey));
+//            valuePresentWrangler.getContributor(contributors);
+//            valuePresentWrangler.getValidationConfig(config);
+//            valuePresentWrangler.getResponses(checkAllQcodesPresent());
+//            valuePresentWrangler.filterConfig();
+//            valuePresentWrangler.matchResponsesToConfig();
+//            System.out.println(valuePresentWrangler.runValidation().toString());
+        }
+        return null;
     }
 }

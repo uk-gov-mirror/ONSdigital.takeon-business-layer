@@ -9,7 +9,7 @@ import uk.gov.ons.collection.entity.ReturnedValidationOutputs;
 @FeignClient(name="ValidationEngine")
 public interface RunValidationServiceProxy {
 
-    @PostMapping(value = "/validation/valuepresent", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/validation/valuepresent/", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ReturnedValidationOutputs runVaas(@RequestBody String body);
 
 }

@@ -3,15 +3,17 @@ package uk.gov.ons.collection.entity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 
 @Builder
 @Getter
 @Setter
+@ToString
 public class ContributorEntity {
 
-    public Integer formId;
+    public Integer formid;
     public String reference;
     public String period;
     public String survey;
@@ -63,7 +65,7 @@ public class ContributorEntity {
     public String inclusionExclusion;
 
     public ContributorEntity(Integer formId, String reference, String period, String survey, String status, String receiptDate, String lockedBy, String lockedDate, String createdBy, String createdDate, String lastUpdatedBy, String lastUpdatedDate, String formType, String checkletter, String frozenSicOutdated, String ruSicOutdated, String frozenSic, String ruSic, Integer frozenEmployees, Integer employees, Integer frozenEmployment, Integer employment, BigDecimal frozenFteEmployment, BigDecimal fteEmployment, Integer frozenTurnover, Integer turnover, String enterpriseReference, String wowEnterpriseReference, String cellNumber, String currency, String vatReference, String payeReference, String companyRegistrationNumber, Integer numberLiveLocalUnits, Integer numberLiveVat, Integer numberLivepaye, String legalStatus, String reportingUnitMarker, String region, String birthDate, String enterpriseName, String name, String address, String postcode, String tradingStyle, String contact, String telephone, String fax, String selectionType, String inclusionExclusion) {
-        this.formId = formId;
+        this.formid = formId;
         this.reference = reference;
         this.period = period;
         this.survey = survey;

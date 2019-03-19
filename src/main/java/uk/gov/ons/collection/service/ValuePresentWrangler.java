@@ -4,25 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.ons.collection.entity.*;
 import uk.gov.ons.collection.utilities.Helpers;
-import uk.gov.ons.collection.utilities.ParseIterable;
 
+import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class ValuePresentWrangler {
 
-    @Autowired
-    ContributorService contributorService;
-
-    @Autowired
-    CurrentResponseService currentResponseService;
-
-    @Autowired
-    ValidationConfigService validationConfigService;
-
-    @Autowired
-    RunValidationService runValidationService;
 
     private String reference;
     private String period;
@@ -31,52 +20,45 @@ public class ValuePresentWrangler {
     private Iterable<ContributorEntity> contributorEntities;
     private Iterable<QuestionResponseEntity> questionResponseEntities;
     private Iterable<ValidationFormEntity> validationConfig;
+    private List<ValidationFormEntity> filteredValidationFormEntities;
+    List<ValidationFormEntity> validationConfigEntitiesToReturn = new ArrayList<>();
     private final String algo = "https://api.algpoc.com/v1/algo/dllmorgan/ValidationValuePresent/1.0.0";
+    private ApiCaller apiCaller;
 
-//    public ValuePresentWrangler(){}
-//
-//    public ValuePresentWrangler(Map<String, String> parameters){
-//        period = parameters.get("period");
-//        reference = parameters.get("reference");
-//        survey = parameters.get("survey");
-//        uri = new Helpers().buildUriParameters(reference, period, survey);
-//    }
+    public ValuePresentWrangler(String reference, String period, String survey,  ApiCaller caller) {
+        this.reference = reference;
+        this.period = period;
+        this.survey = survey;
+        this.apiCaller = caller;
+    }
 
     public void getContributor() {
-        contributorEntities = contributorService.generalSearch(uri);
+        this.contributorEntities = apiCaller.loadContributors(reference, period, survey);
     }
 
-    public Iterable<QuestionResponseEntity> getResponses(){
-        return currentResponseService.getCurrentResponses(uri);
-    }
-
-    public Iterable<ValidationFormEntity> filterConfig(){
-        Iterable<ValidationFormEntity> validationFormEntity = validationConfig;
-        List<ValidationFormEntity> formEntityList = new ParseIterable().parseIterable(validationFormEntity);
-        return formEntityList.stream().filter(element -> element.getValidationCode().equals("VP"))
-                .collect(Collectors.toList());
+    public void getResponses(){
+        this.questionResponseEntities = apiCaller.loadResponses(reference, period, survey);
     }
 
     public void getValidationConfig(){
-        for(ContributorEntity element: contributorEntities) {
-            validationConfig =
-                    validationConfigService.getValidationConfig("FormID="+element.getFormId().toString());
-        }
+        List<ContributorEntity> contributor = new Helpers.ParseIterable().parseIterable(contributorEntities);
+        this.validationConfig = apiCaller.loadValidationConfig(contributor.get(0).formid);
     }
 
-    public void buildUri(Map<String, String> parameters){
-        period = parameters.get("period");
-        reference = parameters.get("reference");
-        survey = parameters.get("survey");
-        uri = new Helpers().buildUriParameters(reference, period, survey);
+    public void filterConfig(){
+        Iterable<ValidationFormEntity> validationFormEntity = validationConfig;
+        List<ValidationFormEntity> formEntityList = new Helpers.ParseIterable().parseIterable(validationFormEntity);
+        filteredValidationFormEntities = formEntityList.stream().filter(element -> element.getValidationCode().equals("VP"))
+                .collect(Collectors.toList());
     }
 
-    public Iterable<ValidationFormEntity> matchResponsesToConfig(Iterable<QuestionResponseEntity> responses,
-                                                   Iterable<ValidationFormEntity> config){
+    public Iterable<QuestionResponseEntity> checkAllQcodesPresent() {
+        return new Helpers().checkAllQuestionsPresent(apiCaller, reference, period, survey);
+    }
 
-        List<ValidationFormEntity> validationConfigEntitiesToReturn = new ArrayList<>();
-        for(QuestionResponseEntity questionResponseEntity: responses){
-            for (ValidationFormEntity validationFormEntity: config){
+    public void matchResponsesToConfig(){
+        for(QuestionResponseEntity questionResponseEntity: questionResponseEntities){
+            for (ValidationFormEntity validationFormEntity: validationConfig){
                 if(Objects.equals(questionResponseEntity.getQuestionCode().trim(), validationFormEntity.getQuestionCode())){
                     validationFormEntity.setCurrentResponse(questionResponseEntity.getResponse());
                     validationConfigEntitiesToReturn.add(validationFormEntity);
@@ -84,24 +66,36 @@ public class ValuePresentWrangler {
             }
         }
         System.out.println("Current Config list: "+ validationConfigEntitiesToReturn);
-        return validationConfigEntitiesToReturn;
     }
 
-    public Iterable<ValidationFormEntity> runAlgoValidation(Iterable<ValidationFormEntity> validationConfig){
-        for(ValidationFormEntity validationFormEntity: validationConfig){
-            System.out.println(validationFormEntity.toString());
-            CallAlgorithmia callAlgorithmia = new CallAlgorithmia(algo, validationFormEntity.getPayload());
-            validationFormEntity.setIsTriggered(callAlgorithmia.callService());
+//    public Iterable<ValidationFormEntity> runAlgoValidation(Iterable<ValidationFormEntity> validationConfig){
+//        for(ValidationFormEntity validationFormEntity: validationConfig){
+//            System.out.println(validationFormEntity.toString());
+//            CallAlgorithmia callAlgorithmia = new CallAlgorithmia(algo, validationFormEntity.getPayload());
+//            validationFormEntity.setIsTriggered(callAlgorithmia.callService());
+//        }
+//        return runValidation();
+//    }
+
+    public Iterable<ValidationFormEntity> setPayload(){
+        List<ValidationFormEntity> validationFormEntitiesWithOutputs = new ArrayList<>();
+        for(ValidationFormEntity entity: validationConfigEntitiesToReturn){
+            entity.setPayload(generateJson(entity.getCurrentResponse()));
+            validationFormEntitiesWithOutputs.add(entity);
         }
-        return runValidation(validationConfig);
+        return validationFormEntitiesWithOutputs;
     }
 
-    public Iterable<ValidationFormEntity> runValidation(Iterable<ValidationFormEntity> validationConfig){
+    public String generateJson(String response){
+        List<ValidationFormEntity> outputValidationPayloads = new ArrayList<>();
+        String payload = new String();
         for(ValidationFormEntity validationFormEntity: validationConfig){
-            String payload = "{\"value\":" + "\""+validationFormEntity.getCurrentResponse()+"\""+"}";
-            ReturnedValidationOutputs returnedValidationOutputs = runValidationService.runValidation(payload);
-            validationFormEntity.setIsTriggered(returnedValidationOutputs.isTriggered());
+            payload = "{\"value\":" + "\""+response+"\""+"}";
+            System.out.println(payload);
+            // ReturnedValidationOutputs returnedValidationOutputs = runValidationService.runValidation(payload);
+            // validationFormEntity.setIsTriggered(returnedValidationOutputs.isTriggered());
+            // outputValidationTriggers.add(validationFormEntity);
         }
-        return validationConfig;
+        return payload;
     }
 }

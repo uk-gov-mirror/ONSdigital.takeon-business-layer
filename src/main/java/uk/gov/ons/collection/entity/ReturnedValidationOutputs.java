@@ -1,20 +1,14 @@
 package uk.gov.ons.collection.entity;
 
+import lombok.*;
+
+@Getter
+@Setter
+@Builder
+@ToString
+@AllArgsConstructor
 public class ReturnedValidationOutputs {
     private String triggered;
-
-    public String isTriggered() {
-        return triggered;
-    }
-
-    public void setTriggered(String triggered) {
-        this.triggered = triggered;
-    }
-
-    @Override
-    public String toString() {
-        return "ReturnedValidationOutputs{" +
-                "triggered='" + triggered + '\'' +
-                '}';
-    }
+    private String valueFormula;
+    private String metaData;
 }
