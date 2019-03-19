@@ -98,4 +98,12 @@ public class ValuePresentWrangler {
         }
         return payload;
     }
+
+    public void runVpWrangler(){
+        getContributor();
+        getResponses();
+        getValidationConfig();
+        matchResponsesToConfig();
+    }
+
 }
