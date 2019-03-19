@@ -1,6 +1,7 @@
 package uk.gov.ons.collection.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.ons.collection.entity.ReturnedValidationOutputs;
 import uk.gov.ons.collection.entity.ValidationFormEntity;
@@ -37,11 +38,12 @@ public class ValidationWranglerController {
         String period = matrixVars.get("period");
         String survey = matrixVars.get("survey");
 
-        ValuePresentWrangler valuePresentWrangler = new ValuePresentWrangler(reference, period, survey, new ApiCallerSQL());
+
+        ValuePresentWrangler valuePresentWrangler = new ValuePresentWrangler(reference, period, survey, loaderSQL);
         valuePresentWrangler.runVpWrangler();
         Iterable<ValidationFormEntity> validationFormEntities = valuePresentWrangler.setPayloadAndReturnFormEntities();
 
-        return new ValuePresentRunner(validationFormEntities).callValidationService();
+        return new ValuePresentRunner().callValidationService(validationFormEntities);
     }
 
 }

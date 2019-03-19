@@ -15,20 +15,15 @@ public class ValuePresentRunner {
     @Autowired
     RunValidationService validationService;
 
-    private Iterable<ValidationFormEntity> validationsToRun;
-    public ValuePresentRunner(Iterable<ValidationFormEntity> validationFormEntities){
-        this.validationsToRun = validationFormEntities;
-    }
-
     private ValidationFormEntity setTriggered(ReturnedValidationOutputs validationOutputs, ValidationFormEntity formEntity){
         formEntity.setIsTriggered(validationOutputs.getTriggered());
         formEntity.setMetaData(validationOutputs.getMetaData());
         return formEntity;
     }
 
-    public Iterable<ValidationFormEntity> callValidationService(){
+    public Iterable<ValidationFormEntity> callValidationService(Iterable<ValidationFormEntity> validationFormEntities){
         List<ValidationFormEntity> processedValidations = new ArrayList<>();
-        for(ValidationFormEntity validation: validationsToRun){
+        for(ValidationFormEntity validation: validationFormEntities){
             ValidationFormEntity validationFormEntity = new ValidationFormEntity();
             ReturnedValidationOutputs validationOutputs = validationService.runValidation(validation.getPayload());
             validationFormEntity = setTriggered(validationOutputs, validation);

@@ -1,6 +1,8 @@
 package uk.gov.ons.collection.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Service;
 import uk.gov.ons.collection.entity.*;
 import uk.gov.ons.collection.utilities.Helpers;
