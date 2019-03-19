@@ -20,14 +20,14 @@ public class ValidationWranglerController {
     RunValidationService validationService;
 
     @GetMapping(value = "/run-all/{vars}")
-    public void runAllValidationRules(@MatrixVariable Map<String, String> matrixVars){
+    public Iterable<Iterable<ValidationFormEntity>> runAllValidationRules(@MatrixVariable Map<String, String> matrixVars){
 
         String reference = matrixVars.get("reference");
         String period = matrixVars.get("period");
         String survey = matrixVars.get("survey");
 
         ValidationRunner validationRunner = new ValidationRunner(reference, period, survey, loaderSQL);
-        validationRunner.runValidations();
+        return validationRunner.runValidations();
     }
 
     @GetMapping("/value-present/{args}")

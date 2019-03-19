@@ -54,18 +54,18 @@ public class ValidationRunner {
     // Check we have a full set of questions. If not add the questionCode and initialise the response to an empty string
 
 
-    public Iterable<Iterable<ReturnedValidationOutputs>> pickRulesToRun(List<String> rules){
-        List<Iterable<ReturnedValidationOutputs>> outputs = new ArrayList<>();
+    public Iterable<Iterable<ValidationFormEntity>> pickRulesToRun(List<String> rules){
+        List<Iterable<ValidationFormEntity>> outputs = new ArrayList<>();
         for(String rule: rules) {
             outputs.add(apiCaller.callValidationApi(rule, reference, period, survey));
         }
         return outputs;
     }
 
-    public void runValidations(){
+    public Iterable<Iterable<ValidationFormEntity>> runValidations(){
         int formId = getFormIdFromForm();
         // Iterable<QuestionResponseEntity> completeIterableOfQcodes = checkAllQcodesPresent();
         List<String> listOfRules = getUniqueListOfRule(formId);
-        pickRulesToRun(listOfRules);
+        return pickRulesToRun(listOfRules);
     }
 }
