@@ -78,4 +78,7 @@ public class ValidationFormEntity implements ValidationEntity {
     @JsonIgnore
     private String errorMessage;
 
+    @JsonIgnore
+    private String metaData;
+
 }
