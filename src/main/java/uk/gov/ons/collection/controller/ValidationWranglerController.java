@@ -17,7 +17,7 @@ public class ValidationWranglerController {
     ApiCallerSQL loaderSQL;
 
     @Autowired
-
+    RunValidationService validationService;
 
     @GetMapping(value = "/run-all/{vars}")
     public void runAllValidationRules(@MatrixVariable Map<String, String> matrixVars){
@@ -39,10 +39,9 @@ public class ValidationWranglerController {
 
         ValuePresentWrangler valuePresentWrangler = new ValuePresentWrangler(reference, period, survey, new ApiCallerSQL());
         valuePresentWrangler.runVpWrangler();
-        Iterable<ValidationFormEntity> validationFormEntities = valuePresentWrangler.setPayload();
+        Iterable<ValidationFormEntity> validationFormEntities = valuePresentWrangler.setPayloadAndReturnFormEntities();
 
-
-        return null;
+        return new ValuePresentRunner(validationFormEntities);
     }
 
 }

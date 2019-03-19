@@ -77,7 +77,7 @@ public class ValuePresentWrangler {
 //        return runValidation();
 //    }
 
-    public Iterable<ValidationFormEntity> setPayload(){
+    public Iterable<ValidationFormEntity> setPayloadAndReturnFormEntities(){
         List<ValidationFormEntity> validationFormEntitiesWithOutputs = new ArrayList<>();
         for(ValidationFormEntity entity: validationConfigEntitiesToReturn){
             entity.setPayload(generateJson(entity.getCurrentResponse()));
