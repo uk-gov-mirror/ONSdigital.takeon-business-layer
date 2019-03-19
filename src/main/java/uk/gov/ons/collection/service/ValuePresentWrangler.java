@@ -9,7 +9,6 @@ import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Service
 public class ValuePresentWrangler {
 
 
@@ -87,16 +86,7 @@ public class ValuePresentWrangler {
     }
 
     public String generateJson(String response){
-        List<ValidationFormEntity> outputValidationPayloads = new ArrayList<>();
-        String payload = new String();
-        for(ValidationFormEntity validationFormEntity: validationConfig){
-            payload = "{\"value\":" + "\""+response+"\""+"}";
-            System.out.println(payload);
-            // ReturnedValidationOutputs returnedValidationOutputs = runValidationService.runValidation(payload);
-            // validationFormEntity.setIsTriggered(returnedValidationOutputs.isTriggered());
-            // outputValidationTriggers.add(validationFormEntity);
-        }
-        return payload;
+        return "{\"value\":" + "\""+response+"\""+"}";
     }
 
     public void runVpWrangler(){

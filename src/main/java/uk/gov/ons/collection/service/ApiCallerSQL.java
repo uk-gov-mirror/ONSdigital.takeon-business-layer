@@ -21,9 +21,6 @@ public class ApiCallerSQL implements ApiCaller {
     CurrentResponseService currentResponseService;
 
     @Autowired
-    ValuePresentWrangler valuePresentWrangler;
-
-    @Autowired
     RunValidationService validationService;
 
     @Autowired

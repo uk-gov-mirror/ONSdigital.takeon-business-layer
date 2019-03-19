@@ -11,7 +11,6 @@ import uk.gov.ons.collection.utilities.Helpers;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
 public class ValidationRunner {
 
     private String reference;

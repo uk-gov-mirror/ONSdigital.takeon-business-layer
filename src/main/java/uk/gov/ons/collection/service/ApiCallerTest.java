@@ -12,7 +12,7 @@ public class ApiCallerTest implements ApiCaller {
     private Iterable<ValidationFormEntity> validationConfig;
     private Iterable<QuestionResponseEntity> questionResponse;
     private Iterable<FormDefintionEntity> defintionEntities;
-    private Iterable<ReturnedValidationOutputs> returnedValidationOutputs;
+    private Iterable<ValidationFormEntity> returnedValidationOutputs;
 
     public ApiCallerTest(Iterable<ContributorEntity> contributors, Iterable<ValidationFormEntity> validationConfig) {
         this.contributors = contributors;
@@ -48,7 +48,7 @@ public class ApiCallerTest implements ApiCaller {
     }
 
     @Override
-    public Iterable<ReturnedValidationOutputs> callValidationApi(String ruleName, String reference, String period, String survey) {
+    public Iterable<ValidationFormEntity> callValidationApi(String ruleName, String reference, String period, String survey) {
         return returnedValidationOutputs;
     }
 }
