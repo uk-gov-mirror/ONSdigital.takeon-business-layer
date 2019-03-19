@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.ons.collection.entity.ContributorEntity;
 import uk.gov.ons.collection.entity.QuestionResponseEntity;
+import uk.gov.ons.collection.entity.ReturnedValidationOutputs;
 import uk.gov.ons.collection.entity.ValidationFormEntity;
 import uk.gov.ons.collection.utilities.Helpers;
 
@@ -53,14 +54,14 @@ public class ValidationRunner {
     // Check we have a full set of questions. If not add the questionCode and initialise the response to an empty string
 
 
-    public Iterable<String> pickRulesToRun(List<String> rules){
-        List<String> outputs = new ArrayList<>();
+    public Iterable<ReturnedValidationOutputs> pickRulesToRun(List<String> rules){
+        List<ReturnedValidationOutputs> outputs = new ArrayList<>();
         for(String rule: rules) {
             outputs.add(apiCaller.callValidationApi(rule, reference, period, survey));
         }
         return outputs;
     }
-
+l
     public void runValidations(){
         int formId = getFormIdFromForm();
         // Iterable<QuestionResponseEntity> completeIterableOfQcodes = checkAllQcodesPresent();
