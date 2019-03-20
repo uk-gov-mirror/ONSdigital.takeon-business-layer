@@ -24,7 +24,7 @@ public class ValidationWranglerController {
     ValuePresentRunner valuePresentRunner;
 
     @GetMapping(value = "/run-all/{vars}")
-    public Iterable<Iterable<ValidationFormEntity>> runAllValidationRules(@MatrixVariable Map<String, String> matrixVars){
+    public Iterable<ReturnedValidationOutputs> runAllValidationRules(@MatrixVariable Map<String, String> matrixVars){
 
         String reference = matrixVars.get("reference");
         String period = matrixVars.get("period");
