@@ -11,4 +11,6 @@ public class ReturnedValidationOutputs {
     private String triggered;
     private String valueFormula;
     private String metaData;
+
+    public ReturnedValidationOutputs() {}
 }

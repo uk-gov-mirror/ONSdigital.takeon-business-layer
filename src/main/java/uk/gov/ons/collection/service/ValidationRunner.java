@@ -1,9 +1,7 @@
 package uk.gov.ons.collection.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.google.common.collect.Lists;
 import uk.gov.ons.collection.entity.ContributorEntity;
-import uk.gov.ons.collection.entity.QuestionResponseEntity;
 import uk.gov.ons.collection.entity.ReturnedValidationOutputs;
 import uk.gov.ons.collection.entity.ValidationFormEntity;
 import uk.gov.ons.collection.utilities.Helpers;
@@ -50,21 +48,20 @@ public class ValidationRunner {
         }
         return rules;
     }
+
     // Check we have a full set of questions. If not add the questionCode and initialise the response to an empty string
-
-
-    public Iterable<Iterable<ValidationFormEntity>> pickRulesToRun(List<String> rules){
-        List<Iterable<ValidationFormEntity>> outputs = new ArrayList<>();
+    public List<ReturnedValidationOutputs> callEachValidationApi(List<String> rules){
+        List<ReturnedValidationOutputs> outputs = new ArrayList<>();
         for(String rule: rules) {
-            outputs.add(apiCaller.callValidationApi(rule, reference, period, survey));
+            Iterable<ReturnedValidationOutputs> response = apiCaller.callValidationApi(rule, reference, period, survey);
+            outputs.addAll(Lists.newArrayList(response));
         }
         return outputs;
     }
 
-    public Iterable<Iterable<ValidationFormEntity>> runValidations(){
+    public Iterable<ReturnedValidationOutputs> runValidations(){
         int formId = getFormIdFromForm();
-        // Iterable<QuestionResponseEntity> completeIterableOfQcodes = checkAllQcodesPresent();
         List<String> listOfRules = getUniqueListOfRule(formId);
-        return pickRulesToRun(listOfRules);
+        return callEachValidationApi(listOfRules);
     }
 }

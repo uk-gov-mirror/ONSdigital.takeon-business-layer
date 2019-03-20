@@ -13,5 +13,5 @@ import java.util.List;
 public interface ApiCallerProxy {
 
     @GetMapping("/validation-bl/value-present/{args}")
-    public Iterable<ValidationFormEntity> runApi(@PathVariable(value="args") String args);
+    public Iterable<ReturnedValidationOutputs> runApi(@PathVariable(value="args") String args);
 }

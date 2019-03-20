@@ -2,6 +2,7 @@ package uk.gov.ons.collection.test;
 
 import org.junit.jupiter.api.Test;
 import uk.gov.ons.collection.entity.ContributorEntity;
+import uk.gov.ons.collection.entity.ReturnedValidationOutputs;
 import uk.gov.ons.collection.entity.ValidationFormEntity;
 import uk.gov.ons.collection.service.ApiCallerTest;
 import uk.gov.ons.collection.service.ValidationRunner;
@@ -9,6 +10,7 @@ import uk.gov.ons.collection.service.ValidationRunner;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -78,7 +80,11 @@ class ValidationRunnerTest {
     }
 
     @Test
-    void pickRulesToRun() {
+    void givenNoApiAvailable_pickRulesToRun_GivesEmptyList() {
+        List<ReturnedValidationOutputs> mockedOutput = new ArrayList<>();
+        ApiCallerTest dataLoader = new ApiCallerTest().builder().returnedValidationOutputs(mockedOutput).build();
+        ValidationRunner runner = new ValidationRunner("", "", "", dataLoader);
+        // assertThat(0, runner.callEachValidationApi());
     }
 
     @Test
