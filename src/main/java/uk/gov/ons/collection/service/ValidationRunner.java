@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import uk.gov.ons.collection.entity.ContributorEntity;
 import uk.gov.ons.collection.entity.ReturnedValidationOutputs;
 import uk.gov.ons.collection.entity.ValidationFormEntity;
-import uk.gov.ons.collection.utilities.Helpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +16,6 @@ public class ValidationRunner {
     private ApiCaller apiCaller;
     private Iterable<ContributorEntity> contributors;
     private Iterable<ValidationFormEntity> config;
-    private Helpers helpers = new Helpers();
 
     public ValidationRunner(String reference, String period, String survey, ApiCaller apiCaller) {
         this.reference = reference;
@@ -25,7 +23,6 @@ public class ValidationRunner {
         this.survey = survey;
         this.apiCaller = apiCaller;
     }
-
 
     // We should only ever be given 1 contributor here, but if more than 1 is given we get the formID of the first one
     public int getFormIdFromForm(){
@@ -36,7 +33,6 @@ public class ValidationRunner {
         }
         return 0;
     }
-
 
     public List<String> getUniqueListOfRule(int formId){
         List<String> rules = new ArrayList<>();
