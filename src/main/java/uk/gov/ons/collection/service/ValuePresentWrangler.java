@@ -1,13 +1,7 @@
 package uk.gov.ons.collection.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.stereotype.Service;
 import uk.gov.ons.collection.entity.*;
 import uk.gov.ons.collection.utilities.Helpers;
-
-import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -16,12 +10,12 @@ public class ValuePresentWrangler {
     private String reference;
     private String period;
     private String survey;
-    private String uri;
+    private int currentFormId;
     private Iterable<ContributorEntity> contributorEntities;
     private Iterable<QuestionResponseEntity> questionResponseEntities;
-    private Iterable<ValidationFormEntity> validationConfig;
-    private List<ValidationFormEntity> filteredValidationFormEntities;
-    List<ValidationFormEntity> validationConfigEntitiesToReturn = new ArrayList<>();
+    private List<ValidationFormEntity> validationConfig;
+    // private List<ValidationFormEntity> filteredValidationFormEntities;
+    private List<ReturnedValidationOutputs> validationConfigEntitiesToReturn = new ArrayList<>();
     private final String algo = "https://api.algpoc.com/v1/algo/dllmorgan/ValidationValuePresent/1.0.0";
     private ApiCaller apiCaller;
 
@@ -32,69 +26,77 @@ public class ValuePresentWrangler {
         this.apiCaller = caller;
     }
 
-    public void getContributor() {
-        this.contributorEntities = apiCaller.loadContributors(reference, period, survey);
+    public void loadContributor() {
+        contributorEntities = apiCaller.loadContributors(reference, period, survey);
     }
 
-    public void getResponses(){
-        this.questionResponseEntities = apiCaller.loadResponses(reference, period, survey);
+    public void loadResponses(){
+        questionResponseEntities = apiCaller.loadResponses(reference, period, survey);
     }
 
-    public void getValidationConfig(){
+    private void determineContributorFormID() {
         List<ContributorEntity> contributor = new Helpers.ParseIterable().parseIterable(contributorEntities);
-        this.validationConfig = apiCaller.loadValidationConfig(contributor.get(0).formid);
+        currentFormId = contributor.get(0).formid;
     }
 
-    public void filterConfig(){
-        Iterable<ValidationFormEntity> validationFormEntity = validationConfig;
-        List<ValidationFormEntity> formEntityList = new Helpers.ParseIterable().parseIterable(validationFormEntity);
-        filteredValidationFormEntities = formEntityList.stream().filter(element -> element.getValidationCode().equals("VP"))
+    public void loadValidationConfig(){
+        determineContributorFormID();
+        Iterable<ValidationFormEntity> unfilteredValidationConfig = apiCaller.loadValidationConfig(currentFormId);
+        List<ValidationFormEntity> formEntityList = new Helpers.ParseIterable().parseIterable(unfilteredValidationConfig);
+        validationConfig = formEntityList.stream().filter(element -> element.getValidationCode().equals("VP"))
                 .collect(Collectors.toList());
     }
 
-    public Iterable<QuestionResponseEntity> checkAllQcodesPresent() {
+    public Iterable<QuestionResponseEntity> GenerateCompleteResponseDataset() {
         return new Helpers().checkAllQuestionsPresent(apiCaller, reference, period, survey);
     }
 
-    public void matchResponsesToConfig(){
-        for(QuestionResponseEntity questionResponseEntity: questionResponseEntities){
+    public List<WrangledValidationData> generateValidationData(Iterable<QuestionResponseEntity> responses) {
+        List<WrangledValidationData> dataForValidationAPI = new ArrayList<>();
+        for(QuestionResponseEntity questionResponseEntity: responses){
             for (ValidationFormEntity validationFormEntity: validationConfig){
                 if(Objects.equals(questionResponseEntity.getQuestionCode().trim(), validationFormEntity.getQuestionCode())){
-                    validationFormEntity.setCurrentResponse(questionResponseEntity.getResponse());
-                    validationConfigEntitiesToReturn.add(validationFormEntity);
+                    String metaData = buildMetaData(questionResponseEntity);
+                    WrangledValidationData inputData = new WrangledValidationData().builder().value(questionResponseEntity.getResponse()).metaData(metaData).build();
+                    dataForValidationAPI.add(inputData);
                 }
             }
         }
-        System.out.println("Current Config list: "+ validationConfigEntitiesToReturn);
+        return dataForValidationAPI;
     }
 
-//    public Iterable<ValidationFormEntity> runAlgoValidation(Iterable<ValidationFormEntity> validationConfig){
-//        for(ValidationFormEntity validationFormEntity: validationConfig){
-//            System.out.println(validationFormEntity.toString());
-//            CallAlgorithmia callAlgorithmia = new CallAlgorithmia(algo, validationFormEntity.getPayload());
-//            validationFormEntity.setIsTriggered(callAlgorithmia.callService());
-//        }
-//        return runValidation();
-//    }
+    private String buildMetaData(QuestionResponseEntity questionResponseEntity) {
+        return "\"reference\":\"" + questionResponseEntity.getReference()
+                + "\",\"period\":\"" + questionResponseEntity.getPeriod()
+                + "\",\"survey\":\"" + questionResponseEntity.getSurvey()
+                + "\",\"questionCode\":\"" + questionResponseEntity.getQuestionCode()
+                + "\",\"instance\":\"" + questionResponseEntity.getInstance()
+                + "\"";
+    }
 
-    public Iterable<ValidationFormEntity> setPayloadAndReturnFormEntities(){
-        List<ValidationFormEntity> validationFormEntitiesWithOutputs = new ArrayList<>();
-        for(ValidationFormEntity entity: validationConfigEntitiesToReturn){
-            entity.setPayload(generateJson(entity.getCurrentResponse()));
-            validationFormEntitiesWithOutputs.add(entity);
+    public List<String> setPayloadAndReturnFormEntities(Iterable<WrangledValidationData> inputData){
+        List<String> outputs = new ArrayList<>();
+        for(WrangledValidationData input: inputData){
+            outputs.add(generateJson(input));
         }
-        return validationFormEntitiesWithOutputs;
+        return outputs;
     }
 
-    public String generateJson(String response){
-        return "{\"value\":" + "\""+response+"\""+"}";
+    private String generateJson(WrangledValidationData input){
+        return "{\"value\":\"" + input.getValue() + "\",\"metaData\":{\"" + input.getMetaData() + "\"}";
     }
 
-    public void runVpWrangler(){
-        getContributor();
-        getResponses();
-        getValidationConfig();
-        matchResponsesToConfig();
+    public List<String> parseDataAndGenerateJson() {
+        loadData();
+        Iterable<QuestionResponseEntity> allResponses = GenerateCompleteResponseDataset();
+        List<WrangledValidationData> wrangledData = generateValidationData(allResponses);
+        return setPayloadAndReturnFormEntities(wrangledData);
+    }
+
+    private void loadData() {
+        loadContributor();
+        loadResponses();
+        loadValidationConfig();
     }
 
 }

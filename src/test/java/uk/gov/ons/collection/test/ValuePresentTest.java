@@ -35,12 +35,12 @@ class ValuePresentTest {
 ////
 ////        ValuePresentWrangler valuePresent = new ValuePresentWrangler();
 ////
-////        valuePresent.getContributor();
+////        valuePresent.loadContributor();
 ////        valuePresent.runValidation();
 ////
 ////        List<ValidationFormEntity> validationFormEntityIterable = new ArrayList<>();
 ////          validationFormEntityIterable.add(validationFormEntity);
-////        assertEquals(valuePresent.matchResponsesToConfig(valuePresent.getResponses(), valuePresent.getValidationConfig())
+////        assertEquals(valuePresent.matchResponsesToConfig(valuePresent.loadResponses(), valuePresent.loadValidationConfig())
 ////                , validationFormEntityIterable);
 ////    }
 }
