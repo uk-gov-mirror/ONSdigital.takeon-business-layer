@@ -26,13 +26,12 @@ public class ValidationRunner {
     public int getFormIdFromForm(){
         Iterable<ContributorEntity> contributors = apiCaller.loadContributors(reference, period, survey);
         for(ContributorEntity entity: contributors){
-            System.out.println(entity.toString());
             return entity.getFormid();
         }
         return 0;
     }
 
-    public List<String> getUniqueListOfRule(int formId){
+    public List<String> getUniqueListOfRules(int formId){
         List<String> rules = new ArrayList<>();
         Iterable<ValidationFormEntity> validationConfig = apiCaller.loadValidationConfig(formId);
         for(ValidationFormEntity validationForms: validationConfig){
@@ -55,7 +54,7 @@ public class ValidationRunner {
 
     public Iterable<ReturnedValidationOutputs> runValidations(){
         int formId = getFormIdFromForm();
-        List<String> listOfRules = getUniqueListOfRule(formId);
+        List<String> listOfRules = getUniqueListOfRules(formId);
         return callEachValidationApi(listOfRules);
     }
 }

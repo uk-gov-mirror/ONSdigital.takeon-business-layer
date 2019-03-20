@@ -8,6 +8,7 @@ import uk.gov.ons.collection.service.ApiCallerTest;
 import uk.gov.ons.collection.service.ValidationRunner;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -49,7 +50,7 @@ class ValidationRunnerTest {
         List<ValidationFormEntity> validationConfig = new ArrayList<>();
         ApiCallerTest dataLoader = new ApiCallerTest().builder().validationConfig(validationConfig).build();
         ValidationRunner runner = new ValidationRunner("","","",dataLoader);
-        assertEquals(0, runner.getUniqueListOfRule(0).size());
+        assertEquals(0, runner.getUniqueListOfRules(0).size());
     }
 
     @Test
@@ -58,8 +59,8 @@ class ValidationRunnerTest {
         validationConfig.add(new ValidationFormEntity().builder().validationCode("VP").build());
         ApiCallerTest dataLoader = new ApiCallerTest().builder().validationConfig(validationConfig).build();
         ValidationRunner runner = new ValidationRunner("","","",dataLoader);
-        assertEquals(1, runner.getUniqueListOfRule(0).size());
-        assertEquals("VP", runner.getUniqueListOfRule(0).get(0));
+        assertEquals(1, runner.getUniqueListOfRules(0).size());
+        assertEquals("VP", runner.getUniqueListOfRules(0).get(0));
     }
 
     @Test
@@ -73,7 +74,7 @@ class ValidationRunnerTest {
 
         ValidationRunner runner = new ValidationRunner("","","",dataLoader);
 
-        List<String> listOfRules = runner.getUniqueListOfRule(0);
+        List<String> listOfRules = runner.getUniqueListOfRules(0);
         assertEquals(2, listOfRules.size());
         assertTrue(listOfRules.contains("VP"));
         assertTrue(listOfRules.contains("POPM"));
@@ -82,12 +83,10 @@ class ValidationRunnerTest {
     @Test
     void givenNoApiAvailable_pickRulesToRun_GivesEmptyList() {
         List<ReturnedValidationOutputs> mockedOutput = new ArrayList<>();
+        List<String> ruleList = new ArrayList<>(Arrays.asList("VP","POPM"));
         ApiCallerTest dataLoader = new ApiCallerTest().builder().returnedValidationOutputs(mockedOutput).build();
         ValidationRunner runner = new ValidationRunner("", "", "", dataLoader);
-        // assertThat(0, runner.callEachValidationApi());
+        assertEquals(0, runner.callEachValidationApi(ruleList));
     }
 
-    @Test
-    void runValidation() {
-    }
 }

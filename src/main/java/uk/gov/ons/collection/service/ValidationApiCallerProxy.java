@@ -10,8 +10,11 @@ import uk.gov.ons.collection.entity.ValidationFormEntity;
 import java.util.List;
 
 @FeignClient(name="BusinessLogicLayer")
-public interface ApiCallerProxy {
+public interface ValidationApiCallerProxy {
 
     @GetMapping("/validation-bl/value-present/{args}")
-    public Iterable<ReturnedValidationOutputs> runApi(@PathVariable(value="args") String args);
+    public Iterable<ReturnedValidationOutputs> runValuePresentApi(@PathVariable(value="args") String args);
+
+    @GetMapping("/validation-bl/value-change/{args}")
+    public Iterable<ReturnedValidationOutputs> runValueChangeApi(@PathVariable(value="args") String args);
 }

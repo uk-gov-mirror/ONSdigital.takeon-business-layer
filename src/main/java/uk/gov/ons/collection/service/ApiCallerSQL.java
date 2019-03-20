@@ -24,7 +24,7 @@ public class ApiCallerSQL implements ApiCaller {
     RunValidationService validationService;
 
     @Autowired
-    ApiCallerService apiCallerService;
+    ValidationApiCallerService validationApiCallerService;
 
     @Override
     public Iterable<ContributorEntity> loadContributors(String reference, String period, String survey) {
@@ -49,13 +49,10 @@ public class ApiCallerSQL implements ApiCaller {
     @Override
     public Iterable<ReturnedValidationOutputs> callValidationApi(String ruleName, String reference, String period, String survey) {
         if(ruleName.equals("VP")){
-              return apiCallerService.callValidationApi(new Helpers().buildUriParameters(reference, period, survey));
-//            valuePresentWrangler.getContributor(contributors);
-//            valuePresentWrangler.getValidationConfig(config);
-//            valuePresentWrangler.getResponses(checkAllQcodesPresent());
-//            valuePresentWrangler.filterConfig();
-//            valuePresentWrangler.matchResponsesToConfig();
-//            System.out.println(valuePresentWrangler.runValidation().toString());
+              return validationApiCallerService.callValuePresentApi(new Helpers().buildUriParameters(reference, period, survey));
+        }
+        else if (ruleName.equals("POPM")) {
+            return validationApiCallerService.callValueChangeApi(new Helpers().buildUriParameters(reference, period, survey));
         }
         return null;
     }

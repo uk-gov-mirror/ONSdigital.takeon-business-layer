@@ -65,20 +65,4 @@ public class ValidationFormEntity implements ValidationEntity {
 
     @Column(name = "lastupdateddate", length = 7)
     private Timestamp lastUpdatedDate;
-
-    @JsonIgnore
-    private String isTriggered;
-
-    @JsonIgnore
-    private String currentResponse;
-
-    @JsonIgnore
-    private String payload;
-
-    @JsonIgnore
-    private String errorMessage;
-
-    @JsonIgnore
-    private String metaData;
-
 }

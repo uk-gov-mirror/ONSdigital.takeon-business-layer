@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 
 public class ValuePresentWrangler {
 
-
     private String reference;
     private String period;
     private String survey;
