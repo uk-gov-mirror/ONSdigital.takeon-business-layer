@@ -44,7 +44,6 @@ public class ValidationWranglerController {
 
         ValuePresentWrangler valuePresentWrangler = new ValuePresentWrangler(reference, period, survey, loaderSQL);
         List<String> valuePresentJson = valuePresentWrangler.parseDataAndGenerateJson();
-
         return valuePresentRunner.callValidationService(valuePresentJson);
     }
 

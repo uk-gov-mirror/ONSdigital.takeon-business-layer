@@ -11,6 +11,9 @@ public class RunValidationService {
     RunValidationServiceProxy runValidationServiceProxy;
 
     public ReturnedValidationOutputs runValidation(String body){
-        return runValidationServiceProxy.runVaas(body);
+        System.out.println("Body to pass: " + body);
+        ReturnedValidationOutputs proxy =  runValidationServiceProxy.runVaas(body);
+        System.out.println("Return: " + proxy);
+        return proxy;
     }
 }

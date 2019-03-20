@@ -66,12 +66,11 @@ public class ValuePresentWrangler {
     }
 
     private String buildMetaData(QuestionResponseEntity questionResponseEntity) {
-        return "\"reference\":\"" + questionResponseEntity.getReference()
+        return "\"reference\":" + "\"" + questionResponseEntity.getReference()
                 + "\",\"period\":\"" + questionResponseEntity.getPeriod()
                 + "\",\"survey\":\"" + questionResponseEntity.getSurvey()
                 + "\",\"questionCode\":\"" + questionResponseEntity.getQuestionCode()
-                + "\",\"instance\":\"" + questionResponseEntity.getInstance()
-                + "\"";
+                + "\",\"instance\":\"" + questionResponseEntity.getInstance();
     }
 
     public List<String> setPayloadAndReturnFormEntities(Iterable<WrangledValidationData> inputData){
@@ -83,7 +82,7 @@ public class ValuePresentWrangler {
     }
 
     private String generateJson(WrangledValidationData input){
-        return "{\"value\":\"" + input.getValue() + "\",\"metaData\":{\"" + input.getMetaData() + "\"}";
+        return "{\"value\":\"" + input.getValue() + "\",\"metaData\":{" + input.getMetaData() + "\"}}";
     }
 
     public List<String> parseDataAndGenerateJson() {
