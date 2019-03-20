@@ -14,8 +14,6 @@ public class ValidationRunner {
     private String period;
     private String survey;
     private ApiCaller apiCaller;
-    private Iterable<ContributorEntity> contributors;
-    private Iterable<ValidationFormEntity> config;
 
     public ValidationRunner(String reference, String period, String survey, ApiCaller apiCaller) {
         this.reference = reference;
@@ -26,7 +24,7 @@ public class ValidationRunner {
 
     // We should only ever be given 1 contributor here, but if more than 1 is given we get the formID of the first one
     public int getFormIdFromForm(){
-        contributors = apiCaller.loadContributors(reference, period, survey);
+        Iterable<ContributorEntity> contributors = apiCaller.loadContributors(reference, period, survey);
         for(ContributorEntity entity: contributors){
             System.out.println(entity.toString());
             return entity.getFormid();
@@ -36,8 +34,8 @@ public class ValidationRunner {
 
     public List<String> getUniqueListOfRule(int formId){
         List<String> rules = new ArrayList<>();
-        config = apiCaller.loadValidationConfig(formId);
-        for(ValidationFormEntity validationForms: config){
+        Iterable<ValidationFormEntity> validationConfig = apiCaller.loadValidationConfig(formId);
+        for(ValidationFormEntity validationForms: validationConfig){
             if(!rules.contains(validationForms.getValidationCode())){
                 rules.add(validationForms.getValidationCode());
             }
