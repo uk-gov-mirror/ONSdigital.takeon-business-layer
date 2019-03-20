@@ -20,6 +20,9 @@ public class ValidationWranglerController {
     @Autowired
     RunValidationService validationService;
 
+    @Autowired
+    ValuePresentRunner valuePresentRunner;
+
     @GetMapping(value = "/run-all/{vars}")
     public Iterable<Iterable<ValidationFormEntity>> runAllValidationRules(@MatrixVariable Map<String, String> matrixVars){
 
@@ -43,7 +46,7 @@ public class ValidationWranglerController {
         valuePresentWrangler.runVpWrangler();
         Iterable<ValidationFormEntity> validationFormEntities = valuePresentWrangler.setPayloadAndReturnFormEntities();
 
-        return new ValuePresentRunner().callValidationService(validationFormEntities);
+        return valuePresentRunner.callValidationService(validationFormEntities);
     }
 
 }
