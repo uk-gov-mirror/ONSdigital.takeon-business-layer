@@ -10,13 +10,13 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FormDefinitionEntity {
-    public Integer formId;
-    public String questionCode;
-    public String displayQuestionNumber;
-    public String displayText;
-    public String type;
-    public String createdBy;
-    public String createdDate;
-    public String lastUpdatedBy;
-    public String lastUpdatedDate;
+    private Integer formId;
+    private String questionCode;
+    private String displayQuestionNumber;
+    private String displayText;
+    private String type;
+    private String createdBy;
+    private String createdDate;
+    private String lastUpdatedBy;
+    private String lastUpdatedDate;
 }
