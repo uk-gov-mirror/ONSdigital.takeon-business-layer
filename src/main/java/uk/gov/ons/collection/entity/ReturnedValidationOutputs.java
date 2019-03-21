@@ -1,8 +1,6 @@
 package uk.gov.ons.collection.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
-
 import java.util.Map;
 
 @Getter
@@ -10,13 +8,12 @@ import java.util.Map;
 @Builder
 @ToString
 @AllArgsConstructor
+@NoArgsConstructor
 public class ReturnedValidationOutputs {
     private String triggered;
     private String valueFormula;
     private Map<String, String> metaData;
     private String error;
-
-    public ReturnedValidationOutputs() {}
 }
 
 
