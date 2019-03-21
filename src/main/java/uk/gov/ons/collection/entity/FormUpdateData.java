@@ -1,28 +1,17 @@
 package uk.gov.ons.collection.entity;
+import lombok.*;
+
 import java.util.ArrayList;
 
+@Builder
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class FormUpdateData {
     public String username;
     public ArrayList<QuestionResponseEntity> originalResponses;
     public ArrayList<QuestionResponseEntity> updatedResponses;
-
-    public FormUpdateData(String username, ArrayList<QuestionResponseEntity> originalResponses, ArrayList<QuestionResponseEntity> updatedResponses) {
-        this.username = username;
-        this.originalResponses = originalResponses;
-        this.updatedResponses = updatedResponses;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public ArrayList<QuestionResponseEntity> getOriginalResponses() {
-        return originalResponses;
-    }
-
-    public ArrayList<QuestionResponseEntity> getUpdatedResponses() {
-        return updatedResponses;
-    }
 
     public String getOnlyChangedResponses(){
         // Determine only changed respponses
