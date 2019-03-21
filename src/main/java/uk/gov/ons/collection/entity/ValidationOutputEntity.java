@@ -16,7 +16,7 @@ import java.sql.Timestamp;
 @ToString
 @Table(name = "validationoutput", schema = "dev01")
 @ApiModel(value = "ValidationOutput", description = "A ValidationOutput entity, maps ValidationOutput table to object")
-public class ValidationOutputEntity implements ValidationEntity {
+public class ValidationOutputEntity {
 
     @JsonManagedReference
     @ManyToOne

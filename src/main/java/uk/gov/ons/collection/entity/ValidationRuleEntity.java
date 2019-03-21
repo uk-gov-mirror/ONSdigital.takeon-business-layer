@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 @RequiredArgsConstructor
 @Table(name = "validationrule", schema = "dev01")
 @ApiModel(value = "ValidationRule", description = "A ValidationRule entity, maps ValidationRule table to object")
-public class ValidationRuleEntity implements ValidationEntity {
+public class ValidationRuleEntity {
 
 
     @JsonBackReference

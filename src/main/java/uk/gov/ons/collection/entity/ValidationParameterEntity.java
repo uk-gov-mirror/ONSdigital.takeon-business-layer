@@ -15,7 +15,7 @@ import java.sql.Timestamp;
 @ToString
 @Table(name = "validationparameter", schema = "dev01")
 @ApiModel(value = "ValidationParameter", description = "A ValidationParameter entity")
-public class ValidationParameterEntity implements ValidationEntity {
+public class ValidationParameterEntity {
 
     @JsonBackReference
     @OneToOne

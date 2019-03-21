@@ -1,7 +1,6 @@
 package uk.gov.ons.collection.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
@@ -18,7 +17,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @Table(name = "validationform", schema = "dev01")
 @ApiModel(value = "ValidationForm", description = "A ValidationForm entity, maps ValidationForm table to object")
-public class ValidationFormEntity implements ValidationEntity {
+public class ValidationFormEntity {
 
     @JsonManagedReference
     @OneToOne
