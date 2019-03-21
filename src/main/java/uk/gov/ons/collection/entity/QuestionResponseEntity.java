@@ -1,7 +1,6 @@
 package uk.gov.ons.collection.entity;
 
 import lombok.*;
-import java.sql.Timestamp;
 
 @Builder
 @Getter
@@ -16,8 +15,8 @@ public class QuestionResponseEntity {
     private Integer instance;
     private String response;
     private String createdBy;
-    private Timestamp createdDate;
-    private Timestamp lastUpdateDate;
+    private String createdDate;
+    private String lastUpdateDate;
     private String lastUpdatedBy;
 
     @Override
