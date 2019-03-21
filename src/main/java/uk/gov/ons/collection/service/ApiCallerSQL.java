@@ -42,7 +42,7 @@ public class ApiCallerSQL implements ApiCaller {
     }
 
     @Override
-    public Iterable<FormDefintionEntity> loadFormDefinition(String reference, String period, String survey){
+    public Iterable<FormDefinitionEntity> loadFormDefinition(String reference, String period, String survey){
         return formDefinitionService.getForm(new Helpers().buildUriParameters(reference, period, survey));
     }
 

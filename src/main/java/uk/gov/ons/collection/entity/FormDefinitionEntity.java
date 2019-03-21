@@ -9,7 +9,7 @@ import javax.persistence.Id;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FormDefintionEntity {
+public class FormDefinitionEntity {
     private Integer formId;
     private String questionCode;
     private String displayQuestionNumber;

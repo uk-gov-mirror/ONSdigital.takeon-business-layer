@@ -1,11 +1,9 @@
 package uk.gov.ons.collection.utilities;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import uk.gov.ons.collection.entity.FormDefintionEntity;
+import uk.gov.ons.collection.entity.FormDefinitionEntity;
 import uk.gov.ons.collection.entity.QuestionResponseEntity;
 import uk.gov.ons.collection.service.ApiCallerTest;
-import uk.gov.ons.collection.service.ValidationRunner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -131,7 +129,7 @@ class HelpersTest {
     }
 
     List<QuestionResponseEntity> testResponses = new ArrayList<>();
-    Iterable<FormDefintionEntity> testFormDef = new ArrayList<>();
+    Iterable<FormDefinitionEntity> testFormDef = new ArrayList<>();
     List<QuestionResponseEntity> testOutputs = new ArrayList<>();
     ApiCallerTest dataLoaderTest = new ApiCallerTest().builder().questionResponse(testResponses).definitionEntities(testFormDef).build();
 
@@ -142,10 +140,10 @@ class HelpersTest {
         testResponses.add(new QuestionResponseEntity().builder().questionCode("032").response("Response for 032").build());
         testResponses.add(new QuestionResponseEntity().builder().questionCode("001").response("Response for 001").build());
         // Basic form definition
-        ((ArrayList<FormDefintionEntity>) testFormDef).add(new FormDefintionEntity().builder().questionCode("132").build());
-        ((ArrayList<FormDefintionEntity>) testFormDef).add(new FormDefintionEntity().builder().questionCode("032").build());
-        ((ArrayList<FormDefintionEntity>) testFormDef).add(new FormDefintionEntity().builder().questionCode("001").build());
-        ((ArrayList<FormDefintionEntity>) testFormDef).add(new FormDefintionEntity().builder().questionCode("999").build());
+        ((ArrayList<FormDefinitionEntity>) testFormDef).add(new FormDefinitionEntity().builder().questionCode("132").build());
+        ((ArrayList<FormDefinitionEntity>) testFormDef).add(new FormDefinitionEntity().builder().questionCode("032").build());
+        ((ArrayList<FormDefinitionEntity>) testFormDef).add(new FormDefinitionEntity().builder().questionCode("001").build());
+        ((ArrayList<FormDefinitionEntity>) testFormDef).add(new FormDefinitionEntity().builder().questionCode("999").build());
         // Setup output list of responses
         testOutputs.add(new QuestionResponseEntity().builder().questionCode("132").response("Response for 132").build());
         testOutputs.add(new QuestionResponseEntity().builder().questionCode("032").response("Response for 032").build());
