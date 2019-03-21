@@ -2,7 +2,6 @@ package uk.gov.ons.collection.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
-import java.sql.Timestamp;
 
 @Getter
 @Setter
@@ -21,7 +20,7 @@ public class ValidationOutputEntity {
     private String primaryValue;
     private String formula;
     private String createdBy;
-    private Timestamp createdDate;
+    private String createdDate;
     private String lastUpdatedBy;
-    private Timestamp lastUpdatedDate;
+    private String lastUpdatedDate;
 }
