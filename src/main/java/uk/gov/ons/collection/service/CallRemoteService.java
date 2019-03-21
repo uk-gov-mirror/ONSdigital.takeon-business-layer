@@ -27,15 +27,14 @@ public class CallRemoteService {
 
     }
 
-    public String callAlgoService() {
+    public void callAlgoService() {
         postMethod.setEntity(body);
         postMethod.setHeader("Authorization", System.getenv("ALGO_AUTH"));
         System.out.println(System.getenv("ALGO_AUTH"));
         try {
-            CloseableHttpResponse response = client.execute(postMethod);
-            return response.toString();
+            response = client.execute(postMethod);
         } catch (IOException e) {
-            return e.toString();
+
         }
     }
 

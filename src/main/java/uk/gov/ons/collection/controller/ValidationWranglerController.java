@@ -61,8 +61,26 @@ public class ValidationWranglerController {
 
         ValuePresentWrangler valuePresentWrangler = new ValuePresentWrangler(reference, period, survey, loaderSQL);
         List<String> valuePresentJson = valuePresentWrangler.parseDataAndGenerateJson();
-        CallRemoteService remoteService = new CallRemoteService("https://anlk9csza4.execute-api.eu-west-2.amazonaws.com/dev/value-present", valuePresentJson.toString());
-        remoteService.callLambda();
-        System.out.println(remoteService.getResponse());
+        for (String element: valuePresentJson) {
+            CallRemoteService remoteService = new CallRemoteService("https://s5p8bg98v4.execute-api.eu-west-2.amazonaws.com/dev/value-present", element);
+            remoteService.callLambda();
+            System.out.println(remoteService.getResponse());
+        }
+    }
+
+    @GetMapping("/value-present-algo/{args}")
+    public void runValuePresentAlgo(@MatrixVariable Map<String, String> matrixVars){
+        String reference = matrixVars.get("reference");
+        String period = matrixVars.get("period");
+        String survey = matrixVars.get("survey");
+
+
+        ValuePresentWrangler valuePresentWrangler = new ValuePresentWrangler(reference, period, survey, loaderSQL);
+        List<String> valuePresentJson = valuePresentWrangler.parseDataAndGenerateJson();
+        for(String element: valuePresentJson) {
+            CallRemoteService remoteService = new CallRemoteService("https://api.algpoc.com/v1/algo/ons/ValidationValuePresent/0.1.0", element);
+            remoteService.callAlgoService();
+            System.out.println(remoteService.getResponse());
+        }
     }
 }
