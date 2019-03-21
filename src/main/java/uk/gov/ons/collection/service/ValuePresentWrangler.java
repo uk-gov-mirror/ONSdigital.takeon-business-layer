@@ -56,7 +56,7 @@ public class ValuePresentWrangler {
         for(QuestionResponseEntity questionResponseEntity: responses){
             for (ValidationFormEntity validationFormEntity: validationConfig){
                 if(Objects.equals(questionResponseEntity.getQuestionCode().trim(), validationFormEntity.getQuestionCode())){
-                    String metaData = buildMetaData(questionResponseEntity);
+                    String metaData = buildMetaData(questionResponseEntity, validationFormEntity);
                     WrangledValidationData inputData = new WrangledValidationData().builder().value(questionResponseEntity.getResponse()).metaData(metaData).build();
                     dataForValidationAPI.add(inputData);
                 }
@@ -65,11 +65,13 @@ public class ValuePresentWrangler {
         return dataForValidationAPI;
     }
 
-    private String buildMetaData(QuestionResponseEntity questionResponseEntity) {
+    private String buildMetaData(QuestionResponseEntity questionResponseEntity, ValidationFormEntity validationFormEntity) {
         return "\"reference\":" + "\"" + questionResponseEntity.getReference()
                 + "\",\"period\":\"" + questionResponseEntity.getPeriod()
                 + "\",\"survey\":\"" + questionResponseEntity.getSurvey()
                 + "\",\"questionCode\":\"" + questionResponseEntity.getQuestionCode()
+                + "\",\"validationId\":\"" + validationFormEntity.getValidationid()
+                + "\",\"primaryValue\":\"" + questionResponseEntity.getResponse()
                 + "\",\"instance\":\"" + questionResponseEntity.getInstance();
     }
 

@@ -8,7 +8,6 @@ import java.util.Map;
 @Getter
 @Setter
 @Builder
-@ToString
 @AllArgsConstructor
 public class ReturnedValidationOutputs {
     private String triggered;
@@ -17,6 +16,26 @@ public class ReturnedValidationOutputs {
     private String error;
 
     public ReturnedValidationOutputs() {}
+
+    private String convertMapToJsonString(Map<String, String> mapToConvert){
+        StringBuilder builder = new StringBuilder();
+        builder.append('{');
+        for(String key: mapToConvert.keySet()){
+           builder.append( "\"" + key + "\":" + "\"" + mapToConvert.get(key) + "\",");
+        }
+        builder.reverse().replace(0,1,"").reverse().append('}');
+        return  builder.toString();
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "\"triggered\":\"" + triggered + '\"' +
+                ", \"valueFormula\":\"" + valueFormula + '\"' +
+                ", \"metaData\":" + convertMapToJsonString(metaData) +
+                ", \"error\":\"" + error + '\"' +
+                '}';
+    }
 }
 
 

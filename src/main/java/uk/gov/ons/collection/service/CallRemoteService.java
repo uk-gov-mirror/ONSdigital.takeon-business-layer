@@ -9,19 +9,21 @@ import org.apache.http.client.*;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import uk.gov.ons.collection.entity.ValidationEntity;
 
 import java.io.IOException;
 
-public class CallAlgorithmia {
+public class CallRemoteService {
 
     private final String algorithim;
     private final String payload;
     private HttpPost postMethod;
     private StringEntity body;
     CloseableHttpClient client = HttpClients.createDefault();
+    CloseableHttpResponse response;
 
-    public CallAlgorithmia(String uri, String content){
+    public CallRemoteService(String uri, String content){
         algorithim = uri;
         payload = content;
         body = new StringEntity(payload, ContentType.APPLICATION_JSON );
@@ -29,7 +31,7 @@ public class CallAlgorithmia {
 
     }
 
-    public String callService() {
+    public String callAlgoService() {
         postMethod.setEntity(body);
         postMethod.setHeader("Authorization", System.getenv("ALGO_AUTH"));
         System.out.println(System.getenv("ALGO_AUTH"));
@@ -39,5 +41,26 @@ public class CallAlgorithmia {
         } catch (IOException e) {
             return e.toString();
         }
+    }
+
+    public void callLambda(){
+        postMethod.setEntity(body);
+        postMethod.setHeader("Content-Type", "application/json");
+        System.out.println(System.getenv("ALGO_AUTH"));
+        try {
+            response = client.execute(postMethod);
+        } catch (IOException e) {
+
+        }
+    }
+
+    public String getResponse(){
+        try {
+            return EntityUtils.toString(response.getEntity());
+        }
+        catch (Exception e){
+
+        }
+        return "";
     }
 }

@@ -1,5 +1,6 @@
 package uk.gov.ons.collection.controller;
 
+import jdk.vm.ci.code.site.Call;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.web.bind.annotation.*;
@@ -23,15 +24,19 @@ public class ValidationWranglerController {
     @Autowired
     ValuePresentRunner valuePresentRunner;
 
+    @Autowired
+    SaveValidationsService saveValidationsService;
+
     @GetMapping(value = "/run-all/{vars}")
-    public Iterable<ReturnedValidationOutputs> runAllValidationRules(@MatrixVariable Map<String, String> matrixVars){
+    public void runAllValidationRules(@MatrixVariable Map<String, String> matrixVars){
 
         String reference = matrixVars.get("reference");
         String period = matrixVars.get("period");
         String survey = matrixVars.get("survey");
 
         ValidationRunner validationRunner = new ValidationRunner(reference, period, survey, loaderSQL);
-        return validationRunner.runValidations();
+        System.out.println(validationRunner.runValidations().toString());
+        saveValidationsService.saveValidations(validationRunner.runValidations().toString());
     }
 
     @GetMapping("/value-present/{args}")
@@ -47,4 +52,17 @@ public class ValidationWranglerController {
         return valuePresentRunner.callValidationService(valuePresentJson);
     }
 
+    @GetMapping("/value-present-lambda/{args}")
+    public void runValuePresentLambda(@MatrixVariable Map<String, String> matrixVars){
+        String reference = matrixVars.get("reference");
+        String period = matrixVars.get("period");
+        String survey = matrixVars.get("survey");
+
+
+        ValuePresentWrangler valuePresentWrangler = new ValuePresentWrangler(reference, period, survey, loaderSQL);
+        List<String> valuePresentJson = valuePresentWrangler.parseDataAndGenerateJson();
+        CallRemoteService remoteService = new CallRemoteService("https://anlk9csza4.execute-api.eu-west-2.amazonaws.com/dev/value-present", valuePresentJson.toString());
+        remoteService.callLambda();
+        System.out.println(remoteService.getResponse());
+    }
 }
