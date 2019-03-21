@@ -1,6 +1,6 @@
 package uk.gov.ons.collection.controller;
 
-import uk.gov.ons.collection.entity.FormDefintionEntity;
+import uk.gov.ons.collection.entity.FormDefinitionEntity;
 import uk.gov.ons.collection.entity.QuestionResponseEntity;
 
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class ConvertIterableToMap {
 
-    public Map<String, List<String>> ConvertToMap(Iterable<QuestionResponseEntity> questionResponseEntities, Iterable<FormDefintionEntity> formDefinitionEntities){
+    public Map<String, List<String>> ConvertToMap(Iterable<QuestionResponseEntity> questionResponseEntities, Iterable<FormDefinitionEntity> formDefinitionEntities){
         List<String> questionCodes = new ArrayList<>();
         List<String> responses = new ArrayList<>();
         List<String> instances = new ArrayList<>();

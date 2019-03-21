@@ -2,9 +2,7 @@ package uk.gov.ons.collection.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.ons.collection.entity.FormDefintionEntity;
 import uk.gov.ons.collection.entity.ReturnedValidationOutputs;
-import uk.gov.ons.collection.entity.ValidationFormEntity;
 
 import java.util.ArrayList;
 import java.util.List;

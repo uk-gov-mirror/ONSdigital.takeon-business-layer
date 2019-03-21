@@ -1,8 +1,6 @@
 package uk.gov.ons.collection.service;
 
-import com.fasterxml.jackson.annotation.JsonSetter;
 import org.json.JSONArray;
-import org.json.JSONObject;
 import uk.gov.ons.collection.entity.QuestionResponseEntity;
 import uk.gov.ons.collection.entity.UpdatedFormData;
 
@@ -38,7 +36,7 @@ public class DeserialisedFormData {
     public List<UpdatedFormData> constructUpdatedObjectsFromKey(List<UpdatedFormData> updatedFormDataList){
         for(UpdatedFormData element: updatedFormDataList){
             Map<String, String> tempHolder;
-            tempHolder = element.getQcodeAndInstance(element.getKey());
+            tempHolder = element.getQuestionCodeAndInstance(element.getKey());
             element.setQuestionCode(tempHolder.get("questionCode"));
             element.setInstance(tempHolder.get("instance"));
             constructedObjects.add(element);

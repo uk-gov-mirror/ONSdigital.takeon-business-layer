@@ -11,7 +11,7 @@ public class ApiCallerTest implements ApiCaller {
     private Iterable<ContributorEntity> contributors;
     private Iterable<ValidationFormEntity> validationConfig;
     private Iterable<QuestionResponseEntity> questionResponse;
-    private Iterable<FormDefintionEntity> definitionEntities;
+    private Iterable<FormDefinitionEntity> definitionEntities;
     private Iterable<ReturnedValidationOutputs> returnedValidationOutputs;
 
     public ApiCallerTest() {}
@@ -32,7 +32,7 @@ public class ApiCallerTest implements ApiCaller {
     }
 
     @Override
-    public Iterable<FormDefintionEntity> loadFormDefinition(String reference, String period, String survey) {
+    public Iterable<FormDefinitionEntity> loadFormDefinition(String reference, String period, String survey) {
         return definitionEntities;
     }
 

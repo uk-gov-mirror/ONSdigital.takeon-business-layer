@@ -1,21 +1,18 @@
 package uk.gov.ons.collection.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
-
 import java.util.Map;
 
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class ReturnedValidationOutputs {
     private String triggered;
     private String valueFormula;
     private Map<String, String> metaData;
     private String error;
-
-    public ReturnedValidationOutputs() {}
 
     private String convertMapToJsonString(Map<String, String> mapToConvert){
         StringBuilder builder = new StringBuilder();
