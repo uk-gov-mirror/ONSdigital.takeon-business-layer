@@ -9,19 +9,19 @@ import lombok.*;
 @NoArgsConstructor
 public class Contributor {
 
-    private String reference;
-    private String period;
-    private String survey;
-    private int formid;
-    private String status;
-    private String receiptDate;
-    private String lockedBy;
-    private String lockedDate;
-    private IdbrSelection idbrSelection;
-    private String createdBy;
-    private String createdDate;
-    private String lastUpdatedBy;
-    private String lastUpdatedDate;
+    public String reference;
+    public String period;
+    public String survey;
+    public int formid;
+    public String status;
+    public String receiptDate;
+    public String lockedBy;
+    public String lockedDate;
+    public IdbrSelection idbrSelection;
+    public String createdBy;
+    public String createdDate;
+    public String lastUpdatedBy;
+    public String lastUpdatedDate;
 
     @Override
     public String toString() {

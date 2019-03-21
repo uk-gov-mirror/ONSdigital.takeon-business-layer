@@ -2,9 +2,9 @@ package uk.gov.ons.collection.entity;
 import java.util.ArrayList;
 
 public class FormUpdateData {
-    String username;
-    ArrayList<QuestionResponseEntity> originalResponses;
-    ArrayList<QuestionResponseEntity> updatedResponses;
+    public String username;
+    public ArrayList<QuestionResponseEntity> originalResponses;
+    public ArrayList<QuestionResponseEntity> updatedResponses;
 
     public FormUpdateData(String username, ArrayList<QuestionResponseEntity> originalResponses, ArrayList<QuestionResponseEntity> updatedResponses) {
         this.username = username;
