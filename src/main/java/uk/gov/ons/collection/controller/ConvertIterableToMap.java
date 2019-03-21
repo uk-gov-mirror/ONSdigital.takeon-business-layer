@@ -16,7 +16,7 @@ public class ConvertIterableToMap {
         List<String> instances = new ArrayList<>();
         Map<String, List<String>> questionDetailMap = new HashMap<>();
 
-        formDefinitionEntities.forEach(formDefintionEntity -> questionCodes.add(formDefintionEntity.getquestionCode()));
+        formDefinitionEntities.forEach(formDefintionEntity -> questionCodes.add(formDefintionEntity.getQuestionCode()));
         questionResponseEntities.forEach(questionResponseEntity -> responses.add(questionResponseEntity.getResponse()));
         //questionResponseEntities.forEach(questionResponseEntity -> instances.add(questionResponseEntity.getInstance().toString()));
 

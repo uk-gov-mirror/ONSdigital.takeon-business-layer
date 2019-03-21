@@ -41,8 +41,8 @@ public class CallRemoteService {
 
     public void callLambda(){
         postMethod.setEntity(body);
+        System.out.println(body);
         postMethod.setHeader("Content-Type", "application/json");
-        System.out.println(System.getenv("ALGO_AUTH"));
         try {
             response = client.execute(postMethod);
         } catch (IOException e) {

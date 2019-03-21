@@ -6,9 +6,7 @@ import lombok.*;
 @Getter
 @Setter
 @NoArgsConstructor
-@RequiredArgsConstructor
 @ToString
-@Builder
 public class ValidationRuleEntity {
     @JsonBackReference
     private ValidationFormEntity validationFormEntity;

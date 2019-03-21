@@ -42,9 +42,9 @@ public class Helpers {
         List<QuestionResponseEntity> questionResponseEntities = new Helpers.ParseIterable().parseIterable(apiCaller.loadResponses(reference, period, survey));
         Iterable<FormDefinitionEntity> formDefintionEntities = apiCaller.loadFormDefinition(reference, period, survey);
         for(FormDefinitionEntity element: formDefintionEntities){
-            if(!checkQuestionCodePresent(element.getquestionCode(), questionResponseEntities)){
+            if(!checkQuestionCodePresent(element.getQuestionCode(), questionResponseEntities)){
                 QuestionResponseEntity entityToAdd = new QuestionResponseEntity();
-                entityToAdd.setQuestionCode(element.getquestionCode());
+                entityToAdd.setQuestionCode(element.getQuestionCode());
                 entityToAdd.setResponse("");
                 questionResponseEntities.add(entityToAdd);
             }

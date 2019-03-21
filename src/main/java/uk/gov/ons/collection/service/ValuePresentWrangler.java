@@ -36,7 +36,7 @@ public class ValuePresentWrangler {
 
     private void determineContributorFormID() {
         List<ContributorEntity> contributor = new Helpers.ParseIterable().parseIterable(contributorEntities);
-        currentFormId = contributor.get(0).formid;
+        currentFormId = contributor.get(0).getFormid();
     }
 
     public void loadValidationConfig(){

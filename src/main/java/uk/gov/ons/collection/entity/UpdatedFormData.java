@@ -1,6 +1,8 @@
 package uk.gov.ons.collection.entity;
 
 import lombok.*;
+
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
