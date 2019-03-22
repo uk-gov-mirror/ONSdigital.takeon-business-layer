@@ -5,8 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.ons.collection.entity.ReturnedValidationOutputs;
+import uk.gov.ons.collection.entity.Status;
 import uk.gov.ons.collection.entity.ValidationFormEntity;
 import uk.gov.ons.collection.service.*;
+import uk.gov.ons.collection.utilities.Helpers;
 
 import java.util.List;
 import java.util.Map;
@@ -27,6 +29,9 @@ public class ValidationWranglerController {
     @Autowired
     SaveValidationsService saveValidationsService;
 
+    @Autowired
+    UpdateFormStatusService updateFormStatusService;
+
     @GetMapping(value = "/run-all/{vars}")
     public void runAllValidationRules(@MatrixVariable Map<String, String> matrixVars){
 
@@ -35,7 +40,11 @@ public class ValidationWranglerController {
         String survey = matrixVars.get("survey");
 
         ValidationRunner validationRunner = new ValidationRunner(reference, period, survey, loaderSQL);
+
         System.out.println(validationRunner.runValidations().toString());
+        Iterable<ReturnedValidationOutputs> returnedValidationOutputs = validationRunner.runValidations();
+        Status status = new CheckIfAnyTriggered().checkIfTriggered(returnedValidationOutputs);
+        updateFormStatusService.updateStatus(new Helpers().buildUriParameters(reference, period, survey), status.toString());
         saveValidationsService.saveValidations(validationRunner.runValidations().toString());
     }
 
@@ -58,7 +67,7 @@ public class ValidationWranglerController {
         String period = matrixVars.get("period");
         String survey = matrixVars.get("survey");
 
-
+        Long start = System.currentTimeMillis();
         ValuePresentWrangler valuePresentWrangler = new ValuePresentWrangler(reference, period, survey, loaderSQL);
         List<String> valuePresentJson = valuePresentWrangler.parseDataAndGenerateJson();
         for (String element: valuePresentJson) {
@@ -66,6 +75,8 @@ public class ValidationWranglerController {
             remoteService.callLambda();
             System.out.println(remoteService.getResponse());
         }
+        Long finish = System.currentTimeMillis();
+        System.out.println(finish - start);
     }
 
     @GetMapping("/value-present-algo/{args}")
@@ -74,7 +85,7 @@ public class ValidationWranglerController {
         String period = matrixVars.get("period");
         String survey = matrixVars.get("survey");
 
-
+        Long start = System.currentTimeMillis();
         ValuePresentWrangler valuePresentWrangler = new ValuePresentWrangler(reference, period, survey, loaderSQL);
         List<String> valuePresentJson = valuePresentWrangler.parseDataAndGenerateJson();
         for(String element: valuePresentJson) {
@@ -82,5 +93,7 @@ public class ValidationWranglerController {
             remoteService.callAlgoService();
             System.out.println(remoteService.getResponse());
         }
+        Long finish = System.currentTimeMillis();
+        System.out.println(finish - start);
     }
 }
