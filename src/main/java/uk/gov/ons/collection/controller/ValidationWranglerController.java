@@ -32,6 +32,7 @@ public class ValidationWranglerController {
     @Autowired
     UpdateFormStatusService updateFormStatusService;
 
+
     @GetMapping(value = "/run-all/{vars}")
     public void runAllValidationRules(@MatrixVariable Map<String, String> matrixVars){
 

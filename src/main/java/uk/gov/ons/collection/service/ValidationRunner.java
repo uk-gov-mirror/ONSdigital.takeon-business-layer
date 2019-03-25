@@ -1,12 +1,15 @@
 package uk.gov.ons.collection.service;
 
 import com.google.common.collect.Lists;
+import org.springframework.http.ResponseEntity;
 import uk.gov.ons.collection.entity.ContributorEntity;
+import uk.gov.ons.collection.entity.QuestionResponseEntity;
 import uk.gov.ons.collection.entity.ReturnedValidationOutputs;
 import uk.gov.ons.collection.entity.ValidationFormEntity;
+import uk.gov.ons.collection.utilities.Helpers;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ValidationRunner {
 
@@ -14,6 +17,9 @@ public class ValidationRunner {
     private String period;
     private String survey;
     private ApiCaller apiCaller;
+    private Iterable<QuestionResponseEntity> responseEntities;
+    private Iterable<ValidationFormEntity> validationConfig;
+    private Map<String, List<ReturnedValidationOutputs>> validationsMap = new HashMap<>();
 
     public ValidationRunner(String reference, String period, String survey, ApiCaller apiCaller) {
         this.reference = reference;
@@ -33,7 +39,7 @@ public class ValidationRunner {
 
     public List<String> getUniqueListOfRules(int formId){
         List<String> rules = new ArrayList<>();
-        Iterable<ValidationFormEntity> validationConfig = apiCaller.loadValidationConfig(formId);
+        validationConfig = apiCaller.loadValidationConfig(formId);
         for(ValidationFormEntity validationForms: validationConfig){
             if(!rules.contains(validationForms.getValidationCode())){
                 rules.add(validationForms.getValidationCode());
@@ -55,6 +61,26 @@ public class ValidationRunner {
     public Iterable<ReturnedValidationOutputs> runValidations(){
         int formId = getFormIdFromForm();
         List<String> listOfRules = getUniqueListOfRules(formId);
+        createMap(listOfRules);
         return callEachValidationApi(listOfRules);
+    }
+
+    public Map<String, List<ReturnedValidationOutputs>> createValidationBatches(List<String> validationCodes){
+        List<QuestionResponseEntity> responseEntitiesList = new Helpers().checkAllQuestionsPresent(apiCaller, reference, period, survey);
+        for(String rule: validationsMap.keySet()){
+            List<ValidationFormEntity> fliteredForms = filterForms(rule);
+            
+        }
+
+    }
+
+    public List<ValidationFormEntity> filterForms(String validationCode){
+        return new Helpers.ParseIterable().parseIterable(validationConfig).stream().filter(element -> element.getValidationCode().equals(validationCode.trim())).collect(Collectors.toList());
+    }
+
+    public void createMap(List<String> rules){
+        for(String rule: rules){
+            validationsMap.put(rule, new ArrayList<>());
+        }
     }
 }
