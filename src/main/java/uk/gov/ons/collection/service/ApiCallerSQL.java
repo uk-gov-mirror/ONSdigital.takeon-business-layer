@@ -48,12 +48,6 @@ public class ApiCallerSQL implements ApiCaller {
 
     @Override
     public Iterable<ReturnedValidationOutputs> callValidationApi(String ruleName, String reference, String period, String survey) {
-        if(ruleName.equals("VP")){
-              return validationApiCallerService.callValuePresentApi(new Helpers().buildUriParameters(reference, period, survey));
-        }
-        else if (ruleName.equals("POPM")) {
-            return validationApiCallerService.callValueChangeApi(new Helpers().buildUriParameters(reference, period, survey));
-        }
-        return null;
+        return validationApiCallerService.callValuePresentApi(new Helpers().buildUriParameters(reference, period, survey));
     }
 }

@@ -14,8 +14,4 @@ public class ValidationApiCallerService {
         return validationApiCallerProxy.runValuePresentApi(params);
     }
 
-    public Iterable<ReturnedValidationOutputs> callValueChangeApi(String params){
-        return validationApiCallerProxy.runValueChangeApi(params);
-    }
-
 }

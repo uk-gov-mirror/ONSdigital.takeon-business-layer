@@ -5,7 +5,7 @@ import uk.gov.ons.collection.utilities.Helpers;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ValuePresentWrangler {
+public class ValidationRuleWrangler {
 
     private String reference;
     private String period;
@@ -14,12 +14,9 @@ public class ValuePresentWrangler {
     private Iterable<ContributorEntity> contributorEntities;
     private Iterable<QuestionResponseEntity> questionResponseEntities;
     private List<ValidationFormEntity> validationConfig;
-    // private List<ValidationFormEntity> filteredValidationFormEntities;
-    private List<ReturnedValidationOutputs> validationConfigEntitiesToReturn = new ArrayList<>();
-    private final String algo = "https://api.algpoc.com/v1/algo/dllmorgan/ValidationValuePresent/1.0.0";
     private ApiCaller apiCaller;
 
-    public ValuePresentWrangler(String reference, String period, String survey,  ApiCaller caller) {
+    public ValidationRuleWrangler(String reference, String period, String survey, ApiCaller caller) {
         this.reference = reference;
         this.period = period;
         this.survey = survey;

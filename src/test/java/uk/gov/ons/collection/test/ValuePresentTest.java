@@ -33,7 +33,7 @@ class ValuePresentTest {
 ////
 ////        validationFormEntityList.add(validationFormEntity);
 ////
-////        ValuePresentWrangler valuePresent = new ValuePresentWrangler();
+////        ValidationRuleWrangler valuePresent = new ValidationRuleWrangler();
 ////
 ////        valuePresent.loadContributor();
 ////        valuePresent.runValidation();
