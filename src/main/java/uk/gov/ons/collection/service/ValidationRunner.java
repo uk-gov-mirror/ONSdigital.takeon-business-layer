@@ -1,13 +1,11 @@
 package uk.gov.ons.collection.service;
 
 import com.google.common.collect.Lists;
-import org.springframework.http.ResponseEntity;
 import uk.gov.ons.collection.entity.ContributorEntity;
 import uk.gov.ons.collection.entity.QuestionResponseEntity;
 import uk.gov.ons.collection.entity.ReturnedValidationOutputs;
 import uk.gov.ons.collection.entity.ValidationFormEntity;
 import uk.gov.ons.collection.utilities.Helpers;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -70,7 +68,7 @@ public class ValidationRunner {
         List<QuestionResponseEntity> responseEntitiesList = new Helpers().checkAllQuestionsPresent(apiCaller, reference, period, survey);
         for(String rule: validationsMap.keySet()) {
             List<ValidationFormEntity> filteredForms = filterForms(rule);
-            Collections.sort(filteredForms, new SortByQuestionCode());
+            Collections.sort(new Helpers.ParseIterable().parseIterable(responseEntities), new SortByQuestionCode());
             for (QuestionResponseEntity responseEntity : responseEntitiesList) {
                 for (ValidationFormEntity formEntity : filteredForms) {
                     if (responseEntity.getQuestionCode().equals(formEntity.getQuestionCode())) {
@@ -82,10 +80,13 @@ public class ValidationRunner {
     }
 
     public void createBatchesTwo(){
-        Collections.sort(new Helpers.ParseIterable().parseIterable(validationConfig), new SortByQuestionCode());
+        List<ValidationFormEntity> formDefinitions = new Helpers.ParseIterable().parseIterable(validationConfig);
+        Collections.sort(new Helpers.ParseIterable().parseIterable(responseEntities), new SortByQuestionCode());
         for(ValidationFormEntity element: validationConfig){
             Map<String, String> tempHold = new HashMap<>();
             tempHold.put(element.getValidationCode(), element.getQuestionCode());
+
+            //int index = Collections.binarySearch(new Helpers.ParseIterable().parseIterable(responseEntities), element, new SortByQuestionCode());
         }
     }
 
@@ -103,8 +104,8 @@ public class ValidationRunner {
 
 }
 
-class SortByQuestionCode implements Comparator<ValidationFormEntity>{
-    public int compare(ValidationFormEntity a, ValidationFormEntity b){
+class SortByQuestionCode implements Comparator<QuestionResponseEntity>{
+    public int compare(QuestionResponseEntity a, QuestionResponseEntity b){
         return Integer.parseInt(a.getQuestionCode()) - Integer.parseInt(b.getQuestionCode());
     }
 }

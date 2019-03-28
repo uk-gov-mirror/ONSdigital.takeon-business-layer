@@ -48,8 +48,6 @@ public class ValidationWranglerController {
             return errorMessage;
         }
 
-
-
         String reference = matrixVars.get("reference");
         String period = matrixVars.get("period");
         String survey = matrixVars.get("survey");
