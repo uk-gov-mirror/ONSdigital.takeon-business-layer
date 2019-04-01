@@ -48,6 +48,6 @@ public class ApiCallerSQL implements ApiCaller {
 
     @Override
     public Iterable<ReturnedValidationOutputs> callValidationApi(String ruleName, String reference, String period, String survey) {
-        return validationApiCallerService.callValuePresentApi(new Helpers().buildUriParameters(reference, period, survey));
+        return validationApiCallerService.callBusinessApi(new Helpers().buildUriParameters(reference, period, survey));
     }
 }

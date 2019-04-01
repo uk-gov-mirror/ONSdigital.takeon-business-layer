@@ -12,8 +12,8 @@ import java.util.List;
 @FeignClient(name="BusinessLogicLayer")
 public interface ValidationApiCallerProxy {
 
-    @GetMapping("/validation-bl/value-present/{args}")
-    public Iterable<ReturnedValidationOutputs> runValuePresentApi(@PathVariable(value="args") String args);
+    @GetMapping("/validation-bl/validation-rule/{args}")
+    public Iterable<ReturnedValidationOutputs> runBusinessLayerApi(@PathVariable(value="args") String args);
 
     @GetMapping("/validation-bl/value-change/{args}")
     public Iterable<ReturnedValidationOutputs> runValueChangeApi(@PathVariable(value="args") String args);

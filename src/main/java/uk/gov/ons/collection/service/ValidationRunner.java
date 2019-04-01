@@ -1,6 +1,7 @@
 package uk.gov.ons.collection.service;
 
 import com.google.common.collect.Lists;
+import org.springframework.http.ResponseEntity;
 import uk.gov.ons.collection.entity.ContributorEntity;
 import uk.gov.ons.collection.entity.QuestionResponseEntity;
 import uk.gov.ons.collection.entity.ReturnedValidationOutputs;
@@ -81,12 +82,14 @@ public class ValidationRunner {
 
     public void createBatchesTwo(){
         List<ValidationFormEntity> formDefinitions = new Helpers.ParseIterable().parseIterable(validationConfig);
-        Collections.sort(new Helpers.ParseIterable().parseIterable(responseEntities), new SortByQuestionCode());
+        List<QuestionResponseEntity> sortedResponseEntities = new Helpers.ParseIterable().parseIterable(responseEntities);
+        Collections.sort(sortedResponseEntities, new SortByQuestionCode());
         for(ValidationFormEntity element: validationConfig){
             Map<String, String> tempHold = new HashMap<>();
             tempHold.put(element.getValidationCode(), element.getQuestionCode());
 
             //int index = Collections.binarySearch(new Helpers.ParseIterable().parseIterable(responseEntities), element, new SortByQuestionCode());
+
         }
     }
 

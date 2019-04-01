@@ -10,8 +10,8 @@ public class ValidationApiCallerService {
     @Autowired
     ValidationApiCallerProxy validationApiCallerProxy;
 
-    public Iterable<ReturnedValidationOutputs> callValuePresentApi(String params){
-        return validationApiCallerProxy.runValuePresentApi(params);
+    public Iterable<ReturnedValidationOutputs> callBusinessApi(String params){
+        return validationApiCallerProxy.runBusinessLayerApi(params);
     }
 
 }

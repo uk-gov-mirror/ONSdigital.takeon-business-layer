@@ -40,8 +40,8 @@ public class Helpers {
 
     public List<QuestionResponseEntity> checkAllQuestionsPresent(ApiCaller apiCaller, String reference, String period, String survey){
         List<QuestionResponseEntity> questionResponseEntities = new Helpers.ParseIterable().parseIterable(apiCaller.loadResponses(reference, period, survey));
-        Iterable<FormDefinitionEntity> formDefintionEntities = apiCaller.loadFormDefinition(reference, period, survey);
-        for(FormDefinitionEntity element: formDefintionEntities){
+        Iterable<FormDefinitionEntity> formDefinitionEntities = apiCaller.loadFormDefinition(reference, period, survey);
+        for(FormDefinitionEntity element: formDefinitionEntities){
             if(!checkQuestionCodePresent(element.getQuestionCode(), questionResponseEntities)){
                 QuestionResponseEntity entityToAdd = new QuestionResponseEntity();
                 entityToAdd.setQuestionCode(element.getQuestionCode());
