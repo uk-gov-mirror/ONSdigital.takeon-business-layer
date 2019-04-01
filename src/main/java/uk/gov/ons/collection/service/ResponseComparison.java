@@ -1,10 +1,7 @@
 package uk.gov.ons.collection.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import uk.gov.ons.collection.entity.OriginalFormData;
 import uk.gov.ons.collection.entity.QuestionResponseEntity;
 import uk.gov.ons.collection.entity.UpdatedFormData;
 
@@ -36,31 +33,10 @@ public class ResponseComparison {
     }
 
     public List<UpdatedFormData> getOnlyUpdatedResponses(){
-        parseJsonObjects();
-        System.out.printf("parsing has run: %s \n", updatedFormDataList.get(1).toString());
-        constructUpdatedObjectsFromKey();
-        System.out.printf("construction has run: %s \n", updatedFormDataList.get(1).toString());
+        DeserialisedFormData deserialisedFormData = new DeserialisedFormData(updatedResponseData);
+        updatedFormDataList = deserialisedFormData.parseJsonObjects();
+        constructedObjects = deserialisedFormData.constructUpdatedObjectsFromKey(updatedFormDataList);
         return getUpdatedResponses();
-    }
-
-    public void parseJsonObjects(){
-        for(int index = 0; index < updatedResponseData.length(); index++){
-            UpdatedFormData updatedFormData = new UpdatedFormData();
-            String jsonKey = updatedResponseData.getJSONObject(index).keys().next();
-            updatedFormData.setKey(jsonKey);
-            updatedFormData.setResponse(updatedResponseData.getJSONObject(index).getString(jsonKey));
-            updatedFormDataList.add(updatedFormData);
-        }
-    }
-
-    public void constructUpdatedObjectsFromKey(){
-        for(UpdatedFormData element: updatedFormDataList){
-            Map<String, String> tempHolder;
-            tempHolder = element.getQcodeAndInstance(element.getKey());
-            element.setQuestionCode(tempHolder.get("questionCode"));
-            element.setInstance(tempHolder.get("instance"));
-            constructedObjects.add(element);
-        }
     }
 
     public List<UpdatedFormData> getUpdatedResponses(){
@@ -74,14 +50,6 @@ public class ResponseComparison {
                     element.setLastUpdatedDate(time.toString());
                     outputData.add(element);
 
-//                else{
-//                    QuestionResponseEntity heldEntity =  getResponseEntity(element);
-//                    element.setCreatedDate(heldEntity.getCreatedDate().toString());
-//                    element.setCreatedBy(heldEntity.getCreatedBy());
-//                    element.setLastUpdatedBy(user);
-//                    element.setLastUpdatedDate(time.toString());
-//                    outputData.add(element);
-//                }
             }
             else {
                 System.out.println("element exists");

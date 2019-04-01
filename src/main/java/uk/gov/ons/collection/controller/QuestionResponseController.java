@@ -28,6 +28,4 @@ public class QuestionResponseController {
         // Make a PUT request on the Persistence layer
         questionResponseService.putResponses(params, updatedResponses);
     }
-
-
 }

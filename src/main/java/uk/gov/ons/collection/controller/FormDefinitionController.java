@@ -8,8 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.ons.collection.entity.ContributorEntity;
-import uk.gov.ons.collection.entity.FormDefintionEntity;
-import uk.gov.ons.collection.service.ContributorService;
+import uk.gov.ons.collection.entity.FormDefinitionEntity;
 import uk.gov.ons.collection.service.FormDefinitionService;
 
 import java.util.ArrayList;
@@ -35,7 +34,7 @@ public class FormDefinitionController {
                 @ApiResponse(code = 404, message = "Contributor does not exist"),
                 @ApiResponse(code = 500, message = "Internal server error")})
         @ResponseBody
-        public Iterable<FormDefintionEntity> getFormDefintion(@MatrixVariable Map<String, String> matrixVars) {
+        public Iterable<FormDefinitionEntity> getFormDefintion(@MatrixVariable Map<String, String> matrixVars) {
             String filteredSearchParameters = filterAndPrepareSearchParameters(matrixVars, this.defaultValidSearchColumns);
             return service.getForm(filteredSearchParameters);
         }

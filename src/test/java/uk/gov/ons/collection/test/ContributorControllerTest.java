@@ -1,6 +1,5 @@
 package uk.gov.ons.collection.test;
 
-import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -52,13 +51,13 @@ public class ContributorControllerTest {
     @Test
     public void generalSearchReturnsJsonObject() throws Exception{
         //Create a ContributorEntity object
-        ContributorEntity contributorEntity = new ContributorEntity();
+        ContributorEntity contributorEntityFFS = new ContributorEntity();
         //Call the setters and populate some of the fields
-        contributorEntity.setPeriod("201812");
-        contributorEntity.setReference("12345678910");
-        contributorEntity.setSurvey("111");
+        contributorEntityFFS.setPeriod("201812");
+        contributorEntityFFS.setReference("12345678910");
+        contributorEntityFFS.setSurvey("111");
         //Create a new Iterable object of type ContributorEntity, add the ContributorEntity object
-        Iterable<ContributorEntity> variable = new ArrayList<>(Arrays.asList(contributorEntity));
+        Iterable<ContributorEntity> variable = new ArrayList<>(Arrays.asList(contributorEntityFFS));
         //when we call the getSearch method of ContributorServer we demand that it returns the Iterable object "variable"
         when(service.generalSearch("")).thenReturn(variable);
         //Get the MockMvc object to preform a get request on the given URI
@@ -72,13 +71,13 @@ public class ContributorControllerTest {
     @Test
     public void generalSearchReturnsJsonObjectWithCorrectKeyValuePairs() throws Exception{
         //Create a ContributorEntity object
-        ContributorEntity contributorEntity = new ContributorEntity();
+        ContributorEntity contributorEntityFFS = new ContributorEntity();
         //Call the setters and populate some of the fields
-        contributorEntity.setPeriod("201812");
-        contributorEntity.setReference("12345678910");
-        contributorEntity.setSurvey("111");
+        contributorEntityFFS.setPeriod("201812");
+        contributorEntityFFS.setReference("12345678910");
+        contributorEntityFFS.setSurvey("111");
         //Create a new Iterable object of type ContributorEntity, add the ContributorEntity object
-        Iterable<ContributorEntity> variable = new ArrayList<>(Arrays.asList(contributorEntity));
+        Iterable<ContributorEntity> variable = new ArrayList<>(Arrays.asList(contributorEntityFFS));
         //when we call the getSearch method of ContributorServer we demand that it returns the Iterable object "variable"
         when(service.generalSearch("")).thenReturn(variable);
         //Get the MockMvc object to preform a get request on the given URI
