@@ -1,8 +1,16 @@
 package uk.gov.ons.collection.entity;
 
+import lombok.*;
+
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class UpdatedFormData {
     private String key;
     private String instance;
@@ -13,73 +21,7 @@ public class UpdatedFormData {
     private String lastUpdatedDate;
     private String lastUpdatedBy;
 
-
-
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public String getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(String createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    public String getInstance() {
-        return instance;
-    }
-
-    public void setInstance(String instance) {
-        this.instance = instance;
-    }
-
-    public String getQuestionCode() {
-        return questionCode;
-    }
-
-    public void setQuestionCode(String questionCode) {
-        this.questionCode = questionCode;
-    }
-
-    public String getResponse() {
-        return response;
-    }
-
-    public void setResponse(String response) {
-        this.response = response;
-    }
-
-    public String getLastUpdatedDate() {
-        return lastUpdatedDate;
-    }
-
-    public void setLastUpdatedDate(String lastUpdatedDate) {
-        this.lastUpdatedDate = lastUpdatedDate;
-    }
-
-    public String getLastUpdatedBy() {
-        return lastUpdatedBy;
-    }
-
-    public void setLastUpdatedBy(String lastUpdatedBy) {
-        this.lastUpdatedBy = lastUpdatedBy;
-    }
-
-    public Map<String, String> getQcodeAndInstance(String key){
+    public Map<String, String> getQuestionCodeAndInstance(String key){
         String[] parts;
         String[] atoms;
         Map<String, String> atomMap = new HashMap<>();
