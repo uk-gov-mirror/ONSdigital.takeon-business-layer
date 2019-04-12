@@ -8,7 +8,7 @@ import uk.gov.ons.collection.entity.ValidationOutputEntity;
 
 import java.util.List;
 
-@FeignClient(name="ValidationPersistenceLayerApp")
+@FeignClient(name="validation-persistence-layer")
 public interface ValidationConfigProxy {
 
     @GetMapping(value = "/validation-pl/validations/configuration/form/{params}")
