@@ -9,7 +9,7 @@ import uk.gov.ons.collection.entity.ValidationFormEntity;
 
 import java.util.List;
 
-@FeignClient(name="BusinessLogicLayer")
+@FeignClient(name="business-layer")
 public interface ValidationApiCallerProxy {
 
     @GetMapping("/validation-bl/validation-rule/{args}")

@@ -4,7 +4,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(name="PersistenceLayerApp")
+@FeignClient(name="persistence-layer")
 public interface QuestionResponseProxy {
 
     @PutMapping(value = "/Upsert/UpdateResponses/{args}", consumes = MediaType.APPLICATION_JSON_VALUE)

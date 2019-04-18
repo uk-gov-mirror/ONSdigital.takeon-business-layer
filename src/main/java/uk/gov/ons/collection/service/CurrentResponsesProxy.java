@@ -7,7 +7,7 @@ import uk.gov.ons.collection.entity.QuestionResponseEntity;
 
 import java.util.List;
 
-@FeignClient(name="PersistenceLayerApp")
+@FeignClient(name="persistence-layer")
 public interface CurrentResponsesProxy {
 
     @GetMapping("/responses/CurrentResponses/{searchVars}")
