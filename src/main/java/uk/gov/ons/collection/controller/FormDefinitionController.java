@@ -4,18 +4,20 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
 import uk.gov.ons.collection.entity.ContributorEntity;
+import uk.gov.ons.collection.entity.ErrorMessage;
 import uk.gov.ons.collection.entity.FormDefinitionEntity;
+import uk.gov.ons.collection.exception.DataNotFondException;
 import uk.gov.ons.collection.service.FormDefinitionService;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+@Log4j2
 @Api(value = "Form Definition Controller", description = "End point for the connection between the UI and persistence layer, controls access to form definitions")
 @RestController
 @RequestMapping(value = "/FormDefinition")
@@ -34,9 +36,27 @@ public class FormDefinitionController {
                 @ApiResponse(code = 404, message = "Contributor does not exist"),
                 @ApiResponse(code = 500, message = "Internal server error")})
         @ResponseBody
-        public Iterable<FormDefinitionEntity> getFormDefintion(@MatrixVariable Map<String, String> matrixVars) {
+        public Iterable<FormDefinitionEntity> getFormDefintion(@MatrixVariable Map<String, String> matrixVars) throws Exception {
+            Iterable<FormDefinitionEntity> formDefinitionEntities = null;
+            ErrorMessage errorMessage = new ErrorMessage();
+
             String filteredSearchParameters = filterAndPrepareSearchParameters(matrixVars, this.defaultValidSearchColumns);
-            return service.getForm(filteredSearchParameters);
+            log.info("Filtered Search Parameters { }", filteredSearchParameters);
+            formDefinitionEntities = service.getForm(filteredSearchParameters);
+            log.info("Form Definition Entities after calling Persistance Layer{ }", formDefinitionEntities);
+            if (formDefinitionEntities == null) {
+                throw new Exception();
+            } else {
+                if (formDefinitionEntities instanceof Collection) {
+                    int size =  ((Collection<?>) formDefinitionEntities).size();
+                    if(size == 0) {
+                        throw new DataNotFondException("Persistance Layer is returning Zero records for Form Definition");
+                    }
+                }
+            }
+
+
+            return formDefinitionEntities;
         }
 
         public String filterAndPrepareSearchParameters(Map<String, String> inputParameters, List<String> allowedParameters) {

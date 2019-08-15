@@ -1,7 +1,7 @@
 package uk.gov.ons.collection.exception;
 
-public class ContributorNotFondException extends RuntimeException {
-    public ContributorNotFondException(String message) {
+public class DataNotFondException extends RuntimeException {
+    public DataNotFondException(String message) {
         super(message);
     }
 }
