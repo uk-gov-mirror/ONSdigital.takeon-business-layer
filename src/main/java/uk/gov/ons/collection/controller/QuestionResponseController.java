@@ -25,12 +25,13 @@ public class QuestionResponseController {
         String reference = matrixVars.get("reference");
         log.info("Reference {} ", reference);
         String period = matrixVars.get("period");
-        log.info("Period { } ", period);
+        log.info("Period {} ", period);
         String survey = matrixVars.get("survey");
         log.info( "Survey {} ", survey);
 
 
         String params = "reference=" + reference + ";" + "period=" + period + ";" + "survey=" + survey;
+        log.info("Parameters {}", params);
         // Make a PUT request on the Persistence layer
         questionResponseService.putResponses(params, updatedResponses);
     }
