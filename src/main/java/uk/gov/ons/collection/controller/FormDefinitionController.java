@@ -26,6 +26,7 @@ public class FormDefinitionController {
 
         private List<String> defaultValidSearchColumns = new ArrayList<>(Arrays.asList("reference", "period", "survey",
                 "status", "formid"));
+        private static final String NO_RECORDS_MESSAGE = "Persistance Layer is returning Zero records for Form Definition";
 
         @Autowired
         FormDefinitionService service;
@@ -50,7 +51,7 @@ public class FormDefinitionController {
                 if (formDefinitionEntities instanceof Collection) {
                     int size =  ((Collection<?>) formDefinitionEntities).size();
                     if(size == 0) {
-                        throw new DataNotFondException("Persistance Layer is returning Zero records for Form Definition");
+                        throw new DataNotFondException(NO_RECORDS_MESSAGE);
                     }
                 }
             }

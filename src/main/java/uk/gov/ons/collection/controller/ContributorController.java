@@ -24,6 +24,8 @@ public class ContributorController {
     private List<String> defaultValidSearchColumns = new ArrayList<>(Arrays.asList("reference", "period", "survey",
             "status", "formid"));
 
+    private static final String NO_RECORDS_MESSAGE = "Persistance Layer is returning Zero records";
+
     @Autowired
     ContributorService service;
     @ApiOperation(value = "Search contributor table by arbitrary parameters", response = String.class)
@@ -46,7 +48,7 @@ public class ContributorController {
             if (contributorEntities instanceof Collection) {
                 int size =  ((Collection<?>) contributorEntities).size();
                 if(size == 0) {
-                    throw new DataNotFondException("Persistance Layer is returning Zero records");
+                    throw new DataNotFondException(NO_RECORDS_MESSAGE);
                 }
             }
         }
