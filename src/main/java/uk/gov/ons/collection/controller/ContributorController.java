@@ -47,6 +47,7 @@ public class ContributorController {
         } else {
             if (contributorEntities instanceof Collection) {
                 int size =  ((Collection<?>) contributorEntities).size();
+                log.info("Contributor Entities Elements size {}", size);
                 if(size == 0) {
                     throw new DataNotFondException(NO_RECORDS_MESSAGE);
                 }

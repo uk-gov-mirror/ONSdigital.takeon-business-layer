@@ -20,6 +20,7 @@ import org.springframework.web.client.ResourceAccessException;
 import uk.gov.ons.collection.controller.ContributorController;
 import uk.gov.ons.collection.entity.ContributorEntity;
 import uk.gov.ons.collection.service.ContributorService;
+import uk.gov.ons.collection.exception.RestExceptionHandler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,6 +53,9 @@ public class ContributorIntegrationTest {
     @Autowired
     ContributorController contributorController;
 
+    @Autowired
+    RestExceptionHandler exceptionHandler;
+
 
     @Autowired
     private ContributorService contributorService;
@@ -59,9 +63,8 @@ public class ContributorIntegrationTest {
     @Before
     public void setup() throws Exception {
         MockitoAnnotations.initMocks(this);
-        this.mockMvc = MockMvcBuilders.standaloneSetup(contributorController).build();
-        //this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
-
+        //Mocking Controller Advice i.e RestExceptionHandler in addition to Contributor Controller
+        this.mockMvc = MockMvcBuilders.standaloneSetup(contributorController).setControllerAdvice(exceptionHandler).build();
     }
     @TestConfiguration
     protected static class Config{
