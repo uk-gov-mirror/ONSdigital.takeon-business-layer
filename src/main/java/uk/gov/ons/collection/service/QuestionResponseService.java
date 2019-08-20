@@ -1,5 +1,6 @@
 package uk.gov.ons.collection.service;
 
+import lombok.extern.log4j.Log4j2;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -7,6 +8,7 @@ import uk.gov.ons.collection.entity.UpdatedFormData;
 
 import java.util.List;
 
+@Log4j2
 @Service
 public class QuestionResponseService {
 
@@ -24,10 +26,10 @@ public class QuestionResponseService {
             ResponseComparison responseComparison = new ResponseComparison(currentResponseService,updatedResponsesJson);
         // Get only the updated responses and not the responses that were already in the DB
             List<UpdatedFormData> responsesToPassTpPL = responseComparison.getOnlyUpdatedResponses();
-            System.out.println(responsesToPassTpPL.toString());
+            log.info("Updated responses JSON { }", responsesToPassTpPL.toString());
             responseJsonToPassOn.put("Updated Responses", responsesToPassTpPL);
             responseJsonToPassOn.put("user", updatedResponsesJson.getJSONObject("user").getString("user"));
-            System.out.println(responseJsonToPassOn.toString());
+            log.info("Response Json To PassOn { }", responseJsonToPassOn.toString());
 
             // Since this is a new JSONObject returned from responseComparision, append the username
             // responsesToPassTpPL.put("user", updatedResponsesJson.getJSONObject("user"));
