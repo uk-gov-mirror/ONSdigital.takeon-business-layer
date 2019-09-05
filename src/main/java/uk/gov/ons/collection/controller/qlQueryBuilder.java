@@ -1,6 +1,5 @@
 package uk.gov.ons.collection.controller;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class qlQueryBuilder {
