@@ -1,5 +1,6 @@
 package uk.gov.ons.collection.controller;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 
@@ -8,7 +9,13 @@ public class qlQueryResponse {
     private JSONObject jsonQlResponse;
 
     public qlQueryResponse(String jsonString) {
-        jsonQlResponse = new JSONObject(jsonString);
+        try {
+            jsonQlResponse = new JSONObject(jsonString);
+        }
+        catch(Exception e) {
+            jsonString = "{}";
+            jsonQlResponse = new JSONObject(jsonString);
+        }
     }
 
 

@@ -92,6 +92,25 @@ public class qlQueryResponseTest {
     }
 
     @Test
+    void attributeCheck_attributeNull(){
+        qlQueryResponse response = new qlQueryResponse(null);
+        assertEquals(false, response.attributeCheck());
+    }
+
+    @Test
+    void attributeCheck_attributeInvalidJson(){
+        String inputString = "{" +
+                "\"data\": {" +
+                ": []" +
+                "" +
+                "}" +
+                "";
+        qlQueryResponse response = new qlQueryResponse(inputString);
+        assertEquals(false, response.attributeCheck());
+    }
+
+
+    @Test
     void stringConvert_attributesPresent() {
         String inputString = "{" +
                 "\"data\": {" +
