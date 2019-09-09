@@ -11,10 +11,12 @@ import uk.gov.ons.collection.entity.ContributorEntity;
 public class ContributorService {
 
     @Autowired
-    ContributorProxy contributorProxy;
+    GraphqlProxy GraphqlProxy;
 
     public Iterable<ContributorEntity> generalSearch(String parameters){
+
         log.info("Reached contributor service");
-        return contributorProxy.searchContributor(parameters);
+        return GraphqlProxy.searchContributor(parameters);
     }
+
 }

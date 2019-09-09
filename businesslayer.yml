@@ -1,0 +1,48 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  namespace: take-on
+  name: business-layer
+  labels:
+    app: business-layer
+spec:
+  replicas: 1
+  template:
+    metadata:
+      namespace: take-on
+      labels:
+        app: business-layer
+    spec:
+      containers:
+        - name: business-layer
+          image: 014669633018.dkr.ecr.eu-west-2.amazonaws.com/takeon-dev-bl:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8088
+              protocol: TCP
+      imagePullSecrets:
+        - name: aws-ecr
+
+
+---
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: business-layersvc
+  labels:
+    app: business-layer
+spec:
+  ports:
+  - port: 8088
+    targetPort: 8088
+    protocol: TCP
+  selector:
+    app: business-layer
+  type: LoadBalancer
+  loadBalancerSourceRanges:
+  - 10.0.0.0/24
+  - 10.0.1.0/24
+  - 80.5.92.42/32
