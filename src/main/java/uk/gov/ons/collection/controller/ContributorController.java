@@ -93,14 +93,14 @@ public class ContributorController {
 
     @GetMapping(value = "/qlSearch/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public Iterable<ContributorEntity> buildQuery(@MatrixVariable Map <String, String> searchParameters){
-        Iterable<ContributorEntity> contributorEntities = null;
+    public String buildQuery(@MatrixVariable Map <String, String> searchParameters){
+        String contributorEntities = null;
 
-        String queryPrefix = "query contributorSearchBy {" +
+        String queryPrefix = "{\"query\": \"query contributorSearchBy {" +
                 "allContributors ";
         String querySuffix = "{" +
                 "nodes {" +
-                "reference, period, survey, formid, status, receiptdate, lockedby, lockeddate}}}";
+                "reference, period, survey, formid, status, receiptdate, lockedby, lockeddate}}}\"}";
 
         StringBuilder builtQuery = new StringBuilder();
         builtQuery.append(queryPrefix);

@@ -13,7 +13,7 @@ public class ContributorService {
     @Autowired
     GraphqlProxy GraphqlProxy;
 
-    public Iterable<ContributorEntity> generalSearch(String parameters){
+    public String generalSearch(String parameters){
 
         log.info("Reached contributor service");
         return GraphqlProxy.searchContributor(parameters);
