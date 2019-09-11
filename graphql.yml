@@ -31,13 +31,9 @@ metadata:
     app: graphql
 spec:
   ports:
-  - port: 5002
+  - port: 5001
     targetPort: 5000
     protocol: TCP
   selector:
     app: graphql
-  type: LoadBalancer
-  loadBalancerSourceRanges:
-  - 10.0.0.0/24
-  - 10.0.1.0/24
-  - 80.5.92.42/32
+  type: ClusterIP

@@ -96,9 +96,8 @@ public class ContributorController {
     @Autowired
     GraphQLService qlService;
     @GetMapping(value = "/qlSearch/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
 
-    public ResponseEntity buildQuery(@MatrixVariable Map <String, String> searchParameters){
+    public Iterable buildQuery(@MatrixVariable Map <String, String> searchParameters){
 
         String queryPrefix = "{\"query\": \"query contributorSearchBy {" +
                 "allContributors ";
