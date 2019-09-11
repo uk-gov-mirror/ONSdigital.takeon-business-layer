@@ -8,10 +8,12 @@ import io.swagger.annotations.ApiResponses;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.ons.collection.entity.ContributorEntity;
 import uk.gov.ons.collection.exception.DataNotFondException;
 import uk.gov.ons.collection.service.ContributorService;
+import uk.gov.ons.collection.service.GraphQLService;
 
 import java.util.*;
 
@@ -70,49 +72,50 @@ public class ContributorController {
     @ResponseBody
     public Iterable<ContributorEntity> searchBy(@MatrixVariable Map<String, String> matrixVars) throws Exception {
         Iterable<ContributorEntity> contributorEntities = null;
-//        String filteredSearchParameters = filterAndPrepareSearchParameters(matrixVars, this.defaultValidSearchColumns);
-//        log.info("Filtered search parameters { }", filteredSearchParameters);
-//        contributorEntities = service.generalSearch(filteredSearchParameters);
-//        log.info("Contributor Entities after calling Persistance Layer { }", filteredSearchParameters);
-//
-//        if (contributorEntities == null) {
-//            throw new Exception();
-//        } else {
-//            if (contributorEntities instanceof Collection) {
-//                int size =  ((Collection<?>) contributorEntities).size();
-//                log.info("Contributor Entities Elements size {}", size);
-//                if(size == 0) {
-//                    throw new DataNotFondException(NO_RECORDS_MESSAGE);
-//                }
-//            }
-//        }
+        String filteredSearchParameters = filterAndPrepareSearchParameters(matrixVars, this.defaultValidSearchColumns);
+        log.info("Filtered search parameters { }", filteredSearchParameters);
+        contributorEntities = service.generalSearch(filteredSearchParameters);
+        log.info("Contributor Entities after calling Persistance Layer { }", filteredSearchParameters);
+
+        if (contributorEntities == null) {
+            throw new Exception();
+        } else {
+            if (contributorEntities instanceof Collection) {
+                int size =  ((Collection<?>) contributorEntities).size();
+                log.info("Contributor Entities Elements size {}", size);
+                if(size == 0) {
+                    throw new DataNotFondException(NO_RECORDS_MESSAGE);
+                }
+            }
+        }
 
         return contributorEntities;
 
     }
 
+    @Autowired
+    GraphQLService qlService;
     @GetMapping(value = "/qlSearch/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String buildQuery(@MatrixVariable Map <String, String> searchParameters){
-        String contributorEntities = null;
+
+    public ResponseEntity buildQuery(@MatrixVariable Map <String, String> searchParameters){
 
         String queryPrefix = "{\"query\": \"query contributorSearchBy {" +
                 "allContributors ";
         String querySuffix = "{" +
                 "nodes {" +
-                "reference, period, survey, formid, status, receiptdate, lockedby, lockeddate}}}\"}";
+                "reference, period, survey, formid, status, receiptdate, lockedby, lockeddate}}}\" }";
 
         StringBuilder builtQuery = new StringBuilder();
         builtQuery.append(queryPrefix);
         if (searchParameters != null && !searchParameters.isEmpty()){
             builtQuery.append("(condition: { ");
-            searchParameters.forEach((key,value) -> builtQuery.append(key + ": \"" + value + "\" "));
+            searchParameters.forEach((key,value) -> builtQuery.append(key + ": \\\"" + value + "\\\" "));
             builtQuery.append("})");
         }
         builtQuery.append(querySuffix);
-//        return builtQuery.toString();
-        contributorEntities = service.generalSearch(builtQuery.toString());
-        return contributorEntities;
+        System.out.println("Hello " + builtQuery.toString());
+        return qlService.qlSearch(builtQuery.toString());
     }
 
 }
