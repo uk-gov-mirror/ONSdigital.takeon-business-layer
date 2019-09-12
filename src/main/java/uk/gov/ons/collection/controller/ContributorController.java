@@ -1,6 +1,5 @@
 package uk.gov.ons.collection.controller;
 
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -15,7 +14,10 @@ import uk.gov.ons.collection.exception.DataNotFondException;
 import uk.gov.ons.collection.service.ContributorService;
 import uk.gov.ons.collection.service.GraphQLService;
 
+import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Log4j2
 @Api(value = "Contributor Controller", description = "Main (and so far only) end point for the connection between the UI and persistance layer")
@@ -97,7 +99,7 @@ public class ContributorController {
     GraphQLService qlService;
     @GetMapping(value = "/qlSearch/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
 
-    public Iterable buildQuery(@MatrixVariable Map <String, String> searchParameters){
+    public String buildQuery(@MatrixVariable Map <String, String> searchParameters){
 
         String queryPrefix = "{\"query\": \"query contributorSearchBy {" +
                 "allContributors ";
@@ -113,6 +115,7 @@ public class ContributorController {
             builtQuery.append("})");
         }
         builtQuery.append(querySuffix);
+        //String testQuery = "{\"query\": \"query contributorSearchBy {allContributors {nodes {reference}}}\"}";
         System.out.println("Hello " + builtQuery.toString());
         return qlService.qlSearch(builtQuery.toString());
     }

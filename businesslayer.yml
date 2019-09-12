@@ -13,6 +13,7 @@ spec:
       labels:
         app: business-layer
     spec:
+      serviceAccountName: take-on-service
       containers:
         - name: business-layer
           image: 014669633018.dkr.ecr.eu-west-2.amazonaws.com/takeon-dev-bl:latest
