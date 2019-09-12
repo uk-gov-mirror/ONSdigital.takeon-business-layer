@@ -102,8 +102,9 @@ public class ContributorController {
     public String buildQuery(@MatrixVariable Map <String, String> searchParameters){
 
         qlQueryBuilder query = new qlQueryBuilder();
-        System.out.println(query.buildQuery(searchParameters));
-        return qlService.qlSearch(query.buildQuery(searchParameters));
+        log.info("Query sent to service: " + query.buildQuery(searchParameters));
+        qlQueryResponse response = new qlQueryResponse(qlService.qlSearch(query.buildQuery(searchParameters)));
+        return response.stringConvert();
     }
 
 }
