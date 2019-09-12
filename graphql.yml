@@ -18,7 +18,7 @@ spec:
       containers:
       - name: graphql
         image: graphile/postgraphile
-        args: ##########
+        args: ['--connection', 'postgres://USER:PASSWORD@DBURL/DBNAME', '--schema', 'SCHEMANAME', '-j', '-a', '--watch']
         ports:
         - containerPort: 5000
 ---
