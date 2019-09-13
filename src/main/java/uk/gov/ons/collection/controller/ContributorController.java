@@ -108,8 +108,6 @@ public class ContributorController {
         catch(Exception e){
             responseText = "{\"error\":\"Invalid response from graphQL\"}";
         }
-//        log.info("query response from service: " + responseText);
-
 
         return responseText;
     }

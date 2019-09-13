@@ -32,12 +32,4 @@ public class qlQueryResponse {
         return jsonQlResponse.toString().replaceAll(":", ": ");
     }
 
-//    public String stringConvert() {
-//        if(attributeCheck() == true) {
-//            return filter();
-//        }
-//        return "";
-//    }
-
-    // string convert() { wrapper method to call attribute checks and filter then return string}
 }
