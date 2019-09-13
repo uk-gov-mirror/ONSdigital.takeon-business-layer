@@ -7,17 +7,13 @@ import io.swagger.annotations.ApiResponses;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.ons.collection.entity.ContributorEntity;
 import uk.gov.ons.collection.exception.DataNotFondException;
 import uk.gov.ons.collection.service.ContributorService;
 import uk.gov.ons.collection.service.GraphQLService;
 
-import java.io.IOException;
-import java.io.InterruptedIOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Log4j2
 @Api(value = "Contributor Controller", description = "Main (and so far only) end point for the connection between the UI and persistance layer")
@@ -97,14 +93,24 @@ public class ContributorController {
 
     @Autowired
     GraphQLService qlService;
+
     @GetMapping(value = "/qlSearch/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of Contributor details", response = ContributorEntity.class)})
+    public String searchContributor(@MatrixVariable Map <String, String> searchParameters){
+        String qlQuery = new qlQueryBuilder().buildContributorSearchQuery(searchParameters);
+        String responseText;
+        log.info("Query sent to service: " + qlQuery);
+        try {
+            qlQueryResponse response = new qlQueryResponse(qlService.qlSearch(qlQuery));
+            responseText = response.parse();
+        }
+        catch(Exception e){
+            responseText = "{\"error\":\"Invalid response from graphQL\"}";
+        }
+//        log.info("query response from service: " + responseText);
 
-    public String buildQuery(@MatrixVariable Map <String, String> searchParameters){
 
-        qlQueryBuilder query = new qlQueryBuilder();
-        log.info("Query sent to service: " + query.buildQuery(searchParameters));
-        qlQueryResponse response = new qlQueryResponse(qlService.qlSearch(query.buildQuery(searchParameters)));
-        return response.stringConvert();
+        return responseText;
     }
-
 }

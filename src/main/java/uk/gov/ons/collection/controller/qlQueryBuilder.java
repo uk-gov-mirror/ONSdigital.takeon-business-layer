@@ -4,7 +4,7 @@ import java.util.Map;
 
 public class qlQueryBuilder {
 
-    public String buildQuery(Map<String, String> searchParameters){
+    public String buildContributorSearchQuery(Map<String, String> searchParameters){
 
         String queryPrefix = "{\"query\": \"query contributorSearchBy {" +
                 "allContributors ";

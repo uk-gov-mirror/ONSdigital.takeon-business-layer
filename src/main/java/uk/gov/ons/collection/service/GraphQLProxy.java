@@ -8,5 +8,5 @@ import org.springframework.web.bind.annotation.*;
 public interface GraphQLProxy {
 
     @PostMapping(value = "/graphql", consumes = MediaType.APPLICATION_JSON_VALUE)
-    String searchContributor(@RequestBody String searchVars);
+    String runQuery(@RequestBody String query);
 }

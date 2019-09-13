@@ -21,14 +21,14 @@ public class qlQueryBuilderTest {
     @Test
     void buildQuery_nullParameters_unfilteredQuery(){
         qlQueryBuilder qlBuild = new qlQueryBuilder();
-        assertEquals(baseQuery,qlBuild.buildQuery(null));
+        assertEquals(baseQuery,qlBuild.buildContributorSearchQuery(null));
     }
 
     @Test
     void buildQuery_emptyParameters_unfilteredQuery(){
         qlQueryBuilder qlBuild = new qlQueryBuilder();
         Map<String,String> emptyParameters = new HashMap<>();
-        assertEquals(baseQuery,qlBuild.buildQuery(emptyParameters));
+        assertEquals(baseQuery,qlBuild.buildContributorSearchQuery(emptyParameters));
     }
 
     @Test
@@ -40,7 +40,7 @@ public class qlQueryBuilderTest {
         qlQueryBuilder qlBuild = new qlQueryBuilder();
         Map<String,String> singleParameter = new HashMap<>();
         singleParameter.put("reference", "4990012");
-        assertEquals(builtQuery,qlBuild.buildQuery(singleParameter));
+        assertEquals(builtQuery,qlBuild.buildContributorSearchQuery(singleParameter));
     }
 
     @Test
@@ -53,7 +53,7 @@ public class qlQueryBuilderTest {
         Map<String,String> twoParameters = new HashMap<>();
         twoParameters.put("reference", "4990012");
         twoParameters.put("period", "201903");
-        assertEquals(builtQuery,qlBuild.buildQuery(twoParameters));
+        assertEquals(builtQuery,qlBuild.buildContributorSearchQuery(twoParameters));
     }
 
 }

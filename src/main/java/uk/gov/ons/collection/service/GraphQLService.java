@@ -11,9 +11,7 @@ public class GraphQLService {
     @Autowired
     GraphQLProxy GraphQLProxy;
 
-    public String qlSearch(String parameters){
-        log.info("Reached GraphQL service");
-        System.out.println("query to graphql: " + parameters);
-        return GraphQLProxy.searchContributor(parameters);
+    public String qlSearch(String queryQlJSON){
+        return GraphQLProxy.runQuery(queryQlJSON);
     }
 }

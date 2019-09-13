@@ -47,7 +47,7 @@ public class qlQueryResponseTest {
                 "}";
 
         qlQueryResponse response = new qlQueryResponse(inputString);
-        assertEquals(outputString, response.filter());
+        assertEquals(outputString, response.parse());
     }
 
     @Test
@@ -63,7 +63,7 @@ public class qlQueryResponseTest {
         String outputString = "{\"data\": []}";
 
         qlQueryResponse response = new qlQueryResponse(inputString);
-        assertEquals(outputString, response.filter());
+        assertEquals(outputString, response.parse());
     }
 
     @Test
@@ -163,5 +163,24 @@ public class qlQueryResponseTest {
         assertEquals("", response.stringConvert());
     }
 
+    @Test
+    void parse_invalidJSON_returnErrorJSON(){
+        String inputString = "fdgsgsrdgf";
+        String outputString = "{\"error\":\"Invalid response from graphQL\"}";
+        qlQueryResponse response = new qlQueryResponse(inputString);
+        assertEquals(outputString, response.parse());
+    }
 
+    @Test
+    void parse_missingContributors_returnErrorJSON() {
+        String inputString = "{" +
+                "\"data\": {" +
+                "\"nodes\": []" +
+                "}" +
+                "}" +
+                "}";
+        String outputString = "{\"error\":\"Invalid response from graphQL\"}";
+        qlQueryResponse response = new qlQueryResponse(inputString);
+        assertEquals(outputString, response.parse());
+    }
 }
