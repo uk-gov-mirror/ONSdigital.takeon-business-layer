@@ -17,6 +17,8 @@
 *.ipr
 /target/
 
+.vscode/
+
 ### NetBeans ###
 /nbproject/private/
 /build/
