@@ -26,18 +26,18 @@ public class qlQueryResponseTest {
 
     @Test
     void parse_attributesPresent_returnValidParsedJsonString() {
-        String inputString = "{" +
-                "\"data\": {" +
+        String inputString = 
+                "{\"data\": {" +
                     "\"allContributors\": {" +
-                        "\"nodes\": [" +
-                            "{\"reference\": \"4990012\",\"period\": \"201211\",\"survey\": \"066 \"}," +
-                            "{\"reference\": \"4990012\",\"period\": \"201212\",\"survey\": \"066 \"}" +
-                "]}}}";
+                        "\"nodes\": " +
+                            "[{\"reference\": \"4990012\",\"period\": \"201211\",\"survey\": \"066 \"}," +
+                             "{\"reference\": \"4990012\",\"period\": \"201212\",\"survey\": \"066 \"}]" +
+                "}}}";
 
-        String expectedOutput = "{" +
-                "\"data\": [" +
-                    "{\"reference\": \"4990012\",\"period\": \"201211\",\"survey\": \"066 \"}," +
-                    "{\"reference\": \"4990012\",\"period\": \"201212\",\"survey\": \"066 \"}" +
+        String expectedOutput = 
+                "{\"data\": " +
+                    "[{\"reference\": \"4990012\",\"period\": \"201211\",\"survey\": \"066 \"}," +
+                     "{\"reference\": \"4990012\",\"period\": \"201212\",\"survey\": \"066 \"}]" +
                 "]}";
 
         qlQueryResponse response = new qlQueryResponse(inputString);
