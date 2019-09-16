@@ -19,6 +19,7 @@ public class qlQueryResponse {
         }
     }
 
+    // Minor conversion to the QL response JSON structure
     public String parse(){
         try {
             jsonQlResponse.put("data", jsonQlResponse.getJSONObject("data")
