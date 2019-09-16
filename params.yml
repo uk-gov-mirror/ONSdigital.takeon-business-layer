@@ -1,1 +1,0 @@
-postgres_connection_string: ['--connection', 'postgres://takeonadmin:aVerySecurePassword123!@validationdb.cyjaepzpx1tk.eu-west-2.rds.amazonaws.com/validationdb', '--schema', 'dev01', '-j', '-a', '--watch']
