@@ -33,6 +33,17 @@ public class qlQueryBuilderTest {
     }
 
     @Test
+    void buildQuery_twoParameters_filteredQuery(){
+        String builtQuery= "{\"query\": \"query contributorSearchBy { " +
+                "allContributors (condition: { reference: \\\"4990012\\\" period: \\\"201903\\\" }){ " +
+                "nodes { reference, period, survey, formid, status, receiptdate, lockedby, lockeddate}}}\" }";
+        Map<String,String> twoParameters = new HashMap<>();
+        twoParameters.put("reference", "4990012");
+        twoParameters.put("period", "201903");
+        assertEquals(builtQuery, new qlQueryBuilder().buildContributorSearchQuery(twoParameters));
+    }    
+
+    @Test
     void buildCondition_null_blankString() {
         assertEquals("", new qlQueryBuilder().buildCondition(null));
     }
@@ -60,16 +71,7 @@ public class qlQueryBuilderTest {
         assertEquals(expectedCondition, new qlQueryBuilder().buildCondition(twoParameters));
     }
 
-    @Test
-    void buildQuery_twoParameters_filteredQuery(){
-        String builtQuery= "{\"query\": \"query contributorSearchBy { " +
-                "allContributors (condition: { reference: \\\"4990012\\\" period: \\\"201903\\\" }){ " +
-                "nodes { reference, period, survey, formid, status, receiptdate, lockedby, lockeddate}}}\" }";
-        Map<String,String> twoParameters = new HashMap<>();
-        twoParameters.put("reference", "4990012");
-        twoParameters.put("period", "201903");
-        assertEquals(builtQuery, new qlQueryBuilder().buildContributorSearchQuery(twoParameters));
-    }
+
 
 }
 
