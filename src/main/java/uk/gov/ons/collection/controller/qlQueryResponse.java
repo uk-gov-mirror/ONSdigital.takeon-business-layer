@@ -8,6 +8,7 @@ public class qlQueryResponse {
 
     private JSONObject jsonQlResponse;
 
+    // If we receive invalid json we consume the error and instead instantiate the current response object with valid but empty Json
     public qlQueryResponse(String jsonString) {
         try {
             jsonQlResponse = new JSONObject(jsonString);
@@ -17,7 +18,6 @@ public class qlQueryResponse {
             jsonQlResponse = new JSONObject(jsonString);
         }
     }
-
 
     public String parse(){
         try {
