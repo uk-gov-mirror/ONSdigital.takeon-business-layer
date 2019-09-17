@@ -27,4 +27,4 @@
 /nbdist/
 /.nb-gradle/
 
-*/params.yml
+**/params.yml
