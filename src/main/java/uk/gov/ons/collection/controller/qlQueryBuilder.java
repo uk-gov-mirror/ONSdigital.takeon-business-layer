@@ -9,13 +9,13 @@ public class qlQueryBuilder {
         builtQuery.append("{\"query\": \"query contributorSearchBy { allContributors ");
         builtQuery.append(buildCondition(searchParameters));
         builtQuery.append("{ nodes { reference, period, survey, formid, status, receiptdate, lockedby, lockeddate, " + 
-                            "lastupdatedby, lastupdateddate, formtype, enterprisename, name, address, postcode, " + 
-                            "checkletter, frozensicoutdated, rusicoutdated, frozensic, rusic, frozenemployees, employees, " +
-                            "frozenemployment, employment, frozenfteemployment, fteemployment, frozenturnover, turnover, " + 
-                            "enterprisereference, wowenterprisereference, cellnumber, currency, vatreference, payereference, " +
-                            "companyregistrationnumber, numberlivelocalunits, numberlivevat, numberlivepaye, legalstatus, " +
-                            "reportingunitmarker, region, birthdate, tradingstyle, contact, telephone, fax, selectiontype, " +
-                            "inclusionexclusion, createdby, createddate}}}\" }");
+            "lastupdatedby, lastupdateddate, formtype, enterprisename, referencename, referenceaddress, referencepostcode, " + 
+            "checkletter, frozensicoutdated, rusicoutdated, frozensic, rusic, frozenemployees, employees, " +
+            "frozenemployment, employment, frozenfteemployment, fteemployment, frozenturnover, turnover, " + 
+            "enterprisereference, wowenterprisereference, cellnumber, currency, vatreference, payereference, " +
+            "companyregistrationnumber, numberlivelocalunits, numberlivevat, numberlivepaye, legalstatus, " +
+            "reportingunitmarker, region, birthdate, tradingstyle, contact, telephone, fax, selectiontype, " +
+            "inclusionexclusion, createdby, createddate}}}\" }");
         return builtQuery.toString();
     }
 

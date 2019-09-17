@@ -13,7 +13,7 @@ public class qlQueryBuilderTest {
     void buildQuery_nullParameters_unfilteredQuery() {
         String expectedQuery = "{\"query\": \"query contributorSearchBy { allContributors " + 
             "{ nodes { reference, period, survey, formid, status, receiptdate, lockedby, lockeddate, " + 
-            "lastupdatedby, lastupdateddate, formtype, enterprisename, name, address, postcode, " + 
+            "lastupdatedby, lastupdateddate, formtype, enterprisename, referencename, referenceaddress, referencepostcode, " + 
             "checkletter, frozensicoutdated, rusicoutdated, frozensic, rusic, frozenemployees, employees, " +
             "frozenemployment, employment, frozenfteemployment, fteemployment, frozenturnover, turnover, " + 
             "enterprisereference, wowenterprisereference, cellnumber, currency, vatreference, payereference, " +
@@ -26,7 +26,7 @@ public class qlQueryBuilderTest {
     @Test
     void buildQuery_emptyParameters_unfilteredQuery(){
         String expectedQuery = "{\"query\": \"query contributorSearchBy { allContributors { nodes { reference, period, survey, formid, status, receiptdate, lockedby, lockeddate, " + 
-            "lastupdatedby, lastupdateddate, formtype, enterprisename, name, address, postcode, " + 
+            "lastupdatedby, lastupdateddate, formtype, enterprisename, referencename, referenceaddress, referencepostcode, " + 
             "checkletter, frozensicoutdated, rusicoutdated, frozensic, rusic, frozenemployees, employees, " +
             "frozenemployment, employment, frozenfteemployment, fteemployment, frozenturnover, turnover, " + 
             "enterprisereference, wowenterprisereference, cellnumber, currency, vatreference, payereference, " +
@@ -42,7 +42,7 @@ public class qlQueryBuilderTest {
         String expectedQuery= "{\"query\": \"query contributorSearchBy { " +
             "allContributors (condition: { reference: \\\"4990012\\\" }){ " +
             "nodes { reference, period, survey, formid, status, receiptdate, lockedby, lockeddate, " + 
-            "lastupdatedby, lastupdateddate, formtype, enterprisename, name, address, postcode, " + 
+            "lastupdatedby, lastupdateddate, formtype, enterprisename, referencename, referenceaddress, referencepostcode, " + 
             "checkletter, frozensicoutdated, rusicoutdated, frozensic, rusic, frozenemployees, employees, " +
             "frozenemployment, employment, frozenfteemployment, fteemployment, frozenturnover, turnover, " + 
             "enterprisereference, wowenterprisereference, cellnumber, currency, vatreference, payereference, " +
@@ -59,7 +59,7 @@ public class qlQueryBuilderTest {
         String builtQuery= "{\"query\": \"query contributorSearchBy { " +
             "allContributors (condition: { reference: \\\"4990012\\\" period: \\\"201903\\\" }){ " +
             "nodes { reference, period, survey, formid, status, receiptdate, lockedby, lockeddate, " + 
-            "lastupdatedby, lastupdateddate, formtype, enterprisename, name, address, postcode, " + 
+            "lastupdatedby, lastupdateddate, formtype, enterprisename, referencename, referenceaddress, referencepostcode, " + 
             "checkletter, frozensicoutdated, rusicoutdated, frozensic, rusic, frozenemployees, employees, " +
             "frozenemployment, employment, frozenfteemployment, fteemployment, frozenturnover, turnover, " + 
             "enterprisereference, wowenterprisereference, cellnumber, currency, vatreference, payereference, " +
