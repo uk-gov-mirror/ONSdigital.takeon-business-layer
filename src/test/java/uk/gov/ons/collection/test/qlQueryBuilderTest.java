@@ -11,27 +11,28 @@ public class qlQueryBuilderTest {
 
     @Test
     void buildQuery_nullParameters_unfilteredQuery() {
-        String expectedQuery = "{\"query\": \"query contributorSearchBy { allContributors { nodes { reference, period, survey, formid, status, receiptdate, lockedby, lockeddate, " + 
-        "lastUpdatedBy, lastUpdatedDate, formType, enterpriseName, name, address, postcode, " + 
-        "checkletter, frozenSicOutdated, ruSicOutdated, frozenSic, ruSic, frozenEmployees, employees, " +
-        "frozenEmployment, employment, frozenFteEmployment, fteEmployment, frozenTurnover, turnover, " + 
-        "enterpriseReference, wowEnterpriseReference, cellNumber, currency, vatReference, payeReference, " +
-        "companyRegistrationNumber, numberLiveLocalUnits, numberLiveVat, numberLivepaye, legalStatus, " +
-        "reportingUnitMarker, region, birthDate, tradingStyle, contact, telephone, fax, selectionType, " +
-        "inclusionExclusion, createdBy, createdDate}}}\" }";
+        String expectedQuery = "{\"query\": \"query contributorSearchBy { allContributors " + 
+            "{ nodes { reference, period, survey, formid, status, receiptdate, lockedby, lockeddate, " + 
+            "lastupdatedby, lastupdateddate, formtype, enterprisename, name, address, postcode, " + 
+            "checkletter, frozensicoutdated, rusicoutdated, frozensic, rusic, frozenemployees, employees, " +
+            "frozenemployment, employment, frozenfteemployment, fteemployment, frozenturnover, turnover, " + 
+            "enterprisereference, wowenterprisereference, cellnumber, currency, vatreference, payereference, " +
+            "companyregistrationnumber, numberlivelocalunits, numberlivevat, numberlivepaye, legalstatus, " +
+            "reportingunitmarker, region, birthdate, tradingstyle, contact, telephone, fax, selectiontype, " +
+            "inclusionexclusion, createdby, createddate}}}\" }";
         assertEquals(expectedQuery, new qlQueryBuilder().buildContributorSearchQuery(null));
     }
 
     @Test
     void buildQuery_emptyParameters_unfilteredQuery(){
         String expectedQuery = "{\"query\": \"query contributorSearchBy { allContributors { nodes { reference, period, survey, formid, status, receiptdate, lockedby, lockeddate, " + 
-        "lastUpdatedBy, lastUpdatedDate, formType, enterpriseName, name, address, postcode, " + 
-        "checkletter, frozenSicOutdated, ruSicOutdated, frozenSic, ruSic, frozenEmployees, employees, " +
-        "frozenEmployment, employment, frozenFteEmployment, fteEmployment, frozenTurnover, turnover, " + 
-        "enterpriseReference, wowEnterpriseReference, cellNumber, currency, vatReference, payeReference, " +
-        "companyRegistrationNumber, numberLiveLocalUnits, numberLiveVat, numberLivepaye, legalStatus, " +
-        "reportingUnitMarker, region, birthDate, tradingStyle, contact, telephone, fax, selectionType, " +
-        "inclusionExclusion, createdBy, createdDate}}}\" }";
+            "lastupdatedby, lastupdateddate, formtype, enterprisename, name, address, postcode, " + 
+            "checkletter, frozensicoutdated, rusicoutdated, frozensic, rusic, frozenemployees, employees, " +
+            "frozenemployment, employment, frozenfteemployment, fteemployment, frozenturnover, turnover, " + 
+            "enterprisereference, wowenterprisereference, cellnumber, currency, vatreference, payereference, " +
+            "companyregistrationnumber, numberlivelocalunits, numberlivevat, numberlivepaye, legalstatus, " +
+            "reportingunitmarker, region, birthdate, tradingstyle, contact, telephone, fax, selectiontype, " +
+            "inclusionexclusion, createdby, createddate}}}\" }";
         Map<String,String> emptyParameters = new HashMap<>();
         assertEquals(expectedQuery, new qlQueryBuilder().buildContributorSearchQuery(emptyParameters));
     }
@@ -39,15 +40,15 @@ public class qlQueryBuilderTest {
     @Test
     void buildQuery_singleParameter_filteredQuery(){
         String expectedQuery= "{\"query\": \"query contributorSearchBy { " +
-                "allContributors (condition: { reference: \\\"4990012\\\" }){ " +
-                "nodes { reference, period, survey, formid, status, receiptdate, lockedby, lockeddate, " + 
-                "lastUpdatedBy, lastUpdatedDate, formType, enterpriseName, name, address, postcode, " + 
-                "checkletter, frozenSicOutdated, ruSicOutdated, frozenSic, ruSic, frozenEmployees, employees, " +
-                "frozenEmployment, employment, frozenFteEmployment, fteEmployment, frozenTurnover, turnover, " + 
-                "enterpriseReference, wowEnterpriseReference, cellNumber, currency, vatReference, payeReference, " +
-                "companyRegistrationNumber, numberLiveLocalUnits, numberLiveVat, numberLivepaye, legalStatus, " +
-                "reportingUnitMarker, region, birthDate, tradingStyle, contact, telephone, fax, selectionType, " +
-                "inclusionExclusion, createdBy, createdDate}}}\" }";
+            "allContributors (condition: { reference: \\\"4990012\\\" }){ " +
+            "nodes { reference, period, survey, formid, status, receiptdate, lockedby, lockeddate, " + 
+            "lastupdatedby, lastupdateddate, formtype, enterprisename, name, address, postcode, " + 
+            "checkletter, frozensicoutdated, rusicoutdated, frozensic, rusic, frozenemployees, employees, " +
+            "frozenemployment, employment, frozenfteemployment, fteemployment, frozenturnover, turnover, " + 
+            "enterprisereference, wowenterprisereference, cellnumber, currency, vatreference, payereference, " +
+            "companyregistrationnumber, numberlivelocalunits, numberlivevat, numberlivepaye, legalstatus, " +
+            "reportingunitmarker, region, birthdate, tradingstyle, contact, telephone, fax, selectiontype, " +
+            "inclusionexclusion, createdby, createddate}}}\" }";
         Map<String,String> singleParameter = new HashMap<>();
         singleParameter.put("reference", "4990012");
         assertEquals(expectedQuery, new qlQueryBuilder().buildContributorSearchQuery(singleParameter));
@@ -56,15 +57,15 @@ public class qlQueryBuilderTest {
     @Test
     void buildQuery_twoParameters_filteredQuery(){
         String builtQuery= "{\"query\": \"query contributorSearchBy { " +
-                "allContributors (condition: { reference: \\\"4990012\\\" period: \\\"201903\\\" }){ " +
-                "nodes { reference, period, survey, formid, status, receiptdate, lockedby, lockeddate, " + 
-                "lastUpdatedBy, lastUpdatedDate, formType, enterpriseName, name, address, postcode, " + 
-                "checkletter, frozenSicOutdated, ruSicOutdated, frozenSic, ruSic, frozenEmployees, employees, " +
-                "frozenEmployment, employment, frozenFteEmployment, fteEmployment, frozenTurnover, turnover, " + 
-                "enterpriseReference, wowEnterpriseReference, cellNumber, currency, vatReference, payeReference, " +
-                "companyRegistrationNumber, numberLiveLocalUnits, numberLiveVat, numberLivepaye, legalStatus, " +
-                "reportingUnitMarker, region, birthDate, tradingStyle, contact, telephone, fax, selectionType, " +
-                "inclusionExclusion, createdBy, createdDate}}}\" }";
+            "allContributors (condition: { reference: \\\"4990012\\\" period: \\\"201903\\\" }){ " +
+            "nodes { reference, period, survey, formid, status, receiptdate, lockedby, lockeddate, " + 
+            "lastupdatedby, lastupdateddate, formtype, enterprisename, name, address, postcode, " + 
+            "checkletter, frozensicoutdated, rusicoutdated, frozensic, rusic, frozenemployees, employees, " +
+            "frozenemployment, employment, frozenfteemployment, fteemployment, frozenturnover, turnover, " + 
+            "enterprisereference, wowenterprisereference, cellnumber, currency, vatreference, payereference, " +
+            "companyregistrationnumber, numberlivelocalunits, numberlivevat, numberlivepaye, legalstatus, " +
+            "reportingunitmarker, region, birthdate, tradingstyle, contact, telephone, fax, selectiontype, " +
+            "inclusionexclusion, createdby, createddate}}}\" }";
         Map<String,String> twoParameters = new HashMap<>();
         twoParameters.put("reference", "4990012");
         twoParameters.put("period", "201903");
