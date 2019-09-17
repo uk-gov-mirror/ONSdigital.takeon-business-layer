@@ -103,12 +103,13 @@ public class ContributorController {
         log.info("Query sent to service: " + qlQuery);
         try {
             qlQueryResponse response = new qlQueryResponse(qlService.qlSearch(qlQuery));
+	    System.out.println(response.toString());
             responseText = response.parse();
         }
         catch(Exception e){
             responseText = "{\"error\":\"Invalid response from graphQL\"}";
         }
-
+	System.out.println(responseText.toString());
         return responseText;
     }
 }
