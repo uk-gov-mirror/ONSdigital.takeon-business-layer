@@ -113,15 +113,11 @@ public class ContributorController {
         return responseText;
     }
 
-    @Autowired
-    GraphQLService gqlService;
     @GetMapping(value = "/dbExport", produces = MediaType.APPLICATION_JSON_VALUE)
-
     public String validationDbExport(){
-
         qlQueryBuilder query = new qlQueryBuilder();
         log.info("Query sent to service from endpoint" );
-        String response = qlService.qlSearch(query.exportDB());
+        String response = qlService.qlSearch(query.buildExportDBQuery());
         log.info("Response after calling endpoint response { }", response);
         System.out.println("response: " + response);
         return response;

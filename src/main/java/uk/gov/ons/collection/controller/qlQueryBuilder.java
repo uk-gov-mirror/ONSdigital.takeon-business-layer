@@ -31,7 +31,7 @@ public class qlQueryBuilder {
         return conditions.toString();
     }
 
-    public String exportDB(){
+    public String buildExportDBQuery(){
 
         String queryPrefix = "{\"query\": \"query  queryExport ";
 
