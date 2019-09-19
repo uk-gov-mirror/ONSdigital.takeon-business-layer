@@ -1,4 +1,4 @@
-package uk.gov.ons.collection;
+package uk.gov.ons.collection.test;
 
 import uk.gov.ons.collection.controller.UrlParameterBuilder;
 import org.junit.jupiter.api.DisplayName;
