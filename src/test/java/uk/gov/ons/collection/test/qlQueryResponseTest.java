@@ -38,7 +38,7 @@ public class qlQueryResponseTest {
                 "{\"data\": " +
                     "[{\"reference\": \"4990012\",\"period\": \"201211\",\"survey\": \"066 \"}," +
                      "{\"reference\": \"4990012\",\"period\": \"201212\",\"survey\": \"066 \"}]" +
-                "]}";
+                "}";
 
         qlQueryResponse response = new qlQueryResponse(inputString);
         assertEquals(expectedOutput, response.parse());
