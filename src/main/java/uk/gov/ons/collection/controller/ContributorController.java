@@ -1,6 +1,5 @@
 package uk.gov.ons.collection.controller;
 
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import uk.gov.ons.collection.entity.ContributorEntity;
 import uk.gov.ons.collection.exception.DataNotFondException;
 import uk.gov.ons.collection.service.ContributorService;
+import uk.gov.ons.collection.service.GraphQLService;
 
 import java.util.*;
 
@@ -63,5 +63,53 @@ public class ContributorController {
         return UrlParameterBuilder.buildParameterString(filteredParameters);
     }
 
+    @ApiOperation(value = "Get contributor details", response = String.class)
+    @GetMapping(value = "/searchBy/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of Contributor details", response = ContributorEntity.class)})
+    @ResponseBody
+    public Iterable<ContributorEntity> searchBy(@MatrixVariable Map<String, String> matrixVars) throws Exception {
+        Iterable<ContributorEntity> contributorEntities = null;
+        String filteredSearchParameters = filterAndPrepareSearchParameters(matrixVars, this.defaultValidSearchColumns);
+        log.info("Filtered search parameters { }", filteredSearchParameters);
+        contributorEntities = service.generalSearch(filteredSearchParameters);
+        log.info("Contributor Entities after calling Persistance Layer { }", filteredSearchParameters);
 
+        if (contributorEntities == null) {
+            throw new Exception();
+        } else {
+            if (contributorEntities instanceof Collection) {
+                int size =  ((Collection<?>) contributorEntities).size();
+                log.info("Contributor Entities Elements size {}", size);
+                if(size == 0) {
+                    throw new DataNotFondException(NO_RECORDS_MESSAGE);
+                }
+            }
+        }
+
+        return contributorEntities;
+
+    }
+
+    @Autowired
+    GraphQLService qlService;
+
+    @GetMapping(value = "/qlSearch/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of Contributor details", response = ContributorEntity.class)})
+    public String searchContributor(@MatrixVariable Map <String, String> searchParameters){
+        String qlQuery = new qlQueryBuilder().buildContributorSearchQuery(searchParameters);
+        String responseText;
+        log.info("Query sent to service: " + qlQuery);
+        try {
+            qlQueryResponse response = new qlQueryResponse(qlService.qlSearch(qlQuery));
+	    System.out.println(response.toString());
+            responseText = response.parse();
+        }
+        catch(Exception e){
+            responseText = "{\"error\":\"Invalid response from graphQL\"}";
+        }
+	System.out.println(responseText.toString());
+        return responseText;
+    }
 }

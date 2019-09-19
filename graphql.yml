@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: graphql
+  labels:
+    app: graphql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: graphql
+  template:
+    metadata:
+      labels:
+        app: graphql
+    spec:
+      serviceAccountName: take-on-service
+      containers:
+      - name: graphql
+        image: graphile/postgraphile
+        args: {{postgres_connection_string}}
+        ports:
+        - containerPort: 5000
+---
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: graphql
+  labels:
+    app: graphql
+spec:
+  ports:
+  - port: 5001
+    targetPort: 5000
+    protocol: TCP
+  selector:
+    app: graphql
+  type: ClusterIP
