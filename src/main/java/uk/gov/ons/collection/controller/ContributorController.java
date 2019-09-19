@@ -98,7 +98,7 @@ public class ContributorController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful retrieval of Contributor details", response = ContributorEntity.class)})
     public String searchContributor(@MatrixVariable Map <String, String> searchParameters){
-        String qlQuery = new qlQueryBuilder().buildContributorSearchQuery(searchParameters);
+        String qlQuery = new qlQueryBuilder(searchParameters).buildContributorSearchQuery();
         String responseText;
         log.info("Query sent to service: " + qlQuery);
         try {
@@ -115,11 +115,11 @@ public class ContributorController {
 
     @GetMapping(value = "/dbExport", produces = MediaType.APPLICATION_JSON_VALUE)
     public String validationDbExport(){
-        qlQueryBuilder query = new qlQueryBuilder();
-        log.info("Query sent to GraphQL" );
+        qlQueryBuilder query = new qlQueryBuilder(null);
+        // log.info("Query sent to GraphQL" );
         String response = qlService.qlSearch(query.buildExportDBQuery());
-        log.info("Result  returned from GraphQL successfully" );
-//        log.info("Response after calling endpoint response { }", response);
+        // log.info("Result returned from GraphQL successfully" );
+        // log.info("Response after calling endpoint response { }", response);
         return response;
     }
 }
