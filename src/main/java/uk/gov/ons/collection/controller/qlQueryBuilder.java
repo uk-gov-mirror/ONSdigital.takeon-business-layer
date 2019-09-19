@@ -1,40 +1,48 @@
 package uk.gov.ons.collection.controller;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.StringJoiner;
 
-public class qlQueryBuilder {
+public class qlQueryBuilder { 
 
-    public String buildContributorSearchQuery(Map<String, String> searchParameters) {
-        StringBuilder builtQuery = new StringBuilder();
-        builtQuery.append("{\"query\": \"query contributorSearchBy { allContributors ");
-        builtQuery.append(buildCondition(searchParameters));
-        builtQuery.append("{ nodes { reference, period, survey, formid, status, receiptdate, lockedby, lockeddate, " + 
-            "lastupdatedby, lastupdateddate, formtype, enterprisename, referencename, referenceaddress, referencepostcode, " + 
-            "checkletter, frozensicoutdated, rusicoutdated, frozensic, rusic, frozenemployees, employees, " +
-            "frozenemployment, employment, frozenfteemployment, fteemployment, frozenturnover, turnover, " + 
-            "enterprisereference, wowenterprisereference, cellnumber, currency, vatreference, payereference, " +
-            "companyregistrationnumber, numberlivelocalunits, numberlivevat, numberlivepaye, legalstatus, " +
-            "reportingunitmarker, region, birthdate, tradingstyle, contact, telephone, fax, selectiontype, " +
-            "inclusionexclusion, createdby, createddate}}}\" }");
-        return builtQuery.toString();
+    private HashMap<String, String> variables;
+
+    // Instantiate the variables and coalesce a null into an empty variable object
+    public qlQueryBuilder(Map<String, String> variables) {
+        this.variables = (variables == null) ? new HashMap<>() : new HashMap<>(variables);
+    }
+
+    public String buildContributorSearchQuery() {        
+        StringBuilder query = new StringBuilder();
+        query.append("{\"query\": \"query contributorSearch($startCursor: Cursor, $first: Int, $endCursor: Cursor, $last: Int, $period: String, $reference: String, $survey: String, $formid: Int, $status: String) " +
+                "{ allContributors (after: $startCursor, first: $first, before: $endCursor, last: $last, condition: {reference: $reference, period: $period, survey: $survey, status: $status, formid: $formid}) " +
+                "{ nodes { reference, period, survey, formid, status, receiptdate, lockedby, lockeddate, " + 
+                            "lastupdatedby, lastupdateddate, formtype, enterprisename, referencename, referenceaddress, referencepostcode, " + 
+                            "checkletter, frozensicoutdated, rusicoutdated, frozensic, rusic, frozenemployees, employees, " +
+                            "frozenemployment, employment, frozenfteemployment, fteemployment, frozenturnover, turnover, " + 
+                            "enterprisereference, wowenterprisereference, cellnumber, currency, vatreference, payereference, " +
+                            "companyregistrationnumber, numberlivelocalunits, numberlivevat, numberlivepaye, legalstatus, " +
+                            "reportingunitmarker, region, birthdate, tradingstyle, contact, telephone, fax, selectiontype, " +
+                            "inclusionexclusion, createdby, createddate} " + 
+                            "pageInfo { hasNextPage hasPreviousPage startCursor endCursor } totalCount " +
+                            "}}\"," +
+                            "variables: {");
+        query.append(buildVariables());
+        query.append("}}");
+        return query.toString();
     }
 
     // Build up a graphQL syntax condition. If invalid (or empty) conditions are provided returns a blank string
-    public String buildCondition(Map<String, String> parameters) {    
-        if (parameters == null || parameters.isEmpty()) {
-            return "";
-        }        
-        StringBuilder conditions = new StringBuilder();
-        conditions.append("(condition: { ");
-        parameters.forEach((key,value) -> conditions.append(key + ": \\\"" + value + "\\\" "));
-        conditions.append("})");
-        return conditions.toString();
+    public String buildVariables() {    
+        StringJoiner joiner = new StringJoiner(",");
+        variables.forEach((key,value) -> joiner.add("\"" + key + "\": \"" + value + "\""));
+        return joiner.toString();
     }
 
     public String buildExportDBQuery(){
 
         String queryPrefix = "{\"query\": \"query  queryExport ";
-
         String dbExportQuery = "{" +
                 " allSurveys {" +
                 "   nodes {" +
@@ -221,6 +229,5 @@ public class qlQueryBuilder {
         StringBuilder builtQuery = new StringBuilder();
         builtQuery.append(queryPrefix).append(dbExportQuery).append(querySuffix);
         return builtQuery.toString();
-//        return dbTestExport;
     }
 }
