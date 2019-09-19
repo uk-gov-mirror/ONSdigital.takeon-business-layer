@@ -112,14 +112,4 @@ public class ContributorController {
 	System.out.println(responseText.toString());
         return responseText;
     }
-
-    @GetMapping(value = "/dbExport", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String validationDbExport(){
-        qlQueryBuilder query = new qlQueryBuilder();
-        log.info("Query sent to GraphQL" );
-        String response = qlService.qlSearch(query.buildExportDBQuery());
-        log.info("Result  returned from GraphQL successfully" );
-//        log.info("Response after calling endpoint response { }", response);
-        return response;
-    }
 }
