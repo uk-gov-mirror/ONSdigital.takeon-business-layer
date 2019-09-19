@@ -1,12 +1,10 @@
 package uk.gov.ons.collection.test;
 
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import uk.gov.ons.collection.controller.qlQueryResponse;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("Ql Response tests")
 public class qlQueryResponseTest {
 
     @Test
@@ -18,8 +16,10 @@ public class qlQueryResponseTest {
 
     @Test
     void parse_validButNoContributorData_givesValidEmptyContributor() {
-        String inputString = "{\"data\": {\"allContributors\": {\"nodes\": []}}}";
-        String outputString = "{\"data\": []}";
+        String inputString = "{\"data\": {\"allContributors\": {\"nodes\": [], \"pageInfo\": {\"hasNextPage\": false," +
+            "\"hasPreviousPage\": false,\"startCursor\": null,\"endCursor\": null },\"totalCount\": 0}}}";
+        String outputString = "{\"data\": [],\"pageInfo\": {\"hasNextPage\": false," +
+            "\"hasPreviousPage\": false,\"endCursor\": null,\"totalCount\": 0,\"startCursor\": null}}";
         qlQueryResponse response = new qlQueryResponse(inputString);
         assertEquals(outputString, response.parse());
     }
@@ -27,17 +27,22 @@ public class qlQueryResponseTest {
     @Test
     void parse_attributesPresent_returnValidParsedJsonString() {
         String inputString = 
-                "{\"data\": {" +
-                    "\"allContributors\": {" +
-                        "\"nodes\": " +
-                            "[{\"reference\": \"4990012\",\"period\": \"201211\",\"survey\": \"066 \"}," +
-                             "{\"reference\": \"4990012\",\"period\": \"201212\",\"survey\": \"066 \"}]" +
-                "}}}";
+            "{\"data\": {" +
+                "\"allContributors\": {" +
+                    "\"nodes\": " +
+                        "[{\"reference\": \"4990012\",\"period\": \"201211\",\"survey\": \"066 \"}," +
+                            "{\"reference\": \"4990012\",\"period\": \"201212\",\"survey\": \"066 \"}]," +
+                    "\"pageInfo\": " +
+                        "{\"hasNextPage\": true,\"hasPreviousPage\": false,\"startCursor\": \"base64string\",\"endCursor\": \"base64string\"}," +
+                    "\"totalCount\": 30 " +
+            "}}}";
 
         String expectedOutput = 
                 "{\"data\": " +
-                    "[{\"reference\": \"4990012\",\"period\": \"201211\",\"survey\": \"066 \"}," +
-                     "{\"reference\": \"4990012\",\"period\": \"201212\",\"survey\": \"066 \"}]" +
+                       "[{\"reference\": \"4990012\",\"period\": \"201211\",\"survey\": \"066 \"}," +
+                        "{\"reference\": \"4990012\",\"period\": \"201212\",\"survey\": \"066 \"}]," +
+                  "\"pageInfo\": " +
+                        "{\"hasNextPage\": true,\"hasPreviousPage\": false,\"endCursor\": \"base64string\",\"totalCount\": 30,\"startCursor\": \"base64string\"}" +
                 "}";
 
         qlQueryResponse response = new qlQueryResponse(inputString);

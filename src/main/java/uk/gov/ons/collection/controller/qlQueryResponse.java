@@ -19,18 +19,20 @@ public class qlQueryResponse {
         }
     }
 
-    // Minor conversion to the QL response JSON structure
-    public String parse(){
-        try {
-            jsonQlResponse.put("data", jsonQlResponse.getJSONObject("data")
-                    .getJSONObject("allContributors")
-                    .getJSONArray("nodes"));
-            jsonQlResponse.remove("nodes");
+    // Conversion from the QL response JSON structure to remove some nested attributes
+    public String parse(){                      
+        JSONObject parsedJsonQlResponse = new JSONObject();
+        try {       
+            JSONObject pageInfo = new JSONObject();     
+            pageInfo.put("pageInfo", jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONObject("pageInfo"));
+            pageInfo.getJSONObject("pageInfo").put("totalCount", jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getInt("totalCount"));
+            parsedJsonQlResponse.put("data", jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes"));
+            parsedJsonQlResponse.put("pageInfo", pageInfo.getJSONObject("pageInfo"));
         }
         catch(JSONException e){
             return "{\"error\":\"Invalid response from graphQL\"}";
         }
-        return jsonQlResponse.toString().replaceAll(":", ": ");
+        return parsedJsonQlResponse.toString().replaceAll(":", ": ");
     }
 
 }
