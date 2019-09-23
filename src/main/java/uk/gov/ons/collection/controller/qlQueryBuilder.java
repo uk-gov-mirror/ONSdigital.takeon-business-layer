@@ -27,7 +27,7 @@ public class qlQueryBuilder {
                             "inclusionexclusion, createdby, createddate} " + 
                             "pageInfo { hasNextPage hasPreviousPage startCursor endCursor } totalCount " +
                             "}}\"," +
-                            "variables: {");
+                            "\"variables\": {");
         query.append(buildVariables());
         query.append("}}");
         return query.toString();
