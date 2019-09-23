@@ -40,7 +40,15 @@ public class qlQueryBuilder {
     // Build up a graphQL syntax condition. If invalid (or empty) conditions are provided returns a blank string
     public String buildVariables() {    
         StringJoiner joiner = new StringJoiner(",");
-        variables.forEach((key,value) -> {joiner.add("\"" + key + "\": \"" + value + "\"");});
+        variables.forEach((key,value) -> {
+            
+            if (intVariables.contains(key)) {
+                joiner.add("\"" + key + "\": " + value );
+            }
+            else {
+                joiner.add("\"" + key + "\": \"" + value + "\"");
+            }
+        });
         return joiner.toString();
     }
 
