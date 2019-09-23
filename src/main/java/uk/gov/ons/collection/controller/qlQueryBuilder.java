@@ -1,13 +1,17 @@
 package uk.gov.ons.collection.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
 public class qlQueryBuilder { 
 
     private HashMap<String, String> variables;
-
+    private List<String> intVariables = new ArrayList<>( Arrays.asList("first", "last", "formid"));
+    
     // Instantiate the variables and coalesce a null into an empty variable object
     public qlQueryBuilder(Map<String, String> variables) {
         this.variables = (variables == null) ? new HashMap<>() : new HashMap<>(variables);
@@ -36,7 +40,7 @@ public class qlQueryBuilder {
     // Build up a graphQL syntax condition. If invalid (or empty) conditions are provided returns a blank string
     public String buildVariables() {    
         StringJoiner joiner = new StringJoiner(",");
-        variables.forEach((key,value) -> joiner.add("\"" + key + "\": \"" + value + "\""));
+        variables.forEach((key,value) -> {joiner.add("\"" + key + "\": \"" + value + "\"");});
         return joiner.toString();
     }
 
