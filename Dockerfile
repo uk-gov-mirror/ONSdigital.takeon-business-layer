@@ -14,10 +14,12 @@ FROM maven:3.6.2-jdk-11-slim as maven
 
 # copy the project files
 COPY ./pom.xml ./pom.xml
-COPY ./src ./src
 
 # build all dependencies
 RUN mvn dependency:go-offline -B
+
+# Build our application
+COPY ./src ./src
 RUN mvn -Dmaven.test.skip=true clean package
 
 
