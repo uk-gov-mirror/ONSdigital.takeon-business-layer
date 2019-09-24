@@ -242,4 +242,5 @@ public class qlQueryBuilder {
         builtQuery.append(queryPrefix).append(dbExportQuery).append(querySuffix);
         return builtQuery.toString();
     }
+
 }

@@ -118,4 +118,5 @@ public class ContributorController {
         String response = qlService.qlSearch(query.buildExportDBQuery());
         return response;
     }
+
 }
