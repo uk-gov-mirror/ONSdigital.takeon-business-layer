@@ -86,7 +86,7 @@ class ValidationRunnerTest {
         List<String> ruleList = new ArrayList<>(Arrays.asList("VP","POPM"));
         ApiCallerTest dataLoader = new ApiCallerTest().builder().returnedValidationOutputs(mockedOutput).build();
         ValidationRunner runner = new ValidationRunner("", "", "", dataLoader);
-        assertEquals(0, runner.callEachValidationApi(ruleList));
+        assertEquals(0, runner.callEachValidationApi(ruleList).size());
     }
 
 }

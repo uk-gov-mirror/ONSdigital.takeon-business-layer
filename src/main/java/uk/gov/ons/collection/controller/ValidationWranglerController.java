@@ -1,5 +1,6 @@
 package uk.gov.ons.collection.controller;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.ons.collection.entity.ErrorMessage;
@@ -11,6 +12,7 @@ import uk.gov.ons.collection.utilities.Helpers;
 import java.util.List;
 import java.util.Map;
 
+@Log4j2
 @RestController
 @RequestMapping(value = "/validation-bl")
 public class ValidationWranglerController {
@@ -68,8 +70,11 @@ public class ValidationWranglerController {
     public Iterable<ReturnedValidationOutputs> runvalidationRule(@MatrixVariable Map<String, String> matrixVars){
 
         String reference = matrixVars.get("reference");
+        log.info("Reference { }", reference);
         String period = matrixVars.get("period");
+        log.info("Period { }", period);
         String survey = matrixVars.get("survey");
+        log.info("Survey { }", survey);
 
 
         ValidationRuleWrangler validationRuleWrangler = new ValidationRuleWrangler(reference, period, survey, loaderSQL);
