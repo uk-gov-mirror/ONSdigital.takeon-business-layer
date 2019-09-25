@@ -98,18 +98,25 @@ public class ContributorController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful retrieval of Contributor details", response = ContributorEntity.class)})
     public String searchContributor(@MatrixVariable Map <String, String> searchParameters){
-        String qlQuery = new qlQueryBuilder().buildContributorSearchQuery(searchParameters);
+        String qlQuery = new qlQueryBuilder(searchParameters).buildContributorSearchQuery();
         String responseText;
         log.info("Query sent to service: " + qlQuery);
         try {
             qlQueryResponse response = new qlQueryResponse(qlService.qlSearch(qlQuery));
-	    System.out.println(response.toString());
             responseText = response.parse();
         }
         catch(Exception e){
             responseText = "{\"error\":\"Invalid response from graphQL\"}";
         }
-	System.out.println(responseText.toString());
+        log.info("Query sent to service: " + qlQuery);     
         return responseText;
     }
+
+    @GetMapping(value = "/dbExport", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String validationDbExport(){
+        qlQueryBuilder query = new qlQueryBuilder(null);
+        String response = qlService.qlSearch(query.buildExportDBQuery());
+        return response;
+    }
+
 }
