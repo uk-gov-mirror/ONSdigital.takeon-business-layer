@@ -36,7 +36,7 @@ public class ContributorControllerTest {
     private ContributorService service;
 
     @MockBean
-    //Create a mock ContributorService object
+    //Create a mock GraphQLService object
     private GraphQLService qlservice;
 
     @Test
