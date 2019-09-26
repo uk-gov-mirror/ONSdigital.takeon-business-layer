@@ -246,16 +246,29 @@ public class qlQueryBuilder {
     public String buildOffsetPeriodQuery(){
         String queryPrefix = "{\"query\": \"query  queryExport ";
         String dataPrepConfig = "{" +
-                " contributor {" +
+                "contributor {" +
                 "   nodes{" +
-                "     reference" +
-                "     period" +
-                "     survey" +
-                "   } " +
-                "  }" +
-                "             }";
-
-
-
+                "       reference" +
+                "       period" +
+                "       survey" +
+                "       surveyBySurvey {" +
+                "           periodicity}" +
+                "       formByFormid {" +
+                "           validationformsByFormid {" +
+                "               nodes {" +
+                "                   validationruleByRule {" +
+                "                       rule" +
+                "                       validationperiodsByRule {" +
+                "                           nodes {" +
+                "                               periodoffset" +
+                "                           }" +
+                "                       }" +
+                "                   }" +
+                "               }" +
+                "           }" +
+                "       }" +   
+                "   }" +
+                " }" +
+                "}";
     }
 }
