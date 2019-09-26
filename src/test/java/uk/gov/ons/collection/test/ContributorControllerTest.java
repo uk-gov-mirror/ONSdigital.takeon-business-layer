@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.ons.collection.controller.ContributorController;
 import uk.gov.ons.collection.entity.ContributorEntity;
 import uk.gov.ons.collection.service.ContributorService;
+import uk.gov.ons.collection.service.GraphQLService;
 
 
 import java.util.ArrayList;
@@ -33,6 +34,10 @@ public class ContributorControllerTest {
     @MockBean
     //Create a mock ContributorService object
     private ContributorService service;
+
+    @MockBean
+    //Create a mock GraphQLService object
+    private GraphQLService qlservice;
 
     @Test
     //Tell JUnit that the following method is a test
