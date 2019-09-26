@@ -122,4 +122,24 @@ public class ContributorController {
         // log.info("Response after calling endpoint response { }", response);
         return response;
     }
+
+    @ApiOperation(value = "Get largest offset period", response = String.class)
+    @GetMapping(value="/contributor/getValidationPrepConfig/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Successful retrieval of all details", response = ContributorEntity.class)})
+    public String dataPrepConfig(@MatrixVariable Map <String, String> searchParameters){
+        qlQueryBuilder query = new qlQueryBuilder(null);
+        //log.info("Query sent to GraphQL for largest period" );
+        //String response = searchParameters.get("Reference" : reference, "Period" : period, "Survey": survey)
+        String response = qlService.qlSearch(query.buildOffsetPeriodQuery());
+        log.info("Result returned from GraphQL successfully" );
+        
+        // Create a class + methods. periodOffsets = new PeriodClass(response); List of Offsets = periodOffsets.GetUniqueOffsets();  {0,1} or {0}, or {0,1,2} etc
+        // Create a class + methods to calculate periods
+        // Construct another QL query (use QueryBuilder)
+        // Parse response to expected structure
+        // return parsed response
+
+        return response;
+    }
 }

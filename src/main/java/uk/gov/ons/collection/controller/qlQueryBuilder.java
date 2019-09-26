@@ -242,4 +242,20 @@ public class qlQueryBuilder {
         builtQuery.append(queryPrefix).append(dbExportQuery).append(querySuffix);
         return builtQuery.toString();
     }
+
+    public String buildOffsetPeriodQuery(){
+        String queryPrefix = "{\"query\": \"query  queryExport ";
+        String dataPrepConfig = "{" +
+                " contributor {" +
+                "   nodes{" +
+                "     reference" +
+                "     period" +
+                "     survey" +
+                "   } " +
+                "  }" +
+                "             }";
+
+
+
+    }
 }
