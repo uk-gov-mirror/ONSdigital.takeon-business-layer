@@ -3,7 +3,11 @@ package uk.gov.ons.collection.test;
 import org.junit.jupiter.api.Test;
 import uk.gov.ons.collection.controller.qlQueryResponse;
 
+import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class qlQueryResponseTest {
 
@@ -64,4 +68,24 @@ public class qlQueryResponseTest {
         qlQueryResponse response = new qlQueryResponse(inputString);
         assertEquals(outputString, response.parse());
     }
+
+
+    @Test
+    void parseForPeriodOffset_onePeriodOffSet_returnsOneItem(){
+        String jsonInput = "{ " +
+            "\"data\": { " +
+                "\"allContributors\": { " +
+                    "\"nodes\": [{ " +
+                        "\"formByFormid\": { " +
+                            "\"validationformsByFormid\": { " +
+                                "\"nodes\": [{ " +
+                                    "\"validationruleByRule\": { " +
+                                        "\"validationperiodsByRule\": { " +
+                                            "\"nodes\": [{ \"periodoffset\": 3 }]}}}]}}}]}}}";
+        ArrayList<Integer> expectedOutput = new ArrayList<>(Arrays.asList(3));
+        qlQueryResponse response = new qlQueryResponse(jsonInput);
+        assertEquals(expectedOutput, response.parseForPeriodOffset());
+        
+    }
+
 }

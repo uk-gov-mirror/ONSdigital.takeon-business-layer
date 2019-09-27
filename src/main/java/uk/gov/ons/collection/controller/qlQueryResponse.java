@@ -1,5 +1,7 @@
 package uk.gov.ons.collection.controller;
 
+import java.util.ArrayList;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -36,19 +38,16 @@ public class qlQueryResponse {
     }
 
 
-    public String parseForPeriodOffset(){                      
-        JSONObject parsedJsonQlResponse = new JSONObject();
+    public ArrayList<Integer> parseForPeriodOffset(){                      
+        ArrayList<Integer> foundOffsets = new ArrayList<>();
         try {       
-            JSONObject pageInfo = new JSONObject();     
-            pageInfo.put("pageInfo", jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONObject("pageInfo"));
-            pageInfo.getJSONObject("pageInfo").put("totalCount", jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getInt("totalCount"));
-            parsedJsonQlResponse.put("data", jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes"));
-            parsedJsonQlResponse.put("pageInfo", pageInfo.getJSONObject("pageInfo"));
+            // Do stuff with jsonQlResponse
         }
         catch(JSONException e){
-            return "{\"error\":\"Invalid response from graphQL\"}";
+            // uh oh
+            return foundOffsets;
         }
-        return parsedJsonQlResponse.toString().replaceAll(":", ": ");
+        return foundOffsets;
     }
 
 }
