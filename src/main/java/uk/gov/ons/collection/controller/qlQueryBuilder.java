@@ -251,6 +251,7 @@ public class qlQueryBuilder {
                 "       reference" +
                 "       period" +
                 "       survey" +
+                "       formid" +
                 "       surveyBySurvey {" +
                 "           periodicity}" +
                 "       formByFormid {" +

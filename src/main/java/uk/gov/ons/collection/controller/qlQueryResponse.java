@@ -2,6 +2,7 @@ package uk.gov.ons.collection.controller;
 
 import java.util.ArrayList;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -39,15 +40,15 @@ public class qlQueryResponse {
 
 
     public ArrayList<Integer> parseForPeriodOffset(){                      
-        ArrayList<Integer> foundOffsets = new ArrayList<>();
-        try {       
-            // Do stuff with jsonQlResponse
+        ArrayList<Integer> uniqueOffsets = new ArrayList<>();
+        JSONArray offsets = jsonQlResponse.getJSONObject("data").getJSONObject("allContributor").getJSONObject("nodes").getJSONArray("");
+        for (int i=0; i < offsets.length(); i++) {    
+            Integer offset = Integer.valueOf(offsets.getJSONObject(i).getInt("periodoffset"));            
+            if (!uniqueOffsets.contains(offset)) {
+                uniqueOffsets.add(offset);
+            }
         }
-        catch(JSONException e){
-            // uh oh
-            return foundOffsets;
-        }
-        return foundOffsets;
+        return uniqueOffsets;
     }
 
 }
