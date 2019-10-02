@@ -123,12 +123,14 @@ public class ContributorController {
         return response;
     }
 
-    @ApiOperation(value = "Get largest offset period", response = String.class)
+    @ApiOperation(value = "Get all validation config & response data", response = String.class)
     @GetMapping(value="/contributor/getValidationPrepConfig/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful retrieval of all details", response = ContributorEntity.class)})
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful retrieval of all details")})
     public String dataPrepConfig(@MatrixVariable Map <String, String> searchParameters){
+        
+        
         qlQueryBuilder query = new qlQueryBuilder(null);
+        
         //log.info("Query sent to GraphQL for largest period" );
         //String response = searchParameters.get("Reference" : reference, "Period" : period, "Survey": survey)
         String response = qlService.qlSearch(query.buildOffsetPeriodQuery());
