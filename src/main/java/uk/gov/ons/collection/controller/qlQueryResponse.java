@@ -41,7 +41,7 @@ public class qlQueryResponse {
 
     public ArrayList<Integer> parseForPeriodOffset(){                      
         ArrayList<Integer> uniqueOffsets = new ArrayList<>();
-        JSONArray offsets = jsonQlResponse.getJSONObject("data").getJSONObject("allContributor").getJSONObject("nodes").getJSONArray("");
+        JSONArray offsets = jsonQlResponse.getJSONObject("data").getJSONObject("allValidationperiods").getJSONArray("nodes");
         for (int i=0; i < offsets.length(); i++) {    
             Integer offset = Integer.valueOf(offsets.getJSONObject(i).getInt("periodoffset"));            
             if (!uniqueOffsets.contains(offset)) {

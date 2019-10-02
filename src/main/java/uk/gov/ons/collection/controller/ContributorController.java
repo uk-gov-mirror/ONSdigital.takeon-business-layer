@@ -12,6 +12,7 @@ import uk.gov.ons.collection.entity.ContributorEntity;
 import uk.gov.ons.collection.exception.DataNotFondException;
 import uk.gov.ons.collection.service.ContributorService;
 import uk.gov.ons.collection.service.GraphQLService;
+import uk.gov.ons.collection.utilities.RelativePeriod;
 
 import java.util.*;
 
@@ -124,24 +125,55 @@ public class ContributorController {
     }
 
     @ApiOperation(value = "Get all validation config & response data", response = String.class)
-    @GetMapping(value="/contributor/getValidationPrepConfig/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value="/validationPrepConfig/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful retrieval of all details")})
     public String dataPrepConfig(@MatrixVariable Map <String, String> searchParameters){
-        
-        
+              
         qlQueryBuilder query = new qlQueryBuilder(null);
+        String responseJson;
+        ArrayList<Integer> uniqueOffsets;
         
-        //log.info("Query sent to GraphQL for largest period" );
-        //String response = searchParameters.get("Reference" : reference, "Period" : period, "Survey": survey)
-        String response = qlService.qlSearch(query.buildOffsetPeriodQuery());
-        log.info("Result returned from GraphQL successfully" );
-        
+        // Step 0 - Unpack parameters
+        String period = "201212";
+        String reference = "499Test";
+        String survey = "999A";
+
+        // Step 1 - Get a unique list of all period offsets
+        try {
+            qlQueryResponse response = new qlQueryResponse(qlService.qlSearch(query.buildOffsetPeriodQuery()));
+            uniqueOffsets = response.parseForPeriodOffset();
+        }
+        catch(Exception e){
+            return "{\"error\":\"Invalid response from graphQL\"}";
+        }
+
+        // Step 1b - Get the formID and periodicity of the given reference/period/survey
+        String periodicity = "Quarterly";
+
+        // Step 2 - Convert the period offsets to a list of IDBR periods
+        List<String> outputPeriods = new ArrayList<>();
+        try { RelativePeriod rp = new RelativePeriod(periodicity);
+            for ( int i = 0; i < uniqueOffsets.size(); i++) {
+                String idbrPeriod = rp.calculateRelativePeriod(uniqueOffsets.get(i).intValue(), period);
+                outputPeriods.add(idbrPeriod);
+            }
+        }
+        catch (Exception e) {
+            return "{\"error\":\"Error processing periods\"}";
+        }
+
+        // Step 3 - Load Validation Config
+
+        // Step 4 - Load each contrib/response/form for each idbrPeriod above
+
+        // Step 5 - munge
+
         // Create a class + methods. periodOffsets = new PeriodClass(response); List of Offsets = periodOffsets.GetUniqueOffsets();  {0,1} or {0}, or {0,1,2} etc
         // Create a class + methods to calculate periods
         // Construct another QL query (use QueryBuilder)
         // Parse response to expected structure
         // return parsed response
 
-        return response;
+        return "{\"error\":\"Error worked correctly\"}";
     }
 }

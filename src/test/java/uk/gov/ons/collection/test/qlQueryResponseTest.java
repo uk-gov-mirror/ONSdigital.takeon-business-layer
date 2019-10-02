@@ -2,12 +2,14 @@ package uk.gov.ons.collection.test;
 
 import org.junit.jupiter.api.Test;
 import uk.gov.ons.collection.controller.qlQueryResponse;
+import uk.gov.ons.collection.utilities.RelativePeriod;
 
 import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class qlQueryResponseTest {
 
@@ -17,7 +19,7 @@ public class qlQueryResponseTest {
         qlQueryResponse response = new qlQueryResponse(null);
         assertEquals(expectedOutput, response.parse());
     }
-
+    
     @Test
     void parse_validButNoContributorData_givesValidEmptyContributor() {
         String inputString = "{\"data\": {\"allContributors\": {\"nodes\": [], \"pageInfo\": {\"hasNextPage\": false," +
@@ -74,18 +76,32 @@ public class qlQueryResponseTest {
     void parseForPeriodOffset_onePeriodOffSet_returnsOneItem(){
         String jsonInput = "{ " +
             "\"data\": { " +
-                "\"allContributors\": { " +
-                    "\"nodes\": [{ " +
-                        "\"formByFormid\": { " +
-                            "\"validationformsByFormid\": { " +
-                                "\"nodes\": [{ " +
-                                    "\"validationruleByRule\": { " +
-                                        "\"validationperiodsByRule\": { " +
-                                            "\"nodes\": [{ \"periodoffset\": 3 }]}}}]}}}]}}}";
-        ArrayList<Integer> expectedOutput = new ArrayList<>(Arrays.asList(3));
+                "\"allValidationperiods\": { " +
+                    "\"nodes\": [{ \"periodoffset\": 3 }, { \"periodoffset\": 2 }]}}}";
+        ArrayList<Integer> expectedOutput = new ArrayList<>(Arrays.asList(3, 2));
         qlQueryResponse response = new qlQueryResponse(jsonInput);
         assertEquals(expectedOutput, response.parseForPeriodOffset());
         
     }
+
+    
+    @Test
+    void checkRelativePeriods() {
+        String startingPeriod = "201209";
+        List<Integer> inputList = new ArrayList<>(Arrays.asList(0,1,2));
+        List<String> expectedPeriods = new ArrayList<>(Arrays.asList("201209","201206","201206"));
+        List<String> outputPeriods = new ArrayList<>();
+        try { RelativePeriod rp = new RelativePeriod("Quarterly");
+            for ( int i = 0; i < inputList.size(); i++) {
+                String idbrPeriod = rp.calculateRelativePeriod(inputList.get(i).intValue(), startingPeriod);
+                outputPeriods.add(idbrPeriod);
+            }
+        }
+        catch (Exception e) {
+            System.out.println(e);
+        }
+        assertEquals(expectedPeriods, outputPeriods);
+    }
+
 
 }
