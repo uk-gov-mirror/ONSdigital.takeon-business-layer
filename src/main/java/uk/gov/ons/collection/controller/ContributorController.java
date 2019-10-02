@@ -114,41 +114,55 @@ public class ContributorController {
         return responseText;
     }
 
+    @ApiOperation(value = "Initial export of all database contents for results consumption", response = String.class)
     @GetMapping(value = "/dbExport", produces = MediaType.APPLICATION_JSON_VALUE)
     public String validationDbExport(){
         qlQueryBuilder query = new qlQueryBuilder(null);
-        // log.info("Query sent to GraphQL" );
         String response = qlService.qlSearch(query.buildExportDBQuery());
-        // log.info("Result returned from GraphQL successfully" );
-        // log.info("Response after calling endpoint response { }", response);
         return response;
     }
 
     @ApiOperation(value = "Get all validation config & response data", response = String.class)
     @GetMapping(value="/validationPrepConfig/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful retrieval of all details")})
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Successful retrieval of all details", response = String.class)})
     public String dataPrepConfig(@MatrixVariable Map <String, String> searchParameters){
-              
-        qlQueryBuilder query = new qlQueryBuilder(null);
-        String responseJson;
-        ArrayList<Integer> uniqueOffsets;
-        
-        // Step 0 - Unpack parameters
-        String period = "201212";
-        String reference = "499Test";
-        String survey = "999A";
 
+        // TODO: This method is rancid. Refactor when it's all working.
+
+        // TODO: Validate all 3 parameters have been passed through
+        String period = searchParameters.get("period");
+ 
         // Step 1 - Get a unique list of all period offsets
+        ArrayList<Integer> uniqueOffsets;
         try {
-            qlQueryResponse response = new qlQueryResponse(qlService.qlSearch(query.buildOffsetPeriodQuery()));
+            log.info("\n\n\n\nLoading period offsets");
+            String query = new qlQueryBuilder(null).buildOffsetPeriodQuery();
+            log.info("Query: " + query);
+            qlQueryResponse response = new qlQueryResponse(qlService.qlSearch(query));
+            log.info("\n\nResponse: " + response );
             uniqueOffsets = response.parseForPeriodOffset();
         }
         catch(Exception e){
-            return "{\"error\":\"Invalid response from graphQL\"}";
+            return "{\"error\":\"Invalid response getting period offsets from graphQL\"}";
         }
 
+        int formID;
+        String periodicity;
         // Step 1b - Get the formID and periodicity of the given reference/period/survey
-        String periodicity = "Quarterly";
+        try {
+            log.info("\n\n\n\nLoading formID/periodicity");
+            String query = new qlQueryBuilder(searchParameters).buildContributorQuery();
+            log.info("Query: " + query);
+            qlQueryResponse response = new qlQueryResponse(qlService.qlSearch(query));
+            log.info("\n\nResponse: " + response );
+
+            formID = response.getFormID();
+            periodicity = response.getPeriodicity();
+        }
+        catch(Exception e){
+            return "{\"error\":\"Invalid response form and periodicity from graphQL\"}";
+        }
 
         // Step 2 - Convert the period offsets to a list of IDBR periods
         List<String> outputPeriods = new ArrayList<>();
@@ -162,15 +176,15 @@ public class ContributorController {
             return "{\"error\":\"Error processing periods\"}";
         }
 
+        log.info("FormID/Periodicity: " + formID + "/" + periodicity);
+        log.info("IDBR Periods: " + outputPeriods);
+
         // Step 3 - Load Validation Config
 
         // Step 4 - Load each contrib/response/form for each idbrPeriod above
 
         // Step 5 - munge
 
-        // Create a class + methods. periodOffsets = new PeriodClass(response); List of Offsets = periodOffsets.GetUniqueOffsets();  {0,1} or {0}, or {0,1,2} etc
-        // Create a class + methods to calculate periods
-        // Construct another QL query (use QueryBuilder)
         // Parse response to expected structure
         // return parsed response
 

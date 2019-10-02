@@ -243,16 +243,19 @@ public class qlQueryBuilder {
         return builtQuery.toString();
     }
 
-    public String buildOffsetPeriodQuery(){
-        String queryPrefix = "{\"query\": \"query  queryExport ";
-        String dataPrepConfig = "{" +
-                " allValidationperiods {" +
-                "   nodes {" +
-                "      periodoffset" +
-                "   }" +   
-                " }" +
-                "}";
-        return queryPrefix + dataPrepConfig;
+    public String buildOffsetPeriodQuery() {
+        return "{\"query\": \"query periodoffset { allValidationperiods { nodes { periodoffset }}}\"}";
+    }
+
+    public String buildContributorQuery() {
+        StringBuilder query = new StringBuilder();
+        query.append("{\"query\": \"query contrib($period: String, $reference: String, $survey: String) { " +
+                "allContributors(condition: {reference: $reference, period: $period, survey: $survey}) { " +            
+                "nodes { reference period survey formid surveyBySurvey { periodicity } }}}\"," +
+                "\"variables\": {");
+        query.append(buildVariables());
+        query.append("}}");
+        return query.toString();
     }
 
     

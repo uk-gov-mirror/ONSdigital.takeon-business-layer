@@ -103,5 +103,12 @@ public class qlQueryResponseTest {
         assertEquals(expectedPeriods, outputPeriods);
     }
 
+    @Test
+     void getFormID_validData_works() {
+        String jsonInput = "{\"data\":{\"allContributors\":{\"nodes\":[{\"reference\":\"12345678001\",\"formid\":1,\"period\":\"201801\",\"surveyBySurvey\":{\"periodicity\":\"Monthly\"},\"survey\":\"999A\"}]}}}";
+        qlQueryResponse response = new qlQueryResponse(jsonInput);
+        assertEquals(1, response.getFormID());    
+    }
+
 
 }

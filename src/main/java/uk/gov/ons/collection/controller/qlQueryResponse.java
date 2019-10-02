@@ -22,6 +22,11 @@ public class qlQueryResponse {
         }
     }
 
+    public String toString() {
+        return jsonQlResponse.toString();
+    }
+
+
     // Conversion from the QL response JSON structure to remove some nested attributes
     public String parse(){                      
         JSONObject parsedJsonQlResponse = new JSONObject();
@@ -49,6 +54,16 @@ public class qlQueryResponse {
             }
         }
         return uniqueOffsets;
+    }
+
+    public int getFormID() {
+        // {"data":{"allContributors":{"nodes":[
+            //{"reference":"12345678001","formid":1,"period":"201801","surveyBySurvey":{"periodicity":"Monthly"},"survey":"999A"}]}}}
+        return jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").getJSONObject(0).getInt("formid");
+    }
+
+    public String getPeriodicity() {
+        return jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").getJSONObject(0).getJSONObject("surveyBySurvey").getString("periodicity");     
     }
 
 }
