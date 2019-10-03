@@ -132,6 +132,8 @@ public class ContributorController {
 
         // TODO: Validate all 3 parameters have been passed through
         String period = searchParameters.get("period");
+        String reference = searchParameters.get("reference");
+        String survey = searchParameters.get("survey");
  
         // Step 1 - Get a unique list of all period offsets
         ArrayList<Integer> uniqueOffsets;
@@ -182,6 +184,16 @@ public class ContributorController {
         // Step 3 - Load Validation Config
 
         // Step 4 - Load each contrib/response/form for each idbrPeriod above
+        try {
+            log.info("\n\n\n\nLoading contributor/response/form details");
+            String query = new qlQueryBuilder(searchParameters).buildContribResponseFormDetailsQuery();
+            log.info("Query: " + query);
+            qlQueryResponse response = new qlQueryResponse(qlService.qlSearch(query));
+            log.info("\n\nResponse: " + response );
+        }
+        catch(Exception e){
+            return "{\"error\":\"Invalid contrib/response/form from graphQL\"}";
+        }
 
         // Step 5 - munge
 
