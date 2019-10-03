@@ -110,5 +110,15 @@ public class qlQueryResponseTest {
         assertEquals(1, response.getFormID());    
     }
 
+    @Test
+    void getResponses_validData_works() {
+        String jsonInput = "{\"data\":{\"allContributors\":{\"nodes\":[{\"formid\":1,\"responsesByReferenceAndPeriodAndSurvey\":{\"nodes\":" + 
+            "[{\"reference\":\"12345678003\",\"period\":\"201801\",\"instance\":0,\"response\":\"\",\"questioncode\":\"1001\",\"survey\":\"999A\"}," +
+            "{\"reference\":\"12345678003\",\"period\":\"201801\",\"instance\":0,\"response\":\"0\",\"questioncode\":\"4001\",\"survey\":\"999A\"}]}" +
+            ",\"surveyBySurvey\":{\"periodicity\":\"Monthly\"},\"status\":\"Status\"}]}}}";
+        qlQueryResponse response = new qlQueryResponse(jsonInput);
+        assertEquals("X", response.getResponses()); 
+    }
+
 
 }

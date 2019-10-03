@@ -186,10 +186,17 @@ public class ContributorController {
         // Step 4 - Load each contrib/response/form for each idbrPeriod above
         try {
             log.info("\n\n\n\nLoading contributor/response/form details");
-            String query = new qlQueryBuilder(searchParameters).buildContribResponseFormDetailsQuery();
-            log.info("Query: " + query);
-            qlQueryResponse response = new qlQueryResponse(qlService.qlSearch(query));
-            log.info("\n\nResponse: " + response );
+           
+            for (int i = 0; i < outputPeriods.size(); i++) {
+                HashMap<String,String> spr = new HashMap<>();
+                spr.put("reference", reference);
+                spr.put("survey", survey);
+                spr.put("period", outputPeriods.get(i));
+                String query = new qlQueryBuilder(spr).buildContribResponseFormDetailsQuery();
+                log.info("Query: " + i + "---" + query);
+                qlQueryResponse response = new qlQueryResponse(qlService.qlSearch(query));
+                log.info("\n\nResponse: " + i + "---" + response );
+            }
         }
         catch(Exception e){
             return "{\"error\":\"Invalid contrib/response/form from graphQL\"}";

@@ -65,5 +65,14 @@ public class qlQueryResponse {
     public String getPeriodicity() {
         return jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").getJSONObject(0).getJSONObject("surveyBySurvey").getString("periodicity");     
     }
+    // "{\"data\":{\"allContributors\":{\"nodes\":[{\"formid\":1,\"birthdate\":\"\",\"selectiontype\":\" \"," +
+    // "\"createddate\":\"2019-10-03T11:42:10.985316+00:00\",\"responsesByReferenceAndPeriodAndSurvey\":{\"nodes\":" + 
+    // "{\"reference\":\"12345678003\",\"period\":\"201801\",\"instance\":0,\"response\":\"\",\"questioncode\":\"1001\",\"survey\":\"999A\"}," +
+    // "{\"reference\":\"12345678003\",\"period\":\"201801\",\"instance\":0,\"response\":\"0\",\"questioncode\":\"4001\",\"survey\":\"999A\"}]}" +
+    // ",\"surveyBySurvey\":{\"periodicity\":\"Monthly\"},\"status\":\"Status\"}]}}}";
+    public String getResponses() {
+        return jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").getJSONObject(0).getJSONObject("responsesByReferenceAndPeriodAndSurvey")
+                .getJSONArray("nodes").toString();
+    }
 
 }
