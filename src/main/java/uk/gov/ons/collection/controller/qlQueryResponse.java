@@ -6,7 +6,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 public class qlQueryResponse {
 
     private JSONObject jsonQlResponse;
@@ -65,14 +67,42 @@ public class qlQueryResponse {
     public String getPeriodicity() {
         return jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").getJSONObject(0).getJSONObject("surveyBySurvey").getString("periodicity");     
     }
-    // "{\"data\":{\"allContributors\":{\"nodes\":[{\"formid\":1,\"birthdate\":\"\",\"selectiontype\":\" \"," +
-    // "\"createddate\":\"2019-10-03T11:42:10.985316+00:00\",\"responsesByReferenceAndPeriodAndSurvey\":{\"nodes\":" + 
-    // "{\"reference\":\"12345678003\",\"period\":\"201801\",\"instance\":0,\"response\":\"\",\"questioncode\":\"1001\",\"survey\":\"999A\"}," +
-    // "{\"reference\":\"12345678003\",\"period\":\"201801\",\"instance\":0,\"response\":\"0\",\"questioncode\":\"4001\",\"survey\":\"999A\"}]}" +
-    // ",\"surveyBySurvey\":{\"periodicity\":\"Monthly\"},\"status\":\"Status\"}]}}}";
-    public String getResponses() {
-        return jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").getJSONObject(0).getJSONObject("responsesByReferenceAndPeriodAndSurvey")
-                .getJSONArray("nodes").toString();
+
+    public JSONArray getResponses() {
+        var outputArray = new JSONArray();
+        if (jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").length() > 0) {
+            outputArray = jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").getJSONObject(0)
+                                        .getJSONObject("responsesByReferenceAndPeriodAndSurvey").getJSONArray("nodes");
+        }
+        return outputArray;        
+    }
+
+    // "responsesByReferenceAndPeriodAndSurvey":{"nodes":[{"reference":"12345678003","period":"201801","instance":0,"response":"",
+    // "questioncode":"1001","survey":"999A"},{"reference":"12345678003","period":"201801","instance":0,"response":"0","questioncode":"4001","survey":"999A"}]}
+
+    public JSONObject getContributors() {
+        JSONObject output = new JSONObject();
+        if (jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").length() > 0) {
+            output = jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").getJSONObject(0);
+            output.remove("surveyBySurvey");
+            output.remove("formByFormid");
+            output.remove("responsesByReferenceAndPeriodAndSurvey");
+        }
+        return output;              
+    }
+    //"{\"data\":{\"allContributors\":{\"nodes\":[{\"formid\":1,\"birthdate\":\"\",\"selectiontype\":\" \",\"createddate\":\"2019-10-04T09:17:36.061812+00:00\",\"responsesByReferenceAndPeriodAndSurvey\":{\"nodes\":[{\"reference\":\"12345678003\",\"period\":\"201801\",\"instance\":0,\"response\":\"\",\"questioncode\":\"1001\",\"survey\":\"999A\"},{\"reference\":\"12345678003\",\"period\":\"201801\",\"instance\":0,\"response\":\"0\",\"questioncode\":\"4001\",\"survey\":\"999A\"}]},\"surveyBySurvey\":{\"periodicity\":\"Monthly\"},\"checkletter\":\" \",\"rusicoutdated\":\"     \",\"tradingstyle\":\"\",\"frozenemployees\":\"0\",\"companyregistrationnumber\":\"\",\"reference\":\"12345678003\",\"reportingunitmarker\":\" \",\"inclusionexclusion\":\" \",\"legalstatus\":\" \",\"createdby\":\"fisdba\",\"lastupdateddate\":null,\"rusic\":\"     \",\"contact\":\"\",\"lastupdatedby\":null," +
+    //"\"formByFormid\":{\"survey\":\"999A\",\"formdefinitionsByFormid\":{\"nodes\":[{\"questioncode\":\"1000\",\"type\":\"NUMERIC\"},{\"questioncode\":\"1001\",\"type\":\"NUMERIC\"},{\"questioncode\":\"2000\",\"type\":\"TICKBOX-Yes\"},{\"questioncode\":\"3000\",\"type\":\"Text\"},{\"questioncode\":\"4000\",\"type\":\"NUMERIC\"},{\"questioncode\":\"4001\",\"type\":\"NUMERIC\"}]}},\"frozenturnover\":\"0\",\"currency\":\"S\",\"receiptdate\":\"2019-10-04T09:17:36.061812+00:00\",\"frozensicoutdated\":\"     \",\"fax\":\"\",\"frozenemployment\":\"0\",\"turnover\":\"0\",\"payereference\":\"\",\"period\":\"201801\",\"wowenterprisereference\":\"\",\"numberlivevat\":\"0\",\"telephone\":\"\",\"employment\":\"0\",\"numberlivepaye\":\"0\",\"vatreference\":\"\",\"lockedby\":null,\"frozenfteemployment\":\"0.000\",\"cellnumber\":0,\"fteemployment\":\"0.000\",\"lockeddate\":null,\"survey\":\"999A\",\"enterprisereference\":\"          \",\"numberlivelocalunits\":\"0\",\"employees\":\"0\",\"region\":\"  \",\"frozensic\":\"     \",\"status\":\"Status\"}]}}}"
+    public JSONArray getForm(String survey, String period) {
+        var outputArray = new JSONArray();
+        if (jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").length() > 0) {
+            outputArray = jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").getJSONObject(0)
+                                        .getJSONObject("formByFormid").getJSONObject("formdefinitionsByFormid").getJSONArray("nodes");
+        }
+        for (int i = 0; i < outputArray.length(); i++) {
+            outputArray.getJSONObject(i).put("survey",survey);
+            outputArray.getJSONObject(i).put("period",period);
+        }
+        return outputArray;
     }
 
 }

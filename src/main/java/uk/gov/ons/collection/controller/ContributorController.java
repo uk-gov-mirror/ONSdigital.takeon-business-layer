@@ -5,6 +5,9 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.log4j.Log4j2;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +18,8 @@ import uk.gov.ons.collection.service.GraphQLService;
 import uk.gov.ons.collection.utilities.RelativePeriod;
 
 import java.util.*;
+
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonArrayFormatVisitor;
 
 @Log4j2
 @Api(value = "Contributor Controller", description = "Main (and so far only) end point for the connection between the UI and persistance layer")
@@ -138,11 +143,11 @@ public class ContributorController {
         // Step 1 - Get a unique list of all period offsets
         ArrayList<Integer> uniqueOffsets;
         try {
-            log.info("\n\n\n\nLoading period offsets");
+            log.info("Loading period offsets");
             String query = new qlQueryBuilder(null).buildOffsetPeriodQuery();
             log.info("Query: " + query);
             qlQueryResponse response = new qlQueryResponse(qlService.qlSearch(query));
-            log.info("\n\nResponse: " + response );
+            log.info("Response: " + response );
             uniqueOffsets = response.parseForPeriodOffset();
         }
         catch(Exception e){
@@ -153,12 +158,11 @@ public class ContributorController {
         String periodicity;
         // Step 1b - Get the formID and periodicity of the given reference/period/survey
         try {
-            log.info("\n\n\n\nLoading formID/periodicity");
+            log.info("Loading formID/periodicity");
             String query = new qlQueryBuilder(searchParameters).buildContributorQuery();
             log.info("Query: " + query);
             qlQueryResponse response = new qlQueryResponse(qlService.qlSearch(query));
-            log.info("\n\nResponse: " + response );
-
+            log.info("Response: " + response );
             formID = response.getFormID();
             periodicity = response.getPeriodicity();
         }
@@ -182,31 +186,50 @@ public class ContributorController {
         log.info("IDBR Periods: " + outputPeriods);
 
         // Step 3 - Load Validation Config
+        JSONArray responses = new JSONArray();
+        JSONArray contributors = new JSONArray();
+        JSONArray forms = new JSONArray();
 
         // Step 4 - Load each contrib/response/form for each idbrPeriod above
         try {
             log.info("\n\n\n\nLoading contributor/response/form details");
-           
             for (int i = 0; i < outputPeriods.size(); i++) {
                 HashMap<String,String> spr = new HashMap<>();
                 spr.put("reference", reference);
                 spr.put("survey", survey);
                 spr.put("period", outputPeriods.get(i));
+
+                log.info("SPR: " + i + "---" + spr.toString() );
                 String query = new qlQueryBuilder(spr).buildContribResponseFormDetailsQuery();
                 log.info("Query: " + i + "---" + query);
-                qlQueryResponse response = new qlQueryResponse(qlService.qlSearch(query));
-                log.info("\n\nResponse: " + i + "---" + response );
+                qlQueryResponse queryResponse = new qlQueryResponse(qlService.qlSearch(query));
+                
+                log.info("queryResponse: " + i + "---" + queryResponse );                                                             
+
+                JSONArray responseArray = queryResponse.getResponses();
+                log.info("ResponseArray: " + responseArray.toString() );
+                log.info("ResponseArray (Length): " + responseArray.length() );
+                for (int j = 0; j < responseArray.length(); j++) {
+                    responses.put(responseArray.getJSONObject(j));
+                }
+
+                JSONArray formArray = queryResponse.getForm(survey, period);
+                forms.put(formArray);
+
+                JSONObject contributor = queryResponse.getContributors();
+                contributors.put(contributor);
             }
         }
         catch(Exception e){
+            log.info("Exception: " + e);
             return "{\"error\":\"Invalid contrib/response/form from graphQL\"}";
         }
 
-        // Step 5 - munge
+        log.info("\n\nFinal OutputResponseArray: " + responses);
+        log.info("\n\nFinal OutputContributorArray: " + contributors);
+        log.info("\n\nFinal form definition: " + forms);
 
-        // Parse response to expected structure
-        // return parsed response
-
-        return "{\"error\":\"Error worked correctly\"}";
+        var outputJson = new JSONObject().put("contributor",contributors).put("response",responses).put("question_schema",forms).put("reference", reference).put("period",period).put("survey",survey).put("periodicity", periodicity);
+        return outputJson.toString();
     }
 }
