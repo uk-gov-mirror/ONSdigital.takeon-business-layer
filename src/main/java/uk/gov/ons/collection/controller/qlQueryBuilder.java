@@ -277,4 +277,20 @@ public class qlQueryBuilder {
         return contributorDetailsQuery.toString();    
     }
     
+    public String buildValidationConfig(){
+        StringBuilder validationConfigQuery = new StringBuilder();
+        validationConfigQuery.append("{\"query\": \"query valconfig($formid: Int) {" +
+            "allValidationrules {nodes {" +
+                "rule baseformula " +
+                "validationformsByRule(condition: {formid: $formid}) {nodes {" +
+                    "validationid primaryquestion defaultvalue " + 
+                    "validationparametersByValidationid {nodes {" +                    
+                        "parameter value source periodoffset" +
+                    "}}}}}}}\"," +
+            "\"variables\": {");
+        validationConfigQuery.append(buildVariables());
+        validationConfigQuery.append("}}");
+        return validationConfigQuery.toString();
+    }    
+
 }

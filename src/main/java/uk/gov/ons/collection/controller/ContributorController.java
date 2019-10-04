@@ -186,6 +186,26 @@ public class ContributorController {
         log.info("IDBR Periods: " + outputPeriods);
 
         // Step 3 - Load Validation Config
+        JSONArray validationConfig = new JSONArray();
+        try {
+            Map<String, String> formIDMap = new HashMap<String, String>();
+            formIDMap.put("formid", Integer.toString(formID));
+            log.info("Retrieving Validation Config...");
+            String query = new qlQueryBuilder(formIDMap).buildValidationConfig();
+            log.info("Validation Query: " + query);
+            qlQueryResponse response = new qlQueryResponse(qlService.qlSearch(query));
+            log.info("\n\nValidation Config Response: " + response);
+            validationConfig = response.parseValidationConfig();
+        }
+        catch (Exception e) {
+            return"{\"error\":\"Error building query for form id\" : " + Integer.toString(formID) + "}";
+        }
+
+
+
+
+
+
         JSONArray responses = new JSONArray();
         JSONArray contributors = new JSONArray();
         JSONArray forms = new JSONArray();
@@ -228,8 +248,9 @@ public class ContributorController {
         log.info("\n\nFinal OutputResponseArray: " + responses);
         log.info("\n\nFinal OutputContributorArray: " + contributors);
         log.info("\n\nFinal form definition: " + forms);
+        log.info("\n\nFinal validation config: " + validationConfig);        
 
-        var outputJson = new JSONObject().put("contributor",contributors).put("response",responses).put("question_schema",forms).put("reference", reference).put("period",period).put("survey",survey).put("periodicity", periodicity);
+        var outputJson = new JSONObject().put("contributor",contributors).put("validation_config",validationConfig).put("response",responses).put("question_schema",forms).put("reference", reference).put("period",period).put("survey",survey).put("periodicity", periodicity);
         return outputJson.toString();
     }
 }

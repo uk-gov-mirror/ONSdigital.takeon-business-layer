@@ -105,4 +105,20 @@ public class qlQueryResponse {
         return outputArray;
     }
 
+//{"data":{"allValidationrules":{"nodes":[{"baseformula":"abs(question - comparison_question) > threshold AND question > 0 AND comparison_question > 0","rule":"POPM",
+//"validationformsByRule":{"nodes":[{"primaryquestion":"1000","validationid":20,"defaultvalue":"0",
+//"validationparametersByValidationid":{"nodes":[{"periodoffset":1,"parameter":"comparison_question","source":"response","value":"1000"},
+        //{"periodoffset":0,"parameter":"question","source":"response","value":"1000"},{"periodoffset":0,"parameter":"threshold","source":"","value":"20000"}]}},
+        //{"primaryquestion":"1001","validationid":21,"defaultvalue":"0",
+        //"validationparametersByValidationid":{"nodes":[{"periodoffset":1,"parameter":"comparison_question","source":"response","value":"1001"},{"periodoffset":0,"parameter":"question","source":"response","value":"1001"},{"periodoffset":0,"parameter":"threshold","source":"","value":"0"}]}}]}},{"baseformula":"question != comparison_question AND ( question = 0 OR comparison_question = 0 ) AND abs(question - comparison_question) > Threshold","rule":"POPZC","validationformsByRule":{"nodes":[{"primaryquestion":"1000","validationid":40,"defaultvalue":"0","validationparametersByValidationid":{"nodes":[{"periodoffset":1,"parameter":"comparison_question","source":"response","value":"1000"},{"periodoffset":0,"parameter":"question","source":"response","value":"1000"},{"periodoffset":0,"parameter":"threshold","source":"","value":"30000"}]}},{"primaryquestion":"1001","validationid":41,"defaultvalue":"0","validationparametersByValidationid":{"nodes":[{"periodoffset":1,"parameter":"comparison_question","source":"response","value":"1000"},{"periodoffset":0,"parameter":"question","source":"response","value":"1000"},{"periodoffset":0,"parameter":"threshold","source":"","value":"0"}]}}]}},{"baseformula":"question != comparison_question","rule":"QVDQ","validationformsByRule":{"nodes":[{"primaryquestion":"1000","validationid":30,"defaultvalue":"0","validationparametersByValidationid":{"nodes":[{"periodoffset":0,"parameter":"comparison_question","source":"response","value":"4000"},{"periodoffset":0,"parameter":"question","source":"response","value":"1000"}]}},{"primaryquestion":"1001","validationid":31,"defaultvalue":"0","validationparametersByValidationid":{"nodes":[{"periodoffset":0,"parameter":"comparison_question","source":"response","value":"4001"},{"periodoffset":0,"parameter":"question","source":"response","value":"1001"}]}}]}},{"baseformula":"question != \"\"","rule":"VP","validationformsByRule":{"nodes":[{"primaryquestion":"3000","validationid":10,"defaultvalue":"","validationparametersByValidationid":{"nodes":[{"periodoffset":0,"parameter":"question","source":"response","value":"3000"}]}},{"primaryquestion":"2000","validationid":11,"defaultvalue":"","validationparametersByValidationid":{"nodes":[{"periodoffset":0,"parameter":"question","source":"response","value":"2000"}]}},{"primaryquestion":"1000","validationid":12,"defaultvalue":"","validationparametersByValidationid":{"nodes":[{"periodoffset":0,"parameter":"question","source":"response","value":"1000"}]}},{"primaryquestion":"4000","validationid":13,"defaultvalue":"","validationparametersByValidationid":{"nodes":[{"periodoffset":0,"parameter":"question","source":"response","value":"4000"}]}}]}}]}}}
+
+    public JSONArray parseValidationConfig() {                      
+        var outputArray = new JSONArray();        
+        if (jsonQlResponse.getJSONObject("data").getJSONObject("allValidationrules").getJSONArray("nodes").length() > 0) {
+            outputArray = jsonQlResponse.getJSONObject("data").getJSONObject("allValidationrules").getJSONArray("nodes");
+        }
+        return outputArray;
+
+    }
+
 }
