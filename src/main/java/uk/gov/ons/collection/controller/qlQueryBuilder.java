@@ -52,8 +52,7 @@ public class qlQueryBuilder {
         return joiner.toString();
     }
 
-    public String buildExportDBQuery(){
-
+    public String buildExportDBQuery() {
         String queryPrefix = "{\"query\": \"query  queryExport ";
         String dbExportQuery = "{" +
                 " allSurveys {" +

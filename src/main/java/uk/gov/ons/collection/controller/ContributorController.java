@@ -12,14 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.ons.collection.entity.ContributorEntity;
+import uk.gov.ons.collection.entity.PeriodOffsetQuery;
+import uk.gov.ons.collection.entity.PeriodOffsetResponse;
+import uk.gov.ons.collection.entity.ValidationConfigQuery;
 import uk.gov.ons.collection.exception.DataNotFondException;
 import uk.gov.ons.collection.service.ContributorService;
 import uk.gov.ons.collection.service.GraphQLService;
 import uk.gov.ons.collection.utilities.RelativePeriod;
 
 import java.util.*;
-
-import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonArrayFormatVisitor;
 
 @Log4j2
 @Api(value = "Contributor Controller", description = "Main (and so far only) end point for the connection between the UI and persistance layer")
@@ -133,111 +134,70 @@ public class ContributorController {
         @ApiResponse(code = 200, message = "Successful retrieval of all details", response = String.class)})
     public String dataPrepConfig(@MatrixVariable Map <String, String> searchParameters){
 
-        // TODO: This method is rancid. Refactor when it's all working.
-
         // TODO: Validate all 3 parameters have been passed through
+        log.info("API CALL!! --> /validationPrepConfig/{vars} :: " + searchParameters );
         String period = searchParameters.get("period");
         String reference = searchParameters.get("reference");
         String survey = searchParameters.get("survey");
  
-        // Step 1 - Get a unique list of all period offsets
-        ArrayList<Integer> uniqueOffsets;
-        try {
-            log.info("Loading period offsets");
-            String query = new qlQueryBuilder(null).buildOffsetPeriodQuery();
-            log.info("Query: " + query);
-            qlQueryResponse response = new qlQueryResponse(qlService.qlSearch(query));
-            log.info("Response: " + response );
-            uniqueOffsets = response.parseForPeriodOffset();
-        }
-        catch(Exception e){
-            return "{\"error\":\"Invalid response getting period offsets from graphQL\"}";
-        }
-
-        int formID;
+        // Step 1 - Get a unique list of all IDBR periods to query
+        int formId;
         String periodicity;
-        // Step 1b - Get the formID and periodicity of the given reference/period/survey
+        List<String> idbrPeriods = new ArrayList<>();
         try {
-            log.info("Loading formID/periodicity");
-            String query = new qlQueryBuilder(searchParameters).buildContributorQuery();
-            log.info("Query: " + query);
-            qlQueryResponse response = new qlQueryResponse(qlService.qlSearch(query));
-            log.info("Response: " + response );
-            formID = response.getFormID();
-            periodicity = response.getPeriodicity();
+            var qlQuery = new PeriodOffsetQuery(searchParameters);
+            var qlResponse = new PeriodOffsetResponse(qlService.qlSearch(qlQuery.getQlQuery()));
+            formId = qlResponse.parseFormId();
+            periodicity = qlResponse.parsePeriodicity();
+            idbrPeriods = new RelativePeriod(periodicity).getIdbrPeriods(qlResponse.parsePeriodOffset(), period);
         }
-        catch(Exception e){
-            return "{\"error\":\"Invalid response form and periodicity from graphQL\"}";
+        catch(Exception e) {
+            log.info("Exception caught: " + e);
+            return "{\"error\":\"Unable to resolve unique list of IDBR periods\"}";
         }
-
-        // Step 2 - Convert the period offsets to a list of IDBR periods
-        List<String> outputPeriods = new ArrayList<>();
-        try { RelativePeriod rp = new RelativePeriod(periodicity);
-            for ( int i = 0; i < uniqueOffsets.size(); i++) {
-                String idbrPeriod = rp.calculateRelativePeriod(uniqueOffsets.get(i).intValue(), period);
-                outputPeriods.add(idbrPeriod);
-            }
-        }
-        catch (Exception e) {
-            return "{\"error\":\"Error processing periods\"}";
-        }
-
-        log.info("FormID/Periodicity: " + formID + "/" + periodicity);
-        log.info("IDBR Periods: " + outputPeriods);
-
-        // Step 3 - Load Validation Config
+        
+        // Step 2 - Load Validation Config for the given formId
         JSONArray validationConfig = new JSONArray();
         try {
-            Map<String, String> formIDMap = new HashMap<String, String>();
-            formIDMap.put("formid", Integer.toString(formID));
-            log.info("Retrieving Validation Config...");
-            String query = new qlQueryBuilder(formIDMap).buildValidationConfig();
-            log.info("Validation Query: " + query);
-            qlQueryResponse response = new qlQueryResponse(qlService.qlSearch(query));
-            log.info("\n\nValidation Config Response: " + response);
+            var qlQuery = new ValidationConfigQuery(formId).getQlQuery();
+            var response = new qlQueryResponse(qlService.qlSearch(qlQuery));            
             validationConfig = response.parseValidationConfig();
         }
         catch (Exception e) {
-            return"{\"error\":\"Error building query for form id\" : " + Integer.toString(formID) + "}";
+            log.info("Exception caught: " + e);
+            return"{\"error\":\"Error obtaining validation config query\"}";
         }
-
-
-
-
 
 
         JSONArray responses = new JSONArray();
         JSONArray contributors = new JSONArray();
         JSONArray forms = new JSONArray();
 
-        // Step 4 - Load each contrib/response/form for each idbrPeriod above
+        // Step 3 - Load each contrib/response/form for each idbrPeriod above
         try {
-            log.info("\n\n\n\nLoading contributor/response/form details");
-            for (int i = 0; i < outputPeriods.size(); i++) {
+            for (int i = 0; i < idbrPeriods.size(); i++) {
                 HashMap<String,String> spr = new HashMap<>();
                 spr.put("reference", reference);
                 spr.put("survey", survey);
-                spr.put("period", outputPeriods.get(i));
+                spr.put("period", idbrPeriods.get(i));
 
-                log.info("SPR: " + i + "---" + spr.toString() );
                 String query = new qlQueryBuilder(spr).buildContribResponseFormDetailsQuery();
-                log.info("Query: " + i + "---" + query);
                 qlQueryResponse queryResponse = new qlQueryResponse(qlService.qlSearch(query));
                 
-                log.info("queryResponse: " + i + "---" + queryResponse );                                                             
-
                 JSONArray responseArray = queryResponse.getResponses();
-                log.info("ResponseArray: " + responseArray.toString() );
-                log.info("ResponseArray (Length): " + responseArray.length() );
                 for (int j = 0; j < responseArray.length(); j++) {
                     responses.put(responseArray.getJSONObject(j));
                 }
 
                 JSONArray formArray = queryResponse.getForm(survey, period);
-                forms.put(formArray);
+                if (formArray.length() > 0) {
+                    forms.put(formArray);
+                }
 
                 JSONObject contributor = queryResponse.getContributors();
-                contributors.put(contributor);
+                if (contributor.length() > 0) {
+                    contributors.put(contributor);
+                }
             }
         }
         catch(Exception e){
@@ -245,11 +205,12 @@ public class ContributorController {
             return "{\"error\":\"Invalid contrib/response/form from graphQL\"}";
         }
 
-        log.info("\n\nFinal OutputResponseArray: " + responses);
-        log.info("\n\nFinal OutputContributorArray: " + contributors);
-        log.info("\n\nFinal form definition: " + forms);
-        log.info("\n\nFinal validation config: " + validationConfig);        
+        // log.info("\n\nFinal OutputResponseArray: " + responses);
+        // log.info("\n\nFinal OutputContributorArray: " + contributors);
+        // log.info("\n\nFinal form definition: " + forms);
+        // log.info("\n\nFinal validation config: " + validationConfig);        
 
+        log.info("API CALL!! --> /validationPrepConfig/{vars} :: Complete" );
         var outputJson = new JSONObject().put("contributor",contributors).put("validation_config",validationConfig).put("response",responses).put("question_schema",forms).put("reference", reference).put("period",period).put("survey",survey).put("periodicity", periodicity);
         return outputJson.toString();
     }

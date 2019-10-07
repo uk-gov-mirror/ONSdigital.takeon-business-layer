@@ -1,5 +1,8 @@
 package uk.gov.ons.collection.utilities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import uk.gov.ons.collection.exception.InvalidIdbrPeriodException;
 import uk.gov.ons.collection.exception.InvalidPeriodicityException;
 
@@ -85,6 +88,15 @@ public class RelativePeriod {
             case "annual":      monthlyFrequency=12; break;
             default:            throw new InvalidPeriodicityException("Invalid periodicity given: " + periodicity);
         }
+    }
+
+    public List<String> getIdbrPeriods(List<Integer> offsets, String startingPeriod) throws InvalidIdbrPeriodException {
+        List<String> outputPeriods = new ArrayList<>();
+        for ( int i = 0; i < offsets.size(); i++) {
+            String idbrPeriod = calculateRelativePeriod(offsets.get(i).intValue(), startingPeriod);
+            outputPeriods.add(idbrPeriod);
+        }        
+        return outputPeriods;
     }
 
 }
