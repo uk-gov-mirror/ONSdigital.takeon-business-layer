@@ -76,7 +76,7 @@ public class qlQueryResponseTest {
     void checkRelativePeriods() {
         String startingPeriod = "201209";
         List<Integer> inputList = new ArrayList<>(Arrays.asList(0,1,2));
-        List<String> expectedPeriods = new ArrayList<>(Arrays.asList("201209","201206","201206"));
+        List<String> expectedPeriods = new ArrayList<>(Arrays.asList("201209","201206","201203"));
         List<String> outputPeriods = new ArrayList<>();
         try { RelativePeriod rp = new RelativePeriod("Quarterly");
             for ( int i = 0; i < inputList.size(); i++) {
@@ -88,16 +88,6 @@ public class qlQueryResponseTest {
             System.out.println(e);
         }
         assertEquals(expectedPeriods, outputPeriods);
-    }
-
-    @Test
-    void getResponses_validData_works() {
-        String jsonInput = "{\"data\":{\"allContributors\":{\"nodes\":[{\"formid\":1,\"responsesByReferenceAndPeriodAndSurvey\":{\"nodes\":" + 
-            "[{\"reference\":\"12345678003\",\"period\":\"201801\",\"instance\":0,\"response\":\"\",\"questioncode\":\"1001\",\"survey\":\"999A\"}," +
-            "{\"reference\":\"12345678003\",\"period\":\"201801\",\"instance\":0,\"response\":\"0\",\"questioncode\":\"4001\",\"survey\":\"999A\"}]}" +
-            ",\"surveyBySurvey\":{\"periodicity\":\"Monthly\"},\"status\":\"Status\"}]}}}";
-        qlQueryResponse response = new qlQueryResponse(jsonInput);
-        assertEquals("X", response.getResponses()); 
     }
 
 }
