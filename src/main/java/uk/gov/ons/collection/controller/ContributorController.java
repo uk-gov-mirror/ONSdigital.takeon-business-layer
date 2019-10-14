@@ -119,7 +119,7 @@ public class ContributorController {
         return response;
     }
 
-    @GetMapping(value = "/updateStatus", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String 
+//    @GetMapping(value = "/updateStatus", produces = MediaType.APPLICATION_JSON_VALUE)
+//    public String
 
 }
