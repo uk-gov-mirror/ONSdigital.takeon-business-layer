@@ -1,9 +1,14 @@
 package uk.gov.ons.collection.controller;
 
+import java.util.ArrayList;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 public class qlQueryResponse {
 
     private JSONObject jsonQlResponse;
@@ -17,6 +22,10 @@ public class qlQueryResponse {
             jsonString = "{}";
             jsonQlResponse = new JSONObject(jsonString);
         }
+    }
+
+    public String toString() {
+        return jsonQlResponse.toString();
     }
 
     // Conversion from the QL response JSON structure to remove some nested attributes
@@ -33,6 +42,48 @@ public class qlQueryResponse {
             return "{\"error\":\"Invalid response from graphQL\"}";
         }
         return parsedJsonQlResponse.toString().replaceAll(":", ": ");
+    }
+
+    public JSONArray getResponses() {
+        var outputArray = new JSONArray();
+        if (jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").length() > 0) {
+            outputArray = jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").getJSONObject(0)
+                                        .getJSONObject("responsesByReferenceAndPeriodAndSurvey").getJSONArray("nodes");
+        }
+        return outputArray;        
+    }
+
+    public JSONObject getContributors() {
+        JSONObject output = new JSONObject();
+        if (jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").length() > 0) {
+            output = jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").getJSONObject(0);
+            output.remove("surveyBySurvey");
+            output.remove("formByFormid");
+            output.remove("responsesByReferenceAndPeriodAndSurvey");
+        }
+        return output;              
+    }
+
+    public JSONArray getForm(String survey, String period) {
+        var outputArray = new JSONArray();
+        if (jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").length() > 0) {
+            outputArray = jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").getJSONObject(0)
+                                        .getJSONObject("formByFormid").getJSONObject("formdefinitionsByFormid").getJSONArray("nodes");
+        }
+        for (int i = 0; i < outputArray.length(); i++) {
+            outputArray.getJSONObject(i).put("survey",survey);
+            outputArray.getJSONObject(i).put("period",period);
+        }
+        return outputArray;
+    }
+
+    public JSONArray parseValidationConfig() {                      
+        var outputArray = new JSONArray();        
+        if (jsonQlResponse.getJSONObject("data").getJSONObject("allValidationrules").getJSONArray("nodes").length() > 0) {
+            outputArray = jsonQlResponse.getJSONObject("data").getJSONObject("allValidationrules").getJSONArray("nodes");
+        }
+        return outputArray;
+
     }
 
 }

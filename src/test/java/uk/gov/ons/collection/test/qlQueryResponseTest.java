@@ -1,9 +1,16 @@
 package uk.gov.ons.collection.test;
 
+import org.json.JSONArray;
 import org.junit.jupiter.api.Test;
 import uk.gov.ons.collection.controller.qlQueryResponse;
+import uk.gov.ons.collection.utilities.RelativePeriod;
 
+import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class qlQueryResponseTest {
 
@@ -13,7 +20,7 @@ public class qlQueryResponseTest {
         qlQueryResponse response = new qlQueryResponse(null);
         assertEquals(expectedOutput, response.parse());
     }
-
+    
     @Test
     void parse_validButNoContributorData_givesValidEmptyContributor() {
         String inputString = "{\"data\": {\"allContributors\": {\"nodes\": [], \"pageInfo\": {\"hasNextPage\": false," +
@@ -64,4 +71,23 @@ public class qlQueryResponseTest {
         qlQueryResponse response = new qlQueryResponse(inputString);
         assertEquals(outputString, response.parse());
     }
+   
+    @Test
+    void checkRelativePeriods() {
+        String startingPeriod = "201209";
+        List<Integer> inputList = new ArrayList<>(Arrays.asList(0,1,2));
+        List<String> expectedPeriods = new ArrayList<>(Arrays.asList("201209","201206","201203"));
+        List<String> outputPeriods = new ArrayList<>();
+        try { RelativePeriod rp = new RelativePeriod("Quarterly");
+            for ( int i = 0; i < inputList.size(); i++) {
+                String idbrPeriod = rp.calculateRelativePeriod(inputList.get(i).intValue(), startingPeriod);
+                outputPeriods.add(idbrPeriod);
+            }
+        }
+        catch (Exception e) {
+            System.out.println(e);
+        }
+        assertEquals(expectedPeriods, outputPeriods);
+    }
+
 }
