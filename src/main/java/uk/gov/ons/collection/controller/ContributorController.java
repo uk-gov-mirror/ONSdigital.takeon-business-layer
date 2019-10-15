@@ -110,13 +110,12 @@ public class ContributorController {
         log.info("Query sent to service: " + qlQuery);
         try {
             qlQueryResponse response = new qlQueryResponse(qlService.qlSearch(qlQuery));
-	    System.out.println(response.toString());
             responseText = response.parse();
         }
         catch(Exception e){
             responseText = "{\"error\":\"Invalid response from graphQL\"}";
         }
-	System.out.println(responseText.toString());
+        log.info("Query sent to service: " + qlQuery);     
         return responseText;
     }
 
@@ -214,4 +213,5 @@ public class ContributorController {
         var outputJson = new JSONObject().put("contributor",contributors).put("validation_config",validationConfig).put("response",responses).put("question_schema",forms).put("reference", reference).put("period",period).put("survey",survey).put("periodicity", periodicity);
         return outputJson.toString();
     }
+
 }

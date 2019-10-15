@@ -144,6 +144,12 @@
             <version>${cucumber.java.version}</version>
             <scope>test</scope>
         </dependency>
+       
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk</artifactId>
+            <version>1.11.584</version>
+        </dependency>
 
         <dependency>
             <groupId>commons-io</groupId>
