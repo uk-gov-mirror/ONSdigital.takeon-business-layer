@@ -1,6 +1,5 @@
 package uk.gov.ons.collection.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 @Getter
@@ -8,9 +7,6 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class ValidationOutputEntity {
-    @JsonManagedReference
-    private ValidationFormEntity validationFormEntity;
-    private Integer validationOutputID;
     private String reference;
     private String period;
     private String survey;

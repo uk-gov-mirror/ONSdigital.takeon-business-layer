@@ -8,6 +8,10 @@ public class updateStatus {
     private String response = "{\"validationoutput\":[{\"formula\":\"\", \"reference\":\"\",\"period\":\"\",\"survey\":\"\",\"triggered\":\"true\",\"validationid\":\"\",\"bpmid\":\"\"}]}";
     private JSONObject jsonResponse;
 
+    private String qlUpdate = "mutation updateStatus($period: String!, $reference: String!, $survey: String!, $status: String!) {" +
+        "updateContributorByReferenceAndPeriodAndSurvey(input: {reference: $reference, period: $period, survey: $survey, contributorPatch: {status: $status}}) {" +
+         "contributor { reference period survey status }}}";
+
     public boolean determineStatus(String response) {
         JSONObject jsonResponse =  new JSONObject(response);
         JSONArray array = jsonResponse.getJSONArray("validationoutput");

@@ -1,26 +1,39 @@
 package uk.gov.ons.collection.controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import lombok.extern.log4j.Log4j2;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.MatrixVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import lombok.extern.log4j.Log4j2;
 import uk.gov.ons.collection.entity.ContributorEntity;
 import uk.gov.ons.collection.entity.PeriodOffsetQuery;
 import uk.gov.ons.collection.entity.PeriodOffsetResponse;
 import uk.gov.ons.collection.entity.ValidationConfigQuery;
+import uk.gov.ons.collection.entity.ValidationOutputs;
 import uk.gov.ons.collection.exception.DataNotFondException;
 import uk.gov.ons.collection.service.ContributorService;
 import uk.gov.ons.collection.service.GraphQLService;
 import uk.gov.ons.collection.utilities.RelativePeriod;
-
-import java.util.*;
 
 @Log4j2
 @Api(value = "Contributor Controller", description = "Main (and so far only) end point for the connection between the UI and persistance layer")
@@ -127,6 +140,7 @@ public class ContributorController {
         return response;
     }
 
+    
     @ApiOperation(value = "Get all validation config & response data", response = String.class)
     @GetMapping(value="/validationPrepConfig/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
@@ -214,4 +228,72 @@ public class ContributorController {
         return outputJson.toString();
     }
 
+
+    @ApiOperation(value = "Save validation outputs", response = String.class)
+    @RequestMapping(value="/validationOutputSave", method = {RequestMethod.POST, RequestMethod.PUT})
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Successful saving of all validation outputs", response = String.class)})
+    public String saveValidationOutputs(@RequestBody String validationOutputsJson, Errors errors){        
+        log.info("API CALL!! --> /validationPrepConfig/{vars} :: " + validationOutputsJson );
+        
+        ValidationOutputs outputs;
+        String period;
+        String reference;
+        String survey;
+        String statusText;
+        String deleteQuery;
+        String insertQuery;
+
+        // 1 - Convert params to JSON Object and extract Reference | Period | Survey
+        try {
+            outputs = new ValidationOutputs(validationOutputsJson);
+            reference = outputs.GetReference();
+            period = outputs.GetPeriod();
+            survey = outputs.GetSurvey();
+            statusText = outputs.GetStatusText();
+            deleteQuery = outputs.buildDeleteOutputQuery();
+            insertQuery = outputs.buildInsertByArrayQuery();
+        }
+        catch(Exception e) {
+            log.info("Exception caught: " + e);
+            return "{\"error\":\"Unable to resolve validation output JSON\"}";
+        }
+
+        log.info("reference: " + reference + " period: " + period + " survey: " + survey + " status: " + statusText);
+        log.info("delete: " + deleteQuery);  
+        log.info("insert: " + insertQuery);
+        
+        // TODO:
+        // 1: Delete outputs
+        // 2: Insert outputs
+        // 3: Update status
+
+        log.info("API CALL!! --> /validationPrepConfig/{vars} :: Complete" );
+        return "Complete";
+    }
+
 }
+
+// query contrib {
+//     allContributors{
+//       nodes{
+//         reference
+//         period
+//         survey
+//         status
+//       }
+//     }
+//   }
+
+// mutation updateStatus($period: String!, $reference: String!, $survey: String!, $status: String!) {
+//     updateContributorByReferenceAndPeriodAndSurvey(input: {reference: $reference, period: $period, survey: $survey, contributorPatch: {status: $status}}) {
+//       contributor {
+//         reference
+//         period
+//         survey
+//         status
+//       }
+//     }
+//   }
+  
+  
