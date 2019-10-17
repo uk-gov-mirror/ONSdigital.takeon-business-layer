@@ -3,7 +3,7 @@ package uk.gov.ons.collection.entity;
 import java.util.HashMap;
 import java.util.Map;
 
-
+import uk.gov.ons.collection.utilities.qlQueryBuilder;
 
 public class PeriodOffsetQuery {
     
