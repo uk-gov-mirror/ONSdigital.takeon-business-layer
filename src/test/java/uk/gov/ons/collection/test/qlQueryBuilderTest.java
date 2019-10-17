@@ -1,6 +1,6 @@
 package uk.gov.ons.collection.test;
 
-import uk.gov.ons.collection.utilities.qlQueryBuilder;;
+import uk.gov.ons.collection.utilities.qlQueryBuilder;
 import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,8 +37,6 @@ public class qlQueryBuilderTest {
         twoParameters.put("survey", "011");
         assertEquals(expectedCondition, new qlQueryBuilder(twoParameters).buildVariables());
     }
-
-
 
 }
 
