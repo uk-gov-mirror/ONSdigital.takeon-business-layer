@@ -1,14 +1,9 @@
 package uk.gov.ons.collection.controller;
 
-import java.util.ArrayList;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import lombok.extern.log4j.Log4j2;
-
-@Log4j2
 public class qlQueryResponse {
 
     private JSONObject jsonQlResponse;

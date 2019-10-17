@@ -13,7 +13,6 @@ public class ConvertIterableToMap {
     public Map<String, List<String>> ConvertToMap(Iterable<QuestionResponseEntity> questionResponseEntities, Iterable<FormDefinitionEntity> formDefinitionEntities){
         List<String> questionCodes = new ArrayList<>();
         List<String> responses = new ArrayList<>();
-        List<String> instances = new ArrayList<>();
         Map<String, List<String>> questionDetailMap = new HashMap<>();
 
         formDefinitionEntities.forEach(formDefintionEntity -> questionCodes.add(formDefintionEntity.getQuestionCode()));

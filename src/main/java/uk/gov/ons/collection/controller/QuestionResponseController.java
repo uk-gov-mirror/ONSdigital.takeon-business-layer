@@ -1,7 +1,6 @@
 package uk.gov.ons.collection.controller;
 
 import lombok.extern.log4j.Log4j2;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.ons.collection.service.QuestionResponseService;

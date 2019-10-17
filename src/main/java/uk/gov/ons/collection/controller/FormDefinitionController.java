@@ -8,9 +8,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.http.ResponseEntity;
 import uk.gov.ons.collection.entity.ContributorEntity;
-import uk.gov.ons.collection.entity.ErrorMessage;
 import uk.gov.ons.collection.entity.FormDefinitionEntity;
 import uk.gov.ons.collection.exception.DataNotFondException;
 import uk.gov.ons.collection.service.FormDefinitionService;
@@ -39,7 +37,6 @@ public class FormDefinitionController {
         @ResponseBody
         public Iterable<FormDefinitionEntity> getFormDefintion(@MatrixVariable Map<String, String> matrixVars) throws Exception {
             Iterable<FormDefinitionEntity> formDefinitionEntities = null;
-            ErrorMessage errorMessage = new ErrorMessage();
 
             String filteredSearchParameters = filterAndPrepareSearchParameters(matrixVars, this.defaultValidSearchColumns);
             log.info("Filtered Search Parameters { }", filteredSearchParameters);
