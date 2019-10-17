@@ -26,7 +26,7 @@ import uk.gov.ons.collection.entity.ContributorEntity;
 import uk.gov.ons.collection.entity.PeriodOffsetQuery;
 import uk.gov.ons.collection.entity.PeriodOffsetResponse;
 import uk.gov.ons.collection.entity.ValidationConfigQuery;
-import uk.gov.ons.collection.exception.DataNotFondException;
+import uk.gov.ons.collection.exception.DataNotFoundException;
 import uk.gov.ons.collection.service.ContributorService;
 import uk.gov.ons.collection.service.GraphQLService;
 import uk.gov.ons.collection.utilities.RelativePeriod;
@@ -66,7 +66,7 @@ public class ContributorController {
                 int size =  ((Collection<?>) contributorEntities).size();
                 log.info("Contributor Entities Elements size {}", size);
                 if(size == 0) {
-                    throw new DataNotFondException(NO_RECORDS_MESSAGE);
+                    throw new DataNotFoundException(NO_RECORDS_MESSAGE);
                 }
             }
         }
@@ -99,7 +99,7 @@ public class ContributorController {
                 int size =  ((Collection<?>) contributorEntities).size();
                 log.info("Contributor Entities Elements size {}", size);
                 if(size == 0) {
-                    throw new DataNotFondException(NO_RECORDS_MESSAGE);
+                    throw new DataNotFoundException(NO_RECORDS_MESSAGE);
                 }
             }
         }

@@ -25,7 +25,7 @@ public class RestExceptionHandler {
         return new ErrorResponse(HTTP_STATUS_NOT_FOUND, ERROR_MESSAGE, ex.getMessage());
     }
 
-    @ExceptionHandler(value = { DataNotFondException.class })
+    @ExceptionHandler(value = { DataNotFoundException.class })
     @ResponseStatus(HttpStatus.OK)
     public ErrorResponse noDataFoundException(Exception ex)
     {

@@ -10,7 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.ons.collection.entity.ContributorEntity;
 import uk.gov.ons.collection.entity.FormDefinitionEntity;
-import uk.gov.ons.collection.exception.DataNotFondException;
+import uk.gov.ons.collection.exception.DataNotFoundException;
 import uk.gov.ons.collection.service.FormDefinitionService;
 
 import java.util.*;
@@ -48,7 +48,7 @@ public class FormDefinitionController {
                 if (formDefinitionEntities instanceof Collection) {
                     int size =  ((Collection<?>) formDefinitionEntities).size();
                     if(size == 0) {
-                        throw new DataNotFondException(NO_RECORDS_MESSAGE);
+                        throw new DataNotFoundException(NO_RECORDS_MESSAGE);
                     }
                 }
             }
