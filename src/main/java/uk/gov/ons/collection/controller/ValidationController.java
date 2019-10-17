@@ -130,7 +130,7 @@ public class ValidationController {
     @RequestMapping(value="/saveOutputs", method = {RequestMethod.POST, RequestMethod.PUT})
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful saving of all validation outputs", response = String.class)})
     public String saveValidationOutputs(@RequestBody String validationOutputsJson, Errors errors){        
-        log.info("API CALL!! --> /validationPrepConfig/{vars} :: " + validationOutputsJson );
+        log.info("API CALL!! --> /validation/saveOutputs :: " + validationOutputsJson );
         
         ValidationOutputs outputs;
         String period;
@@ -155,25 +155,42 @@ public class ValidationController {
             return "{\"error\":\"Unable to resolve validation output JSON\"}";
         }
         
+        String qlResponse = new String();
+
         // 1: Delete outputs
-        log.info("Delete: " + deleteQuery); 
-        var deleteResponse = qlService.qlSearch(deleteQuery);
-        log.info("Delete response: " + deleteResponse); 
+        try {        
+            log.info("Delete: " + deleteQuery); 
+            qlResponse = qlService.qlSearch(deleteQuery);
+        }
+        catch(Exception e){
+            log.info("Exception: " + e);
+            log.info("QL Response: " + qlResponse);
+            return "{\"error\":\"Error removing existing validation outputs\"}";
+        }
 
         // 2: Insert outputs
-        log.info("Insert: " + insertQuery); 
-        var insertResponse = qlService.qlSearch(insertQuery);
-        log.info("Insert response: " + insertResponse); 
+        try {        
+            log.info("Insert: " + insertQuery); 
+            qlResponse = qlService.qlSearch(insertQuery);
+        }
+        catch(Exception e){
+            log.info("Exception: " + e);     
+            log.info("QL Response: " + qlResponse);
+            return "{\"error\":\"Error saving validation outputs\"}";
+        }
 
         // 3: Update status
-        var contributorStatus = new ContributorStatus(reference, period, survey, statusText);
-        var updateStatusQuery = contributorStatus.buildUpdateQuery();
+        try {
+            var updateStatusQuery = new ContributorStatus(reference, period, survey, statusText).buildUpdateQuery();
+            qlResponse = qlService.qlSearch(updateStatusQuery);
+        }
+        catch(Exception e){
+            log.info("Exception: " + e);
+            log.info("QL Response: " + qlResponse);
+            return "{\"error\":\"Error updating contributor status\"}";
+        }        
 
-        log.info("Update: " + updateStatusQuery); 
-        var UpdateResponse = qlService.qlSearch(updateStatusQuery);
-        log.info("Delete response: " + UpdateResponse); 
-
-        log.info("API CALL!! --> /validationPrepConfig/{vars} :: Complete" );
+        log.info("API CALL!! --> /validation/saveOutputs :: Complete" );
         return "Complete";
     }
 
@@ -200,5 +217,65 @@ public class ValidationController {
 //       }
 //     }
 //   }
+
+//    Custom graphQL queries temporary storage
+
+//    create or replace function dev01.deleteOutput(reference text, period text, survey text)
+//        returns void as $$
+//        DELETE
+//        FROM dev01.validationoutput
+//        where
+//        reference = $1 and
+//        period    = $2 and
+//        survey = $3
+//        $$ language sql VOLATILE;
+//
+//        Create function dev01.InsertValidationOutputByArray (dev01.validationoutput[]) returns dev01.validationoutput as $$
+//        Insert Into dev01.validationoutput (reference, period, survey, validationid, instance, triggered, formula, createdBy, createdDate)
+//        Select  reference, period, survey, validationid, instance, triggered, formula, createdBy, createdDate
+//        From    unnest($1)
+//        Returning *;
+//        $$ LANGUAGE sql VOLATILE STRICT SECURITY DEFINER;
   
   
+// public class updateStatusTest {
+
+//     @Test
+//     public void determineStatus_validInput_triggeredBlank() {
+//         String response = "{\"validationoutput\":[{\"formula\":\"\", \"reference\":\"\",\"period\":\"\",\"survey\":\"\",\"triggered\":\"\",\"validationid\":\"\",\"bpmid\":\"\"}]}";
+//         assertEquals(false, new updateStatus().determineStatus(response));
+//     }
+
+//     @Test
+//     public void determineStatus_validInput_triggeredFalse() {
+//         String response = "{\"validationoutput\":[{\"formula\":\"\", \"reference\":\"\",\"period\":\"\",\"survey\":\"\",\"triggered\":\"false\",\"validationid\":\"\",\"bpmid\":\"\"}]}";
+//         assertEquals(false, new updateStatus().determineStatus(response));
+//     }
+
+//     @Test
+//     public void determineStatus_validInput_triggeredTrue() {
+//         String response = "{\"validationoutput\":[{\"formula\":\"\", \"reference\":\"\",\"period\":\"\",\"survey\":\"\",\"triggered\":\"true\",\"validationid\":\"\",\"bpmid\":\"\"}]}";
+//         assertEquals(true, new updateStatus().determineStatus(response));
+//     }
+
+//     @Test
+//     public void determineStatus_multiArray_triggeredTrue() {
+//         String response = "{\"validationoutput\":[{\"formula\":\"\", \"reference\":\"\",\"period\":\"\",\"survey\":\"\",\"triggered\":\"\",\"validationid\":\"\",\"bpmid\":\"\"},{\"formula\":\"\", \"reference\":\"\",\"period\":\"\",\"survey\":\"\",\"triggered\":\"true\",\"validationid\":\"\",\"bpmid\":\"\"}]}";
+//         assertEquals(true, new updateStatus().determineStatus(response));
+//     }
+
+//     @Test
+//     public void determineStatus_multiArray_triggeredFalse() {
+//         String response = "{\"validationoutput\":[{\"formula\":\"\", \"reference\":\"\",\"period\":\"\",\"survey\":\"\",\"triggered\":\"\",\"validationid\":\"\",\"bpmid\":\"\"},{\"formula\":\"\", \"reference\":\"\",\"period\":\"\",\"survey\":\"\",\"triggered\":\"false\",\"validationid\":\"\",\"bpmid\":\"\"}]}";
+//         assertEquals(false, new updateStatus().determineStatus(response));
+//     }
+
+//     @Test
+//     public void updateStatus_validInput_triggeredTrue() {
+//         String response = "{\"validationoutput\":[{\"formula\":\"\", \"reference\":\"12345678000\",\"period\":\"201801\",\"survey\":\"999A\",\"triggered\":\"\",\"validationid\":\"\",\"bpmid\":\"\"},{\"formula\":\"\", \"reference\":\"\",\"period\":\"\",\"survey\":\"\",\"triggered\":\"false\",\"validationid\":\"\",\"bpmid\":\"\"}]}";
+//         String updateStatusQuery = "{\"query\" : \"mutation updateStatus {updateContributorByReferenceAndPeriodAndSurvey(input: {reference: \\\"12345678000\\\", period: \\\"201801\\\", survey: \\\"999A\\\", contributorPatch: {status: \\\"ValidationsTriggered\\\"}}) {clientMutationId}}\"}";
+//         assertEquals(updateStatusQuery, new updateStatus().updateStatusQuery(response));
+//     }
+
+
+// }

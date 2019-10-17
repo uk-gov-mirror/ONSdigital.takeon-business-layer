@@ -20,10 +20,11 @@ import uk.gov.ons.collection.exception.InvalidJsonException;
 public class ValidationOutputs {
 
     private JSONObject outputs;
-    private final String arrayAttribute = "validation_outputs";
-    private final String qlDeleteQuery = "mutation deleteOutput($period: String!, $reference: String!, $survey: String!){deleteoutput(input: {reference: $reference, period: $period, survey: $survey}){clientMutationId}}";
     private final Timestamp time = new Timestamp(new Date().getTime());
-
+    private final String arrayAttribute = "validation_outputs";
+    private final String qlDeleteQuery = "mutation deleteOutput($period: String!, $reference: String!, $survey: String!)" +
+                                         "{deleteoutput(input: {reference: $reference, period: $period, survey: $survey}){clientMutationId}}";
+    
     public ValidationOutputs(String jsonString) throws InvalidJsonException {
         try {
             outputs = new JSONObject(jsonString);
@@ -69,15 +70,15 @@ public class ValidationOutputs {
         StringJoiner joiner = new StringJoiner(",");
         try {
             var outputRow = outputs.getJSONArray(arrayAttribute).getJSONObject(index);
-            joiner.add("reference: \"" + outputRow.getString("reference") + "\"");   
-            joiner.add("period: \"" + outputRow.getString("period") + "\"");
-            joiner.add("survey: \"" + outputRow.getString("survey") + "\"");
-            joiner.add("formula: \"" + outputRow.getString("formula") + "\"");
-            joiner.add("validationid: \"" + outputRow.getInt("validationid") + "\"");
-            joiner.add("instance: \"" + outputRow.getInt("instance") + "\",");
-            joiner.add("triggered: \"" + outputRow.getBoolean("triggered") + "\"");
-            joiner.add("createdby: \"fisdba\"");
-            joiner.add("createddate: \"" + time.toString() + "\"");
+            joiner.add("reference: \\\"" + outputRow.getString("reference") + "\\\"");   
+            joiner.add("period: \\\"" + outputRow.getString("period") + "\\\"");
+            joiner.add("survey: \\\"" + outputRow.getString("survey") + "\\\"");
+            joiner.add("formula: \\\"" + outputRow.getString("formula") + "\\\"");
+            joiner.add("validationid: \\\"" + outputRow.getInt("validationid") + "\\\"");
+            joiner.add("instance: \\\"" + outputRow.getInt("instance") + "\\\"");
+            joiner.add("triggered: " + outputRow.getBoolean("triggered"));
+            joiner.add("createdby: \\\"fisdba\\\"");
+            joiner.add("createddate: \\\"" + time.toString() + "\\\"");
             return joiner.toString();
         }
         catch (Exception err) {

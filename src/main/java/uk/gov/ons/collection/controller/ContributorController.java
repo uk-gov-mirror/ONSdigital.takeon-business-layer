@@ -44,6 +44,7 @@ public class ContributorController {
 
     @Autowired
     ContributorService service;
+    
     @ApiOperation(value = "Search contributor table by arbitrary parameters", response = String.class)
     @GetMapping(value = "/search/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
