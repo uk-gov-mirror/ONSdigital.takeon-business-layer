@@ -17,7 +17,6 @@ public class Helpers {
 
     public Map<Integer, List<String>> placeIntoMap(List<QuestionResponseEntity> questionResponseEntities){
         Map<Integer, List<String>> mapOfInstance = new HashMap<>();
-        List<String> listOfQuestionCodes = new ArrayList<>();
         for(QuestionResponseEntity element: questionResponseEntities){
             if(!mapOfInstance.containsKey(element.getInstance())){
                 mapOfInstance.put(element.getInstance(), new ArrayList<String>());

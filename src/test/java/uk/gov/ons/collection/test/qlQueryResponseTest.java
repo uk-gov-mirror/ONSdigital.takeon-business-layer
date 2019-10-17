@@ -1,11 +1,9 @@
 package uk.gov.ons.collection.test;
 
-import org.json.JSONArray;
 import org.junit.jupiter.api.Test;
 import uk.gov.ons.collection.controller.qlQueryResponse;
 import uk.gov.ons.collection.utilities.RelativePeriod;
 
-import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;

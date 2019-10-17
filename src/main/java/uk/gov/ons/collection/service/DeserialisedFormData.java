@@ -1,7 +1,6 @@
 package uk.gov.ons.collection.service;
 
 import org.json.JSONArray;
-import uk.gov.ons.collection.entity.QuestionResponseEntity;
 import uk.gov.ons.collection.entity.UpdatedFormData;
 
 import java.util.ArrayList;
@@ -11,12 +10,9 @@ import java.util.Map;
 public class DeserialisedFormData {
 
     private JSONArray updatedFormData;
-    private UpdatedFormData newFormData;
-    private JSONArray updatedResponseData;
 
     private List<UpdatedFormData> updatedFormDataList = new ArrayList<>();
     private List<UpdatedFormData> constructedObjects = new ArrayList<>();
-    private List<QuestionResponseEntity> currentlyHeldResponses;
 
     public DeserialisedFormData(JSONArray formData){
         updatedFormData = formData;

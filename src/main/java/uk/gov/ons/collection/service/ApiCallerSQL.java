@@ -9,9 +9,6 @@ import uk.gov.ons.collection.utilities.Helpers;
 public class ApiCallerSQL implements ApiCaller {
 
     @Autowired
-    ValidationConfigService validationConfigService;
-
-    @Autowired
     ContributorService contributorService;
 
     @Autowired
@@ -20,20 +17,9 @@ public class ApiCallerSQL implements ApiCaller {
     @Autowired
     CurrentResponseService currentResponseService;
 
-    @Autowired
-    RunValidationService validationService;
-
-    @Autowired
-    ValidationApiCallerService validationApiCallerService;
-
     @Override
     public Iterable<ContributorEntity> loadContributors(String reference, String period, String survey) {
         return contributorService.generalSearch(new Helpers().buildUriParameters(reference, period, survey));
-    }
-
-    @Override
-    public Iterable<ValidationFormEntity> loadValidationConfig(int formId) {
-        return validationConfigService.getValidationConfig("FormID="+formId);
     }
 
     @Override
@@ -46,8 +32,4 @@ public class ApiCallerSQL implements ApiCaller {
         return formDefinitionService.getForm(new Helpers().buildUriParameters(reference, period, survey));
     }
 
-    @Override
-    public Iterable<ReturnedValidationOutputs> callValidationApi(String ruleName, String reference, String period, String survey) {
-        return validationApiCallerService.callBusinessApi(new Helpers().buildUriParameters(reference, period, survey));
-    }
 }
