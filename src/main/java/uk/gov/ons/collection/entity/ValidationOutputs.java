@@ -20,7 +20,8 @@ import uk.gov.ons.collection.exception.InvalidJsonException;
 public class ValidationOutputs {
 
     private JSONObject outputs;
-    private final String qlDeleteQuery = "mutation deleteOutput{deleteoutput(input: {reference: $reference, period: $period, survey: $survey}){clientMutationId}}";
+    private final String arrayAttribute = "validation_outputs";
+    private final String qlDeleteQuery = "mutation deleteOutput($period: String!, $reference: String!, $survey: String!){deleteoutput(input: {reference: $reference, period: $period, survey: $survey}){clientMutationId}}";
     private final Timestamp time = new Timestamp(new Date().getTime());
 
     public ValidationOutputs(String jsonString) throws InvalidJsonException {
@@ -36,11 +37,7 @@ public class ValidationOutputs {
         var queryJson = new StringBuilder();
         queryJson.append("{\"query\": \""); 
         queryJson.append(qlDeleteQuery); 
-        queryJson.append("\",\"variables\": {");
-        queryJson.append("\"reference\": \"" + GetReference() + "\"");
-        queryJson.append("\"period\": \"" + GetPeriod() + "\"");
-        queryJson.append("\"survey\": \"" + GetSurvey() + "\"");
-        queryJson.append("}){clientMutationId}}}");
+        queryJson.append("\",\"variables\":{\"reference\": \"" + GetReference() + "\",\"period\": \"" + GetPeriod() + "\",\"survey\": \"" + GetSurvey() + "\"}}");
         return queryJson.toString();
     }
 
@@ -56,7 +53,7 @@ public class ValidationOutputs {
     public String getValidationOutputs() throws InvalidJsonException {
         StringJoiner joiner = new StringJoiner(",");
         try {
-            var outputArray = outputs.getJSONArray("validationOutputs");
+            var outputArray = outputs.getJSONArray(arrayAttribute);
             for (int i=0; i < outputArray.length(); i++) {
                 joiner.add("{" + extractValidationOutputRow(i) + "}" );
             }
@@ -71,13 +68,13 @@ public class ValidationOutputs {
     public String extractValidationOutputRow(int index) throws InvalidJsonException {
         StringJoiner joiner = new StringJoiner(",");
         try {
-            var outputRow = outputs.getJSONArray("validationOutputs").getJSONObject(index);
+            var outputRow = outputs.getJSONArray(arrayAttribute).getJSONObject(index);
             joiner.add("reference: \"" + outputRow.getString("reference") + "\"");   
             joiner.add("period: \"" + outputRow.getString("period") + "\"");
             joiner.add("survey: \"" + outputRow.getString("survey") + "\"");
             joiner.add("formula: \"" + outputRow.getString("formula") + "\"");
             joiner.add("validationid: \"" + outputRow.getInt("validationid") + "\"");
-            joiner.add("instance: \"" + outputRow.getInt("instance") + "\"");
+            joiner.add("instance: \"" + outputRow.getInt("instance") + "\",");
             joiner.add("triggered: \"" + outputRow.getBoolean("triggered") + "\"");
             joiner.add("createdby: \"fisdba\"");
             joiner.add("createddate: \"" + time.toString() + "\"");
@@ -91,7 +88,7 @@ public class ValidationOutputs {
 
     public String GetReference() throws InvalidJsonException {
         try {   
-            return outputs.getJSONArray("validationOutputs").getJSONObject(0).getString("reference");
+            return outputs.getJSONArray(arrayAttribute).getJSONObject(0).getString("reference");
         }
         catch (Exception err) {
             throw new InvalidJsonException("Given JSON did not contain reference in the expected location: " + outputs, err);
@@ -100,7 +97,7 @@ public class ValidationOutputs {
 
     public String GetPeriod() throws InvalidJsonException {
         try {   
-            return outputs.getJSONArray("validationOutputs").getJSONObject(0).getString("period");
+            return outputs.getJSONArray(arrayAttribute).getJSONObject(0).getString("period");
         }
         catch (Exception err) {
             throw new InvalidJsonException("Given JSON did not contain period in the expected location: " + outputs, err);
@@ -109,7 +106,7 @@ public class ValidationOutputs {
 
     public String GetSurvey() throws InvalidJsonException {
         try {   
-            return outputs.getJSONArray("validationOutputs").getJSONObject(0).getString("survey");
+            return outputs.getJSONArray(arrayAttribute).getJSONObject(0).getString("survey");
         }
         catch (Exception err) {
             throw new InvalidJsonException("Given JSON did not contain survey in the expected location: " + outputs, err);
@@ -125,7 +122,7 @@ public class ValidationOutputs {
 
     public boolean isTriggeredFound() throws InvalidJsonException {
         try {    
-            var outputArray = outputs.getJSONArray("validationOutputs");
+            var outputArray = outputs.getJSONArray(arrayAttribute);
             for (int i=0; i < outputArray.length(); i++) {
                 if(outputArray.getJSONObject(i).getBoolean("triggered")){
                     return true;
