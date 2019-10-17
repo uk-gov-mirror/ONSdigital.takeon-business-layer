@@ -30,6 +30,9 @@ import uk.gov.ons.collection.exception.DataNotFoundException;
 import uk.gov.ons.collection.service.ContributorService;
 import uk.gov.ons.collection.service.GraphQLService;
 import uk.gov.ons.collection.utilities.RelativePeriod;
+import uk.gov.ons.collection.utilities.UrlParameterBuilder;
+import uk.gov.ons.collection.utilities.qlQueryBuilder;
+import uk.gov.ons.collection.utilities.qlQueryResponse;
 
 @Log4j2
 @Api(value = "Contributor Controller", description = "Main (and so far only) end point for the connection between the UI and persistance layer")

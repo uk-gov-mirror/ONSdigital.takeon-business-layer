@@ -1,4 +1,4 @@
-package uk.gov.ons.collection.controller;
+package uk.gov.ons.collection.utilities;
 
 import uk.gov.ons.collection.entity.FormDefinitionEntity;
 import uk.gov.ons.collection.entity.QuestionResponseEntity;

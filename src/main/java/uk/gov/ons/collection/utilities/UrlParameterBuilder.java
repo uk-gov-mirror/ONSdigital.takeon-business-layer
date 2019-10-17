@@ -1,4 +1,4 @@
-package uk.gov.ons.collection.controller;
+package uk.gov.ons.collection.utilities;
 
 import java.util.ArrayList;
 import java.util.HashMap;

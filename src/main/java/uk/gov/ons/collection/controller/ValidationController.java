@@ -29,6 +29,7 @@ import uk.gov.ons.collection.entity.ValidationConfigQuery;
 import uk.gov.ons.collection.entity.ValidationOutputs;
 import uk.gov.ons.collection.service.GraphQLService;
 import uk.gov.ons.collection.utilities.RelativePeriod;
+import uk.gov.ons.collection.utilities.qlQueryResponse;
 
 @Log4j2
 @Api(value = "Validation Controller", description = "Entry points primarily involving validation queries")
