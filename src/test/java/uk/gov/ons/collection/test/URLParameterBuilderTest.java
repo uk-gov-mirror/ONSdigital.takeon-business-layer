@@ -1,6 +1,6 @@
 package uk.gov.ons.collection.test;
 
-import uk.gov.ons.collection.controller.UrlParameterBuilder;
+import uk.gov.ons.collection.utilities.UrlParameterBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.hamcrest.collection.IsMapContaining;
@@ -10,8 +10,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 

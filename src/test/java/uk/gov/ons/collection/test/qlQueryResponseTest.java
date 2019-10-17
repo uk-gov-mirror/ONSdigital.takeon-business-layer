@@ -1,7 +1,7 @@
 package uk.gov.ons.collection.test;
 
 import org.junit.jupiter.api.Test;
-import uk.gov.ons.collection.controller.qlQueryResponse;
+import uk.gov.ons.collection.utilities.qlQueryResponse;
 import uk.gov.ons.collection.utilities.RelativePeriod;
 
 import static org.junit.jupiter.api.Assertions.*;
