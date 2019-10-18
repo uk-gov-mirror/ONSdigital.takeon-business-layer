@@ -11,7 +11,6 @@ public class qlQueryBuilderTest {
 
     @Test
     void buildVariables_null_blankString() {
-
         assertEquals("", new qlQueryBuilder(null).buildVariables());
     }
 

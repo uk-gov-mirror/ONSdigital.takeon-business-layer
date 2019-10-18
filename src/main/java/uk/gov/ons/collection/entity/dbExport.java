@@ -3,7 +3,7 @@ package uk.gov.ons.collection.entity;
 public class dbExport { 
 
     private final String query = 
-        "query  queryExport {" +
+        "query dbExport {" +
                 " allSurveys {nodes {survey description periodicity createdby createddate lastupdatedby lastupdateddate " +
                     "formsBySurvey {nodes { formid survey description periodstart periodend createdby createddate " +
                                            "lastupdatedby lastupdateddate " +
@@ -11,8 +11,7 @@ public class dbExport {
                             "formid questioncode displayquestionnumber displaytext displayorder " +
                             "type derivedformula createdby createddate lastupdatedby lastupdateddate}}" +
                         "validationformsByFormid {nodes {" +
-                            "validationid formid rule questioncode precalculationformula severity createdby " +
-                            "createddate lastupdatedby lastupdateddate " +
+                            "validationid formid rule primaryquestion defaultvalue severity createdby createddate lastupdatedby lastupdateddate " +
                             "validationparametersByValidationid {nodes {" +
                                 "validationid attributename attributevalue parameter value createdby createddate lastupdatedby lastupdateddate}}" +
                             "validationruleByRule {" +
@@ -21,8 +20,8 @@ public class dbExport {
                     "questionsBySurvey { nodes {survey questioncode createdby createddate lastupdatedby lastupdateddate}}" +
                     "contributorsBySurvey { nodes {" +
                         "reference  period survey  formid  status  receiptdate  lockedby  lockeddate  formtype  checkletter  frozensicoutdated " +
-                        "rusicoutdated frozensic rusic frozenemployees employees frozenemployment employment frozenfteemployment" +
-                        "fteemployment frozenturnover turnover enterprisereference wowenterprisereference cellnumber currency vatreference" +
+                        "rusicoutdated frozensic rusic frozenemployees employees frozenemployment employment frozenfteemployment " +
+                        "fteemployment frozenturnover turnover enterprisereference wowenterprisereference cellnumber currency vatreference " +
                         "payereference companyregistrationnumber numberlivelocalunits numberlivevat numberlivepaye legalstatus " +
                         "reportingunitmarker region birthdate enterprisename referencename referenceaddress referencepostcode tradingstyle " +
                         "contact telephone fax selectiontype inclusionexclusion createdby createddate lastupdatedby lastupdateddate " +
