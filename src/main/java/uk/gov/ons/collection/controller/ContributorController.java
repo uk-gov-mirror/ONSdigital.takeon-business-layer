@@ -83,34 +83,6 @@ public class ContributorController {
         return UrlParameterBuilder.buildParameterString(filteredParameters);
     }
 
-    @ApiOperation(value = "Get contributor details", response = String.class)
-    @GetMapping(value = "/searchBy/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful retrieval of Contributor details", response = ContributorEntity.class)})
-    @ResponseBody
-    public Iterable<ContributorEntity> searchBy(@MatrixVariable Map<String, String> matrixVars) throws Exception {
-        Iterable<ContributorEntity> contributorEntities = null;
-        String filteredSearchParameters = filterAndPrepareSearchParameters(matrixVars, this.defaultValidSearchColumns);
-        log.info("Filtered search parameters { }", filteredSearchParameters);
-        contributorEntities = service.generalSearch(filteredSearchParameters);
-        log.info("Contributor Entities after calling Persistance Layer { }", filteredSearchParameters);
-
-        if (contributorEntities == null) {
-            throw new Exception();
-        } else {
-            if (contributorEntities instanceof Collection) {
-                int size =  ((Collection<?>) contributorEntities).size();
-                log.info("Contributor Entities Elements size {}", size);
-                if(size == 0) {
-                    throw new DataNotFoundException(NO_RECORDS_MESSAGE);
-                }
-            }
-        }
-
-        return contributorEntities;
-
-    }
-
     @Autowired
     GraphQLService qlService;
 
