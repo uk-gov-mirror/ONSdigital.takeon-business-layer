@@ -145,10 +145,10 @@ public class ValidationController {
         // 1 - Convert params to JSON Object and extract Reference | Period | Survey
         try {
             outputs = new ValidationOutputs(validationOutputsJson);
-            reference = outputs.GetReference();
-            period = outputs.GetPeriod();
-            survey = outputs.GetSurvey();
-            statusText = outputs.GetStatusText();
+            reference = outputs.getReference();
+            period = outputs.getPeriod();
+            survey = outputs.getSurvey();
+            statusText = outputs.getStatusText();
             deleteQuery = outputs.buildDeleteOutputQuery();
             insertQuery = outputs.buildInsertByArrayQuery();
         }

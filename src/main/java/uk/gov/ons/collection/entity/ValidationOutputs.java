@@ -4,30 +4,22 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.StringJoiner;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 import uk.gov.ons.collection.exception.InvalidJsonException;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@ToString
 public class ValidationOutputs {
 
-    private JSONObject outputs;
+    private JSONArray outputArray;
     private final Timestamp time = new Timestamp(new Date().getTime());
-    private final String arrayAttribute = "validation_outputs";
     private final String qlDeleteQuery = "mutation deleteOutput($period: String!, $reference: String!, $survey: String!)" +
                                          "{deleteoutput(input: {reference: $reference, period: $period, survey: $survey}){clientMutationId}}";
     
     public ValidationOutputs(String jsonString) throws InvalidJsonException {
         try {
-            outputs = new JSONObject(jsonString);
+            outputArray = new JSONObject(jsonString).getJSONArray("validation_outputs");
         }
         catch (JSONException err) {
             throw new InvalidJsonException("Given string could not be converted/processed: " + jsonString, err);
@@ -38,7 +30,7 @@ public class ValidationOutputs {
         var queryJson = new StringBuilder();
         queryJson.append("{\"query\": \""); 
         queryJson.append(qlDeleteQuery); 
-        queryJson.append("\",\"variables\":{\"reference\": \"" + GetReference() + "\",\"period\": \"" + GetPeriod() + "\",\"survey\": \"" + GetSurvey() + "\"}}");
+        queryJson.append("\",\"variables\":{\"reference\": \"" + getReference() + "\",\"period\": \"" + getPeriod() + "\",\"survey\": \"" + getSurvey() + "\"}}");
         return queryJson.toString();
     }
 
@@ -51,25 +43,23 @@ public class ValidationOutputs {
     }
 
     // Loop through the given validation output array json and convert it into a graphQL compatable format
-    public String getValidationOutputs() throws InvalidJsonException {
+    private String getValidationOutputs() throws InvalidJsonException {
         StringJoiner joiner = new StringJoiner(",");
-        try {
-            var outputArray = outputs.getJSONArray(arrayAttribute);
-            for (int i=0; i < outputArray.length(); i++) {
-                joiner.add("{" + extractValidationOutputRow(i) + "}" );
-            }
-            return joiner.toString();
+        for (int i=0; i < outputArray.length(); i++) {
+            joiner.add("{" + extractValidationOutputRow(i) + "}" );
         }
-        catch (Exception err) {
-            throw new InvalidJsonException("Error processing validation output json structure: " + outputs, err);
-        }
+        return joiner.toString();
+    }
+
+    public String getTime() {
+        return time.toString();
     }
 
     // Convert a row for the given index and provide it in graphQL desired format
-    public String extractValidationOutputRow(int index) throws InvalidJsonException {
+    private String extractValidationOutputRow(int index) throws InvalidJsonException {
         StringJoiner joiner = new StringJoiner(",");
         try {
-            var outputRow = outputs.getJSONArray(arrayAttribute).getJSONObject(index);
+            var outputRow = outputArray.getJSONObject(index);
             joiner.add("reference: \\\"" + outputRow.getString("reference") + "\\\"");   
             joiner.add("period: \\\"" + outputRow.getString("period") + "\\\"");
             joiner.add("survey: \\\"" + outputRow.getString("survey") + "\\\"");
@@ -82,56 +72,48 @@ public class ValidationOutputs {
             return joiner.toString();
         }
         catch (Exception err) {
-            throw new InvalidJsonException("Error processing validation output json structure: " + outputs, err);
+            throw new InvalidJsonException("Error processing validation output json structure: " + outputArray, err);
         }
     }
 
-
-    public String GetReference() throws InvalidJsonException {
+    private String getFirstRowAttribute(String attribute) throws InvalidJsonException {
         try {   
-            return outputs.getJSONArray(arrayAttribute).getJSONObject(0).getString("reference");
+            return outputArray.getJSONObject(0).getString(attribute);
         }
         catch (Exception err) {
-            throw new InvalidJsonException("Given JSON did not contain reference in the expected location: " + outputs, err);
+            throw new InvalidJsonException("Given JSON did not contain " + attribute + " in the expected location: " + outputArray, err);
         } 
     }
 
-    public String GetPeriod() throws InvalidJsonException {
-        try {   
-            return outputs.getJSONArray(arrayAttribute).getJSONObject(0).getString("period");
-        }
-        catch (Exception err) {
-            throw new InvalidJsonException("Given JSON did not contain period in the expected location: " + outputs, err);
-        } 
+    public String getReference() throws InvalidJsonException {
+        return getFirstRowAttribute("reference");
     }
 
-    public String GetSurvey() throws InvalidJsonException {
-        try {   
-            return outputs.getJSONArray(arrayAttribute).getJSONObject(0).getString("survey");
-        }
-        catch (Exception err) {
-            throw new InvalidJsonException("Given JSON did not contain survey in the expected location: " + outputs, err);
-        } 
+    public String getPeriod() throws InvalidJsonException {
+        return getFirstRowAttribute("period");
     }
 
-    public String GetStatusText() throws InvalidJsonException {
+    public String getSurvey() throws InvalidJsonException {
+        return getFirstRowAttribute("survey");
+    }
+
+    public String getStatusText() throws InvalidJsonException {
         if (isTriggeredFound()) {
             return "Validations Triggered";
         }
         return "Clear";
     }
 
-    public boolean isTriggeredFound() throws InvalidJsonException {
+    private boolean isTriggeredFound() throws InvalidJsonException {
         try {    
-            var outputArray = outputs.getJSONArray(arrayAttribute);
             for (int i=0; i < outputArray.length(); i++) {
-                if(outputArray.getJSONObject(i).getBoolean("triggered")){
+                if (outputArray.getJSONObject(i).getBoolean("triggered")){
                     return true;
                 }
             }
         }
         catch (Exception err) {
-            throw new InvalidJsonException("Given JSON did not contain triggered in the expected location(s): " + outputs, err);
+            throw new InvalidJsonException("Given JSON did not contain triggered in the expected location(s): " + outputArray, err);
         } 
         return false;
     }
