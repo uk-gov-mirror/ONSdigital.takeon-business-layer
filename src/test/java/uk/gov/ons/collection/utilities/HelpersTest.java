@@ -1,16 +1,19 @@
 package uk.gov.ons.collection.utilities;
 
-import org.junit.jupiter.api.Test;
-import uk.gov.ons.collection.entity.FormDefinitionEntity;
-import uk.gov.ons.collection.entity.QuestionResponseEntity;
-import uk.gov.ons.collection.service.ApiCallerTest;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+
+import uk.gov.ons.collection.entity.FormDefinitionEntity;
+import uk.gov.ons.collection.entity.QuestionResponseEntity;
+import uk.gov.ons.collection.service.ApiCallerTest;
 
 class HelpersTest {
 
@@ -18,8 +21,8 @@ class HelpersTest {
     void placeIntoMap_twoInstances_OneQuestionCode() {
         Helpers helpers = new Helpers();
         List<QuestionResponseEntity> testResponses = new ArrayList<>();
-        QuestionResponseEntity questionResponseEntity = new QuestionResponseEntity().builder().instance(3).questionCode("143").build();
-        QuestionResponseEntity questionResponseEntity_2 = new QuestionResponseEntity().builder().instance(0).questionCode("143").build();
+        QuestionResponseEntity questionResponseEntity = QuestionResponseEntity.builder().instance(3).questionCode("143").build();
+        QuestionResponseEntity questionResponseEntity_2 = QuestionResponseEntity.builder().instance(0).questionCode("143").build();
         testResponses.add(questionResponseEntity);
         testResponses.add(questionResponseEntity_2);
 
@@ -41,8 +44,8 @@ class HelpersTest {
         // List that gets passed to helper function
         List<QuestionResponseEntity> testResponses = new ArrayList<>();
         // Instantiate entities
-        QuestionResponseEntity questionResponseEntity = new QuestionResponseEntity().builder().instance(0).questionCode("146").build();
-        QuestionResponseEntity questionResponseEntity_2 = new QuestionResponseEntity().builder().instance(0).questionCode("143").build();
+        QuestionResponseEntity questionResponseEntity = QuestionResponseEntity.builder().instance(0).questionCode("146").build();
+        QuestionResponseEntity questionResponseEntity_2 = QuestionResponseEntity.builder().instance(0).questionCode("143").build();
         //Add to list
         testResponses.add(questionResponseEntity);
         testResponses.add(questionResponseEntity_2);
@@ -63,9 +66,9 @@ class HelpersTest {
         // List that gets passed to helper function
         List<QuestionResponseEntity> testResponses = new ArrayList<>();
         // Instantiate entities
-        QuestionResponseEntity questionResponseEntity = new QuestionResponseEntity().builder().instance(0).questionCode("146").build();
-        QuestionResponseEntity questionResponseEntity_2 = new QuestionResponseEntity().builder().instance(1).questionCode("143").build();
-        QuestionResponseEntity questionResponseEntity_3 = new QuestionResponseEntity().builder().instance(2).questionCode("143").build();
+        QuestionResponseEntity questionResponseEntity = QuestionResponseEntity.builder().instance(0).questionCode("146").build();
+        QuestionResponseEntity questionResponseEntity_2 = QuestionResponseEntity.builder().instance(1).questionCode("143").build();
+        QuestionResponseEntity questionResponseEntity_3 = QuestionResponseEntity.builder().instance(2).questionCode("143").build();
         //Add to list
         testResponses.add(questionResponseEntity);
         testResponses.add(questionResponseEntity_2);
@@ -94,11 +97,11 @@ class HelpersTest {
         // List that gets passed to helper function
         List<QuestionResponseEntity> testResponses = new ArrayList<>();
         // Instantiate entities
-        QuestionResponseEntity questionResponseEntity = new QuestionResponseEntity().builder().instance(0).questionCode("146").build();
-        QuestionResponseEntity questionResponseEntity_2 = new QuestionResponseEntity().builder().instance(1).questionCode("143").build();
-        QuestionResponseEntity questionResponseEntity_3 = new QuestionResponseEntity().builder().instance(2).questionCode("143").build();
-        QuestionResponseEntity questionResponseEntity_4 = new QuestionResponseEntity().builder().instance(2).questionCode("001").build();
-        QuestionResponseEntity questionResponseEntity_5 = new QuestionResponseEntity().builder().instance(2).questionCode("002").build();
+        QuestionResponseEntity questionResponseEntity = QuestionResponseEntity.builder().instance(0).questionCode("146").build();
+        QuestionResponseEntity questionResponseEntity_2 = QuestionResponseEntity.builder().instance(1).questionCode("143").build();
+        QuestionResponseEntity questionResponseEntity_3 = QuestionResponseEntity.builder().instance(2).questionCode("143").build();
+        QuestionResponseEntity questionResponseEntity_4 = QuestionResponseEntity.builder().instance(2).questionCode("001").build();
+        QuestionResponseEntity questionResponseEntity_5 = QuestionResponseEntity.builder().instance(2).questionCode("002").build();
         //Add to list
         testResponses.add(questionResponseEntity);
         testResponses.add(questionResponseEntity_2);
@@ -131,24 +134,24 @@ class HelpersTest {
     List<QuestionResponseEntity> testResponses = new ArrayList<>();
     Iterable<FormDefinitionEntity> testFormDef = new ArrayList<>();
     List<QuestionResponseEntity> testOutputs = new ArrayList<>();
-    ApiCallerTest dataLoaderTest = new ApiCallerTest().builder().questionResponse(testResponses).definitionEntities(testFormDef).build();
+    ApiCallerTest dataLoaderTest = ApiCallerTest.builder().questionResponse(testResponses).definitionEntities(testFormDef).build();
 
     void setup_checkAllQuestionsPresent(){
 
         // List of test responses
-        testResponses.add(new QuestionResponseEntity().builder().questionCode("132").response("Response for 132").build());
-        testResponses.add(new QuestionResponseEntity().builder().questionCode("032").response("Response for 032").build());
-        testResponses.add(new QuestionResponseEntity().builder().questionCode("001").response("Response for 001").build());
+        testResponses.add(QuestionResponseEntity.builder().questionCode("132").response("Response for 132").build());
+        testResponses.add(QuestionResponseEntity.builder().questionCode("032").response("Response for 032").build());
+        testResponses.add(QuestionResponseEntity.builder().questionCode("001").response("Response for 001").build());
         // Basic form definition
-        ((ArrayList<FormDefinitionEntity>) testFormDef).add(new FormDefinitionEntity().builder().questionCode("132").build());
-        ((ArrayList<FormDefinitionEntity>) testFormDef).add(new FormDefinitionEntity().builder().questionCode("032").build());
-        ((ArrayList<FormDefinitionEntity>) testFormDef).add(new FormDefinitionEntity().builder().questionCode("001").build());
-        ((ArrayList<FormDefinitionEntity>) testFormDef).add(new FormDefinitionEntity().builder().questionCode("999").build());
+        ((ArrayList<FormDefinitionEntity>) testFormDef).add(FormDefinitionEntity.builder().questionCode("132").build());
+        ((ArrayList<FormDefinitionEntity>) testFormDef).add(FormDefinitionEntity.builder().questionCode("032").build());
+        ((ArrayList<FormDefinitionEntity>) testFormDef).add(FormDefinitionEntity.builder().questionCode("001").build());
+        ((ArrayList<FormDefinitionEntity>) testFormDef).add(FormDefinitionEntity.builder().questionCode("999").build());
         // Setup output list of responses
-        testOutputs.add(new QuestionResponseEntity().builder().questionCode("132").response("Response for 132").build());
-        testOutputs.add(new QuestionResponseEntity().builder().questionCode("032").response("Response for 032").build());
-        testOutputs.add(new QuestionResponseEntity().builder().questionCode("001").response("Response for 001").build());
-        testOutputs.add(new QuestionResponseEntity().builder().questionCode("999").response("").build());
+        testOutputs.add(QuestionResponseEntity.builder().questionCode("132").response("Response for 132").build());
+        testOutputs.add(QuestionResponseEntity.builder().questionCode("032").response("Response for 032").build());
+        testOutputs.add(QuestionResponseEntity.builder().questionCode("001").response("Response for 001").build());
+        testOutputs.add(QuestionResponseEntity.builder().questionCode("999").response("").build());
 
     }
 
