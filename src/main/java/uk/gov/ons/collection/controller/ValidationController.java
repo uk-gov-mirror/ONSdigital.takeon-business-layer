@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.MatrixVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
@@ -131,6 +132,7 @@ public class ValidationController {
     @ApiOperation(value = "Save validation outputs", response = String.class)
     @RequestMapping(value="/saveOutputs", method = {RequestMethod.POST, RequestMethod.PUT})
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful saving of all validation outputs", response = String.class)})
+    @ResponseBody
     public String saveValidationOutputs(@RequestBody String validationOutputsJson, Errors errors){        
         log.info("API CALL!! --> /validation/saveOutputs :: " + validationOutputsJson );
         
@@ -172,7 +174,6 @@ public class ValidationController {
 
         // 2: Insert outputs
         try {        
-            log.info("Insert: " + insertQuery); 
             qlResponse = qlService.qlSearch(insertQuery);
         }
         catch(Exception e){
@@ -193,7 +194,7 @@ public class ValidationController {
         }        
 
         log.info("API CALL!! --> /validation/saveOutputs :: Complete" );
-        return "Complete";
+        return "{\"status\": \"Success\"}";
     }
 
 }
