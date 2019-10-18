@@ -51,7 +51,6 @@ public class Helpers {
         return questionResponseEntities;
     }
 
-
     public boolean checkQuestionCodePresent(String questionCode, List<QuestionResponseEntity> questionResponses){
         for(QuestionResponseEntity element: questionResponses){
             if(element.getQuestionCode().equals(questionCode))
