@@ -21,10 +21,10 @@ import java.util.Map;
 
 
 @DisplayName("URL Parameter Builder tests")
-public class URLParameterBuilderTest {
+public class UrlParameterBuilderTest {
 
     @Test
-    void FilterParametersEmptyFilterAnd1ParameterGivesEmptyMap() {
+    void filterParametersEmptyFilterAnd1ParameterGivesEmptyMap() {
         Map<String, String> oneParameter = new HashMap<>();
         oneParameter.put("testKey", "testValue");
         List<String> emptyFilter = new ArrayList<>();
@@ -35,7 +35,7 @@ public class URLParameterBuilderTest {
     }
 
     @Test
-    void FilterParameters1FilterAndEmptyParameterGivesEmptyMap() {
+    void filterParameters1FilterAndEmptyParameterGivesEmptyMap() {
         Map<String, String> emptyParameter = new HashMap<>();
         List<String> oneFilter = new ArrayList<>(Arrays.asList("testFilter"));
 
@@ -45,7 +45,7 @@ public class URLParameterBuilderTest {
     }
 
     @Test
-    void FilterParameters1FilterAnd2ParameterGives1FilteredResponse() {
+    void filterParameters1FilterAnd2ParameterGives1FilteredResponse() {
         Map<String, String> twoParameters = new HashMap<>();
         twoParameters.put("testKey", "nonFilteredValue");
         twoParameters.put("testFilter", "filteredValue");
@@ -58,20 +58,20 @@ public class URLParameterBuilderTest {
     }
 
     @Test
-    void FilterNullParametersAndNullFilterGivesEmptyMap() {
+    void filterNullParametersAndNullFilterGivesEmptyMap() {
         Map<String, String> filteredParameters = UrlParameterBuilder.filter(null,null);
         assertThat(filteredParameters.size(), is(0));
     }
 
     @Test
-    void BuilderEmptyParamsGivesBlankString() {
+    void builderEmptyParamsGivesBlankString() {
         Map<String, String> noParameters = new HashMap<>();
         String output = UrlParameterBuilder.buildParameterString(noParameters);
         assertEquals("",output);
     }
 
     @Test
-    void Builder1Param() {
+    void builder1Param() {
         Map<String, String> oneParameter = new HashMap<>();
         oneParameter.put("testKey", "testValue");
         String output = UrlParameterBuilder.buildParameterString(oneParameter);
@@ -79,7 +79,7 @@ public class URLParameterBuilderTest {
     }
 
     @Test
-    void Builder2Params() {
+    void builder2Params() {
         Map<String, String> twoParameters = new HashMap<>();
         twoParameters.put("testKeyA", "testValueA");
         twoParameters.put("testKeyB", "testValueB");
@@ -89,7 +89,7 @@ public class URLParameterBuilderTest {
     }
 
     @Test
-    void BuilderNullParams() {
+    void builderNullParams() {
         String output = UrlParameterBuilder.buildParameterString(null);
         assertEquals("",output);
     }

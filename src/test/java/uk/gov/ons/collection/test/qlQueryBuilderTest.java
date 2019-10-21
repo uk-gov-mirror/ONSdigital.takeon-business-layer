@@ -7,7 +7,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class qlQueryBuilderTest {
+public class QlQueryBuilderTest {
 
     @Test
     void buildVariables_null_blankString() {

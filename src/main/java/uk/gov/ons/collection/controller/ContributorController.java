@@ -125,7 +125,7 @@ public class ContributorController {
     public String dataPrepConfig(@MatrixVariable Map<String, String> searchParameters) {
 
         // TODO: Validate all 3 parameters have been passed through
-        log.info("API CALL!! --> /validationPrepConfig/{vars} :: " + searchParameters);
+        log.info("DEPRECATED!!!! API CALL!! --> /validationPrepConfig/{vars} :: " + searchParameters);
         String period = searchParameters.get("period");
         String reference = searchParameters.get("reference");
         String survey = searchParameters.get("survey");

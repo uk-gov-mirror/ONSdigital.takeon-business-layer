@@ -1,18 +1,18 @@
 package uk.gov.ons.collection.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import org.junit.jupiter.api.Test;
-
 import uk.gov.ons.collection.entity.ValidationOutputs;
 import uk.gov.ons.collection.exception.InvalidJsonException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ValidationOutputsTest {
 
     @Test
     void class_invalidJson_throwsExeption() {
-        assertThrows( InvalidJsonException.class, () -> new ValidationOutputs("Dummy"));
+        assertThrows(InvalidJsonException.class, () -> new ValidationOutputs("Dummy"));
     }
 
     @Test
@@ -25,7 +25,7 @@ public class ValidationOutputsTest {
             var query = new ValidationOutputs(inputJson).buildDeleteOutputQuery();
             assertEquals(expectedQuery, query);
         } catch (Exception e) {
-             assert(false);
+            assertTrue(false);
         }
     }
 
@@ -39,13 +39,14 @@ public class ValidationOutputsTest {
             var validationOutput = new ValidationOutputs(inputJson);
             var query = validationOutput.buildInsertByArrayQuery();
             var expectedQuery = "{\"query\": \"mutation insertOutputArray{insertvalidationoutputbyarray(input:" +
-            " {arg0:[{reference: \\\"12345678000\\\",period: \\\"201801\\\",survey: \\\"999A\\\",formula: \\\"4745634 > 5\\\"" +
-            ",validationid: \\\"10\\\",instance: \\\"0\\\",triggered: false,createdby: \\\"fisdba\\\",createddate: \\\"" + validationOutput.getTime() + "\\\"}," +
-            "{reference: \\\"12345678000\\\",period: \\\"201801\\\",survey: \\\"999A\\\",formula: \\\"1233.52 > 5\\\",validationid: \\\"11\\\"," +
-            "instance: \\\"0\\\",triggered: false,createdby: \\\"fisdba\\\",createddate: \\\"" + validationOutput.getTime() + "\\\"}]}){clientMutationId}}\"}";
+                " {arg0:[{reference: \\\"12345678000\\\",period: \\\"201801\\\",survey: \\\"999A\\\",formula: \\\"4745634 > 5\\\"" +
+                ",validationid: \\\"10\\\",instance: \\\"0\\\",triggered: false,createdby: \\\"fisdba\\\",createddate: \\\"" + validationOutput.getTime() + 
+                "\\\"},{reference: \\\"12345678000\\\",period: \\\"201801\\\",survey: \\\"999A\\\",formula: \\\"1233.52 > 5\\\",validationid: \\\"11\\\"," +
+                "instance: \\\"0\\\",triggered: false,createdby: \\\"fisdba\\\",createddate: \\\"" +
+                validationOutput.getTime() + "\\\"}]}){clientMutationId}}\"}";
             assertEquals(expectedQuery, query);
         } catch (Exception e) {
-            assert(false);
+            assertTrue(false);
         }
     }
 
@@ -66,23 +67,23 @@ public class ValidationOutputsTest {
             var reference = new ValidationOutputs(inputJson).getReference();
             assertEquals(expectedReference, reference);
         } catch (Exception e) {
-            assert(false);
+            assertTrue(false);
         }
     }
 
     @Test
     void getReference_missingReference_throwsException() {
-        assertThrows( InvalidJsonException.class, () -> new ValidationOutputs("{\"validation_outputs\": []}").getReference());
+        assertThrows(InvalidJsonException.class, () -> new ValidationOutputs("{\"validation_outputs\": []}").getReference());
     }
 
     @Test
     void getPeriod_missingAttribute_throwsException() {
-        assertThrows( InvalidJsonException.class, () -> new ValidationOutputs("{\"validation_outputs\": []}").getPeriod());
+        assertThrows(InvalidJsonException.class, () -> new ValidationOutputs("{\"validation_outputs\": []}").getPeriod());
     }
 
     @Test
     void getSurvey_missingAttribute_throwsException() {
-        assertThrows( InvalidJsonException.class, () -> new ValidationOutputs("{\"validation_outputs\": []}").getSurvey());
+        assertThrows(InvalidJsonException.class, () -> new ValidationOutputs("{\"validation_outputs\": []}").getSurvey());
     }
     
     @Test
@@ -93,7 +94,7 @@ public class ValidationOutputsTest {
             var period = new ValidationOutputs(inputJson).getPeriod();
             assertEquals(expectedPeriod, period);
         } catch (Exception e) {
-            assert(false);
+            assertTrue(false);
         }
     }  
     
@@ -105,13 +106,13 @@ public class ValidationOutputsTest {
             var survey = new ValidationOutputs(inputJson).getSurvey();
             assertEquals(expectedPeriod, survey);
         } catch (Exception e) {
-            assert(false);
+            assertTrue(false);
         }
     }
 
     @Test
     void getStatusText_missingTriggeredAttribute_throwsException() {
-        assertThrows( InvalidJsonException.class, () -> new ValidationOutputs("{\"validation_outputs\": [{\"a\":\"b\"}]}").getStatusText());
+        assertThrows(InvalidJsonException.class, () -> new ValidationOutputs("{\"validation_outputs\": [{\"a\":\"b\"}]}").getStatusText());
     }
 
     @Test
@@ -122,7 +123,7 @@ public class ValidationOutputsTest {
             var status = new ValidationOutputs(inputJson).getStatusText();
             assertEquals(expectedStatus, status);
         } catch (Exception e) {
-            assert(false);
+            assertTrue(false);
         }
     }
 
@@ -134,7 +135,7 @@ public class ValidationOutputsTest {
             var status = new ValidationOutputs(inputJson).getStatusText();
             assertEquals(expectedStatus, status);
         } catch (Exception e) {
-            assert(false);
+            assertTrue(false);
         }
     }
 
@@ -146,19 +147,20 @@ public class ValidationOutputsTest {
             var status = new ValidationOutputs(inputJson).getStatusText();
             assertEquals(expectedStatus, status);
         } catch (Exception e) {
-            assert(false);
+            assertTrue(false);
         }
     }
 
     @Test
     void getStatusText_0of5triggeredInJson_returnsClear() {
-        var inputJson =  "{\"validation_outputs\": [{\"triggered\": false},{\"triggered\": false},{\"triggered\": false},{\"triggered\": false},{\"triggered\": false}]}";
+        var inputJson = "{\"validation_outputs\": [{\"triggered\": false},{\"triggered\": false}," + 
+            "{\"triggered\": false},{\"triggered\": false},{\"triggered\": false}]}";
         var expectedStatus = "Clear";
         try {
             var status = new ValidationOutputs(inputJson).getStatusText();
             assertEquals(expectedStatus, status);
         } catch (Exception e) {
-            assert(false);
+            assertTrue(false);
         }
     }
 
