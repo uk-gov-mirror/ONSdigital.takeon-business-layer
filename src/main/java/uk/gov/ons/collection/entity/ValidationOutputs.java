@@ -20,8 +20,7 @@ public class ValidationOutputs {
     public ValidationOutputs(String jsonString) throws InvalidJsonException {
         try {
             outputArray = new JSONObject(jsonString).getJSONArray("validation_outputs");
-        }
-        catch (JSONException err) {
+        } catch (JSONException err) {
             throw new InvalidJsonException("Given string could not be converted/processed: " + jsonString, err);
         }
     }
@@ -30,7 +29,8 @@ public class ValidationOutputs {
         var queryJson = new StringBuilder();
         queryJson.append("{\"query\": \""); 
         queryJson.append(qlDeleteQuery); 
-        queryJson.append("\",\"variables\":{\"reference\": \"" + getReference() + "\",\"period\": \"" + getPeriod() + "\",\"survey\": \"" + getSurvey() + "\"}}");
+        queryJson.append("\",\"variables\":" + 
+            "{\"reference\": \"" + getReference() + "\",\"period\": \"" + getPeriod() + "\",\"survey\": \"" + getSurvey() + "\"}}");
         return queryJson.toString();
     }
 
@@ -45,8 +45,8 @@ public class ValidationOutputs {
     // Loop through the given validation output array json and convert it into a graphQL compatable format
     private String getValidationOutputs() throws InvalidJsonException {
         StringJoiner joiner = new StringJoiner(",");
-        for (int i=0; i < outputArray.length(); i++) {
-            joiner.add("{" + extractValidationOutputRow(i) + "}" );
+        for (int i = 0; i < outputArray.length(); i++) {
+            joiner.add("{" + extractValidationOutputRow(i) + "}");
         }
         return joiner.toString();
     }
@@ -70,8 +70,7 @@ public class ValidationOutputs {
             joiner.add("createdby: \\\"fisdba\\\"");
             joiner.add("createddate: \\\"" + time.toString() + "\\\"");
             return joiner.toString();
-        }
-        catch (Exception err) {
+        } catch (Exception err) {
             throw new InvalidJsonException("Error processing validation output json structure: " + outputArray, err);
         }
     }
@@ -79,8 +78,7 @@ public class ValidationOutputs {
     private String getFirstRowAttribute(String attribute) throws InvalidJsonException {
         try {   
             return outputArray.getJSONObject(0).getString(attribute);
-        }
-        catch (Exception err) {
+        } catch (Exception err) {
             throw new InvalidJsonException("Given JSON did not contain " + attribute + " in the expected location: " + outputArray, err);
         } 
     }
@@ -106,13 +104,12 @@ public class ValidationOutputs {
 
     private boolean isTriggeredFound() throws InvalidJsonException {
         try {    
-            for (int i=0; i < outputArray.length(); i++) {
-                if (outputArray.getJSONObject(i).getBoolean("triggered")){
+            for (int i = 0; i < outputArray.length(); i++) {
+                if (outputArray.getJSONObject(i).getBoolean("triggered")) {
                     return true;
                 }
             }
-        }
-        catch (Exception err) {
+        } catch (Exception err) {
             throw new InvalidJsonException("Given JSON did not contain triggered in the expected location(s): " + outputArray, err);
         } 
         return false;

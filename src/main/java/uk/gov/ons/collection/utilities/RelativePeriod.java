@@ -21,7 +21,7 @@ public class RelativePeriod {
 
     public String calculateRelativePeriod(int offset, String startingPeriod) throws InvalidIdbrPeriodException {
         String outputPeriod = startingPeriod;
-        for (int i = 0; i < offset; i++){
+        for (int i = 0; i < offset; i++) {
             outputPeriod = getPreviousPeriod(outputPeriod);
         }
         return outputPeriod;
@@ -42,16 +42,13 @@ public class RelativePeriod {
     private static int safeNumberExtract(String idbrPeriod, int start, int end) throws InvalidIdbrPeriodException {    
         try {
             return Integer.parseInt(idbrPeriod.substring(start,end)); 
-        }
-        catch (NullPointerException err) {
+        } catch (NullPointerException err) {
             throw new InvalidIdbrPeriodException("Null starting period provided", err);
-        }
-        catch (NumberFormatException err) {
+        } catch (NumberFormatException err) {
             throw new InvalidIdbrPeriodException("Unable to convert starting period into numeric format: " + idbrPeriod, err);
-        }
-        catch (IndexOutOfBoundsException err) {
+        } catch (IndexOutOfBoundsException err) {
             throw new InvalidIdbrPeriodException("Given starting period is too short: " + idbrPeriod, err);
-        }    
+        }
     }
 
     public static void validatePeriodLength(String idbrPeriod) throws InvalidIdbrPeriodException {
@@ -82,17 +79,26 @@ public class RelativePeriod {
 
     private void setMonthFrequency() throws InvalidPeriodicityException {
         switch (periodicity.toLowerCase()) {
-            case "monthly":     monthlyFrequency=1; break;
-            case "quarterly":   monthlyFrequency=3; break;
-            case "biannual":    monthlyFrequency=6; break;
-            case "annual":      monthlyFrequency=12; break;
-            default:            throw new InvalidPeriodicityException("Invalid periodicity given: " + periodicity);
+            case "monthly":      
+                monthlyFrequency = 1; 
+                break;
+            case "quarterly": 
+                monthlyFrequency = 3;
+                break;
+            case "biannual":    
+                monthlyFrequency = 6;
+                break;
+            case "annual": 
+                monthlyFrequency = 12; 
+                break;
+            default:
+                throw new InvalidPeriodicityException("Invalid periodicity given: " + periodicity);
         }
     }
 
     public List<String> getIdbrPeriods(List<Integer> offsets, String startingPeriod) throws InvalidIdbrPeriodException {
         List<String> outputPeriods = new ArrayList<>();
-        for ( int i = 0; i < offsets.size(); i++) {
+        for (int i = 0; i < offsets.size(); i++) {
             String idbrPeriod = calculateRelativePeriod(offsets.get(i).intValue(), startingPeriod);
             outputPeriods.add(idbrPeriod);
         }        

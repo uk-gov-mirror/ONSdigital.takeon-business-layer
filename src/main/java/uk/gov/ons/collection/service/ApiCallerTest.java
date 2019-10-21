@@ -2,7 +2,9 @@ package uk.gov.ons.collection.service;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import uk.gov.ons.collection.entity.*;
+import uk.gov.ons.collection.entity.ContributorEntity;
+import uk.gov.ons.collection.entity.FormDefinitionEntity;
+import uk.gov.ons.collection.entity.QuestionResponseEntity;
 
 @Builder
 @AllArgsConstructor

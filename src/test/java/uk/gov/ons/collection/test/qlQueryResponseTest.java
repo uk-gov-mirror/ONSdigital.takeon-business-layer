@@ -1,10 +1,10 @@
 package uk.gov.ons.collection.test;
 
 import org.junit.jupiter.api.Test;
-import uk.gov.ons.collection.utilities.qlQueryResponse;
+import uk.gov.ons.collection.utilities.QlQueryResponse;
 import uk.gov.ons.collection.utilities.RelativePeriod;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,7 +15,7 @@ public class qlQueryResponseTest {
     @Test
     void parse_nullInputJson_returnErrorJSON() {
         String expectedOutput = "{\"error\":\"Invalid response from graphQL\"}";
-        qlQueryResponse response = new qlQueryResponse(null);
+        QlQueryResponse response = new QlQueryResponse(null);
         assertEquals(expectedOutput, response.parse());
     }
     
@@ -25,7 +25,7 @@ public class qlQueryResponseTest {
             "\"hasPreviousPage\": false,\"startCursor\": null,\"endCursor\": null },\"totalCount\": 0}}}";
         String outputString = "{\"data\": [],\"pageInfo\": {\"hasNextPage\": false," +
             "\"hasPreviousPage\": false,\"endCursor\": null,\"totalCount\": 0,\"startCursor\": null}}";
-        qlQueryResponse response = new qlQueryResponse(inputString);
+        QlQueryResponse response = new QlQueryResponse(inputString);
         assertEquals(outputString, response.parse());
     }
 
@@ -50,15 +50,15 @@ public class qlQueryResponseTest {
                         "{\"hasNextPage\": true,\"hasPreviousPage\": false,\"endCursor\": \"base64string\",\"totalCount\": 30,\"startCursor\": \"base64string\"}" +
                 "}";
 
-        qlQueryResponse response = new qlQueryResponse(inputString);
+        QlQueryResponse response = new QlQueryResponse(inputString);
         assertEquals(expectedOutput, response.parse());
     }
 
     @Test
-    void parse_invalidJSON_returnErrorJSON(){
+    void parse_invalidJSON_returnErrorJSON() {
         String inputString = "fdgsgsrdgf";
         String outputString = "{\"error\":\"Invalid response from graphQL\"}";
-        qlQueryResponse response = new qlQueryResponse(inputString);
+        QlQueryResponse response = new QlQueryResponse(inputString);
         assertEquals(outputString, response.parse());
     }
 
@@ -66,7 +66,7 @@ public class qlQueryResponseTest {
     void parse_missingContributors_returnErrorJSON() {
         String inputString = "{\"data\": {\"nodes\": []}}}";
         String outputString = "{\"error\":\"Invalid response from graphQL\"}";
-        qlQueryResponse response = new qlQueryResponse(inputString);
+        QlQueryResponse response = new QlQueryResponse(inputString);
         assertEquals(outputString, response.parse());
     }
    

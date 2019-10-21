@@ -1,6 +1,6 @@
 package uk.gov.ons.collection.test;
 
-import uk.gov.ons.collection.utilities.qlQueryBuilder;
+import uk.gov.ons.collection.utilities.QlQueryBuilder;
 import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,13 +11,13 @@ public class qlQueryBuilderTest {
 
     @Test
     void buildVariables_null_blankString() {
-        assertEquals("", new qlQueryBuilder(null).buildVariables());
+        assertEquals("", new QlQueryBuilder(null).buildVariables());
     }
 
     @Test
     void buildCondition_emptyParameters_blankString() {
         Map<String,String> emptyParameter = new HashMap<>();
-        assertEquals("", new qlQueryBuilder(emptyParameter).buildVariables());
+        assertEquals("", new QlQueryBuilder(emptyParameter).buildVariables());
     }
 
     @Test
@@ -25,7 +25,7 @@ public class qlQueryBuilderTest {
         String expectedCondition = "\"reference\": \"4990012\"";
         Map<String,String> singleParameter = new HashMap<>();
         singleParameter.put("reference", "4990012");
-        assertEquals(expectedCondition, new qlQueryBuilder(singleParameter).buildVariables());
+        assertEquals(expectedCondition, new QlQueryBuilder(singleParameter).buildVariables());
     }
 
     @Test
@@ -34,7 +34,7 @@ public class qlQueryBuilderTest {
         Map<String,String> twoParameters = new HashMap<>();
         twoParameters.put("reference", "4990012");
         twoParameters.put("survey", "011");
-        assertEquals(expectedCondition, new qlQueryBuilder(twoParameters).buildVariables());
+        assertEquals(expectedCondition, new QlQueryBuilder(twoParameters).buildVariables());
     }
 
 }

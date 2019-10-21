@@ -1,8 +1,8 @@
 package uk.gov.ons.collection.entity;
 
-public class dbExport { 
+public class DbExport { 
 
-    private final String query = 
+    private static final String QUERY = 
         "query dbExport {" +
                 " allSurveys {nodes {survey description periodicity createdby createddate lastupdatedby lastupdateddate " +
                     "formsBySurvey {nodes { formid survey description periodstart periodend createdby createddate " +
@@ -31,12 +31,12 @@ public class dbExport {
                         "validationoutputid reference period survey validationid instance triggered formula " +
                         "createdby createddate lastupdatedby lastupdateddate}}}}}";
 
-    public dbExport() {
+    public DbExport() {
         super();
     }
 
     public String buildQuery() {
-        return "{\"query\": \"" + query + "\"}";
+        return "{\"query\": \"" + QUERY + "\"}";
     }
 
 }

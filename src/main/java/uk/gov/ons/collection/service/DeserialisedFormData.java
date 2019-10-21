@@ -14,12 +14,12 @@ public class DeserialisedFormData {
     private List<UpdatedFormData> updatedFormDataList = new ArrayList<>();
     private List<UpdatedFormData> constructedObjects = new ArrayList<>();
 
-    public DeserialisedFormData(JSONArray formData){
+    public DeserialisedFormData(JSONArray formData) {
         updatedFormData = formData;
     }
 
-    public List<UpdatedFormData> parseJsonObjects(){
-        for(int index = 0; index < updatedFormData.length(); index++){
+    public List<UpdatedFormData> parseJsonObjects() {
+        for (int index = 0; index < updatedFormData.length(); index++) {
             UpdatedFormData updatedFormDataObject = new UpdatedFormData();
             String jsonKey = updatedFormData.getJSONObject(index).keys().next();
             updatedFormDataObject.setKey(jsonKey);
@@ -29,8 +29,8 @@ public class DeserialisedFormData {
         return updatedFormDataList;
     }
 
-    public List<UpdatedFormData> constructUpdatedObjectsFromKey(List<UpdatedFormData> updatedFormDataList){
-        for(UpdatedFormData element: updatedFormDataList){
+    public List<UpdatedFormData> constructUpdatedObjectsFromKey(List<UpdatedFormData> updatedFormDataList) {
+        for (UpdatedFormData element: updatedFormDataList) {
             Map<String, String> tempHolder;
             tempHolder = element.getQuestionCodeAndInstance(element.getKey());
             element.setQuestionCode(tempHolder.get("questionCode"));

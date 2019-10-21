@@ -7,20 +7,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
-public class qlQueryBuilder { 
+public class QlQueryBuilder { 
 
     private HashMap<String, String> variables;
-    private List<String> intVariables = new ArrayList<>( Arrays.asList("first", "last", "formid"));
+    private List<String> intVariables = new ArrayList<>(Arrays.asList("first", "last", "formid"));
     
     // Instantiate the variables and coalesce a null into an empty variable object
-    public qlQueryBuilder(Map<String, String> variables) {
+    public QlQueryBuilder(Map<String, String> variables) {
         this.variables = (variables == null) ? new HashMap<>() : new HashMap<>(variables);
     }
 
     public String buildContributorSearchQuery() {        
         StringBuilder query = new StringBuilder();
-        query.append("{\"query\": \"query contributorSearch($startCursor: Cursor, $first: Int, $endCursor: Cursor, $last: Int, $period: String, $reference: String, $survey: String, $formid: Int, $status: String) " +
-                "{ allContributors (after: $startCursor, first: $first, before: $endCursor, last: $last, condition: {reference: $reference, period: $period, survey: $survey, status: $status, formid: $formid}) " +
+        query.append("{\"query\": \"query contributorSearch($startCursor: Cursor, $first: Int, $endCursor: Cursor, $last: Int," +
+                                                           "$period: String, $reference: String, $survey: String, $formid: Int, $status: String) " +
+                "{ allContributors (after: $startCursor, first: $first, before: $endCursor, last: $last," +
+                                   "condition: {reference: $reference, period: $period, survey: $survey, status: $status, formid: $formid}) " +
                 "{ nodes { reference, period, survey, formid, status, receiptdate, lockedby, lockeddate, " + 
                             "lastupdatedby, lastupdateddate, formtype, enterprisename, referencename, referenceaddress, referencepostcode, " + 
                             "checkletter, frozensicoutdated, rusicoutdated, frozensic, rusic, frozenemployees, employees, " +
@@ -41,11 +43,9 @@ public class qlQueryBuilder {
     public String buildVariables() {    
         StringJoiner joiner = new StringJoiner(",");
         variables.forEach((key,value) -> {
-            
             if (intVariables.contains(key)) {
-                joiner.add("\"" + key + "\": " + value );
-            }
-            else {
+                joiner.add("\"" + key + "\": " + value);
+            } else {
                 joiner.add("\"" + key + "\": \"" + value + "\"");
             }
         });
@@ -80,7 +80,7 @@ public class qlQueryBuilder {
                 "createdby createddate lastupdatedby lastupdateddate " +
                 "formByFormid {survey formdefinitionsByFormid {nodes {questioncode type}}}" +
                 "responsesByReferenceAndPeriodAndSurvey {nodes {reference period survey instance questioncode response }}}}}\"," +
-                "\"variables\": {" );
+                "\"variables\": {");
         contributorDetailsQuery.append(buildVariables());
         contributorDetailsQuery.append("}}");
         return contributorDetailsQuery.toString();    

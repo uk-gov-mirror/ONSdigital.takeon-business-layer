@@ -24,7 +24,9 @@ public class ValidationOutputsTest {
         try {
             var query = new ValidationOutputs(inputJson).buildDeleteOutputQuery();
             assertEquals(expectedQuery, query);
-        } catch (Exception e) {assert(false);}
+        } catch (Exception e) {
+             assert(false);
+        }
     }
 
     @Test
@@ -42,7 +44,9 @@ public class ValidationOutputsTest {
             "{reference: \\\"12345678000\\\",period: \\\"201801\\\",survey: \\\"999A\\\",formula: \\\"1233.52 > 5\\\",validationid: \\\"11\\\"," +
             "instance: \\\"0\\\",triggered: false,createdby: \\\"fisdba\\\",createddate: \\\"" + validationOutput.getTime() + "\\\"}]}){clientMutationId}}\"}";
             assertEquals(expectedQuery, query);
-        } catch (Exception e) {assert(false);}
+        } catch (Exception e) {
+            assert(false);
+        }
     }
 
     @Test
@@ -51,7 +55,7 @@ public class ValidationOutputsTest {
             "\"survey\": \"999A\",\"formula\": \"4745634 > 5\",\"instance\": 0}," +
             "{\"validationid\": 11,\"reference\": \"12345678000\",\"period\": \"201801\",\"survey\": \"999A\"," +
             "\"triggered\": false,\"formula\": \"1233.52 > 5\",\"instance\": 0}]}";
-        assertThrows( InvalidJsonException.class, () -> new ValidationOutputs(inputJson).buildInsertByArrayQuery());
+        assertThrows(InvalidJsonException.class, () -> new ValidationOutputs(inputJson).buildInsertByArrayQuery());
     }
 
     @Test
@@ -61,7 +65,9 @@ public class ValidationOutputsTest {
         try {
             var reference = new ValidationOutputs(inputJson).getReference();
             assertEquals(expectedReference, reference);
-        } catch (Exception e) {assert(false);}
+        } catch (Exception e) {
+            assert(false);
+        }
     }
 
     @Test
@@ -86,7 +92,9 @@ public class ValidationOutputsTest {
         try {
             var period = new ValidationOutputs(inputJson).getPeriod();
             assertEquals(expectedPeriod, period);
-        } catch (Exception e) {assert(false);}
+        } catch (Exception e) {
+            assert(false);
+        }
     }  
     
     @Test
@@ -96,7 +104,9 @@ public class ValidationOutputsTest {
         try {
             var survey = new ValidationOutputs(inputJson).getSurvey();
             assertEquals(expectedPeriod, survey);
-        } catch (Exception e) {assert(false);}
+        } catch (Exception e) {
+            assert(false);
+        }
     }
 
     @Test
@@ -111,7 +121,9 @@ public class ValidationOutputsTest {
         try {
             var status = new ValidationOutputs(inputJson).getStatusText();
             assertEquals(expectedStatus, status);
-        } catch (Exception e) {assert(false);}
+        } catch (Exception e) {
+            assert(false);
+        }
     }
 
     @Test
@@ -121,7 +133,9 @@ public class ValidationOutputsTest {
         try {
             var status = new ValidationOutputs(inputJson).getStatusText();
             assertEquals(expectedStatus, status);
-        } catch (Exception e) {assert(false);}
+        } catch (Exception e) {
+            assert(false);
+        }
     }
 
     @Test
@@ -131,7 +145,9 @@ public class ValidationOutputsTest {
         try {
             var status = new ValidationOutputs(inputJson).getStatusText();
             assertEquals(expectedStatus, status);
-        } catch (Exception e) {assert(false);}
+        } catch (Exception e) {
+            assert(false);
+        }
     }
 
     @Test
@@ -141,7 +157,9 @@ public class ValidationOutputsTest {
         try {
             var status = new ValidationOutputs(inputJson).getStatusText();
             assertEquals(expectedStatus, status);
-        } catch (Exception e) {assert(false);}
+        } catch (Exception e) {
+            assert(false);
+        }
     }
 
 }

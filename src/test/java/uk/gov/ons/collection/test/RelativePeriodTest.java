@@ -1,12 +1,13 @@
 package uk.gov.ons.collection.test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import org.junit.jupiter.api.Test;
 
 import uk.gov.ons.collection.exception.InvalidIdbrPeriodException;
 import uk.gov.ons.collection.exception.InvalidPeriodicityException;
 import uk.gov.ons.collection.utilities.RelativePeriod;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class RelativePeriodTest {
 
@@ -24,7 +25,7 @@ public class RelativePeriodTest {
             assertEquals("07",rp.paddedMonth(7));
             assertEquals("08",rp.paddedMonth(8));
             assertEquals("09",rp.paddedMonth(9));
-        } catch (Exception e) {}
+        } catch (Exception e) { }
     }
 
     @Test
@@ -34,7 +35,7 @@ public class RelativePeriodTest {
             assertEquals("10",rp.paddedMonth(10));
             assertEquals("11",rp.paddedMonth(11));
             assertEquals("12",rp.paddedMonth(12));
-        } catch (Exception e) {}
+        } catch (Exception e) { }
     }    
 
     @Test
@@ -53,7 +54,7 @@ public class RelativePeriodTest {
             assertEquals("200002",rp.getPreviousPeriod("200003"));
             assertEquals("200001",rp.getPreviousPeriod("200002"));
             assertEquals("199912",rp.getPreviousPeriod("200001"));        
-        } catch (Exception e) {}
+        } catch (Exception e) { }
     }
 
     @Test
@@ -95,7 +96,7 @@ public class RelativePeriodTest {
             assertEquals("200006",rp.getPreviousPeriod("200009"));
             assertEquals("200003",rp.getPreviousPeriod("200006"));
             assertEquals("199912",rp.getPreviousPeriod("200003"));
-        } catch (Exception e) {}
+        } catch (Exception e) { }
     }
 
     @Test
@@ -105,7 +106,7 @@ public class RelativePeriodTest {
             assertEquals("200012",rp.getPreviousPeriod("200112"));
             assertEquals("199912",rp.getPreviousPeriod("200012"));
             assertEquals("200009",rp.getPreviousPeriod("200109"));
-        } catch (Exception e) {}            
+        } catch (Exception e) { }
     }
 
     @Test
@@ -121,7 +122,7 @@ public class RelativePeriodTest {
             assertEquals("200012",rp.calculateRelativePeriod(1,"200112"));
             assertEquals("199912",rp.calculateRelativePeriod(2,"200112"));
             assertEquals("199812",rp.calculateRelativePeriod(3,"200112"));
-        } catch (Exception e) {}      
+        } catch (Exception e) { }
     }
 
     @Test
@@ -135,7 +136,7 @@ public class RelativePeriodTest {
             assertEquals("199912",rp.calculateRelativePeriod(4,"200012"));
             assertEquals("199909",rp.calculateRelativePeriod(5,"200012"));
             assertEquals("199906",rp.calculateRelativePeriod(6,"200012"));
-        } catch (Exception e) {}      
+        } catch (Exception e) { }
     }
     
     @Test
@@ -156,7 +157,7 @@ public class RelativePeriodTest {
             assertEquals("200001",rp.calculateRelativePeriod(11,"200012"));
             assertEquals("199912",rp.calculateRelativePeriod(12,"200012"));
             assertEquals("199911",rp.calculateRelativePeriod(13,"200012"));
-        } catch (Exception e) {}      
+        } catch (Exception e) { }
     }
 
 }

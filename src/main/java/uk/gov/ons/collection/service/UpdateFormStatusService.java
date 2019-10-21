@@ -8,7 +8,8 @@ public class UpdateFormStatusService {
 
     @Autowired
     UpdateFormStatusProxy updateFormStatusProxy;
-    public String updateStatus(String params, String body){
+    
+    public String updateStatus(String params, String body) {
         return updateFormStatusProxy.updateStatus(params, body);
     }
 }

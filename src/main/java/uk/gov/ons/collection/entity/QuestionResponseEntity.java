@@ -1,8 +1,12 @@
 package uk.gov.ons.collection.entity;
 
-import lombok.*;
-
 import java.sql.Timestamp;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Builder
 @Getter

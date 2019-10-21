@@ -7,9 +7,10 @@ public class ContributorStatus {
     private final String survey;
     private final String statusText;
     
-    private String qlUpdate = "mutation updateStatus($period: String!, $reference: String!, $survey: String!, $status: String!) {" +
-        "updateContributorByReferenceAndPeriodAndSurvey(input: {reference: $reference, period: $period, survey: $survey, contributorPatch: {status: $status}}) {" +
-         "contributor { reference period survey status }}}";
+    private String qlUpdate = "mutation updateStatus($period: String!, $reference: String!, $survey: String!, $status: String!) " +
+        "{updateContributorByReferenceAndPeriodAndSurvey" +
+        "(input: {reference: $reference, period: $period, survey: $survey, contributorPatch: {status: $status}}) " +
+        "{contributor { reference period survey status }}}";
 
     public ContributorStatus(String reference, String period, String survey, String statusText) {
         this.reference = reference;
@@ -22,7 +23,8 @@ public class ContributorStatus {
         var updateQuery = new StringBuilder();
         updateQuery.append("{\"query\": \"" + qlUpdate);    
         updateQuery.append("\",\"variables\": {");
-        updateQuery.append("\"reference\": \"" + reference + "\",\"period\": \"" + period + "\",\"survey\": \"" + survey + "\",\"status\": \"" + statusText + "\"}}");
+        updateQuery.append("\"reference\": \"" + reference + "\",\"period\": \"" + period + "\",");
+        updateQuery.append("\"survey\": \"" + survey + "\",\"status\": \"" + statusText + "\"}}");
         return updateQuery.toString();
     }
 }

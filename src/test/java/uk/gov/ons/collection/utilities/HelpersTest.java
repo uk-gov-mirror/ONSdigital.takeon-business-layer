@@ -136,7 +136,7 @@ class HelpersTest {
     List<QuestionResponseEntity> testOutputs = new ArrayList<>();
     ApiCallerTest dataLoaderTest = ApiCallerTest.builder().questionResponse(testResponses).definitionEntities(testFormDef).build();
 
-    void setup_checkAllQuestionsPresent(){
+    void setup_checkAllQuestionsPresent() {
 
         // List of test responses
         testResponses.add(QuestionResponseEntity.builder().questionCode("132").response("Response for 132").build());
@@ -158,24 +158,23 @@ class HelpersTest {
     @Test
     void checkAllQuestionsPresent_incompleteListOfResponses() {
         setup_checkAllQuestionsPresent();
-        assertEquals(new Helpers().checkAllQuestionsPresent(dataLoaderTest, "","","")
-                .toString(), testOutputs.toString());
+        assertEquals(new Helpers().checkAllQuestionsPresent(dataLoaderTest, "","","").toString(), testOutputs.toString());
     }
 
     @Test
-    void checkQuestionCodePresent_shouldBePresent_returnsTrue(){
+    void checkQuestionCodePresent_shouldBePresent_returnsTrue() {
         setup_checkAllQuestionsPresent();
         assertTrue(new Helpers().checkQuestionCodePresent("132", testResponses));
     }
 
     @Test
-    void checkQuestionCodePresent_shouldNotBePresent_returnsFalse(){
+    void checkQuestionCodePresent_shouldNotBePresent_returnsFalse() {
         setup_checkAllQuestionsPresent();
         assertFalse(new Helpers().checkQuestionCodePresent("999", testResponses));
     }
 
     @Test
-    void checkQuestionCodePresent_nullShouldNotBePresent_returnsFalse(){
+    void checkQuestionCodePresent_nullShouldNotBePresent_returnsFalse() {
         setup_checkAllQuestionsPresent();
         assertFalse(new Helpers().checkQuestionCodePresent(null, testResponses));
     }

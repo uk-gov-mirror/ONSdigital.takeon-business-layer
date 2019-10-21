@@ -28,10 +28,10 @@ import uk.gov.ons.collection.entity.PeriodOffsetQuery;
 import uk.gov.ons.collection.entity.PeriodOffsetResponse;
 import uk.gov.ons.collection.entity.ValidationConfigQuery;
 import uk.gov.ons.collection.entity.ValidationOutputs;
-import uk.gov.ons.collection.service.GraphQLService;
+import uk.gov.ons.collection.service.GraphQlService;
 import uk.gov.ons.collection.utilities.RelativePeriod;
-import uk.gov.ons.collection.utilities.qlQueryBuilder;
-import uk.gov.ons.collection.utilities.qlQueryResponse;
+import uk.gov.ons.collection.utilities.QlQueryBuilder;
+import uk.gov.ons.collection.utilities.QlQueryResponse;
 
 @Log4j2
 @Api(value = "Validation Controller", description = "Entry points primarily involving validation queries")
@@ -40,15 +40,15 @@ import uk.gov.ons.collection.utilities.qlQueryResponse;
 public class ValidationController {
    
     @Autowired
-    GraphQLService qlService;
+    GraphQlService qlService;
 
     @ApiOperation(value = "Get all validation config & response data", response = String.class)
-    @GetMapping(value="/getAllConfiguration/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/getAllConfiguration/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful retrieval of all details", response = String.class)})
-    public String dataPrepConfig(@MatrixVariable Map <String, String> searchParameters){
+    public String dataPrepConfig(@MatrixVariable Map<String, String> searchParameters) {
 
         // TODO: Validate all 3 parameters have been passed through
-        log.info("API CALL!! --> /validationPrepConfig/{vars} :: " + searchParameters );
+        log.info("API CALL!! --> /validationPrepConfig/{vars} :: " + searchParameters);
         String period = searchParameters.get("period");
         String reference = searchParameters.get("reference");
         String survey = searchParameters.get("survey");
@@ -63,8 +63,7 @@ public class ValidationController {
             formId = qlResponse.parseFormId();
             periodicity = qlResponse.parsePeriodicity();
             idbrPeriods = new RelativePeriod(periodicity).getIdbrPeriods(qlResponse.parsePeriodOffset(), period);
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             log.info("Exception caught: " + e);
             return "{\"error\":\"Unable to resolve unique list of IDBR periods\"}";
         }
@@ -73,12 +72,11 @@ public class ValidationController {
         JSONArray validationConfig = new JSONArray();
         try {
             var qlQuery = new ValidationConfigQuery(formId).getQlQuery();
-            var response = new qlQueryResponse(qlService.qlSearch(qlQuery));            
+            var response = new QlQueryResponse(qlService.qlSearch(qlQuery));            
             validationConfig = response.parseValidationConfig();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.info("Exception caught: " + e);
-            return"{\"error\":\"Error obtaining validation config query\"}";
+            return "{\"error\":\"Error obtaining validation config query\"}";
         }
 
 
@@ -94,8 +92,8 @@ public class ValidationController {
                 spr.put("survey", survey);
                 spr.put("period", idbrPeriods.get(i));
 
-                String query = new qlQueryBuilder(spr).buildContribResponseFormDetailsQuery();
-                qlQueryResponse queryResponse = new qlQueryResponse(qlService.qlSearch(query));
+                String query = new QlQueryBuilder(spr).buildContribResponseFormDetailsQuery();
+                QlQueryResponse queryResponse = new QlQueryResponse(qlService.qlSearch(query));
                 
                 JSONArray responseArray = queryResponse.getResponses();
                 for (int j = 0; j < responseArray.length(); j++) {
@@ -112,8 +110,7 @@ public class ValidationController {
                     contributors.put(contributor);
                 }
             }
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             log.info("Exception: " + e);
             return "{\"error\":\"Invalid contrib/response/form from graphQL\"}";
         }
@@ -123,18 +120,20 @@ public class ValidationController {
         // log.info("\n\nFinal form definition: " + forms);
         // log.info("\n\nFinal validation config: " + validationConfig);        
 
-        log.info("API CALL!! --> /validationPrepConfig/{vars} :: Complete" );
-        var outputJson = new JSONObject().put("contributor",contributors).put("validation_config",validationConfig).put("response",responses).put("question_schema",forms).put("reference", reference).put("period",period).put("survey",survey).put("periodicity", periodicity);
+        log.info("API CALL!! --> /validationPrepConfig/{vars} :: Complete");
+        var outputJson = new JSONObject().put("contributor",contributors).put("validation_config",validationConfig)
+                                         .put("response",responses).put("question_schema",forms).put("reference", reference)
+                                         .put("period",period).put("survey",survey).put("periodicity", periodicity);
         return outputJson.toString();
     }
 
 
     @ApiOperation(value = "Save validation outputs", response = String.class)
-    @RequestMapping(value="/saveOutputs", method = {RequestMethod.POST, RequestMethod.PUT})
+    @RequestMapping(value = "/saveOutputs", method = {RequestMethod.POST, RequestMethod.PUT})
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful saving of all validation outputs", response = String.class)})
     @ResponseBody
-    public String saveValidationOutputs(@RequestBody String validationOutputsJson, Errors errors){        
-        log.info("API CALL!! --> /validation/saveOutputs :: " + validationOutputsJson );
+    public String saveValidationOutputs(@RequestBody String validationOutputsJson, Errors errors) {
+        log.info("API CALL!! --> /validation/saveOutputs :: " + validationOutputsJson);
         
         ValidationOutputs outputs;
         String period;
@@ -153,8 +152,7 @@ public class ValidationController {
             statusText = outputs.getStatusText();
             deleteQuery = outputs.buildDeleteOutputQuery();
             insertQuery = outputs.buildInsertByArrayQuery();
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             log.info("Exception caught: " + e);
             return "{\"error\":\"Unable to resolve validation output JSON\"}";
         }
@@ -165,8 +163,7 @@ public class ValidationController {
         try {        
             log.info("Delete: " + deleteQuery); 
             qlResponse = qlService.qlSearch(deleteQuery);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             log.info("Exception: " + e);
             log.info("QL Response: " + qlResponse);
             return "{\"error\":\"Error removing existing validation outputs\"}";
@@ -175,8 +172,7 @@ public class ValidationController {
         // 2: Insert outputs
         try {        
             qlResponse = qlService.qlSearch(insertQuery);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             log.info("Exception: " + e);     
             log.info("QL Response: " + qlResponse);
             return "{\"error\":\"Error saving validation outputs\"}";
@@ -186,14 +182,13 @@ public class ValidationController {
         try {
             var updateStatusQuery = new ContributorStatus(reference, period, survey, statusText).buildUpdateQuery();
             qlResponse = qlService.qlSearch(updateStatusQuery);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             log.info("Exception: " + e);
             log.info("QL Response: " + qlResponse);
             return "{\"error\":\"Error updating contributor status\"}";
         }        
 
-        log.info("API CALL!! --> /validation/saveOutputs :: Complete" );
+        log.info("API CALL!! --> /validation/saveOutputs :: Complete");
         return "{\"status\": \"Success\"}";
     }
 

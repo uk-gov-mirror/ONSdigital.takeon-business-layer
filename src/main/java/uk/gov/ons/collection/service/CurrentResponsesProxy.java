@@ -7,9 +7,9 @@ import uk.gov.ons.collection.entity.QuestionResponseEntity;
 
 import java.util.List;
 
-@FeignClient(name="persistence-layer")
+@FeignClient(name = "persistence-layer")
 public interface CurrentResponsesProxy {
 
     @GetMapping("/responses/CurrentResponses/{searchVars}")
-    public List<QuestionResponseEntity> responses(@PathVariable(value="searchVars") String searchVars);
+    public List<QuestionResponseEntity> responses(@PathVariable(value = "searchVars") String searchVars);
 }

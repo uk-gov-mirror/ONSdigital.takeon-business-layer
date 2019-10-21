@@ -4,12 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class GraphQLService {
+public class GraphQlService {
 
     @Autowired
-    GraphQLProxy GraphQLProxy;
+    GraphQlProxy graphQlProxy;
 
-    public String qlSearch(String queryQlJSON){
-        return GraphQLProxy.runQuery(queryQlJSON);
+    public String qlSearch(String queryQlJson) {
+        return graphQlProxy.runQuery(queryQlJson);
     }
 }

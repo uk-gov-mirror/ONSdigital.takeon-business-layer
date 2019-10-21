@@ -12,7 +12,7 @@ public class ContributorService {
     @Autowired
     ContributorProxy contributorProxy;
 
-    public Iterable<ContributorEntity> generalSearch(String parameters){
+    public Iterable<ContributorEntity> generalSearch(String parameters) {
         log.info("Reached contributor service");
         return contributorProxy.searchContributor(parameters);
     }

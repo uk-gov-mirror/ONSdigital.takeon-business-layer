@@ -3,7 +3,7 @@ package uk.gov.ons.collection.entity;
 import java.util.HashMap;
 import java.util.Map;
 
-import uk.gov.ons.collection.utilities.qlQueryBuilder;
+import uk.gov.ons.collection.utilities.QlQueryBuilder;
 
 public class PeriodOffsetQuery {
     
@@ -28,7 +28,7 @@ public class PeriodOffsetQuery {
     }
 
     private void buildQlQuery() {
-        var queryBuilder = new qlQueryBuilder(variables);
+        var queryBuilder = new QlQueryBuilder(variables);
         var queryJson = new StringBuilder();
         queryJson.append("{\"query\": \""); 
         queryJson.append(baseQuery); 

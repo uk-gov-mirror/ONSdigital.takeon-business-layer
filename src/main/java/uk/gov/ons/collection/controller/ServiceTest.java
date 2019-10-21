@@ -8,14 +8,13 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-public class service_test {
+public class ServiceTest {
 
     @Autowired
     DiscoveryClient discoveryClient;
 
     @RequestMapping("/service")
-    public List<String> services(){
-
+    public List<String> services() {
         return this.discoveryClient.getServices();
     }
 }

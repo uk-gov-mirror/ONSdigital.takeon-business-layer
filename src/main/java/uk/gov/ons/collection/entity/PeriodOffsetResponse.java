@@ -14,8 +14,7 @@ public class PeriodOffsetResponse {
     public PeriodOffsetResponse(String jsonString) throws InvalidJsonException {
         try {
             jsonQlResponse = new JSONObject(jsonString);
-        }
-        catch (JSONException err) {
+        } catch (JSONException err) {
             throw new InvalidJsonException("Given string could not be converted/processed: " + jsonString, err);
         }
     }
@@ -24,27 +23,25 @@ public class PeriodOffsetResponse {
         ArrayList<Integer> uniqueOffsets = new ArrayList<>();
         try {        
             JSONArray offsets = jsonQlResponse.getJSONObject("data").getJSONObject("allValidationperiods").getJSONArray("nodes");
-            for (int i=0; i < offsets.length(); i++) {    
+            for (int i = 0; i < offsets.length(); i++) {    
                 Integer offset = Integer.valueOf(offsets.getJSONObject(i).getInt("periodoffset"));            
                 if (!uniqueOffsets.contains(offset)) {
                     uniqueOffsets.add(offset);
                 }
             }
-        }
-        catch (Exception err) {
+        } catch (Exception err) {
             throw new InvalidJsonException("Given JSON did not contain the expected variables: " + jsonQlResponse, err);
         } 
         return uniqueOffsets;
     }
 
-    public int parseFormId() throws InvalidJsonException {        
+    public int parseFormId() throws InvalidJsonException {
         try {   
             return jsonQlResponse.getJSONObject("data").getJSONObject("allValidationperiods").getJSONArray("nodes")
             .getJSONObject(0).getJSONObject("validationruleByRule").getJSONObject("validationformsByRule")
             .getJSONArray("nodes").getJSONObject(0).getJSONObject("formByFormid")
             .getJSONObject("contributorsByFormid").getJSONArray("nodes").getJSONObject(0).getInt("formid");            
-        }
-        catch (Exception err) {
+        } catch (Exception err) {
             throw new InvalidJsonException("Given JSON did not contain formID in the expected location: " + jsonQlResponse, err);
         } 
     }
@@ -56,11 +53,9 @@ public class PeriodOffsetResponse {
             .getJSONObject(0).getJSONObject("validationruleByRule").getJSONObject("validationformsByRule")
             .getJSONArray("nodes").getJSONObject(0).getJSONObject("formByFormid")
             .getJSONObject("contributorsByFormid").getJSONArray("nodes").getJSONObject(0).getJSONObject("surveyBySurvey").getString("periodicity");
-        }
-        catch (Exception err) {
+        } catch (Exception err) {
             throw new InvalidJsonException("Given JSON did not contain periodicity in the expected location: " + jsonQlResponse, err);
         } 
-
         return periodicity;  
     }
 }

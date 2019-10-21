@@ -14,13 +14,16 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableAutoConfiguration
-@RibbonClient(name="business-layer")
+@RibbonClient(name = "business-layer")
 public class BusinessLayer {
+    
     public static void main(String[] args) {
         SpringApplication.run(BusinessLayer.class, args);
     }
 
     @Bean
-    public RestTemplate getRestTemplate(){return new RestTemplate();}
+    public RestTemplate getRestTemplate() { 
+        return new RestTemplate(); 
+    }
 
 }

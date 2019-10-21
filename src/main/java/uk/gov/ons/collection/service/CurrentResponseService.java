@@ -16,7 +16,7 @@ public class CurrentResponseService {
     CurrentResponsesProxy currentResponsesProxy;
 
     @ResponseBody
-    public List<QuestionResponseEntity> getCurrentResponses(String params){
+    public List<QuestionResponseEntity> getCurrentResponses(String params) {
         log.info("Parameters Received { }", params);
         return currentResponsesProxy.responses(params);
     }

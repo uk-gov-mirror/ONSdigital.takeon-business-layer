@@ -4,9 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import uk.gov.ons.collection.entity.dbExport;
+import uk.gov.ons.collection.entity.DbExport;
 
-public class dbExportTest {
+public class DbExportTest {
 
     @Test
     void paddedMonth_1Digit_paddedOutput() {
@@ -37,7 +37,7 @@ public class dbExportTest {
                     "validationoutputsBySurvey {nodes {" +
                         "validationoutputid reference period survey validationid instance triggered formula " +
                         "createdby createddate lastupdatedby lastupdateddate}}}}}\"}";
-        var query = new dbExport().buildQuery();
+        var query = new DbExport().buildQuery();
         assertEquals(expectedQuery,query);
     }
 }
