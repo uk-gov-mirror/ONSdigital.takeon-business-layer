@@ -1,9 +1,15 @@
-package uk.gov.ons.collection.entity;
+package uk.gov.ons.collection.test;
 
-public class DbExport { 
+import org.junit.jupiter.api.Test;
+import uk.gov.ons.collection.entity.FullDataExport;
 
-    private static final String QUERY = 
-        "query dbExport {" +
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class FullDataExportTest {
+
+    @Test
+    void paddedMonth_1Digit_paddedOutput() {
+        var expectedQuery = "{\"query\": \"query dbExport {" +
                 " allSurveys {nodes {survey description periodicity createdby createddate lastupdatedby lastupdateddate " +
                     "formsBySurvey {nodes { formid survey description periodstart periodend createdby createddate " +
                                            "lastupdatedby lastupdateddate " +
@@ -29,14 +35,9 @@ public class DbExport {
                             "reference period survey questioncode instance response createdby createddate lastupdatedby lastupdateddate}}}}" +
                     "validationoutputsBySurvey {nodes {" +
                         "validationoutputid reference period survey validationid instance triggered formula " +
-                        "createdby createddate lastupdatedby lastupdateddate}}}}}";
-
-    public DbExport() {
-        super();
+                        "createdby createddate lastupdatedby lastupdateddate}}}}}\"}";
+        var query = new FullDataExport().buildQuery();
+        assertEquals(expectedQuery,query);
     }
-
-    public String buildQuery() {
-        return "{\"query\": \"" + QUERY + "\"}";
-    }
-
 }
+

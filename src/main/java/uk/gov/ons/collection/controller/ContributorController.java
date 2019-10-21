@@ -15,17 +15,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.ons.collection.entity.ContributorEntity;
-import uk.gov.ons.collection.entity.DbExport;
+import uk.gov.ons.collection.entity.FullDataExport;
 import uk.gov.ons.collection.entity.PeriodOffsetQuery;
 import uk.gov.ons.collection.entity.PeriodOffsetResponse;
 import uk.gov.ons.collection.entity.ValidationConfigQuery;
 import uk.gov.ons.collection.exception.DataNotFoundException;
 import uk.gov.ons.collection.service.ContributorService;
 import uk.gov.ons.collection.service.GraphQlService;
-import uk.gov.ons.collection.utilities.RelativePeriod;
-import uk.gov.ons.collection.utilities.UrlParameterBuilder;
 import uk.gov.ons.collection.utilities.QlQueryBuilder;
 import uk.gov.ons.collection.utilities.QlQueryResponse;
+import uk.gov.ons.collection.utilities.RelativePeriod;
+import uk.gov.ons.collection.utilities.UrlParameterBuilder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -105,10 +105,10 @@ public class ContributorController {
 
     @ApiOperation(value = "Initial export of all database contents for results consumption", response = String.class)
     @GetMapping(value = "/dbExport", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String validationDbExport() {
+    public String fullDataExport() {
         var response = "";
         try {
-            response = qlService.qlSearch(new DbExport().buildQuery());
+            response = qlService.qlSearch(new FullDataExport().buildQuery());
         } catch (Exception e) {
             log.info("Exception: " + e);     
             log.info("QL Response: " + response);
