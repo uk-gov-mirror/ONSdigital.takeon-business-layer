@@ -19,7 +19,6 @@ import uk.gov.ons.collection.entity.ContributorEntity;
 import uk.gov.ons.collection.service.ContributorService;
 import uk.gov.ons.collection.service.GraphQLService;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 

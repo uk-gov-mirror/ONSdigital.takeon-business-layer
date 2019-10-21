@@ -26,6 +26,7 @@ import uk.gov.ons.collection.entity.ContributorEntity;
 import uk.gov.ons.collection.entity.PeriodOffsetQuery;
 import uk.gov.ons.collection.entity.PeriodOffsetResponse;
 import uk.gov.ons.collection.entity.ValidationConfigQuery;
+import uk.gov.ons.collection.entity.dbExport;
 import uk.gov.ons.collection.exception.DataNotFoundException;
 import uk.gov.ons.collection.service.ContributorService;
 import uk.gov.ons.collection.service.GraphQLService;
@@ -106,9 +107,16 @@ public class ContributorController {
 
     @ApiOperation(value = "Initial export of all database contents for results consumption", response = String.class)
     @GetMapping(value = "/dbExport", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String validationDbExport(){
-        qlQueryBuilder query = new qlQueryBuilder(null);
-        String response = qlService.qlSearch(query.buildExportDBQuery());
+    public String validationDbExport() {
+        var response = "";
+        try {
+            response = qlService.qlSearch(new dbExport().buildQuery());
+        }
+        catch(Exception e) {
+            log.info("Exception: " + e);     
+            log.info("QL Response: " + response);
+            return "{\"error\":\"Error loading data for db Export\"}";
+        }
         return response;
     }
 
