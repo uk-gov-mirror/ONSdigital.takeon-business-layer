@@ -160,31 +160,34 @@ public class ValidationController {
         String qlResponse = new String();
 
         // 1: Delete outputs
-        try {        
-            log.info("Delete: " + deleteQuery); 
+        try {                    
             qlResponse = qlService.qlSearch(deleteQuery);
         } catch (Exception e) {
             log.info("Exception: " + e);
+            log.info("Delete: " + deleteQuery); 
             log.info("QL Response: " + qlResponse);
             return "{\"error\":\"Error removing existing validation outputs\"}";
         }
 
         // 2: Insert outputs
-        try {        
+        try {                
             qlResponse = qlService.qlSearch(insertQuery);
-        } catch (Exception e) {
+        } catch (Exception e) {            
             log.info("Exception: " + e);     
+            log.info("Insert: " + insertQuery);     
             log.info("QL Response: " + qlResponse);
             return "{\"error\":\"Error saving validation outputs\"}";
         }
 
         // 3: Update status
+        String updateStatusQuery = "";
         try {
-            var updateStatusQuery = new ContributorStatus(reference, period, survey, statusText).buildUpdateQuery();
+            updateStatusQuery = new ContributorStatus(reference, period, survey, statusText).buildUpdateQuery();
             qlResponse = qlService.qlSearch(updateStatusQuery);
         } catch (Exception e) {
             log.info("Exception: " + e);
-            log.info("QL Response: " + qlResponse);
+            log.info("Update: " + insertQuery);    
+            log.info("QL Response: " + updateStatusQuery);
             return "{\"error\":\"Error updating contributor status\"}";
         }        
 
