@@ -2,28 +2,23 @@ package uk.gov.ons.collection.service;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import uk.gov.ons.collection.entity.*;
+import uk.gov.ons.collection.entity.ContributorEntity;
+import uk.gov.ons.collection.entity.FormDefinitionEntity;
+import uk.gov.ons.collection.entity.QuestionResponseEntity;
 
 @Builder
 @AllArgsConstructor
 public class ApiCallerTest implements ApiCaller {
 
     private Iterable<ContributorEntity> contributors;
-    private Iterable<ValidationFormEntity> validationConfig;
     private Iterable<QuestionResponseEntity> questionResponse;
     private Iterable<FormDefinitionEntity> definitionEntities;
-    private Iterable<ReturnedValidationOutputs> returnedValidationOutputs;
 
     public ApiCallerTest() {}
 
     @Override
     public Iterable<ContributorEntity> loadContributors(String reference, String period, String survey) {
         return contributors;
-    }
-
-    @Override
-    public Iterable<ValidationFormEntity> loadValidationConfig(int formId) {
-        return validationConfig;
     }
 
     @Override
@@ -36,8 +31,4 @@ public class ApiCallerTest implements ApiCaller {
         return definitionEntities;
     }
 
-    @Override
-    public Iterable<ReturnedValidationOutputs> callValidationApi(String ruleName, String reference, String period, String survey) {
-        return returnedValidationOutputs;
-    }
 }

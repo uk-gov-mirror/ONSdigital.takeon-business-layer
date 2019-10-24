@@ -19,7 +19,7 @@ public class ValidationConfigQuery {
         qlQuery = buildQuery();
     }
 
-    private String buildQuery(){
+    private String buildQuery() {
         StringBuilder validationConfigQuery = new StringBuilder();
         validationConfigQuery.append("{\"query\": \"" + baseQuery + "\"");
         validationConfigQuery.append(",\"variables\": {\"formid\": " + Integer.toString(formId) + "}}");

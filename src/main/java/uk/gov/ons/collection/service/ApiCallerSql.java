@@ -2,14 +2,14 @@ package uk.gov.ons.collection.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.ons.collection.entity.*;
+
+import uk.gov.ons.collection.entity.ContributorEntity;
+import uk.gov.ons.collection.entity.FormDefinitionEntity;
+import uk.gov.ons.collection.entity.QuestionResponseEntity;
 import uk.gov.ons.collection.utilities.Helpers;
 
 @Service
-public class ApiCallerSQL implements ApiCaller {
-
-    @Autowired
-    ValidationConfigService validationConfigService;
+public class ApiCallerSql implements ApiCaller {
 
     @Autowired
     ContributorService contributorService;
@@ -20,20 +20,9 @@ public class ApiCallerSQL implements ApiCaller {
     @Autowired
     CurrentResponseService currentResponseService;
 
-    @Autowired
-    RunValidationService validationService;
-
-    @Autowired
-    ValidationApiCallerService validationApiCallerService;
-
     @Override
     public Iterable<ContributorEntity> loadContributors(String reference, String period, String survey) {
         return contributorService.generalSearch(new Helpers().buildUriParameters(reference, period, survey));
-    }
-
-    @Override
-    public Iterable<ValidationFormEntity> loadValidationConfig(int formId) {
-        return validationConfigService.getValidationConfig("FormID="+formId);
     }
 
     @Override
@@ -42,12 +31,8 @@ public class ApiCallerSQL implements ApiCaller {
     }
 
     @Override
-    public Iterable<FormDefinitionEntity> loadFormDefinition(String reference, String period, String survey){
+    public Iterable<FormDefinitionEntity> loadFormDefinition(String reference, String period, String survey) {
         return formDefinitionService.getForm(new Helpers().buildUriParameters(reference, period, survey));
     }
 
-    @Override
-    public Iterable<ReturnedValidationOutputs> callValidationApi(String ruleName, String reference, String period, String survey) {
-        return validationApiCallerService.callBusinessApi(new Helpers().buildUriParameters(reference, period, survey));
-    }
 }

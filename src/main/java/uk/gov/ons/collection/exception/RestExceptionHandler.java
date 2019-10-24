@@ -19,16 +19,14 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(value = { Exception.class })
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse unKnownException(Exception ex)
-    {
+    public ErrorResponse unKnownException(Exception ex) {
         log.error("Exception in Business Layer { }", ex);
         return new ErrorResponse(HTTP_STATUS_NOT_FOUND, ERROR_MESSAGE, ex.getMessage());
     }
 
-    @ExceptionHandler(value = { DataNotFondException.class })
+    @ExceptionHandler(value = {DataNotFoundException.class})
     @ResponseStatus(HttpStatus.OK)
-    public ErrorResponse noDataFoundException(Exception ex)
-    {
+    public ErrorResponse noDataFoundException(Exception ex) {
         return new ErrorResponse(HTTP_STATUS_OK_NO_RECORDS, NO_DATA_ERROR_MESSAGE, ex.getMessage());
     }
 }

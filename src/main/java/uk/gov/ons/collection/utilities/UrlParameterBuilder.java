@@ -1,4 +1,4 @@
-package uk.gov.ons.collection.controller;
+package uk.gov.ons.collection.utilities;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class UrlParameterBuilder {
 
-    public static Map<String, String> filter(Map<String, String> parameters, List<String> allowedParameters){
+    public static Map<String, String> filter(Map<String, String> parameters, List<String> allowedParameters) {
         Map<String,String> safeParameters = (parameters == null) ? new HashMap<>() : new HashMap<>(parameters);
         List<String> safeAllowedParameters = (allowedParameters == null) ? new ArrayList<>() : allowedParameters;
         safeParameters.keySet().retainAll(safeAllowedParameters);

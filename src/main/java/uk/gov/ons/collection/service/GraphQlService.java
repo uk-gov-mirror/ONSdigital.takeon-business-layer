@@ -4,12 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SaveValidationsService {
+public class GraphQlService {
 
     @Autowired
-    SaveValidationsProxy saveValidationsProxy;
+    GraphQlProxy graphQlProxy;
 
-    public void saveValidations(String body){
-        saveValidationsProxy.putValidations(body);
+    public String qlSearch(String queryQlJson) {
+        return graphQlProxy.runQuery(queryQlJson);
     }
 }

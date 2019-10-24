@@ -12,7 +12,7 @@ public class FormDefinitionService {
     @Autowired
     FormDefinitionProxy formDefinitionProxy;
 
-    public Iterable<FormDefinitionEntity> getForm(String parameters){
+    public Iterable<FormDefinitionEntity> getForm(String parameters) {
         log.info("Form Parameters { } ", parameters);
         return formDefinitionProxy.getFormDefinition(parameters);
     }

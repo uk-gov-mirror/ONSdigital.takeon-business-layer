@@ -5,22 +5,34 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.log4j.Log4j2;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.MatrixVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import uk.gov.ons.collection.entity.ContributorEntity;
+import uk.gov.ons.collection.entity.FullDataExport;
 import uk.gov.ons.collection.entity.PeriodOffsetQuery;
 import uk.gov.ons.collection.entity.PeriodOffsetResponse;
 import uk.gov.ons.collection.entity.ValidationConfigQuery;
-import uk.gov.ons.collection.exception.DataNotFondException;
+import uk.gov.ons.collection.exception.DataNotFoundException;
 import uk.gov.ons.collection.service.ContributorService;
-import uk.gov.ons.collection.service.GraphQLService;
+import uk.gov.ons.collection.service.GraphQlService;
+import uk.gov.ons.collection.utilities.QlQueryBuilder;
+import uk.gov.ons.collection.utilities.QlQueryResponse;
 import uk.gov.ons.collection.utilities.RelativePeriod;
+import uk.gov.ons.collection.utilities.UrlParameterBuilder;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Log4j2
 @Api(value = "Contributor Controller", description = "Main (and so far only) end point for the connection between the UI and persistance layer")
@@ -35,6 +47,7 @@ public class ContributorController {
 
     @Autowired
     ContributorService service;
+    
     @ApiOperation(value = "Search contributor table by arbitrary parameters", response = String.class)
     @GetMapping(value = "/search/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
@@ -55,8 +68,8 @@ public class ContributorController {
             if (contributorEntities instanceof Collection) {
                 int size =  ((Collection<?>) contributorEntities).size();
                 log.info("Contributor Entities Elements size {}", size);
-                if(size == 0) {
-                    throw new DataNotFondException(NO_RECORDS_MESSAGE);
+                if (size == 0) {
+                    throw new DataNotFoundException(NO_RECORDS_MESSAGE);
                 }
             }
         }
@@ -70,49 +83,20 @@ public class ContributorController {
         return UrlParameterBuilder.buildParameterString(filteredParameters);
     }
 
-    @ApiOperation(value = "Get contributor details", response = String.class)
-    @GetMapping(value = "/searchBy/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful retrieval of Contributor details", response = ContributorEntity.class)})
-    @ResponseBody
-    public Iterable<ContributorEntity> searchBy(@MatrixVariable Map<String, String> matrixVars) throws Exception {
-        Iterable<ContributorEntity> contributorEntities = null;
-        String filteredSearchParameters = filterAndPrepareSearchParameters(matrixVars, this.defaultValidSearchColumns);
-        log.info("Filtered search parameters { }", filteredSearchParameters);
-        contributorEntities = service.generalSearch(filteredSearchParameters);
-        log.info("Contributor Entities after calling Persistance Layer { }", filteredSearchParameters);
-
-        if (contributorEntities == null) {
-            throw new Exception();
-        } else {
-            if (contributorEntities instanceof Collection) {
-                int size =  ((Collection<?>) contributorEntities).size();
-                log.info("Contributor Entities Elements size {}", size);
-                if(size == 0) {
-                    throw new DataNotFondException(NO_RECORDS_MESSAGE);
-                }
-            }
-        }
-
-        return contributorEntities;
-
-    }
-
     @Autowired
-    GraphQLService qlService;
+    GraphQlService qlService;
 
     @GetMapping(value = "/qlSearch/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful retrieval of Contributor details", response = ContributorEntity.class)})
-    public String searchContributor(@MatrixVariable Map <String, String> searchParameters){
-        String qlQuery = new qlQueryBuilder(searchParameters).buildContributorSearchQuery();
+    public String searchContributor(@MatrixVariable Map<String, String> searchParameters) {
+        String qlQuery = new QlQueryBuilder(searchParameters).buildContributorSearchQuery();
         String responseText;
         log.info("Query sent to service: " + qlQuery);
         try {
-            qlQueryResponse response = new qlQueryResponse(qlService.qlSearch(qlQuery));
+            QlQueryResponse response = new QlQueryResponse(qlService.qlSearch(qlQuery));
             responseText = response.parse();
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             responseText = "{\"error\":\"Invalid response from graphQL\"}";
         }
         log.info("Query sent to service: " + qlQuery);     
@@ -121,20 +105,27 @@ public class ContributorController {
 
     @ApiOperation(value = "Initial export of all database contents for results consumption", response = String.class)
     @GetMapping(value = "/dbExport", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String validationDbExport(){
-        qlQueryBuilder query = new qlQueryBuilder(null);
-        String response = qlService.qlSearch(query.buildExportDBQuery());
+    public String fullDataExport() {
+        var response = "";
+        try {
+            response = qlService.qlSearch(new FullDataExport().buildQuery());
+        } catch (Exception e) {
+            log.info("Exception: " + e);     
+            log.info("QL Response: " + response);
+            return "{\"error\":\"Error loading data for db Export\"}";
+        }
         return response;
     }
 
+    
     @ApiOperation(value = "Get all validation config & response data", response = String.class)
-    @GetMapping(value="/validationPrepConfig/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/validationPrepConfig/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Successful retrieval of all details", response = String.class)})
-    public String dataPrepConfig(@MatrixVariable Map <String, String> searchParameters){
+    public String dataPrepConfig(@MatrixVariable Map<String, String> searchParameters) {
 
         // TODO: Validate all 3 parameters have been passed through
-        log.info("API CALL!! --> /validationPrepConfig/{vars} :: " + searchParameters );
+        log.info("DEPRECATED!!!! API CALL!! --> /validationPrepConfig/{vars} :: " + searchParameters);
         String period = searchParameters.get("period");
         String reference = searchParameters.get("reference");
         String survey = searchParameters.get("survey");
@@ -149,8 +140,7 @@ public class ContributorController {
             formId = qlResponse.parseFormId();
             periodicity = qlResponse.parsePeriodicity();
             idbrPeriods = new RelativePeriod(periodicity).getIdbrPeriods(qlResponse.parsePeriodOffset(), period);
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             log.info("Exception caught: " + e);
             return "{\"error\":\"Unable to resolve unique list of IDBR periods\"}";
         }
@@ -159,12 +149,11 @@ public class ContributorController {
         JSONArray validationConfig = new JSONArray();
         try {
             var qlQuery = new ValidationConfigQuery(formId).getQlQuery();
-            var response = new qlQueryResponse(qlService.qlSearch(qlQuery));            
+            var response = new QlQueryResponse(qlService.qlSearch(qlQuery));            
             validationConfig = response.parseValidationConfig();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.info("Exception caught: " + e);
-            return"{\"error\":\"Error obtaining validation config query\"}";
+            return "{\"error\":\"Error obtaining validation config query\"}";
         }
 
 
@@ -180,8 +169,8 @@ public class ContributorController {
                 spr.put("survey", survey);
                 spr.put("period", idbrPeriods.get(i));
 
-                String query = new qlQueryBuilder(spr).buildContribResponseFormDetailsQuery();
-                qlQueryResponse queryResponse = new qlQueryResponse(qlService.qlSearch(query));
+                String query = new QlQueryBuilder(spr).buildContribResponseFormDetailsQuery();
+                QlQueryResponse queryResponse = new QlQueryResponse(qlService.qlSearch(query));
                 
                 JSONArray responseArray = queryResponse.getResponses();
                 for (int j = 0; j < responseArray.length(); j++) {
@@ -198,8 +187,7 @@ public class ContributorController {
                     contributors.put(contributor);
                 }
             }
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             log.info("Exception: " + e);
             return "{\"error\":\"Invalid contrib/response/form from graphQL\"}";
         }
@@ -209,8 +197,10 @@ public class ContributorController {
         // log.info("\n\nFinal form definition: " + forms);
         // log.info("\n\nFinal validation config: " + validationConfig);        
 
-        log.info("API CALL!! --> /validationPrepConfig/{vars} :: Complete" );
-        var outputJson = new JSONObject().put("contributor",contributors).put("validation_config",validationConfig).put("response",responses).put("question_schema",forms).put("reference", reference).put("period",period).put("survey",survey).put("periodicity", periodicity);
+        log.info("API CALL!! --> /validationPrepConfig/{vars} :: Complete");
+        var outputJson = new JSONObject().put("contributor",contributors).put("validation_config",validationConfig)
+                                .put("response",responses).put("question_schema",forms).put("reference", reference)
+                                .put("period",period).put("survey",survey).put("periodicity", periodicity);
         return outputJson.toString();
     }
 

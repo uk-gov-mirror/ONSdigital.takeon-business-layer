@@ -1,24 +1,18 @@
-package uk.gov.ons.collection.controller;
-
-import java.util.ArrayList;
+package uk.gov.ons.collection.utilities;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import lombok.extern.log4j.Log4j2;
-
-@Log4j2
-public class qlQueryResponse {
+public class QlQueryResponse {
 
     private JSONObject jsonQlResponse;
 
     // If we receive invalid json we consume the error and instead instantiate the current response object with valid but empty Json
-    public qlQueryResponse(String jsonString) {
+    public QlQueryResponse(String jsonString) {
         try {
             jsonQlResponse = new JSONObject(jsonString);
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             jsonString = "{}";
             jsonQlResponse = new JSONObject(jsonString);
         }
@@ -29,7 +23,7 @@ public class qlQueryResponse {
     }
 
     // Conversion from the QL response JSON structure to remove some nested attributes
-    public String parse(){                      
+    public String parse() {
         JSONObject parsedJsonQlResponse = new JSONObject();
         try {       
             JSONObject pageInfo = new JSONObject();     
@@ -37,8 +31,7 @@ public class qlQueryResponse {
             pageInfo.getJSONObject("pageInfo").put("totalCount", jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getInt("totalCount"));
             parsedJsonQlResponse.put("data", jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes"));
             parsedJsonQlResponse.put("pageInfo", pageInfo.getJSONObject("pageInfo"));
-        }
-        catch(JSONException e){
+        } catch (JSONException e) {
             return "{\"error\":\"Invalid response from graphQL\"}";
         }
         return parsedJsonQlResponse.toString().replaceAll(":", ": ");
