@@ -63,15 +63,16 @@ public class ValidationOutputs {
             joiner.add("reference: \\\"" + outputRow.getString("reference") + "\\\"");   
             joiner.add("period: \\\"" + outputRow.getString("period") + "\\\"");
             joiner.add("survey: \\\"" + outputRow.getString("survey") + "\\\"");
-            joiner.add("formula: \\\"" + outputRow.getString("formula") + "\\\"");
+            joiner.add("formula: \\\"" + outputRow.getString("formula").replace("\"","'") + "\\\"");
             joiner.add("validationid: \\\"" + outputRow.getInt("validationid") + "\\\"");
             joiner.add("instance: \\\"" + outputRow.getInt("instance") + "\\\"");
             joiner.add("triggered: " + outputRow.getBoolean("triggered"));
             joiner.add("createdby: \\\"fisdba\\\"");
             joiner.add("createddate: \\\"" + time.toString() + "\\\"");
             return joiner.toString();
+
         } catch (Exception err) {
-            throw new InvalidJsonException("Error processing validation output json structure: " + outputArray, err);
+            throw new InvalidJsonException("Error processing validation output json structure: " + err + " JSON: " + outputArray, err);
         }
     }
 

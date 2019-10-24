@@ -32,21 +32,21 @@ public class ValidationOutputsTest {
     @Test
     void buildInsertByArrayQuery_validJson_validInsertQueryGenerated() {
         var inputJson = "{\"validation_outputs\":[{\"validationid\":10,\"reference\":\"12345678000\",\"period\": \"201801\"," +
-            "\"survey\": \"999A\",\"triggered\": false,\"formula\": \"4745634 > 5\",\"instance\": 0}," +
+            "\"survey\": \"999A\",\"triggered\": false,\"formula\": \"47\\\"X\\\"45634 > 5\",\"instance\": 0}," +
             "{\"validationid\": 11,\"reference\": \"12345678000\",\"period\": \"201801\",\"survey\": \"999A\"," +
             "\"triggered\": false,\"formula\": \"1233.52 > 5\",\"instance\": 0}]}";
         try {
             var validationOutput = new ValidationOutputs(inputJson);
             var query = validationOutput.buildInsertByArrayQuery();
             var expectedQuery = "{\"query\": \"mutation insertOutputArray{insertvalidationoutputbyarray(input:" +
-                " {arg0:[{reference: \\\"12345678000\\\",period: \\\"201801\\\",survey: \\\"999A\\\",formula: \\\"4745634 > 5\\\"" +
+                " {arg0:[{reference: \\\"12345678000\\\",period: \\\"201801\\\",survey: \\\"999A\\\",formula: \\\"47'X'45634 > 5\\\"" +
                 ",validationid: \\\"10\\\",instance: \\\"0\\\",triggered: false,createdby: \\\"fisdba\\\",createddate: \\\"" + validationOutput.getTime() + 
                 "\\\"},{reference: \\\"12345678000\\\",period: \\\"201801\\\",survey: \\\"999A\\\",formula: \\\"1233.52 > 5\\\",validationid: \\\"11\\\"," +
                 "instance: \\\"0\\\",triggered: false,createdby: \\\"fisdba\\\",createddate: \\\"" +
                 validationOutput.getTime() + "\\\"}]}){clientMutationId}}\"}";
             assertEquals(expectedQuery, query);
         } catch (Exception e) {
-            assertTrue(false);
+            assertEquals("", e);
         }
     }
 
