@@ -10,12 +10,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class upsertResponse {
+public class UpsertResponse {
 
     private JSONArray responseArray;
     private final Timestamp time = new Timestamp(new Date().getTime());
 
-    public responseOutputs(String jsonString) throws InvalidJsonException {
+    public UpsertResponse(String jsonString) throws InvalidJsonException {
         try {
             responseArray = new JSONObject(jsonString).getJSONArray("response");
         } catch (JSONException err) {
