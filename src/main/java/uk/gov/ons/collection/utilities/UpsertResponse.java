@@ -1,4 +1,4 @@
-package uk.gov.ons.collection.entity;
+package uk.gov.ons.collection.utilities;
 
 import uk.gov.ons.collection.exception.InvalidJsonException;
 
