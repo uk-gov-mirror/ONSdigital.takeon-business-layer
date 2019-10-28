@@ -23,6 +23,37 @@ public class UpsertResponse {
         }
     }
 
+    public String buildRetrieveResponseQuery() throws InvalidJsonException {
+        var queryJson = new StringBuilder();
+        queryJson.append("{\"query\" : \"query filteredResponse {allResponses(condition: ");
+        queryJson.append(retrieveOutputs());
+        queryJson.append("){nodes{reference,period,survey,questioncode,response," +
+                "createdby,createddate,lastupdatedby,lastupdateddate}}}\"}");
+        return queryJson.toString();
+    }
+
+    private String retrieveOutputs() throws InvalidJsonException {
+        StringJoiner joiner = new StringJoiner(",");
+        for (int i = 0; i < responseArray.length(); i++) {
+            joiner.add("{" + extractRetrieveResponseOutputRow(i) + "}");
+        }
+        return joiner.toString();
+    }
+
+    private String extractRetrieveResponseOutputRow(int index) throws InvalidJsonException {
+        StringJoiner joiner = new StringJoiner(",");
+        try {
+            var outputRow = responseArray.getJSONObject(index);
+            joiner.add("reference: \\\"" + outputRow.getString("reference") + "\\\"");
+            joiner.add("period: \\\"" + outputRow.getString("period") + "\\\"");
+            joiner.add("survey: \\\"" + outputRow.getString("survey") + "\\\"");
+
+            return joiner.toString();
+        } catch (Exception err) {
+            throw new InvalidJsonException("Error processing validation output json structure: " + responseArray, err);
+        }
+    }
+
     public String buildUpsertByArrayQuery() throws InvalidJsonException {
         var queryJson = new StringBuilder();
         queryJson.append("{\"query\" : \"mutation saveResponse {saveresponsearray(input: {arg0: ");
@@ -53,8 +84,8 @@ public class UpsertResponse {
             joiner.add("period: \\\"" + outputRow.getString("period") + "\\\"");
             joiner.add("survey: \\\"" + outputRow.getString("survey") + "\\\"");
             joiner.add("questioncode: \\\"" + outputRow.getString("questioncode") + "\\\"");
-            joiner.add("instance: \\\"" + outputRow.getInt("instance") + "\\\"");
-            joiner.add("response: " + outputRow.getString("response"));
+            joiner.add("instance: " + outputRow.getInt("instance"));
+            joiner.add("response: \\\"" + outputRow.getString("response") + "\\\"");
             joiner.add("createdby: \\\"fisdba\\\"");
             joiner.add("createddate: \\\"" + time.toString() + "\\\"");
             return joiner.toString();
