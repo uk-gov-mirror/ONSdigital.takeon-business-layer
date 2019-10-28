@@ -42,10 +42,6 @@ public class UpsertResponse {
         return queryJson.toString();
     }
 
-    private String validationMessage{
-        if
-    }
-
     private String retrieveResponseOutputs() throws InvalidJsonException {
         StringJoiner joiner = new StringJoiner(",");
         for (int i = 0; i < responseArray.length(); i++) {

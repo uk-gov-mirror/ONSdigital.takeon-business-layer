@@ -14,13 +14,16 @@ class UpsertResponseTest {
     void buildUpdateStatusQuery_validJson_validRetrieveQueryGenerated() {
         var inputJson = "{\"response\":[{\"reference\":\"12345678000\",\"period\": \"201801\"," +
                 "\"survey\": \"999A\",\"questioncode\": \"1000\",\"instance\": 0,\"response\": \"test\"}]}";
+
+        var inputJsonNew = "{\"reference\":\"12345678000\",\"period\": \"201801\",\"survey\": \"999A\",\"responses\": [{\"instance\": 0,\"questioncode\": \"1000\",\"response\":\"test\"}]";
+
         try {
             var upsertResponse = new UpsertResponse(inputJson);
             var query = upsertResponse.buildUpdateStatusQuery();
             var expectedQuery = "{\"query\" : \"mutation updateStatus " +
                     "{updateContributorByReferenceAndPeriodAndSurvey(input: {reference: " +
                     "\\\"12345678000\\\",period: \\\"201801\\\",survey: \\\"999A\\\"," +
-                    "contributorPatch: {status: \\\"ValidationsTriggered\\\"}}) {clientMutationId}}\"}";
+                    "contributorPatch: {status: \\\"Form Saved\\\"}}) {clientMutationId}}\"}";
             assertEquals(expectedQuery, query);
         } catch (Exception e) {
             assertTrue(false);
