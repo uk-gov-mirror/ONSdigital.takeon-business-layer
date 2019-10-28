@@ -26,16 +26,30 @@ public class UpsertResponse {
     public String buildRetrieveResponseQuery() throws InvalidJsonException {
         var queryJson = new StringBuilder();
         queryJson.append("{\"query\" : \"query filteredResponse {allResponses(condition: ");
-        queryJson.append(retrieveOutputs());
-        queryJson.append("){nodes{reference,period,survey,questioncode,response," +
+        queryJson.append(retrieveResponseOutputs());
+        queryJson.append("}){nodes{reference,period,survey,questioncode,response," +
                 "createdby,createddate,lastupdatedby,lastupdateddate}}}\"}");
         return queryJson.toString();
     }
 
-    private String retrieveOutputs() throws InvalidJsonException {
+    public String buildUpdateStatusQuery() throws InvalidJsonException {
+        var queryJson = new StringBuilder();
+        queryJson.append("{\"query\" : \"mutation updateStatus" +
+                " {updateContributorByReferenceAndPeriodAndSurvey(input: ");
+        queryJson.append(retrieveResponseOutputs());
+        queryJson.append(",contributorPatch: {status: \\\"Form Saved\\\"");
+        queryJson.append("}}) {clientMutationId}}\"}");
+        return queryJson.toString();
+    }
+
+    private String validationMessage{
+        if
+    }
+
+    private String retrieveResponseOutputs() throws InvalidJsonException {
         StringJoiner joiner = new StringJoiner(",");
         for (int i = 0; i < responseArray.length(); i++) {
-            joiner.add("{" + extractRetrieveResponseOutputRow(i) + "}");
+            joiner.add("{" + extractRetrieveResponseOutputRow(i));
         }
         return joiner.toString();
     }
