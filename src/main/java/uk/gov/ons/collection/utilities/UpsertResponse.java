@@ -1,6 +1,7 @@
 package uk.gov.ons.collection.utilities;
 
 import uk.gov.ons.collection.exception.InvalidJsonException;
+import uk.gov.ons.collection.entity.ContributorStatus;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -35,14 +36,20 @@ public class UpsertResponse {
         return queryJson.toString();
     }
 
-    public String buildUpdateStatusQuery() throws InvalidJsonException {
-        var queryJson = new StringBuilder();
-        queryJson.append("{\"query\" : \"mutation updateStatus" +
-                " {updateContributorByReferenceAndPeriodAndSurvey(input: ");
-        queryJson.append(retrieveResponseOutputs());
-        queryJson.append(",contributorPatch: {status: \\\"Form Saved\\\"");
-        queryJson.append("}}) {clientMutationId}}\"}");
-        return queryJson.toString();
+    public String updateContributorStatus() throws InvalidJsonException {
+        try {
+            var outputRow = responseObject;
+            String reference = (outputRow.getString("reference"));
+            String period = (outputRow.getString("period"));
+            String survey = (outputRow.getString("survey"));
+            String statusText = ("Form Saved");
+
+            ContributorStatus status = new ContributorStatus(reference,period,survey,statusText);
+            return status.buildUpdateQuery();
+        } catch (Exception err) {
+            throw new InvalidJsonException("Error processing update status json structure: " + responseObject, err);
+        }
+
     }
 
     private String retrieveResponseOutputs() throws InvalidJsonException {
@@ -63,7 +70,7 @@ public class UpsertResponse {
 
             return joiner.toString();
         } catch (Exception err) {
-            throw new InvalidJsonException("Error processing validation output json structure: " + responseArray, err);
+            throw new InvalidJsonException("Error processing response json structure: " + responseArray, err);
         }
     }
 
@@ -104,7 +111,7 @@ public class UpsertResponse {
             joiner.add("createddate: \\\"" + time.toString() + "\\\"");
             return joiner.toString();
         } catch (Exception err) {
-            throw new InvalidJsonException("Error processing validation output json structure: " + responseArray, err);
+            throw new InvalidJsonException("Error processing response json structure: " + responseArray, err);
         }
     }
 }

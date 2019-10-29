@@ -19,11 +19,13 @@ class UpsertResponseTest {
 
         try {
             var upsertResponse = new UpsertResponse(inputJson);
-            var query = upsertResponse.buildUpdateStatusQuery();
-            var expectedQuery = "{\"query\" : \"mutation updateStatus " +
-                    "{updateContributorByReferenceAndPeriodAndSurvey(input: {reference: " +
-                    "\\\"12345678000\\\",period: \\\"201801\\\",survey: \\\"999A\\\"," +
-                    "contributorPatch: {status: \\\"Form Saved\\\"}}) {clientMutationId}}\"}";
+            var query = upsertResponse.updateContributorStatus();
+            var expectedQuery = "{\"query\": \"mutation updateStatus($period: String!, $reference: " +
+                    "String!, $survey: String!, $status: String!) " +
+                    "{updateContributorByReferenceAndPeriodAndSurvey(input: {reference: $reference, " +
+                    "period: $period, survey: $survey, contributorPatch: {status: $status}}) {contributor " +
+                    "{ reference period survey status }}}\",\"variables\": {\"reference\": \"12345678000\"" +
+                    ",\"period\": \"201801\",\"survey\": \"999A\",\"status\": \"Form Saved\"}}";
             assertEquals(expectedQuery, query);
         } catch (Exception e) {
             assertTrue(false);
