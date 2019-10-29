@@ -195,4 +195,17 @@ public class ValidationController {
         return "{\"status\": \"Success\"}";
     }
 
+    @ApiOperation(value = "Validation output to UI", response = String.class)
+    @GetMapping(value="/validationoutput/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+    @ApiResponse(code = 200, message = "Successful", response = String.class)})
+    public String validationoutput(@MatrixVariable Map <String, String> searchParameters){
+        String qlQuery = new QlQueryBuilder(searchParameters).buildValidationOutputQuery();
+        String response = qlService.qlSearch(qlQuery.buildValidationOutputQuery(searchParameters));
+        String period = searchParameters.get("period");
+        String reference = searchParameters.get("reference");
+        String survey = searchParameters.get("survey");
+        return response;
+    }
+
 }

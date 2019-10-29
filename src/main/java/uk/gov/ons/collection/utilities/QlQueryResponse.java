@@ -78,5 +78,12 @@ public class QlQueryResponse {
         return outputArray;
 
     }
+	public JSONArray parseValidationOutputs() {
+        var outputArray = new JSONArray();
+        for (jsonQlResponse.getJSONArray("data").getJSONArray("allValidationoutputs").getJSONArray("nodes").length() > 0){
+            outputArray = jsonQlResponse.getJSONArray("data").getJSONArray("allValidationoutputs").getJSONArray("nodes");
+        }
+        return outputArray;
+    }
 
 }
