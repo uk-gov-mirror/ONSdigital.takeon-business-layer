@@ -13,11 +13,14 @@ import org.json.JSONObject;
 public class UpsertResponse {
 
     private JSONArray responseArray;
+    private JSONObject responseObject;
     private final Timestamp time = new Timestamp(new Date().getTime());
 
     public UpsertResponse(String jsonString) throws InvalidJsonException {
         try {
-            responseArray = new JSONObject(jsonString).getJSONArray("response");
+            responseObject = new JSONObject(jsonString);
+            responseArray = responseObject.getJSONArray("responses");
+
         } catch (JSONException err) {
             throw new InvalidJsonException("Given string could not be converted/processed: " + jsonString, err);
         }
@@ -53,7 +56,7 @@ public class UpsertResponse {
     private String extractRetrieveResponseOutputRow(int index) throws InvalidJsonException {
         StringJoiner joiner = new StringJoiner(",");
         try {
-            var outputRow = responseArray.getJSONObject(index);
+            var outputRow = responseObject;
             joiner.add("reference: \\\"" + outputRow.getString("reference") + "\\\"");
             joiner.add("period: \\\"" + outputRow.getString("period") + "\\\"");
             joiner.add("survey: \\\"" + outputRow.getString("survey") + "\\\"");
@@ -90,9 +93,10 @@ public class UpsertResponse {
         StringJoiner joiner = new StringJoiner(",");
         try {
             var outputRow = responseArray.getJSONObject(index);
-            joiner.add("reference: \\\"" + outputRow.getString("reference") + "\\\"");
-            joiner.add("period: \\\"" + outputRow.getString("period") + "\\\"");
-            joiner.add("survey: \\\"" + outputRow.getString("survey") + "\\\"");
+            var refPerSur = responseObject;
+            joiner.add("reference: \\\"" + refPerSur.getString("reference") + "\\\"");
+            joiner.add("period: \\\"" + refPerSur.getString("period") + "\\\"");
+            joiner.add("survey: \\\"" + refPerSur.getString("survey") + "\\\"");
             joiner.add("questioncode: \\\"" + outputRow.getString("questioncode") + "\\\"");
             joiner.add("instance: " + outputRow.getInt("instance"));
             joiner.add("response: \\\"" + outputRow.getString("response") + "\\\"");
