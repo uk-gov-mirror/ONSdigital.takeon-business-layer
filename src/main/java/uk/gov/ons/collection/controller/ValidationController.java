@@ -200,12 +200,18 @@ public class ValidationController {
     @ApiResponses(value = {
     @ApiResponse(code = 200, message = "Successful", response = String.class)})
     public String validationoutput(@MatrixVariable Map <String, String> searchParameters){
-        String qlQuery = new QlQueryBuilder(searchParameters).buildValidationOutputQuery();
-        String response = qlService.qlSearch(qlQuery.buildValidationOutputQuery(searchParameters));
-        String period = searchParameters.get("period");
-        String reference = searchParameters.get("reference");
-        String survey = searchParameters.get("survey");
-        return response;
+        String validationOutputsQuery = "";
+        JSONArray validationOutputs = new JSONArray();
+        try {
+            validationOutputsQuery = new QlQueryBuilder(searchParameters).buildValidationOutputQuery();
+            QlQueryResponse response = new QlQueryResponse(qlService.qlSearch(validationOutputsQuery));
+            validationOutputs = response.parseValidationOutputs();
+        } catch (Exception e) {
+            log.info("Exception: " + e);
+            log.info("Validation Outputs Query: " + validationOutputsQuery);
+            return "{\"error\":\"Error building Validation Outputs Query\"}";
+        }
+        return validationOutputs.toString();
     }
 
 }

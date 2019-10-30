@@ -80,8 +80,8 @@ public class QlQueryResponse {
     }
 	public JSONArray parseValidationOutputs() {
         var outputArray = new JSONArray();
-        for (jsonQlResponse.getJSONArray("data").getJSONArray("allValidationoutputs").getJSONArray("nodes").length() > 0){
-            outputArray = jsonQlResponse.getJSONArray("data").getJSONArray("allValidationoutputs").getJSONArray("nodes");
+        if (jsonQlResponse.getJSONObject("data").getJSONObject("allValidationoutputs").getJSONArray("nodes").length() > 0) {
+            outputArray = jsonQlResponse.getJSONObject("data").getJSONObject("allValidationoutputs").getJSONArray("nodes");
         }
         return outputArray;
     }
