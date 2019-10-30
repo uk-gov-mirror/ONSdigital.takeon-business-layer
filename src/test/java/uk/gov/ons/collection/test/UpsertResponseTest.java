@@ -77,6 +77,34 @@ class UpsertResponseTest {
     }
 
     @Test
+    void buildUpsertByArrayQuery_multidimensional_validUpsertQueryGenerated() {
+//        var inputJson = "{\"response\":[{\"reference\":\"12345678000\",\"period\": \"201801\"," +
+//                "\"survey\": \"999A\",\"questioncode\": \"1000\",\"instance\": 0,\"response\": \"test\"}]}";
+
+        var inputJson = "{\"reference\":\"12345678000\",\"period\": \"201801\",\"survey\": \"999A\",\"responses\": " +
+                "[{\"instance\": 0,\"questioncode\": \"1000\",\"response\":\"test\"}," +
+                "{\"instance\": 0,\"questioncode\": \"2000\",\"response\":\"test\"}]}";
+
+        try {
+            var upsertResponse = new UpsertResponse(inputJson);
+            var query = upsertResponse.buildUpsertByArrayQuery();
+            var expectedQuery = "{\"query\" : \"mutation saveResponse {saveresponsearray" +
+                    "(input: {arg0: [{reference: \\\"12345678000\\\",period: \\\"201801\\\"," +
+                    "survey: \\\"999A\\\",questioncode: \\\"1000\\\",instance: 0,response: \\\"test\\\"," +
+                    "createdby: \\\"fisdba\\\",createddate: \\\"" + upsertResponse.getTime() + "\\\"}," +
+                    "{reference: \\\"12345678000\\\",period: \\\"201801\\\"," +
+                    "survey: \\\"999A\\\",questioncode: \\\"2000\\\",instance: 0,response: \\\"test\\\"," +
+                    "createdby: \\\"fisdba\\\",createddate: \\\"" + upsertResponse.getTime() + "\\\"}]" +
+                    "}){clientMutationId}}\"}";
+
+            assertEquals(expectedQuery, query);
+        } catch (Exception e) {
+            assertTrue(false);
+
+        }
+    }
+
+    @Test
     void buildUpsertByArrayQuery_validJsonMissingAttribute_throwsException() {
         var inputJson = "{\"response\":[{\"reference\":\"12345678000\",\"period\": \"201801\"," +
                 "\"survey\": \"999A\",\"questioncode\": \"1000\",\"instance\": 0}]}";
