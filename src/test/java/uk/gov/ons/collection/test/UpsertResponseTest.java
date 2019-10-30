@@ -42,7 +42,7 @@ class UpsertResponseTest {
 
         try {
             var upsertResponse = new UpsertResponse(inputJson);
-            var query = upsertResponse.buildRetrieveResponseQuery();
+            var query = upsertResponse.buildRetrieveOldResponseQuery();
             var expectedQuery = "{\"query\" : \"query filteredResponse {allResponses(condition: {reference: \\\"12345678000\\\"," +
                     "period: \\\"201801\\\",survey: \\\"999A\\\"}){nodes{reference,period,survey,questioncode,response," +
                     "createdby,createddate,lastupdatedby,lastupdateddate}}}\"}";

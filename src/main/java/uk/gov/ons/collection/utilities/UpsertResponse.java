@@ -27,15 +27,41 @@ public class UpsertResponse {
         }
     }
 
-    public String buildRetrieveResponseQuery() throws InvalidJsonException {
+    // Builds query to retrieve old response data currently held in the database
+    public String buildRetrieveOldResponseQuery() throws InvalidJsonException {
         var queryJson = new StringBuilder();
         queryJson.append("{\"query\" : \"query filteredResponse {allResponses(condition: ");
-        queryJson.append(retrieveResponseOutputs());
+        queryJson.append(retrieveOldResponse());
         queryJson.append("}){nodes{reference,period,survey,questioncode,response," +
                 "createdby,createddate,lastupdatedby,lastupdateddate}}}\"}");
         return queryJson.toString();
     }
 
+    // Loops through json array to pull out data
+    private String retrieveOldResponse() throws InvalidJsonException {
+        StringJoiner joiner = new StringJoiner(",");
+        for (int i = 0; i < responseArray.length(); i++) {
+            joiner.add("{" + extractOldResponseRow(i));
+        }
+        return joiner.toString();
+    }
+
+    // Extracts values from json and stores and adds to StringJoiner
+    private String extractOldResponseRow(int index) throws InvalidJsonException {
+        StringJoiner joiner = new StringJoiner(",");
+        try {
+            var outputRow = responseObject;
+            joiner.add("reference: \\\"" + outputRow.getString("reference") + "\\\"");
+            joiner.add("period: \\\"" + outputRow.getString("period") + "\\\"");
+            joiner.add("survey: \\\"" + outputRow.getString("survey") + "\\\"");
+
+            return joiner.toString();
+        } catch (Exception err) {
+            throw new InvalidJsonException("Error processing response json structure: " + responseArray, err);
+        }
+    }
+
+    // Uses contributor status class to build update query, takes reference period survey and status text as args
     public String updateContributorStatus() throws InvalidJsonException {
         try {
             var outputRow = responseObject;
@@ -52,28 +78,7 @@ public class UpsertResponse {
 
     }
 
-    private String retrieveResponseOutputs() throws InvalidJsonException {
-        StringJoiner joiner = new StringJoiner(",");
-        for (int i = 0; i < responseArray.length(); i++) {
-            joiner.add("{" + extractRetrieveResponseOutputRow(i));
-        }
-        return joiner.toString();
-    }
-
-    private String extractRetrieveResponseOutputRow(int index) throws InvalidJsonException {
-        StringJoiner joiner = new StringJoiner(",");
-        try {
-            var outputRow = responseObject;
-            joiner.add("reference: \\\"" + outputRow.getString("reference") + "\\\"");
-            joiner.add("period: \\\"" + outputRow.getString("period") + "\\\"");
-            joiner.add("survey: \\\"" + outputRow.getString("survey") + "\\\"");
-
-            return joiner.toString();
-        } catch (Exception err) {
-            throw new InvalidJsonException("Error processing response json structure: " + responseArray, err);
-        }
-    }
-
+    // Builds Upsert query
     public String buildUpsertByArrayQuery() throws InvalidJsonException {
         var queryJson = new StringBuilder();
         queryJson.append("{\"query\" : \"mutation saveResponse {saveresponsearray(input: {arg0: ");
