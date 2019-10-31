@@ -90,11 +90,10 @@ public class QlQueryBuilder {
         StringBuilder validationOutputQuery = new StringBuilder();
         validationOutputQuery.append("{\"query\": \"query allValidationOutputs($reference: String, $period: String, $survey: String) " +
          "{ allValidationoutputs(condition: {reference: $reference, period: $period, survey: $survey}) {" +
-              "nodes {formula triggered lastupdatedby lastupdateddate instance} " +
-                "validationformByValidationid {severity validationid rule primaryquestion\"," +
-                "validationruleByRule {name}}}}}\" " +
-                "\"variables\": {" );
-    
+              "nodes {formula triggered lastupdatedby lastupdateddate instance " +
+                "validationformByValidationid {severity validationid rule primaryquestion " +
+                "validationruleByRule {name}}}}}\"," +
+                "\"variables\": {");
         validationOutputQuery.append(buildVariables());
         validationOutputQuery.append("}}");
         return validationOutputQuery.toString();    

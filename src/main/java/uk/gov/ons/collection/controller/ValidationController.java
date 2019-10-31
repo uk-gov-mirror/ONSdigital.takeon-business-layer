@@ -199,9 +199,9 @@ public class ValidationController {
     @GetMapping(value="/validationoutput/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
     @ApiResponse(code = 200, message = "Successful", response = String.class)})
-    public String validationoutput(@MatrixVariable Map <String, String> searchParameters){
+    public String validationoutput(@MatrixVariable Map<String, String> searchParameters){
         String validationOutputsQuery = "";
-        JSONArray validationOutputs = new JSONArray();
+        JSONObject validationOutputs = new JSONObject();
         try {
             validationOutputsQuery = new QlQueryBuilder(searchParameters).buildValidationOutputQuery();
             QlQueryResponse response = new QlQueryResponse(qlService.qlSearch(validationOutputsQuery));
@@ -211,6 +211,7 @@ public class ValidationController {
             log.info("Validation Outputs Query: " + validationOutputsQuery);
             return "{\"error\":\"Error building Validation Outputs Query\"}";
         }
+        log.info("Validation Outputs Query: " + validationOutputs.toString());
         return validationOutputs.toString();
     }
 

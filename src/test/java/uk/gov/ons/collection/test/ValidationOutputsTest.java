@@ -172,21 +172,19 @@ public class ValidationOutputsTest {
     }
 
     @Test
-    void parseValidationOutputs() {
-        String inputString = "{\"data\": {" + "\"allValidationoutputs\": {" + "\"nodes\": [" + "{\"formula\": 1=1,"
-                + "\"triggered\": true," + "\"lastupdatedby\": null," + "lastupdateddate\": null," + "\"instance\": 0,"
-                + "\"validationformByValidationid\": {\"severity\": W," + "\"validationid\": 10," + "\"rule\": VP,"
-                + "\"primaryquestion\": 3000," + "\"validationruleByRule\": {\"name\": Value Present}}}]}}}";
-        String expectedOutput =
-
-                "{\"data\": {" + "\"allValidationoutputs\": {\"formula\": 1=1," + "\"triggered\": true,"
-                        + "\"lastupdatedby\": null," + "lastupdateddate\": null," + "\"instance\": 0,"
-                        + "\"validationformByValidationid\": {\"severity\": W," + "\"validationid\": 10,"
-                        + "\"rule\": VP," + "\"primaryquestion\": 3000,"
-                        + "\"validationruleByRule\": {\"name\": Value Present}}}]}}}";
+    void testParseValidationOutputs_returnsExpectedFormat() {
+        String inputString = "{\"data\": {\"allValidationoutputs\": {\"nodes\": [" + "{\"formula\": \"1=1\","
+                + "\"triggered\": true, \"lastupdatedby\": null, \"lastupdateddate\": null, \"instance\": 0,"
+                + "\"validationformByValidationid\": {\"severity\": \"W\", \"validationid\": 10, \"rule\": VP,"
+                + "\"primaryquestion\": \"3000\", \"validationruleByRule\": {\"name\": \"Value Present\"}}}]}}}";
+        
+        String expectedOutput = "{\"validation_outputs\":[{\"severity\":\"W\",\"primaryquestion\":\"3000\",\"triggered\":true,"
+                + "\"instance\":0,\"validationid\":10,\"lastupdateddate\":null,\"lastupdatedby\":null,\"name\":\"Value Present\","
+                + "\"formula\":\"1=1\",\"rule\":\"VP\""
+                + "}]}";
 
         QlQueryResponse response = new QlQueryResponse(inputString);
-        assertEquals(expectedOutput, response.parseValidationOutputs());
+        assertEquals(expectedOutput, response.parseValidationOutputs().toString());
         }
 
 }
