@@ -71,20 +71,19 @@ public class RecalculateDerivedValues {
         return extractResponseQuery.toString();
     }
 
+    // Splits the extracted formulae on whitespace and returns a lisr
     public String getQuestionCodes() {
         String derivedFormula = inputJSON.getString("derivedformula");
         String questionCodes[] = derivedFormula.split("\\s+");
-        System.out.println(questionCodes.toString());
-        System.out.println(derivedFormula);
-        List <String> test = new ArrayList<>();
+        List <String> questionCodeList = new ArrayList<>();
         for(int i=0; i < questionCodes.length; i++){
-            test.add(questionCodes[i]);
-            System.out.println(questionCodes[i]);
+            questionCodeList.add(questionCodes[i]);
         }
 
-        return test.toString();
+        return questionCodeList.toString();
     }
 
+    // This will form the middle part of the buildExtractResponseQuery, may not be needed if as nicer way is found
     private String getAliasQueries() {
         //        "alias1: allResponses(condition: {questioncode: \\\"1000\\\", reference: \\\"12345678001\\\"}) {nodes {questioncode,response}}";
 //        "alias2: allResponses(condition: {questioncode: \\\"1001\\\", reference: \\\"12345678001\\\"}) {nodes {questioncode,response}}";
