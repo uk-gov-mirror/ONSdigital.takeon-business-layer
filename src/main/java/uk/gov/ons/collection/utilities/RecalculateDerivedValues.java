@@ -2,38 +2,49 @@ package uk.gov.ons.collection.utilities;
 
 import org.json.JSONObject;
 
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.StringJoiner;
 
 public class RecalculateDerivedValues {
 
-    private JSONObject definitionInput;
-    private JSONObject extractionInput;
+    private JSONObject inputKey;
+    private JSONObject inputJSON;
+    public String reference;
 
-    public RecalculateDerivedValues(String inputJSON) {
-        definitionInput = new JSONObject(inputJSON);
-        extractionInput = new JSONObject(inputJSON);
+    public RecalculateDerivedValues(String input, String key) {
+        inputKey = new JSONObject(key);
+        inputJSON = new JSONObject(input);
+        reference = inputKey.getString("reference");
     }
 
+    // Builds a query to the form definition table to find all questions codes and derived formulae
     public String buildFormDefinitionQuery() {
+
         StringBuilder formDefintionQuery = new StringBuilder();
-        formDefintionQuery.append("{\"query\": \"query formDefinitionByReference {allContributors(condition: {");
+        formDefintionQuery.append("{\"query\":\"query formDefinitionByReference {allContributors(condition: {");
         formDefintionQuery.append(getReference());
         formDefintionQuery.append("}){nodes {formByFormid {formdefinitionsByFormid {nodes {questioncode,derivedformula}}}}}}\"}");
 
         return formDefintionQuery.toString();
     }
 
+    // Gets reference, period, survey from the input JSON
     private String getReference() {
         StringJoiner joiner = new StringJoiner(",");
-            joiner.add("reference: \"" + definitionInput.getString("reference") + "\"");
-            joiner.add("period: \"" + definitionInput.getString("period") + "\"");
-            joiner.add("survey: \"" + definitionInput.getString("survey") + "\"");
+            joiner.add("reference: \"" + inputKey.getString("reference") + "\"");
+            joiner.add("period: \""    + inputKey.getString("period")    + "\"");
+            joiner.add("survey: \""    + inputKey.getString("survey")    + "\"");
         return joiner.toString();
     }
 
-    public String extractDerivedValues() {
+    // Goes through the JSON returned by definition query and extracts the question codes and derived formulae,
+    // Ignores anything without a derived formula
+    public String extractDerivedFormulae() {
         StringJoiner joiner = new StringJoiner(",");
-        var formulaArray = extractionInput.getJSONObject("data")
+        var formulaArray = inputJSON.getJSONObject("data")
                 .getJSONObject("allContributors")
                 .getJSONArray("nodes")
                 .getJSONObject(0)
@@ -46,6 +57,38 @@ public class RecalculateDerivedValues {
                 joiner.add("derivedformula: \"" + formulaArray.getJSONObject(i).getString("derivedformula") + "\"");
             }
         }
-        return joiner.toString();
+        var extractedFormulae = "{" + joiner + "}";
+
+        return extractedFormulae;
+    }
+
+    // Using output from extract derived formulae query, builds a query to get responses
+    public String buildExtractResponseQuery() {
+        StringBuilder extractResponseQuery = new StringBuilder();
+        extractResponseQuery.append("{\"query\": \"query responseByQuestionCode {");
+        extractResponseQuery.append(getAliasQueries());
+        extractResponseQuery.append("}) {nodes {questioncode,response}}}\\\"}\")");
+        return extractResponseQuery.toString();
+    }
+
+    public String getQuestionCodes() {
+        String derivedFormula = inputJSON.getString("derivedformula");
+        String questionCodes[] = derivedFormula.split("\\s+");
+        System.out.println(questionCodes.toString());
+        System.out.println(derivedFormula);
+        List <String> test = new ArrayList<>();
+        for(int i=0; i < questionCodes.length; i++){
+            test.add(questionCodes[i]);
+            System.out.println(questionCodes[i]);
+        }
+
+        return test.toString();
+    }
+
+    private String getAliasQueries() {
+        //        "alias1: allResponses(condition: {questioncode: \\\"1000\\\", reference: \\\"12345678001\\\"}) {nodes {questioncode,response}}";
+//        "alias2: allResponses(condition: {questioncode: \\\"1001\\\", reference: \\\"12345678001\\\"}) {nodes {questioncode,response}}";
+//        "alias3: allResponses(condition: {questioncode: \\\"4000\\\", reference: \\\"12345678001\\\"";
+        return null;
     }
 }

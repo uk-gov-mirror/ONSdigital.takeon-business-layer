@@ -9,8 +9,9 @@ class RecalculateDerivedValuesTest {
 
     @Test
     void buildFormDefinitionQuery_validInput_queryBuiltSuccessfully() {
-        var inputJson = "{\"reference\":\"12345678001\",\"period\":\"201801\",\"survey\":\"999A\"}";
-        var recalculateDerivedValues = new RecalculateDerivedValues(inputJson);
+        var key = "{\"reference\":\"12345678001\",\"period\":\"201801\",\"survey\":\"999A\"}";
+        var inputJson = "{}";
+        var recalculateDerivedValues = new RecalculateDerivedValues(inputJson,key);
         var query = recalculateDerivedValues.buildFormDefinitionQuery();
         var expectedQuery = "{\"query\":\"query formDefinitionByReference "+
                 "{allContributors(condition: {reference: \"12345678001\",period: \"201801\",survey: \"999A\"})"+
@@ -19,7 +20,8 @@ class RecalculateDerivedValuesTest {
     }
 
     @Test
-    void extractDerivedFormula_validInput_derivedFormulaFound() {
+    void extractDerivedFormulae_validInput_derivedFormulaeFound() {
+        var key = "{\"reference\":\"12345678001\",\"period\":\"201801\",\"survey\":\"999A\"}";
         var inputJson = "{"+
                 "\"data\": {"+
                 "\"allContributors\": {"+
@@ -60,12 +62,36 @@ class RecalculateDerivedValuesTest {
                 "}"+
                 "}"+
                 "}";
-        var expectedOutputString = "questioncode: \"4000\",derivedformula: \"1000 + 1001\",questioncode: \"4001\",derivedformula: \"1000 - 1001\"";
+        var expectedOutputString = "{questioncode: \"4000\",derivedformula: \"1000 + 1001\",questioncode: \"4001\",derivedformula: \"1000 - 1001\"}";
 
 
-        var recalculateDerivedValues = new RecalculateDerivedValues(inputJson);
-        var outputString = recalculateDerivedValues.extractDerivedValues();
+        var recalculateDerivedValues = new RecalculateDerivedValues(inputJson, key);
+        var outputString = recalculateDerivedValues.extractDerivedFormulae();
         assertEquals(expectedOutputString,outputString);
+    }
+
+    @Test
+    void extractResponseQuery_validInput_querySuccessful() {
+        var key = "{\"reference\":\"12345678001\",\"period\":\"201801\",\"survey\":\"999A\"}";
+        var inputJson = "{questioncode: \"4000\",derivedformula: \"1000 + 1001\"}";
+        var expectedQuery = "{\"query\": \"query responseByQuestionCode {alias1: allResponses(condition: " +
+                "{questioncode: \\\"1000\\\", reference: \\\"12345678001\\\"}) {nodes {questioncode,response}}" +
+                "alias2: allResponses(condition: {questioncode: \\\"1001\\\", reference: \\\"12345678001\\\"}) " +
+                "{nodes {questioncode,response}}alias3: allResponses(condition: " +
+                "{questioncode: \\\"4000\\\", reference: \\\"12345678001\\\"}) {nodes {questioncode,response}}}\"}";
+        var recalculateDerivedValues = new RecalculateDerivedValues(inputJson, key);
+        var extractResponseQuery = recalculateDerivedValues.buildExtractResponseQuery();
+        assertEquals(expectedQuery,extractResponseQuery);
+    }
+
+    @Test
+    void extractQuestionCodes_validInput_codesExtracted() {
+        var key = "{\"reference\":\"12345678001\",\"period\":\"201801\",\"survey\":\"999A\"}";
+        var inputJson = "{questioncode: \"4000\",derivedformula: \"1000 + 1001\"}";
+        var expectedList = "[1000, +, 1001]";
+        var recalculateDerivedValues = new RecalculateDerivedValues(inputJson, key);
+        var extractResponseQuery = recalculateDerivedValues.getQuestionCodes();
+        assertEquals(expectedList,extractResponseQuery);
     }
 
 }
