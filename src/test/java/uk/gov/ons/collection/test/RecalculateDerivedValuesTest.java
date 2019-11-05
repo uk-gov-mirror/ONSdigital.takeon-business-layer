@@ -71,18 +71,18 @@ class RecalculateDerivedValuesTest {
     }
 
     @Test
-    void extractResponseQuery_validInput_querySuccessful() {
-        var key = "{\"reference\":\"12345678001\",\"period\":\"201801\",\"survey\":\"999A\"}";
-        var inputJson = "{questioncode: \"4000\",derivedformula: \"1000 + 1001\"}";
-        var expectedQuery = "{\"query\": \"query responseByQuestionCode {alias1: allResponses(condition: " +
-                "{questioncode: \\\"1000\\\", reference: \\\"12345678001\\\"}) {nodes {questioncode,response}}" +
-                "alias2: allResponses(condition: {questioncode: \\\"1001\\\", reference: \\\"12345678001\\\"}) " +
-                "{nodes {questioncode,response}}alias3: allResponses(condition: " +
-                "{questioncode: \\\"4000\\\", reference: \\\"12345678001\\\"}) {nodes {questioncode,response}}}\"}";
-        var recalculateDerivedValues = new RecalculateDerivedValues(inputJson, key);
-        var extractResponseQuery = recalculateDerivedValues.buildExtractResponseQuery();
-        assertEquals(expectedQuery,extractResponseQuery);
-    }
+    // void extractResponseQuery_validInput_querySuccessful() {
+    //     var key = "{\"reference\":\"12345678001\",\"period\":\"201801\",\"survey\":\"999A\"}";
+    //     var inputJson = "{questioncode: \"4000\",derivedformula: \"1000 + 1001\"}";
+    //     var expectedQuery = "{\"query\": \"query responseByQuestionCode {alias1: allResponses(condition: " +
+    //             "{questioncode: \\\"1000\\\", reference: \\\"12345678001\\\"}) {nodes {questioncode,response}}" +
+    //             "alias2: allResponses(condition: {questioncode: \\\"1001\\\", reference: \\\"12345678001\\\"}) " +
+    //             "{nodes {questioncode,response}}alias3: allResponses(condition: " +
+    //             "{questioncode: \\\"4000\\\", reference: \\\"12345678001\\\"}) {nodes {questioncode,response}}}\"}";
+    //     var recalculateDerivedValues = new RecalculateDerivedValues(inputJson, key);
+    //     var extractResponseQuery = recalculateDerivedValues.buildExtractResponseQuery();
+    //     assertEquals(expectedQuery,extractResponseQuery);
+    // }
 
     @Test
     void extractQuestionCodes_validInput_codesExtracted() {
@@ -92,6 +92,18 @@ class RecalculateDerivedValuesTest {
         var recalculateDerivedValues = new RecalculateDerivedValues(inputJson, key);
         var extractResponseQuery = recalculateDerivedValues.getQuestionCodes();
         assertEquals(expectedList,extractResponseQuery);
+    }
+
+    @Test
+    void buildResponseQuery_validInput_querySuccessful() {
+        var key = "{\"reference\":\"12345678001\",\"period\":\"201801\",\"survey\":\"999A\"}";
+        var inputJson = "{}";
+        var recalculateDerivedValues = new RecalculateDerivedValues(inputJson,key);
+        var query = recalculateDerivedValues.buildGetResponsesQuery();
+        var expectedQuery = "{\"query\":\"query getResponses($reference: String, $period: String, $survey: String){" +
+            "allResponses(condition: {reference: \"12345678001\",period: \"201801\",survey: \"999A\"}){" +
+            "nodes {response questioncode}}}\"}";
+        assertEquals(expectedQuery, query);
     }
 
 }
