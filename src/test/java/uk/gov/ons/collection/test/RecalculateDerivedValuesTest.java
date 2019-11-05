@@ -98,7 +98,7 @@ class RecalculateDerivedValuesTest {
     void buildResponseQuery_validInput_querySuccessful() {
         var key = "{\"reference\":\"12345678001\",\"period\":\"201801\",\"survey\":\"999A\"}";
         var inputJson = "{}";
-        var recalculateDerivedValues = new RecalculateDerivedValues(inputJson,key);
+        var recalculateDerivedValues = new RecalculateDerivedValues(inputJson, key);
         var query = recalculateDerivedValues.buildGetResponsesQuery();
         var expectedQuery = "{\"query\":\"query getResponses($reference: String, $period: String, $survey: String){" +
             "allResponses(condition: {reference: \"12345678001\",period: \"201801\",survey: \"999A\"}){" +

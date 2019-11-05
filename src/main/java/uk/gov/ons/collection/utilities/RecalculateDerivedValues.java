@@ -1,5 +1,6 @@
 package uk.gov.ons.collection.utilities;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import lombok.var;
@@ -13,17 +14,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
-
+// Refactor:
+// 1) Class for queries - constructor for 'key'
+// 2) Class for response - constructor for input json
+// 3) Class for running the calculations or can do this in response
 public class RecalculateDerivedValues {
 
     private JSONObject inputKey;
     private JSONObject inputJSON;
-    public String reference;
 
     public RecalculateDerivedValues(String input, String key) {
-        inputKey = new JSONObject(key);
         inputJSON = new JSONObject(input);
-        reference = inputKey.getString("reference");
+        try {
+            inputKey = new JSONObject(key);
+        } catch (JSONException e) {
+            throw new InvalidJsonException("Given string could not be converted/processed: " + inputKey, e);
+        }
     }
 
     // Builds a query to the form definition table to find all questions codes and derived formulae
@@ -66,7 +72,20 @@ public class RecalculateDerivedValues {
         return questionCodeList.toString();
     }
 
-    public String 
+    // Use this class 
+    // In new class
+    public String parseFormData(String formJsonData){
+        return new String();
+    }
+
+    // In new class
+    public String parseResponseData(String responseJsonData){
+        return new String();
+    }
+
+    public String getDerivedQuestionResponses(String formJsonData, String reponseJsonData){
+        return new String();
+    }
 
     // HAVE ALTERNATIVE WAY OF DOING THIS - MOVE THIS TO RESPONSE CLASS ALSO
     // Goes through the JSON returned by definition query and extracts the question codes and derived formulae,
