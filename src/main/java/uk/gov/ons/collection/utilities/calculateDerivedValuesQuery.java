@@ -3,7 +3,6 @@ package uk.gov.ons.collection.utilities;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import lombok.var;
 import java.util.StringJoiner;
 
 // Refactor:

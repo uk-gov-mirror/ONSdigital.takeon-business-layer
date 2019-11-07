@@ -13,6 +13,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import uk.gov.ons.collection.exception.InvalidDerivedResponseException;
+
 public class calculateDerviedValuesResponse {
 
     private JSONObject formInputJSON;
@@ -54,6 +56,7 @@ public class calculateDerviedValuesResponse {
         for (int i = 0; i < questionCodes.length; i++) {
             questionCodeList.add(questionCodes[i]);
         }
+        System.out.println("Question Codes List: " + questionCodeList.toString());
         return questionCodeList;
     }
 
@@ -64,14 +67,14 @@ public class calculateDerviedValuesResponse {
         var responseArray = new JSONArray();
         var parsedFormData = parseFormData();
         var parsedResponseData = parseResponseData();
-        var evaluatorArray = new JSONArray();
+        var derivedArray = new JSONArray();
         try {
             formArray = parsedFormData.getJSONArray("form_data");
             responseArray = parsedResponseData.getJSONArray("response_data");
         } catch (JSONException e) {
             System.out.println("Given string could not be converted/processed: " + e);
         }
-
+        // Could refactor this to say ! not equal blank?
         for (int i = 0; i < formArray.length(); i++) {
             if (formArray.getJSONObject(i).getString("derivedformula") != "") {
                 String questionCode = formArray.getJSONObject(i).getString("questioncode");
@@ -90,45 +93,58 @@ public class calculateDerviedValuesResponse {
                     }
                 }
                 var questions = new JSONObject();
-                questions.put("questionCode", questionCode);
-                questions.put("formulaToRun", responses);
+                questions.put("questioncode", questionCode);
+                questions.put("formulatorun", responses);
                 questions.put("result", "");
 
-                evaluatorArray.put(questions);
+                derivedArray.put(questions);
             }
         }
-        System.out.println("Formulas to be evaluated: " + evaluatorArray.toString());
-        return evaluatorArray;
+        System.out.println("Formulas to be evaluated: " + derivedArray.toString());
+        return derivedArray;
     }
 
     // Convert all Integer response values to Big Decimal then back to String and
-    // append back to evaluator array
+    // append to existing evaluator array
     // Call this in a for loop to generate the formula each time
-    private JSONArray convertResponsesToBigDecimal() {
+    private JSONArray convertResponsesToBigDecimal() throws InvalidDerivedResponseException {
         var evaluatorArray = getDerivedQuestionResponses();
-        var formulaToRun = new StringBuilder("");
+        var bigDecimalArray = new JSONArray();
+
+        // Iterate through each formula array in the evaluator array and convert to BigDecimal
         for (int i = 0; i < evaluatorArray.length(); i++) {
-            JSONArray inputFormula = evaluatorArray.getJSONObject(i).getJSONArray("formulaToRun");
-            for (int j = 0; j < inputFormula.length(); j++) {
-                if (!inputFormula.getString(j).equals(new String("+"))
-                        || !inputFormula.getString(j).equals(new String("-"))) {
-                    var bigDecimalNumber = new BigDecimal(inputFormula.getString(j));
-                    formulaToRun.append(bigDecimalNumber.toString());
-                } else {
-                    formulaToRun.append(inputFormula.getString(j));
-                }
+            var formulaToRun = new StringBuilder("");
+            if (!(evaluatorArray.getJSONObject(i).getJSONArray("formulatorun").isEmpty())) {
+                JSONArray inputFormula = evaluatorArray.getJSONObject(i).getJSONArray("formulatorun");
+                // Substitute formulatorun to be a String of the formula ready to run
+                for (int j = 0; j < inputFormula.length(); j++) {
+                    System.out.println("Input formula: " + inputFormula.getString(j));
+                    //System.out.println(inputFormula.getString(j).equals(new String("+")));
+                    if (!(inputFormula.getString(j).equals(new String("+")))
+                            && !(inputFormula.getString(j).equals(new String("-")))) {
+                                try {
+                                    var bigDecimalNumber = new BigDecimal(inputFormula.getString(j));
+                                    formulaToRun.append(bigDecimalNumber.toString()); // To string here???
+                                } catch (NumberFormatException error) {
+                                    throw new InvalidDerivedResponseException("Error converting response to Big decimal: ", error);
+                                }
+                    } else {
+                        formulaToRun.append(inputFormula.getString(j));
+                    }
             }
+            var bigDecimalObject = new JSONObject();
+            bigDecimalObject.put("questioncode", evaluatorArray.getJSONObject(i).getString("questioncode"));
+            bigDecimalObject.put("updatedformula", formulaToRun.toString());
+            bigDecimalArray.put(bigDecimalObject);
+            } 
         }
-        // Substitute formulaToRun to be a String of the formula ready to run rather
-        // than an array
-        for (int i = 0; i < evaluatorArray.length(); i++) {
-            evaluatorArray.getJSONObject(i).put("updatedFormula", formulaToRun);
-        }
-        return evaluatorArray;
+        System.out.println("Output from Convert Responses to Big Decimal: " + bigDecimalArray.toString());
+        return bigDecimalArray;
     }
 
     // Calculate formulas - make this private too and just make updateDerivedQuestionsPublic?
-    public JSONArray calculateDerviedValues() {
+    // No - keep this public to test
+    public JSONArray calculateDerviedValues() throws InvalidDerivedResponseException {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine engine = manager.getEngineByName("js");
         Object result;
@@ -140,12 +156,13 @@ public class calculateDerviedValuesResponse {
         try {
             for (int i = 0; i < evaluatorArray.length(); i++) {
             var calculatedQuestion = new JSONObject();
-            formula = evaluatorArray.getJSONObject(i).getString("updatedFormula");
+            formula = evaluatorArray.getJSONObject(i).getString("updatedformula");
             result = engine.eval(formula);
-            calculatedQuestion.put("questionCode", evaluatorArray.getJSONObject(i).getString("questionCode"));
-            calculatedQuestion.put("result", result);
+            calculatedQuestion.put("questioncode", evaluatorArray.getJSONObject(i).getString("questioncode"));
+            calculatedQuestion.put("result", result.toString());
             outputArray.put(calculatedQuestion);
             }
+            // Add custom exception here too
         } catch (ScriptException e) {
             System.out.println("Error Evaluating formula: " + e);
         }
@@ -153,9 +170,25 @@ public class calculateDerviedValuesResponse {
 
     }
 
-    public JSONArray updateDerivedQuestions() {
-        return new JSONArray();
+    // Now create a structure which gets parsedResponse data JSON Object and updates the response
+    // from the result in above output array (matching by question code) and is ready to be used
+    // by Postgres Upsert function
+    // *** Need to get Reference, Period. Survey nd Username values when we call it? ***
+    public JSONObject updateDerivedQuestionResponses() throws InvalidDerivedResponseException {
+        var resultsArray = calculateDerviedValues();
+        var responseArray = parseResponseData().getJSONArray("response_data");
+        var updatedResponseArray = new JSONArray();
+        for (int i = 0; i < resultsArray.length(); i++) {
+            for (int j = 0; j < responseArray.length(); j++) {
+                if (resultsArray.getJSONObject(i).getString("questioncode")
+                .equals(responseArray.getJSONObject(j).getString("questioncode"))) {
+                    var updatedResponsesObject = new JSONObject();
+                    updatedResponsesObject.put("question", resultsArray.getJSONObject(i).getString("questioncode"));
+                    updatedResponsesObject.put("response", resultsArray.getJSONObject(i).getString("result"));
+                    updatedResponseArray.put(updatedResponsesObject);
+                }  
+            }
+        }
+    return new JSONObject().put("responses", updatedResponseArray);
     }
-
-
 }
