@@ -29,5 +29,4 @@ public class ValidationConfigQuery {
     public String getQlQuery() {
         return qlQuery;
     }
-
 }
