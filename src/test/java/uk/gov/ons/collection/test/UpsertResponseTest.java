@@ -12,8 +12,6 @@ class UpsertResponseTest {
 
     @Test
     void buildUpdateStatusQuery_validJson_validRetrieveQueryGenerated() {
-//        var inputJson = "{\"response\":[{\"reference\":\"12345678000\",\"period\": \"201801\"," +
-//                "\"survey\": \"999A\",\"questioncode\": \"1000\",\"instance\": 0,\"response\": \"test\"}]}";
 
         var inputJson = "{\"reference\":\"12345678000\",\"period\": \"201801\",\"survey\": \"999A\",\"responses\": [{\"instance\": 0,\"questioncode\": \"1000\",\"response\":\"test\"}]}";
 
@@ -35,8 +33,6 @@ class UpsertResponseTest {
 
     @Test
     void buildRetrieveResponseQuery_validJson_validRetrieveQueryGenerated() {
-//        var inputJson = "{\"response\":[{\"reference\":\"12345678000\",\"period\": \"201801\"," +
-//                "\"survey\": \"999A\",\"questioncode\": \"1000\",\"instance\": 0,\"response\": \"test\"}]}";
 
         var inputJson = "{\"reference\":\"12345678000\",\"period\": \"201801\",\"survey\": \"999A\",\"responses\": [{\"instance\": 0,\"questioncode\": \"1000\",\"response\":\"test\"}]}";
 
@@ -44,7 +40,7 @@ class UpsertResponseTest {
             var upsertResponse = new UpsertResponse(inputJson);
             var query = upsertResponse.buildRetrieveOldResponseQuery();
             var expectedQuery = "{\"query\" : \"query filteredResponse {allResponses(condition: {reference: \\\"12345678000\\\"," +
-                    "period: \\\"201801\\\",survey: \\\"999A\\\"}){nodes{reference,period,survey,questioncode,response," +
+                    "period: \\\"201801\\\",survey: \\\"999A\\\"}){nodes{reference,period,survey,questioncode,response,instance," +
                     "createdby,createddate,lastupdatedby,lastupdateddate}}}\"}";
             assertEquals(expectedQuery, query);
         } catch (Exception e) {
@@ -56,8 +52,6 @@ class UpsertResponseTest {
 
     @Test
     void buildUpsertByArrayQuery_validJson_validUpsertQueryGenerated() {
-//        var inputJson = "{\"response\":[{\"reference\":\"12345678000\",\"period\": \"201801\"," +
-//                "\"survey\": \"999A\",\"questioncode\": \"1000\",\"instance\": 0,\"response\": \"test\"}]}";
 
         var inputJson = "{\"reference\":\"12345678000\",\"period\": \"201801\",\"survey\": \"999A\",\"responses\": [{\"instance\": 0,\"questioncode\": \"1000\",\"response\":\"test\"}]}";
 
@@ -78,8 +72,6 @@ class UpsertResponseTest {
 
     @Test
     void buildUpsertByArrayQuery_multidimensional_validUpsertQueryGenerated() {
-//        var inputJson = "{\"response\":[{\"reference\":\"12345678000\",\"period\": \"201801\"," +
-//                "\"survey\": \"999A\",\"questioncode\": \"1000\",\"instance\": 0,\"response\": \"test\"}]}";
 
         var inputJson = "{\"reference\":\"12345678000\",\"period\": \"201801\",\"survey\": \"999A\",\"responses\": " +
                 "[{\"instance\": 0,\"questioncode\": \"1000\",\"response\":\"test\"}," +
