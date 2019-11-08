@@ -136,7 +136,6 @@ public class UpsertResponse {
     // Loop through the given Consolidated output array json and convert it into a graphQL compatable format
     private String getConsolidateResponseOutputs() throws InvalidJsonException {
         StringJoiner joiner = new StringJoiner(",");
-        System.out.println("Consolidated Array:"+consolidatedArray);
         for (int i = 0; i < consolidatedArray.length(); i++) {
             joiner.add("{" + extractResponseOutputRow(i) + "}");
         }
