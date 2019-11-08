@@ -27,10 +27,10 @@ class calculateDerivedValuesTest {
             + "\"derivedformula\": \"1000 - 1001\"" + "}" + "]" + "}" + "}" + "}" + "]" + "}" + "}" + "}";
 
     String responseInput = "{" + "\"data\": {" + "\"allResponses\": {" + "\"nodes\": [" + "{" + "\"response\": \"20\","
-            + "\"questioncode\": \"1000\"" + "}," + "{" + "\"response\": \"1\"," + "\"questioncode\": \"1001\"" + "},"
-            + "{" + "\"response\": \"1\"," + "\"questioncode\": \"2000\"" + "}," + "{" + "\"response\": \"Rhubarb\","
-            + "\"questioncode\": \"3000\"" + "}," + "{" + "\"response\": \"21\"," + "\"questioncode\": \"4000\"" + "},"
-            + "{" + "\"response\": \"19\"," + "\"questioncode\": \"4001\"" + "}" + "]" + "}" + "}" + "}";
+            + "\"questioncode\": \"1000\"," + "\"instance\": 0" + "}," + "{" + "\"response\": \"1\"," + "\"questioncode\": \"1001\"," + "\"instance\": 0},"
+            + "{" + "\"response\": \"1\"," + "\"questioncode\": \"2000\"," + "\"instance\": 0}," + "{" + "\"response\": \"Rhubarb\","
+            + "\"questioncode\": \"3000\"," + "\"instance\": 0}," + "{" + "\"response\": \"21\"," + "\"questioncode\": \"4000\"," + "\"instance\": 0},"
+            + "{" + "\"response\": \"19\"," + "\"questioncode\": \"4001\"," + "\"instance\": 0}" + "]" + "}" + "}" + "}";
 
     @Test
     void buildFormDefinitionQuery_validInput_queryBuiltSuccessfully() {
@@ -64,7 +64,7 @@ class calculateDerivedValuesTest {
         }
         var expectedQuery = "{\"query\":\"query getResponses($reference: String, $period: String, $survey: String){" +
             "allResponses(condition: {reference: \"12345678001\",period: \"201801\",survey: \"999A\"}){" +
-            "nodes {response questioncode}}}\"}";
+            "nodes {response questioncode instance}}}\"}";
         assertEquals(expectedQuery, responseQuery);
     }
 
@@ -114,26 +114,32 @@ class calculateDerivedValuesTest {
         var expectedOutput = "{"
         +  "\"response_data\":["
         +  "{"
+        +  "\"instance\":0,"
         +  "\"response\":\"20\","
         + "\"questioncode\":\"1000\""
         +  "},"
         +  "{"
+        +  "\"instance\":0,"
         +  "\"response\":\"1\","
         +       "\"questioncode\":\"1001\""
         +     "},"
         +      "{"
+        +        "\"instance\":0,"
         +        "\"response\":\"1\","
         +        "\"questioncode\":\"2000\""
         +      "},"
         +      "{"
+        +        "\"instance\":0,"
         +        "\"response\":\"Rhubarb\","
         +        "\"questioncode\":\"3000\""
         +      "},"
         +      "{"
+        +        "\"instance\":0,"
         +        "\"response\":\"21\","
         +        "\"questioncode\":\"4000\""
         +      "},"
         +     "{"
+        +        "\"instance\":0,"
         +        "\"response\":\"19\","
         +        "\"questioncode\":\"4001\""
         +     "}"
@@ -144,7 +150,7 @@ class calculateDerivedValuesTest {
         try {
             response = new calculateDerviedValuesResponse(formInput, responseInput).parseResponseData();
         } catch (Exception e) {
-            System.out.println("Can't parse form data calculating derived values" + e);
+            System.out.println("Can't parse response data calculating derived values" + e);
         }
         assertEquals(expectedOutput, response.toString());
 
@@ -153,8 +159,8 @@ class calculateDerivedValuesTest {
     @Test
     void calculateDerviedValues_returnsExpectedValues(){
 
-        var expectedOutput = "[{\"result\":\"21\",\"questioncode\":\"4000\"}," +
-                            "{\"result\":\"19\",\"questioncode\":\"4001\"}]";
+        var expectedOutput = "[{\"result\":\"21\",\"instance\":0,\"questioncode\":\"4000\"}," +
+                            "{\"result\":\"19\",\"instance\":0,\"questioncode\":\"4001\"}]";
         JSONArray response = new JSONArray();
         try {
             response = new calculateDerviedValuesResponse(formInput, responseInput).calculateDerviedValues();
@@ -172,36 +178,42 @@ class calculateDerivedValuesTest {
         + "\"allResponses\": {"
         +  "\"nodes\": ["
         +  "{"
-        +  "\"response\": \"20.0000000\","
-        + "\"questioncode\": \"1000\""
+        +  "\"response\": \"20.345\","
+        + "\"questioncode\": \"1000\","
+        +  "\"instance\":0"
         +  "},"
         +  "{"
-        +  "\"response\": \"1.00000000\","
-        +        "\"questioncode\": \"1001\""
+        +  "\"response\": \"1.343\","
+        +        "\"questioncode\": \"1001\","
+        +        "\"instance\":0"
         +     "},"
         +      "{"
         +        "\"response\": \"1\","
-        +        "\"questioncode\": \"2000\""
+        +        "\"questioncode\": \"2000\","
+        +        "\"instance\":0"
         +      "},"
         +      "{"
         +        "\"response\": \"Rhubarb\","
-        +        "\"questioncode\": \"3000\""
+        +        "\"questioncode\": \"3000\","
+        +        "\"instance\":0"
         +      "},"
         +      "{"
         +        "\"response\": \"21\","
-        +        "\"questioncode\": \"4000\""
+        +        "\"questioncode\": \"4000\","
+        +        "\"instance\":0"
         +      "},"
         +     "{"
         +        "\"response\": \"19\","
-        +        "\"questioncode\": \"4001\""
+        +        "\"questioncode\": \"4001\","
+        +        "\"instance\":0"
         +     "}"
         +    "]"
         +  "}"
         + "}"
         + "}";
 
-        var expectedOutput = "[{\"result\":\"21.0\",\"questioncode\":\"4000\"}," +
-        "{\"result\":\"19.0\",\"questioncode\":\"4001\"}]";
+        var expectedOutput = "[{\"result\":\"21.688\",\"instance\":0,\"questioncode\":\"4000\"}," +
+        "{\"result\":\"19.002\",\"instance\":0,\"questioncode\":\"4001\"}]";
         JSONArray response = new JSONArray();
         try {
             response = new calculateDerviedValuesResponse(formInput, responseDecimalInput).calculateDerviedValues();
@@ -220,27 +232,33 @@ class calculateDerivedValuesTest {
         +  "\"nodes\": ["
         +  "{"
         +  "\"response\": \"TEST\","
-        + "\"questioncode\": \"1000\""
+        + "\"questioncode\": \"1000\","
+        +  "\"instance\":0"
         +  "},"
         +  "{"
         +  "\"response\": \"1.00000000\","
-        +        "\"questioncode\": \"1001\""
+        +        "\"questioncode\": \"1001\","
+        +        "\"instance\":0"
         +     "},"
         +      "{"
         +        "\"response\": \"1\","
-        +        "\"questioncode\": \"2000\""
+        +        "\"questioncode\": \"2000\","
+        +        "\"instance\":0"
         +      "},"
         +      "{"
         +        "\"response\": \"Rhubarb\","
-        +        "\"questioncode\": \"3000\""
+        +        "\"questioncode\": \"3000\","
+        +        "\"instance\":0"
         +      "},"
         +      "{"
         +        "\"response\": \"21\","
-        +        "\"questioncode\": \"4000\""
+        +        "\"questioncode\": \"4000\","
+        +        "\"instance\":0"
         +      "},"
         +     "{"
         +        "\"response\": \"19\","
-        +        "\"questioncode\": \"4001\""
+        +        "\"questioncode\": \"4001\","
+        +        "\"instance\":0"
         +     "}"
         +    "]"
         +  "}"
@@ -254,8 +272,8 @@ class calculateDerivedValuesTest {
 
     @Test
     void updateDerivedResponses_validInput_returnsExpectedData() {
-        var expectedOutput = "{\"responses\":[{\"question\":\"4000\",\"response\":\"21\"}," +
-        "{\"question\":\"4001\",\"response\":\"19\"}]}";
+        var expectedOutput = "{\"responses\":[{\"instance\":0,\"question\":\"4000\",\"response\":\"21\"}," +
+        "{\"instance\":0,\"question\":\"4001\",\"response\":\"19\"}]}";
         JSONObject response = new JSONObject();
         try {
             response = new calculateDerviedValuesResponse(formInput, responseInput)

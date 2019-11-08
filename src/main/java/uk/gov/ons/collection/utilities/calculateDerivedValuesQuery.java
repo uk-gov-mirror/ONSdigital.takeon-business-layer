@@ -35,7 +35,7 @@ public class calculateDerivedValuesQuery {
         responseQuery.append("{\"query\":\"query getResponses($reference: String, $period: String, $survey: String){");
         responseQuery.append("allResponses(condition: {");
         responseQuery.append(getReferencePeriodAndSurvey());
-        responseQuery.append("}){nodes {response questioncode}}}\"}");
+        responseQuery.append("}){nodes {response questioncode instance}}}\"}");
         return responseQuery.toString();
     }
 

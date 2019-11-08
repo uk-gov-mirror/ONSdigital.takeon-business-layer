@@ -51,6 +51,7 @@ public class calculateDerviedValuesResponse {
     }
 
     // Splits the extracted formulae on whitespace and returns a list
+    // *** Take a look at refactoring this / making it more robust ***
     private List<String> getQuestionCodes(String derivedFormula) {
         String questionCodes[] = derivedFormula.split("\\s+");
         List<String> questionCodeList = new ArrayList<>();
@@ -61,7 +62,7 @@ public class calculateDerviedValuesResponse {
         return questionCodeList;
     }
 
-    // Get the responses for the dervied questions by iteating through the Responses
+    // Get the responses for the dervied questions by iterating through the Responses
     // and Form array (which holds all expected Questions)
     private JSONArray getDerivedQuestionResponses() throws InvalidJsonException {
         var formArray = new JSONArray();
@@ -79,12 +80,15 @@ public class calculateDerviedValuesResponse {
         for (int i = 0; i < formArray.length(); i++) {
             if (formArray.getJSONObject(i).getString("derivedformula") != "") {
                 String questionCode = formArray.getJSONObject(i).getString("questioncode");
+                // Split the derivedformula string by space and put into list
                 List<String> formulaList = getQuestionCodes(formArray.getJSONObject(i).getString("derivedformula"));
                 JSONArray responses = new JSONArray();
+                int instance = 0;
                 for (int j = 0; j < formulaList.size(); j++) {
                     for (int k = 0; k < responseArray.length(); k++) {
                         if (formulaList.get(j).equals(responseArray.getJSONObject(k).getString("questioncode"))) {
                             responses.put(responseArray.getJSONObject(k).getString("response"));
+                            instance = responseArray.getJSONObject(k).getInt("instance");
                         }
                     }
                     if (formulaList.get(j).equals(new String("+"))) {
@@ -94,6 +98,7 @@ public class calculateDerviedValuesResponse {
                     }
                 }
                 var questions = new JSONObject();
+                questions.put("instance", instance);
                 questions.put("questioncode", questionCode);
                 questions.put("formulatorun", responses);
                 questions.put("result", "");
@@ -133,6 +138,7 @@ public class calculateDerviedValuesResponse {
                     }
             }
             var bigDecimalObject = new JSONObject();
+            bigDecimalObject.put("instance", evaluatorArray.getJSONObject(i).getInt("instance"));
             bigDecimalObject.put("questioncode", evaluatorArray.getJSONObject(i).getString("questioncode"));
             bigDecimalObject.put("updatedformula", formulaToRun.toString());
             bigDecimalArray.put(bigDecimalObject);
@@ -157,6 +163,7 @@ public class calculateDerviedValuesResponse {
             var calculatedQuestion = new JSONObject();
             formula = evaluatorArray.getJSONObject(i).getString("updatedformula");
             result = engine.eval(formula);
+            calculatedQuestion.put("instance", evaluatorArray.getJSONObject(i).getInt("instance"));
             calculatedQuestion.put("questioncode", evaluatorArray.getJSONObject(i).getString("questioncode"));
             calculatedQuestion.put("result", result.toString());
             outputArray.put(calculatedQuestion);
@@ -166,6 +173,7 @@ public class calculateDerviedValuesResponse {
             // Need to throw new here so it gets caught by calling method
             System.out.println("Error Evaluating formula: " + e);
         }
+        System.out.println("Calculated Results output: " + outputArray.toString());
         return outputArray;
 
     }
@@ -182,6 +190,7 @@ public class calculateDerviedValuesResponse {
                 if (resultsArray.getJSONObject(i).getString("questioncode")
                 .equals(responseArray.getJSONObject(j).getString("questioncode"))) {
                     var updatedResponsesObject = new JSONObject();
+                    updatedResponsesObject.put("instance", resultsArray.getJSONObject(i).get("instance"));
                     updatedResponsesObject.put("question", resultsArray.getJSONObject(i).getString("questioncode"));
                     updatedResponsesObject.put("response", resultsArray.getJSONObject(i).getString("result"));
                     updatedResponseArray.put(updatedResponsesObject);

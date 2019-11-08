@@ -53,6 +53,8 @@ public class ResponseController {
             return "{\"error\":\"Failed to update Derived Question responses\"}";
         }
 
+        
+        // Create new object with reference, period, survey and user included before sending over?
         return updatedResponses.toString();
 
     }
