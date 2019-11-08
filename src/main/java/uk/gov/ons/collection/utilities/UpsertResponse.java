@@ -112,7 +112,7 @@ public class UpsertResponse {
 
         List<ResponseData> currentResponseEntities = new ArrayList<ResponseData>();
 
-        for (int i=0; i< outputArray.length(); i++) {
+        for (int i = 0; i < outputArray.length(); i++) {
             ResponseData response = new ResponseData();
             String reference =  outputArray.getJSONObject(i).getString("reference");
             response.setReference(reference);

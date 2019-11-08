@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Log4j2
-public class CompareUIAndCurrentResponses {
+public class CompareUiAndCurrentResponses {
 
     private String user;
     private String reference;
@@ -23,7 +23,7 @@ public class CompareUIAndCurrentResponses {
     private List<ResponseData> currentHeldResponses;
     Timestamp time = new Timestamp(new Date().getTime());
 
-    public CompareUIAndCurrentResponses(List<ResponseData> currentResponses, JSONObject responses) {
+    public CompareUiAndCurrentResponses(List<ResponseData> currentResponses, JSONObject responses) {
 
         this.currentHeldResponses = currentResponses;
         this.updatedResponseData = responses.getJSONArray("responses");
@@ -34,9 +34,9 @@ public class CompareUIAndCurrentResponses {
 
     }
 
-    public List<ResponseData> getUIResponseData() {
+    public List<ResponseData> getUiResponseData() {
         List<ResponseData> uiDataResponses = new ArrayList<ResponseData>();
-        for (int i = 0; i< updatedResponseData.length(); i++) {
+        for (int i = 0; i < updatedResponseData.length(); i++) {
             ResponseData uiResponseData = new ResponseData();
             uiResponseData.setReference(reference);
             uiResponseData.setPeriod(period);
@@ -52,10 +52,11 @@ public class CompareUIAndCurrentResponses {
 
         return uiDataResponses;
     }
+
     public List<ResponseData> getFinalConsolidatedResponses() {
         List<ResponseData> finalOutputData = new ArrayList<ResponseData>();
 
-        for(ResponseData element: getUIResponseData()) {
+        for (ResponseData element: getUiResponseData()) {
 
             if (!checkIfExists(element) & !Objects.equals(element.getResponse(), "")) {
                 element.setCreatedDate(time.toString());

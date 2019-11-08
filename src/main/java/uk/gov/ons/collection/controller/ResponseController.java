@@ -10,12 +10,16 @@ import io.swagger.annotations.ApiResponses;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 
 import lombok.extern.log4j.Log4j2;
 import uk.gov.ons.collection.entity.ResponseData;
-import uk.gov.ons.collection.service.CompareUIAndCurrentResponses;
+import uk.gov.ons.collection.service.CompareUiAndCurrentResponses;
 import uk.gov.ons.collection.service.GraphQlService;
 import uk.gov.ons.collection.utilities.UpsertResponse;
 
@@ -35,11 +39,9 @@ public class ResponseController {
 
         log.info("API CALL!! --> /response/save :: " + updatedResponses);
 
-
-        List<ResponseData>  currentResponseEntities ;
+        List<ResponseData>  currentResponseEntities;
         JSONObject updatedResponsesJson = new JSONObject(updatedResponses);
-        CompareUIAndCurrentResponses responseComparison;
-
+        CompareUiAndCurrentResponses responseComparison;
 
         try {
             var upsertResponse = new UpsertResponse(updatedResponses);
@@ -54,7 +56,7 @@ public class ResponseController {
             currentResponseEntities = upsertResponse.buildCurrentResponseEntities(outputArray);
 
             //Call Compare Responses
-            responseComparison = new CompareUIAndCurrentResponses(currentResponseEntities, updatedResponsesJson);
+            responseComparison = new CompareUiAndCurrentResponses(currentResponseEntities, updatedResponsesJson);
             // Get only the updated responses and not the responses that were already in the DB
             List<ResponseData> responsesToPassToDatabase = responseComparison.getFinalConsolidatedResponses();
             JSONArray jsonArray = new JSONArray(responsesToPassToDatabase);
@@ -68,7 +70,6 @@ public class ResponseController {
             var contributorStatusQuery = upsertResponse.updateContributorStatus();
             String qlStatusOutput = qlService.qlSearch(contributorStatusQuery);
             log.info("Output after updating the form status {}", qlStatusOutput);
-
 
         } catch (Exception e) {
             e.printStackTrace();
