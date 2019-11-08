@@ -14,8 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import lombok.extern.log4j.Log4j2;
-import uk.gov.ons.collection.entity.CurrentResponseData;
-import uk.gov.ons.collection.entity.UIResponseData;
+import uk.gov.ons.collection.entity.ResponseData;
 import uk.gov.ons.collection.service.CompareUIAndCurrentResponses;
 import uk.gov.ons.collection.service.GraphQlService;
 import uk.gov.ons.collection.utilities.UpsertResponse;
@@ -37,7 +36,7 @@ public class ResponseController {
         log.info("API CALL!! --> /response/save :: " + updatedResponses);
 
 
-        List<CurrentResponseData>  currentResponseEntities ;
+        List<ResponseData>  currentResponseEntities ;
         JSONObject updatedResponsesJson = new JSONObject(updatedResponses);
         CompareUIAndCurrentResponses responseComparison;
 
@@ -57,7 +56,7 @@ public class ResponseController {
             //Call Compare Responses
             responseComparison = new CompareUIAndCurrentResponses(currentResponseEntities, updatedResponsesJson);
             // Get only the updated responses and not the responses that were already in the DB
-            List<UIResponseData> responsesToPassToDatabase = responseComparison.getFinalConsolidatedResponses();
+            List<ResponseData> responsesToPassToDatabase = responseComparison.getFinalConsolidatedResponses();
             JSONArray jsonArray = new JSONArray(responsesToPassToDatabase);
             var upsertSaveResponse = new UpsertResponse(jsonArray);
             //Constructing GraphQL query for Save

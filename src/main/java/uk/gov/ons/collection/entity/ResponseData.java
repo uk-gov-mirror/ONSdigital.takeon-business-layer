@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CurrentResponseData {
+public class ResponseData {
     private String reference;
     private String period;
     private String survey;
@@ -22,6 +22,7 @@ public class CurrentResponseData {
     private String createdDate;
     private String lastUpdateDate;
     private String lastUpdatedBy;
+    private String user;
 
     @Override
     public String toString() {

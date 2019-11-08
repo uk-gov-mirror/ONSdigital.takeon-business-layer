@@ -1,6 +1,6 @@
 package uk.gov.ons.collection.utilities;
 
-import uk.gov.ons.collection.entity.CurrentResponseData;
+import uk.gov.ons.collection.entity.ResponseData;
 import uk.gov.ons.collection.exception.InvalidJsonException;
 import uk.gov.ons.collection.entity.ContributorStatus;
 
@@ -108,12 +108,12 @@ public class UpsertResponse {
         return queryJson.toString();
     }
 
-    public List<CurrentResponseData> buildCurrentResponseEntities(JSONArray outputArray) throws InvalidJsonException {
+    public List<ResponseData> buildCurrentResponseEntities(JSONArray outputArray) throws InvalidJsonException {
 
-        List<CurrentResponseData> currentResponseEntities = new ArrayList<CurrentResponseData>();
+        List<ResponseData> currentResponseEntities = new ArrayList<ResponseData>();
 
         for (int i=0; i< outputArray.length(); i++) {
-            CurrentResponseData response = new CurrentResponseData();
+            ResponseData response = new ResponseData();
             String reference =  outputArray.getJSONObject(i).getString("reference");
             response.setReference(reference);
             response.setSurvey(outputArray.getJSONObject(i).getString("survey"));

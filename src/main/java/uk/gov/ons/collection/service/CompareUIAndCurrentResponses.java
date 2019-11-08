@@ -2,8 +2,9 @@ package uk.gov.ons.collection.service;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import uk.gov.ons.collection.entity.CurrentResponseData;
-import uk.gov.ons.collection.entity.UIResponseData;
+import uk.gov.ons.collection.entity.ResponseData;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -21,10 +22,10 @@ public class CompareUIAndCurrentResponses {
     private String period;
     private String survey;
     private JSONArray updatedResponseData;
-    private List<CurrentResponseData> currentHeldResponses;
+    private List<ResponseData> currentHeldResponses;
     Timestamp time = new Timestamp(new Date().getTime());
 
-    public CompareUIAndCurrentResponses(List<CurrentResponseData> currentResponses, JSONObject responses) {
+    public CompareUIAndCurrentResponses(List<ResponseData> currentResponses, JSONObject responses) {
 
         this.currentHeldResponses = currentResponses;
         this.updatedResponseData = responses.getJSONArray("responses");
@@ -35,10 +36,10 @@ public class CompareUIAndCurrentResponses {
 
     }
 
-    public List<UIResponseData> getUIResponseData() {
-        List<UIResponseData> uiDataResponses = new ArrayList<UIResponseData>();
+    public List<ResponseData> getUIResponseData() {
+        List<ResponseData> uiDataResponses = new ArrayList<ResponseData>();
         for (int i = 0; i< updatedResponseData.length(); i++) {
-            UIResponseData uiResponseData = new UIResponseData();
+            ResponseData uiResponseData = new ResponseData();
             uiResponseData.setReference(reference);
             uiResponseData.setPeriod(period);
             uiResponseData.setSurvey(survey);
@@ -51,12 +52,15 @@ public class CompareUIAndCurrentResponses {
             uiDataResponses.add(uiResponseData);
         }
 
+        ObjectMapper mapper = new ObjectMapper();
+        uiDataResponses = mapper.readValue(updatedResponseData, new TypeReference<List>(){});
+
         return uiDataResponses;
     }
-    public List<UIResponseData> getFinalConsolidatedResponses() {
-        List<UIResponseData> finalOutputData = new ArrayList<UIResponseData>();
+    public List<ResponseData> getFinalConsolidatedResponses() {
+        List<ResponseData> finalOutputData = new ArrayList<ResponseData>();
 
-        for(UIResponseData element: getUIResponseData()) {
+        for(ResponseData element: getUIResponseData()) {
 
             if (!checkIfExists(element) & !Objects.equals(element.getResponse(), "")) {
                 element.setCreatedDate(time.toString());
@@ -68,7 +72,7 @@ public class CompareUIAndCurrentResponses {
                 log.info("element exists");
                 if (checkIfChanged(element)) {
                     log.info("element has also changed");
-                    CurrentResponseData heldEntity = getResponseEntity(element);
+                    ResponseData heldEntity = getResponseEntity(element);
                     element.setCreatedDate(heldEntity.getCreatedDate());
                     element.setCreatedBy(heldEntity.getCreatedBy());
                     element.setLastUpdatedBy(user);
@@ -84,8 +88,8 @@ public class CompareUIAndCurrentResponses {
     }
 
 
-    private boolean checkIfChanged(UIResponseData entityToCheck) {
-        for (CurrentResponseData element: currentHeldResponses) {
+    private boolean checkIfChanged(ResponseData entityToCheck) {
+        for (ResponseData element: currentHeldResponses) {
             if (Objects.equals(element.getQuestionCode(), entityToCheck.getQuestionCode())
                     && Objects.equals(element.getInstance(), entityToCheck.getInstance())
                     && !Objects.equals(element.getResponse(), entityToCheck.getResponse())) {
@@ -95,8 +99,8 @@ public class CompareUIAndCurrentResponses {
         return false;
     }
 
-    private boolean checkIfExists(UIResponseData entityToCheck) {
-        for (CurrentResponseData element: currentHeldResponses) {
+    private boolean checkIfExists(ResponseData entityToCheck) {
+        for (ResponseData element: currentHeldResponses) {
             if (Objects.equals(element.getQuestionCode(), entityToCheck.getQuestionCode())
                     && Objects.equals(element.getInstance(), entityToCheck.getInstance())) {
                 return true;
@@ -105,8 +109,8 @@ public class CompareUIAndCurrentResponses {
         return false;
     }
 
-    private CurrentResponseData getResponseEntity(UIResponseData entity) {
-        for (CurrentResponseData element: currentHeldResponses) {
+    private ResponseData getResponseEntity(ResponseData entity) {
+        for (ResponseData element: currentHeldResponses) {
             if (Objects.equals(element.getInstance().toString(), entity.getInstance().toString())
                     && Objects.equals(element.getQuestionCode(), entity.getQuestionCode())) {
                 return element;
