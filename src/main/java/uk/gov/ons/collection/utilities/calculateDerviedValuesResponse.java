@@ -14,18 +14,19 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import uk.gov.ons.collection.exception.InvalidDerivedResponseException;
+import uk.gov.ons.collection.exception.InvalidJsonException;
 
 public class calculateDerviedValuesResponse {
 
     private JSONObject formInputJSON;
     private JSONObject responseInputJSON;
 
-    public calculateDerviedValuesResponse(String formJSON, String responseJSON) {
+    public calculateDerviedValuesResponse(String formJSON, String responseJSON) throws InvalidJsonException {
         try {
             formInputJSON = new JSONObject(formJSON);
             responseInputJSON = new JSONObject(responseJSON);
         } catch (JSONException e) {
-            System.out.println("Given string could not be converted/processed: " + formJSON + responseJSON + e);
+            throw new InvalidJsonException("Given string could not be converted/processed: " + e);
         }
     }
 
@@ -62,7 +63,7 @@ public class calculateDerviedValuesResponse {
 
     // Get the responses for the dervied questions by iteating through the Responses
     // and Form array (which holds all expected Questions)
-    private JSONArray getDerivedQuestionResponses() {
+    private JSONArray getDerivedQuestionResponses() throws InvalidJsonException {
         var formArray = new JSONArray();
         var responseArray = new JSONArray();
         var parsedFormData = parseFormData();
@@ -72,7 +73,7 @@ public class calculateDerviedValuesResponse {
             formArray = parsedFormData.getJSONArray("form_data");
             responseArray = parsedResponseData.getJSONArray("response_data");
         } catch (JSONException e) {
-            System.out.println("Given string could not be converted/processed: " + e);
+            throw new InvalidJsonException("Given JSON did not contain contain form_data or response_data: " + e);
         }
         // Could refactor this to say ! not equal blank?
         for (int i = 0; i < formArray.length(); i++) {
@@ -107,7 +108,7 @@ public class calculateDerviedValuesResponse {
     // Convert all Integer response values to Big Decimal then back to String and
     // append to existing evaluator array
     // Call this in a for loop to generate the formula each time
-    private JSONArray convertResponsesToBigDecimal() throws InvalidDerivedResponseException {
+    private JSONArray convertResponsesToBigDecimal() throws InvalidDerivedResponseException, InvalidJsonException {
         var evaluatorArray = getDerivedQuestionResponses();
         var bigDecimalArray = new JSONArray();
 
@@ -119,12 +120,11 @@ public class calculateDerviedValuesResponse {
                 // Substitute formulatorun to be a String of the formula ready to run
                 for (int j = 0; j < inputFormula.length(); j++) {
                     System.out.println("Input formula: " + inputFormula.getString(j));
-                    //System.out.println(inputFormula.getString(j).equals(new String("+")));
                     if (!(inputFormula.getString(j).equals(new String("+")))
                             && !(inputFormula.getString(j).equals(new String("-")))) {
                                 try {
                                     var bigDecimalNumber = new BigDecimal(inputFormula.getString(j));
-                                    formulaToRun.append(bigDecimalNumber.toString()); // To string here???
+                                    formulaToRun.append(bigDecimalNumber.toString());
                                 } catch (NumberFormatException error) {
                                     throw new InvalidDerivedResponseException("Error converting response to Big decimal: ", error);
                                 }
@@ -142,9 +142,8 @@ public class calculateDerviedValuesResponse {
         return bigDecimalArray;
     }
 
-    // Calculate formulas - make this private too and just make updateDerivedQuestionsPublic?
-    // No - keep this public to test
-    public JSONArray calculateDerviedValues() throws InvalidDerivedResponseException {
+    // Calculate formulas
+    public JSONArray calculateDerviedValues() throws InvalidDerivedResponseException, InvalidJsonException {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine engine = manager.getEngineByName("js");
         Object result;
@@ -162,8 +161,9 @@ public class calculateDerviedValuesResponse {
             calculatedQuestion.put("result", result.toString());
             outputArray.put(calculatedQuestion);
             }
-            // Add custom exception here too
+            // *** Add custom exception here too ***
         } catch (ScriptException e) {
+            // Need to throw new here so it gets caught by calling method
             System.out.println("Error Evaluating formula: " + e);
         }
         return outputArray;
@@ -173,8 +173,7 @@ public class calculateDerviedValuesResponse {
     // Now create a structure which gets parsedResponse data JSON Object and updates the response
     // from the result in above output array (matching by question code) and is ready to be used
     // by Postgres Upsert function
-    // *** Need to get Reference, Period. Survey nd Username values when we call it? ***
-    public JSONObject updateDerivedQuestionResponses() throws InvalidDerivedResponseException {
+    public JSONObject updateDerivedQuestionResponses() throws InvalidDerivedResponseException, InvalidJsonException {
         var resultsArray = calculateDerviedValues();
         var responseArray = parseResponseData().getJSONArray("response_data");
         var updatedResponseArray = new JSONArray();
@@ -189,6 +188,8 @@ public class calculateDerviedValuesResponse {
                 }  
             }
         }
-    return new JSONObject().put("responses", updatedResponseArray);
+        JSONObject updatedDerivedResponses = new JSONObject().put("responses", updatedResponseArray);
+        System.out.println("Updated Derived Question Responses: " + updatedDerivedResponses.toString());
+        return updatedDerivedResponses;
     }
 }

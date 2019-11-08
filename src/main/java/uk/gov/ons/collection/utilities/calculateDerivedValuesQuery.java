@@ -3,21 +3,20 @@ package uk.gov.ons.collection.utilities;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import uk.gov.ons.collection.exception.InvalidJsonException;
+
+import java.util.Map;
 import java.util.StringJoiner;
 
-// Refactor:
-// 1) Class for queries - constructor for 'key'
-// 2) Class for response - constructor for input json
-// 3) Class for running the calculations or can do this in response
 public class calculateDerivedValuesQuery {
 
     private JSONObject inputKey;
 
-    public calculateDerivedValuesQuery(String key) {
+    public calculateDerivedValuesQuery(Map<String, String> variables) throws InvalidJsonException {
         try {
-            inputKey = new JSONObject(key);
+            inputKey = new JSONObject(variables);
         } catch (JSONException e) {
-            System.out.println("Given string could not be converted/processed: " + inputKey + e);
+            throw new InvalidJsonException("Can't build form or response Query for calculating derived values: " + inputKey, e);
         }
     }
 
