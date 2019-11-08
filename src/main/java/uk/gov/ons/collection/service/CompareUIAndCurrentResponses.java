@@ -3,8 +3,6 @@ package uk.gov.ons.collection.service;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import uk.gov.ons.collection.entity.ResponseData;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -51,9 +49,6 @@ public class CompareUIAndCurrentResponses {
             uiResponseData.setResponse(response);
             uiDataResponses.add(uiResponseData);
         }
-
-        ObjectMapper mapper = new ObjectMapper();
-        uiDataResponses = mapper.readValue(updatedResponseData, new TypeReference<List>(){});
 
         return uiDataResponses;
     }
