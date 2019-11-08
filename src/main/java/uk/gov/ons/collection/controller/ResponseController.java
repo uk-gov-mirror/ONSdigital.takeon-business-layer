@@ -37,7 +37,7 @@ public class ResponseController {
     @ResponseBody
     public void saveQuestionResponses(@RequestBody String updatedResponses) {
 
-        log.info("API CALL!! --> /response/save :: " + updatedResponses);
+        log.info("API CALL!! --> /response/save :: Updated UI Responses" + updatedResponses);
 
         List<ResponseData>  currentResponseEntities;
         JSONObject updatedResponsesJson = new JSONObject(updatedResponses);
@@ -46,13 +46,13 @@ public class ResponseController {
         try {
             var upsertResponse = new UpsertResponse(updatedResponses);
             var currentResponseQuery = upsertResponse.buildRetrieveOldResponseQuery();
-            log.info("Current Response GraphQL Query :: " + currentResponseQuery);
+            log.info("GraphQL Query for getting old responses:: " + currentResponseQuery);
             String qlResponseOutput = qlService.qlSearch(currentResponseQuery);
-            log.info("Output from GraphQL Current Response  :: " + qlResponseOutput);
+            log.info("Old Responses from GraphQL after database execution  :: " + qlResponseOutput);
             JSONObject qlResponseOutputJson = new JSONObject(qlResponseOutput);
             var outputArray = new JSONArray();
             outputArray = qlResponseOutputJson.getJSONObject("data").getJSONObject("allResponses").getJSONArray("nodes");
-            log.info("Output JSON Array  :: " + outputArray);
+            log.info("Old Responses JSON Array :: " + outputArray);
             currentResponseEntities = upsertResponse.buildCurrentResponseEntities(outputArray);
 
             //Call Compare Responses
@@ -63,11 +63,12 @@ public class ResponseController {
             var upsertSaveResponse = new UpsertResponse(jsonArray);
             //Constructing GraphQL query for Save
             var saveQuery = upsertSaveResponse.buildConsolidateUpsertByArrayQuery();
+            log.info("GraphQL query for save {}", saveQuery);
             String qlSaveResponseOutput = qlService.qlSearch(saveQuery);
             log.info("Output after saving the responses {}", qlSaveResponseOutput);
-
             //Finally Updating the Form Status
             var contributorStatusQuery = upsertResponse.updateContributorStatus();
+            log.info("GraphQL Query for updating Form Status {}", contributorStatusQuery);
             String qlStatusOutput = qlService.qlSearch(contributorStatusQuery);
             log.info("Output after updating the form status {}", qlStatusOutput);
 
