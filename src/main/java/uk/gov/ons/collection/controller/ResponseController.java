@@ -1,19 +1,15 @@
 package uk.gov.ons.collection.controller;
 
-import java.util.List;
 import java.util.Map;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.log4j.Log4j2;
-import uk.gov.ons.collection.exception.InvalidJsonException;
 import uk.gov.ons.collection.service.GraphQlService;
 import uk.gov.ons.collection.utilities.UpsertResponse;
 import uk.gov.ons.collection.utilities.calculateDerivedValuesQuery;
