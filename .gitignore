@@ -28,3 +28,5 @@
 /.nb-gradle/
 
 **/params.yml
+
+.DS_Store
