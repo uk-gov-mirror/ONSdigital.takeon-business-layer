@@ -78,5 +78,29 @@ public class QlQueryResponse {
         return outputArray;
 
     }
+	public JSONObject parseValidationOutputs() {
+        var outputArray = new JSONArray();
+        var valOutputArray = new JSONArray();
+        System.out.println("Output from Validation Query before parsing: " + jsonQlResponse.toString());
+        if (jsonQlResponse.getJSONObject("data").getJSONObject("allValidationoutputs").getJSONArray("nodes").length() > 0) {
+            outputArray = jsonQlResponse.getJSONObject("data").getJSONObject("allValidationoutputs").getJSONArray("nodes");
+        }
+        for (int i = 0; i < outputArray.length(); i++) {
+            JSONObject validationRule = new JSONObject();
+            validationRule.put("formula", outputArray.getJSONObject(i).get("formula"));
+            validationRule.put("triggered", outputArray.getJSONObject(i).get("triggered"));
+            validationRule.put("lastupdatedby", outputArray.getJSONObject(i).get("lastupdatedby"));
+            validationRule.put("lastupdateddate", outputArray.getJSONObject(i).get("lastupdateddate"));
+            validationRule.put("instance", outputArray.getJSONObject(i).get("instance"));
+            validationRule.put("severity", outputArray.getJSONObject(i).getJSONObject("validationformByValidationid").get("severity"));
+            validationRule.put("validationid", outputArray.getJSONObject(i).getJSONObject("validationformByValidationid").get("validationid"));
+            validationRule.put("rule", outputArray.getJSONObject(i).getJSONObject("validationformByValidationid").get("rule"));
+            validationRule.put("primaryquestion", outputArray.getJSONObject(i).getJSONObject("validationformByValidationid").get("primaryquestion"));
+            validationRule.put("name", outputArray.getJSONObject(i).getJSONObject("validationformByValidationid").getJSONObject("validationruleByRule").get("name"));
+            valOutputArray.put(validationRule);
+        }
+        var validationOutputs = new JSONObject().put("validation_outputs", valOutputArray);
+        return validationOutputs;
+    }
 
 }

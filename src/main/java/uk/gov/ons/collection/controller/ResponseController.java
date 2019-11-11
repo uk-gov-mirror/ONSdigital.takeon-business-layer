@@ -2,6 +2,8 @@ package uk.gov.ons.collection.controller;
 
 import java.util.Map;
 
+import java.util.List;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -14,6 +16,17 @@ import uk.gov.ons.collection.service.GraphQlService;
 import uk.gov.ons.collection.utilities.UpsertResponse;
 import uk.gov.ons.collection.utilities.calculateDerivedValuesQuery;
 import uk.gov.ons.collection.utilities.calculateDerviedValuesResponse;
+import org.json.JSONArray;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import uk.gov.ons.collection.entity.ResponseData;
+import uk.gov.ons.collection.service.CompareUiAndCurrentResponses;
+import uk.gov.ons.collection.service.GraphQlService;
+import uk.gov.ons.collection.utilities.UpsertResponse;
+
 @Log4j2
 @Api(value = "Response Controller")
 @RestController
@@ -63,7 +76,9 @@ public class ResponseController {
 
         try {
             // Call to save updated derived responses
-            saveResponses(upsertResponses.toString());
+            var upsertSaveResponse = new UpsertResponse(upsertResponses.toString());
+            var saveQuery = upsertSaveResponse.buildUpsertByArrayQuery();
+            saveResponses(saveQuery);
         } catch (Exception err) {
             log.info("Exception: " + err);
             return "{\"error\":\"Failed to save derived Question responses\"}";
@@ -77,18 +92,69 @@ public class ResponseController {
     @RequestMapping(value = "/saveResponses", method = {RequestMethod.POST, RequestMethod.PUT})
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful save of all question responses", response = String.class)})
     @ResponseBody
-    public String saveResponses(String jsonString) {
+    public String saveResponses(String saveQuery) {
 
         try {
-            var upsertSaveResponse = new UpsertResponse(jsonString);
-            var saveQuery = upsertSaveResponse.buildUpsertByArrayQuery();
+            // Should do this but can't for now as there are two different structures
+            // in 2 different constructors for UpsertResponse
+            //var upsertSaveResponse = new UpsertResponse(jsonString);
+            //var saveQuery = upsertSaveResponse.buildUpsertByArrayQuery();
             String saveResponseOutput = qlService.qlSearch(saveQuery);
             log.info("Output after saving the responses {}", saveResponseOutput);
         } catch (Exception err) {
-            log.error("Failed to save responses: " + jsonString + err);
+            log.error("Failed to save responses: " + saveQuery + err);
             return "{\"error\":\"Failed to save Question responses\"}";
         }
         return "{\"Success\":\"Question responses saved successfully\"}";
     }
 
+    @ApiOperation(value = "Save question responses", response = String.class)
+    @RequestMapping(value = "/save/{vars}", method = {RequestMethod.POST, RequestMethod.PUT})
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful in saving of all question responses", response = String.class)})
+    @ResponseBody
+    public void saveQuestionResponses(@RequestBody String updatedResponses) {
+
+        log.info("API CALL!! --> /response/save :: Updated UI Responses" + updatedResponses);
+
+        List<ResponseData>  currentResponseEntities;
+        JSONObject updatedResponsesJson = new JSONObject(updatedResponses);
+        CompareUiAndCurrentResponses responseComparison;
+
+        try {
+            var upsertResponse = new UpsertResponse(updatedResponses);
+            var currentResponseQuery = upsertResponse.buildRetrieveOldResponseQuery();
+            log.info("GraphQL Query for getting old responses:: " + currentResponseQuery);
+            String qlResponseOutput = qlService.qlSearch(currentResponseQuery);
+            log.info("Old Responses from GraphQL after database execution  :: " + qlResponseOutput);
+            JSONObject qlResponseOutputJson = new JSONObject(qlResponseOutput);
+            var outputArray = new JSONArray();
+            outputArray = qlResponseOutputJson.getJSONObject("data").getJSONObject("allResponses").getJSONArray("nodes");
+            log.info("Old Responses JSON Array :: " + outputArray);
+            currentResponseEntities = upsertResponse.buildCurrentResponseEntities(outputArray);
+
+            //Call Compare Responses
+            responseComparison = new CompareUiAndCurrentResponses(currentResponseEntities, updatedResponsesJson);
+            // Get only the updated responses and not the responses that were already in the DB
+            List<ResponseData> responsesToPassToDatabase = responseComparison.getFinalConsolidatedResponses();
+            JSONArray jsonArray = new JSONArray(responsesToPassToDatabase);
+            var upsertSaveResponse = new UpsertResponse(jsonArray);
+            //Constructing GraphQL query for Save
+            var saveQuery = upsertSaveResponse.buildConsolidateUpsertByArrayQuery();
+            log.info("GraphQL query for save {}", saveQuery);
+            // *** Extract out just this call ? *** //
+            String qlSaveResponseOutput = qlService.qlSearch(saveQuery);
+            log.info("Output after saving the responses {}", qlSaveResponseOutput);
+            //Updating the Form Status
+            var contributorStatusQuery = upsertResponse.updateContributorStatus();
+            log.info("GraphQL Query for updating Form Status {}", contributorStatusQuery);
+            String qlStatusOutput = qlService.qlSearch(contributorStatusQuery);
+            log.info("Output after updating the form status {}", qlStatusOutput);
+            // Finally call to calculate derived values
+            calculateDerivedValues();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("Error in saving :: " + e.getMessage());
+        }
+    }
 }

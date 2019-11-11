@@ -160,36 +160,59 @@ public class ValidationController {
         String qlResponse = new String();
 
         // 1: Delete outputs
-        try {        
-            log.info("Delete: " + deleteQuery); 
+        try {                    
             qlResponse = qlService.qlSearch(deleteQuery);
         } catch (Exception e) {
             log.info("Exception: " + e);
+            log.info("Delete: " + deleteQuery); 
             log.info("QL Response: " + qlResponse);
             return "{\"error\":\"Error removing existing validation outputs\"}";
         }
 
         // 2: Insert outputs
-        try {        
+        try {                
             qlResponse = qlService.qlSearch(insertQuery);
-        } catch (Exception e) {
+        } catch (Exception e) {            
             log.info("Exception: " + e);     
+            log.info("Insert: " + insertQuery);     
             log.info("QL Response: " + qlResponse);
             return "{\"error\":\"Error saving validation outputs\"}";
         }
 
         // 3: Update status
+        String updateStatusQuery = "";
         try {
-            var updateStatusQuery = new ContributorStatus(reference, period, survey, statusText).buildUpdateQuery();
+            updateStatusQuery = new ContributorStatus(reference, period, survey, statusText).buildUpdateQuery();
             qlResponse = qlService.qlSearch(updateStatusQuery);
         } catch (Exception e) {
             log.info("Exception: " + e);
-            log.info("QL Response: " + qlResponse);
+            log.info("Update: " + insertQuery);    
+            log.info("QL Response: " + updateStatusQuery);
             return "{\"error\":\"Error updating contributor status\"}";
         }        
 
         log.info("API CALL!! --> /validation/saveOutputs :: Complete");
         return "{\"status\": \"Success\"}";
+    }
+
+    @ApiOperation(value = "Validation output to UI", response = String.class)
+    @GetMapping(value="/validationoutput/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+    @ApiResponse(code = 200, message = "Successful", response = String.class)})
+    public String validationoutput(@MatrixVariable Map<String, String> searchParameters){
+        String validationOutputsQuery = "";
+        JSONObject validationOutputs = new JSONObject();
+        try {
+            validationOutputsQuery = new QlQueryBuilder(searchParameters).buildValidationOutputQuery();
+            QlQueryResponse response = new QlQueryResponse(qlService.qlSearch(validationOutputsQuery));
+            validationOutputs = response.parseValidationOutputs();
+        } catch (Exception e) {
+            log.info("Exception: " + e);
+            log.info("Validation Outputs Query: " + validationOutputsQuery);
+            return "{\"error\":\"Error building Validation Outputs Query\"}";
+        }
+        log.info("Validation Outputs Query: " + validationOutputs.toString());
+        return validationOutputs.toString();
     }
 
 }
