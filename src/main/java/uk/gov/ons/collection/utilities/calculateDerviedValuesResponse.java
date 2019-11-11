@@ -13,9 +13,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import lombok.extern.log4j.Log4j2;
+import uk.gov.ons.collection.exception.FormulaCalculationException;
 import uk.gov.ons.collection.exception.InvalidDerivedResponseException;
 import uk.gov.ons.collection.exception.InvalidJsonException;
 
+@Log4j2
 public class calculateDerviedValuesResponse {
 
     private JSONObject formInputJSON;
@@ -149,7 +152,7 @@ public class calculateDerviedValuesResponse {
     }
 
     // Calculate formulas
-    public JSONArray calculateDerviedValues() throws InvalidDerivedResponseException, InvalidJsonException {
+    public JSONArray calculateDerviedValues() throws InvalidDerivedResponseException, InvalidJsonException, FormulaCalculationException {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine engine = manager.getEngineByName("js");
         Object result;
@@ -169,9 +172,10 @@ public class calculateDerviedValuesResponse {
             outputArray.put(calculatedQuestion);
             }
             // *** Add custom exception here too ***
-        } catch (ScriptException e) {
+        } catch (ScriptException err) {
             // Need to throw new here so it gets caught by calling method
-            System.out.println("Error Evaluating formula: " + e);
+            log.error("Error Evaluating formula: " + err);
+            throw new FormulaCalculationException("Error Evaluating formula: ", err);
         }
         System.out.println("Calculated Results output: " + outputArray.toString());
         return outputArray;
@@ -181,7 +185,7 @@ public class calculateDerviedValuesResponse {
     // Now create a structure which gets parsedResponse data JSON Object and updates the response
     // from the result in above output array (matching by question code) and is ready to be used
     // by Postgres Upsert function
-    public JSONObject updateDerivedQuestionResponses() throws InvalidDerivedResponseException, InvalidJsonException {
+    public JSONObject updateDerivedQuestionResponses() throws InvalidDerivedResponseException, InvalidJsonException, FormulaCalculationException {
         var resultsArray = calculateDerviedValues();
         var responseArray = parseResponseData().getJSONArray("response_data");
         var updatedResponseArray = new JSONArray();
@@ -191,7 +195,7 @@ public class calculateDerviedValuesResponse {
                 .equals(responseArray.getJSONObject(j).getString("questioncode"))) {
                     var updatedResponsesObject = new JSONObject();
                     updatedResponsesObject.put("instance", resultsArray.getJSONObject(i).get("instance"));
-                    updatedResponsesObject.put("question", resultsArray.getJSONObject(i).getString("questioncode"));
+                    updatedResponsesObject.put("questioncode", resultsArray.getJSONObject(i).getString("questioncode"));
                     updatedResponsesObject.put("response", resultsArray.getJSONObject(i).getString("result"));
                     updatedResponseArray.put(updatedResponsesObject);
                 }  

@@ -2,12 +2,14 @@ package uk.gov.ons.collection.utilities;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import lombok.extern.log4j.Log4j2;
 
 import uk.gov.ons.collection.exception.InvalidJsonException;
 
 import java.util.Map;
 import java.util.StringJoiner;
 
+@Log4j2
 public class calculateDerivedValuesQuery {
 
     private JSONObject inputKey;
@@ -26,25 +28,26 @@ public class calculateDerivedValuesQuery {
         formDefintionQuery.append("{\"query\":\"query formDefinitionByReference {allContributors(condition: {");
         formDefintionQuery.append(getReferencePeriodAndSurvey());
         formDefintionQuery.append("}){nodes {formByFormid {formdefinitionsByFormid {nodes {questioncode,derivedformula}}}}}}\"}");
-
+        log.info("Output of form definition query {}", formDefintionQuery.toString());
         return formDefintionQuery.toString();
     }
 
     public String buildGetResponsesQuery() {
         StringBuilder responseQuery = new StringBuilder();
-        responseQuery.append("{\"query\":\"query getResponses($reference: String, $period: String, $survey: String){");
+        responseQuery.append("{\"query\":\"query getResponses {");
         responseQuery.append("allResponses(condition: {");
         responseQuery.append(getReferencePeriodAndSurvey());
         responseQuery.append("}){nodes {response questioncode instance}}}\"}");
+        log.info("Output of derived response query {}", responseQuery.toString());
         return responseQuery.toString();
     }
 
     // Gets reference, period, survey from the input JSON
     private String getReferencePeriodAndSurvey() {
         StringJoiner joiner = new StringJoiner(",");
-            joiner.add("reference: \"" + inputKey.getString("reference") + "\"");
-            joiner.add("period: \""    + inputKey.getString("period")    + "\"");
-            joiner.add("survey: \""    + inputKey.getString("survey")    + "\"");
+            joiner.add("reference: \\\"" + inputKey.getString("reference") + "\\\"");
+            joiner.add("period: \\\""    + inputKey.getString("period")    + "\\\"");
+            joiner.add("survey: \\\""    + inputKey.getString("survey")    + "\\\"");
         return joiner.toString();
     }
 

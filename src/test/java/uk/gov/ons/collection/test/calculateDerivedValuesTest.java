@@ -45,7 +45,7 @@ class calculateDerivedValuesTest {
             System.out.println("Can't build form query for calculating derived values" + e);
         }
         var expectedQuery = "{\"query\":\"query formDefinitionByReference "+
-                "{allContributors(condition: {reference: \"12345678001\",period: \"201801\",survey: \"999A\"})"+
+                "{allContributors(condition: {reference: \\\"12345678001\\\",period: \\\"201801\\\",survey: \\\"999A\\\"})"+
                 "{nodes {formByFormid {formdefinitionsByFormid {nodes {questioncode,derivedformula}}}}}}\"}";
         assertEquals(expectedQuery, formQuery);
     }
@@ -62,8 +62,8 @@ class calculateDerivedValuesTest {
         } catch (InvalidJsonException e) {
             System.out.println("Can't build response query for calculating derived values" + e);
         }
-        var expectedQuery = "{\"query\":\"query getResponses($reference: String, $period: String, $survey: String){" +
-            "allResponses(condition: {reference: \"12345678001\",period: \"201801\",survey: \"999A\"}){" +
+        var expectedQuery = "{\"query\":\"query getResponses {" +
+            "allResponses(condition: {reference: \\\"12345678001\\\",period: \\\"201801\\\",survey: \\\"999A\\\"}){" +
             "nodes {response questioncode instance}}}\"}";
         assertEquals(expectedQuery, responseQuery);
     }
@@ -272,8 +272,8 @@ class calculateDerivedValuesTest {
 
     @Test
     void updateDerivedResponses_validInput_returnsExpectedData() {
-        var expectedOutput = "{\"responses\":[{\"instance\":0,\"question\":\"4000\",\"response\":\"21\"}," +
-        "{\"instance\":0,\"question\":\"4001\",\"response\":\"19\"}]}";
+        var expectedOutput = "{\"responses\":[{\"instance\":0,\"response\":\"21\",\"questioncode\":\"4000\"}," +
+        "{\"instance\":0,\"response\":\"19\",\"questioncode\":\"4001\"}]}";
         JSONObject response = new JSONObject();
         try {
             response = new calculateDerviedValuesResponse(formInput, responseInput)
