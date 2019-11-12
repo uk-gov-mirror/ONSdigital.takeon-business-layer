@@ -61,7 +61,7 @@ public class calculateDerviedValuesResponse {
         for (int i = 0; i < questionCodes.length; i++) {
             questionCodeList.add(questionCodes[i]);
         }
-        System.out.println("Question Codes List: " + questionCodeList.toString());
+        log.info("Question Codes List: " + questionCodeList.toString());
         return questionCodeList;
     }
 
@@ -79,7 +79,7 @@ public class calculateDerviedValuesResponse {
         } catch (JSONException e) {
             throw new InvalidJsonException("Given JSON did not contain contain form_data or response_data: " + e);
         }
-        // Could refactor this to say ! not equal blank?
+        // Loop through to check where derived formula != blank
         for (int i = 0; i < formArray.length(); i++) {
             if (formArray.getJSONObject(i).getString("derivedformula") != "") {
                 String questionCode = formArray.getJSONObject(i).getString("questioncode");
@@ -109,7 +109,7 @@ public class calculateDerviedValuesResponse {
                 derivedArray.put(questions);
             }
         }
-        System.out.println("Formulas to be evaluated: " + derivedArray.toString());
+        log.info("Formulas to be evaluated: " + derivedArray.toString());
         return derivedArray;
     }
 
@@ -127,7 +127,7 @@ public class calculateDerviedValuesResponse {
                 JSONArray inputFormula = evaluatorArray.getJSONObject(i).getJSONArray("formulatorun");
                 // Substitute formulatorun to be a String of the formula ready to run
                 for (int j = 0; j < inputFormula.length(); j++) {
-                    System.out.println("Input formula: " + inputFormula.getString(j));
+                    log.info("Input formula: " + inputFormula.getString(j));
                     if (!(inputFormula.getString(j).equals(new String("+")))
                             && !(inputFormula.getString(j).equals(new String("-")))) {
                                 try {
@@ -147,7 +147,7 @@ public class calculateDerviedValuesResponse {
             bigDecimalArray.put(bigDecimalObject);
             } 
         }
-        System.out.println("Output from Convert Responses to Big Decimal: " + bigDecimalArray.toString());
+        log.info("Output from Convert Responses to Big Decimal: " + bigDecimalArray.toString());
         return bigDecimalArray;
     }
 
@@ -171,13 +171,12 @@ public class calculateDerviedValuesResponse {
             calculatedQuestion.put("result", result.toString());
             outputArray.put(calculatedQuestion);
             }
-            // *** Add custom exception here too ***
         } catch (ScriptException err) {
             // Need to throw new here so it gets caught by calling method
             log.error("Error Evaluating formula: " + err);
             throw new FormulaCalculationException("Error Evaluating formula: ", err);
         }
-        System.out.println("Calculated Results output: " + outputArray.toString());
+        log.info("Calculated Results output: " + outputArray.toString());
         return outputArray;
 
     }
@@ -202,7 +201,7 @@ public class calculateDerviedValuesResponse {
             }
         }
         JSONObject updatedDerivedResponses = new JSONObject().put("responses", updatedResponseArray);
-        System.out.println("Updated Derived Question Responses: " + updatedDerivedResponses.toString());
+        log.info("Updated Derived Question Responses: " + updatedDerivedResponses.toString());
         return updatedDerivedResponses;
     }
 }
