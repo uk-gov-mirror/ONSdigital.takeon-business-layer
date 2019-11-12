@@ -1,7 +1,7 @@
 package uk.gov.ons.collection.controller;
 
 import java.util.Map;
-
+import java.util.HashMap;
 import java.util.List;
 
 import io.swagger.annotations.Api;
@@ -62,6 +62,8 @@ public class ResponseController {
             qlFormResponse = qlService.qlSearch(formQuery);
             qlResponsesResponse = qlService.qlSearch(responseQuery);
             updatedResponses = new calculateDerviedValuesResponse(qlFormResponse, qlResponsesResponse).updateDerivedQuestionResponses();
+            log.info("Parsed form Data in controller: " + qlFormResponse);
+            log.info("Parsed Response Data in controller: " + qlResponsesResponse);
         } catch (Exception err) {
             log.error("Exception: " + err);
             return "{\"error\":\"Failed to update Derived Question responses\"}";
@@ -80,10 +82,9 @@ public class ResponseController {
             var saveQuery = upsertSaveResponse.buildUpsertByArrayQuery();
             saveResponses(saveQuery);
         } catch (Exception err) {
-            log.info("Exception: " + err);
+            log.error("Exception: " + err);
             return "{\"error\":\"Failed to save derived Question responses\"}";
         }
-        //return "{}";
         return "{\"Success\":\"Successfully saved derived Question responses\"}";
         
     }
@@ -128,29 +129,35 @@ public class ResponseController {
             log.info("Old Responses from GraphQL after database execution  :: " + qlResponseOutput);
             JSONObject qlResponseOutputJson = new JSONObject(qlResponseOutput);
             var outputArray = new JSONArray();
-            outputArray = qlResponseOutputJson.getJSONObject("data").getJSONObject("allResponses").getJSONArray("nodes");
+            outputArray = qlResponseOutputJson.getJSONObject("data").getJSONObject("allResponses")
+                    .getJSONArray("nodes");
             log.info("Old Responses JSON Array :: " + outputArray);
             currentResponseEntities = upsertResponse.buildCurrentResponseEntities(outputArray);
 
-            //Call Compare Responses
+            // Call Compare Responses
             responseComparison = new CompareUiAndCurrentResponses(currentResponseEntities, updatedResponsesJson);
-            // Get only the updated responses and not the responses that were already in the DB
+            // Get only the updated responses and not the responses that were already in the
+            // DB
             List<ResponseData> responsesToPassToDatabase = responseComparison.getFinalConsolidatedResponses();
             JSONArray jsonArray = new JSONArray(responsesToPassToDatabase);
             var upsertSaveResponse = new UpsertResponse(jsonArray);
-            //Constructing GraphQL query for Save
+            // Constructing GraphQL query for Save
             var saveQuery = upsertSaveResponse.buildConsolidateUpsertByArrayQuery();
             log.info("GraphQL query for save {}", saveQuery);
-            // *** Extract out just this call ? *** //
+            // *** Extract out this call ? *** //
             String qlSaveResponseOutput = qlService.qlSearch(saveQuery);
             log.info("Output after saving the responses {}", qlSaveResponseOutput);
-            //Updating the Form Status
+            // Updating the Form Status
             var contributorStatusQuery = upsertResponse.updateContributorStatus();
             log.info("GraphQL Query for updating Form Status {}", contributorStatusQuery);
             String qlStatusOutput = qlService.qlSearch(contributorStatusQuery);
             log.info("Output after updating the form status {}", qlStatusOutput);
             // Finally call to calculate derived values
-            calculateDerivedValues();
+            Map<String,String> refPerSur = new HashMap<>();
+            refPerSur.put("reference", updatedResponsesJson.getString("reference"));
+            refPerSur.put("period", updatedResponsesJson.getString("period"));
+            refPerSur.put("survey", updatedResponsesJson.getString("survey"));
+            calculateDerivedValues(refPerSur);
 
         } catch (Exception e) {
             e.printStackTrace();

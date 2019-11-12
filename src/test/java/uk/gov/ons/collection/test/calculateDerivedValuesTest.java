@@ -284,5 +284,58 @@ class calculateDerivedValuesTest {
         assertEquals(expectedOutput, response.toString());
     }
 
+    @Test
+    void calculateDerviedValues_blankResponseInput_convertsToZero() {
+        var responseStringInput = "{"
+        + "\"data\": {"
+        + "\"allResponses\": {"
+        +  "\"nodes\": ["
+        +  "{"
+        +  "\"response\": \"\","
+        + "\"questioncode\": \"1000\","
+        +  "\"instance\":0"
+        +  "},"
+        +  "{"
+        +  "\"response\": \"1.00000000\","
+        +        "\"questioncode\": \"1001\","
+        +        "\"instance\":0"
+        +     "},"
+        +      "{"
+        +        "\"response\": \"1\","
+        +        "\"questioncode\": \"2000\","
+        +        "\"instance\":0"
+        +      "},"
+        +      "{"
+        +        "\"response\": \"Rhubarb\","
+        +        "\"questioncode\": \"3000\","
+        +        "\"instance\":0"
+        +      "},"
+        +      "{"
+        +        "\"response\": \"21\","
+        +        "\"questioncode\": \"4000\","
+        +        "\"instance\":0"
+        +      "},"
+        +     "{"
+        +        "\"response\": \"19\","
+        +        "\"questioncode\": \"4001\","
+        +        "\"instance\":0"
+        +     "}"
+        +    "]"
+        +  "}"
+        + "}"
+        + "}";
+
+        var expectedOutput = "[{\"result\":\"1.0\",\"instance\":0,\"questioncode\":\"4000\"}," +
+        "{\"result\":\"-1.0\",\"instance\":0,\"questioncode\":\"4001\"}]";
+        JSONArray response = new JSONArray();
+        try {
+            response = new calculateDerviedValuesResponse(formInput, responseStringInput).calculateDerviedValues();
+        } catch (Exception e) {
+            System.out.println("Can't calculate derived values" + e);
+        }
+        assertEquals(expectedOutput, response.toString());
+
+    }
+
 
 }

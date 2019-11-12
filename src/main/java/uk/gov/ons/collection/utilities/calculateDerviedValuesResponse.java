@@ -41,6 +41,7 @@ public class calculateDerviedValuesResponse {
                     .getJSONObject(0).getJSONObject("formByFormid").getJSONObject("formdefinitionsByFormid")
                     .getJSONArray("nodes");
         }
+        log.info("Parsed Form Data: " + outputArray.toString());
         return new JSONObject().put("form_data", outputArray);
     }
 
@@ -50,6 +51,7 @@ public class calculateDerviedValuesResponse {
         if (responseInputJSON.getJSONObject("data").getJSONObject("allResponses").getJSONArray("nodes").length() > 0) {
             outputArray = responseInputJSON.getJSONObject("data").getJSONObject("allResponses").getJSONArray("nodes");
         }
+        log.info("Parsed Response Data: " + outputArray.toString());
         return new JSONObject().put("response_data", outputArray);
     }
 
@@ -131,8 +133,14 @@ public class calculateDerviedValuesResponse {
                     if (!(inputFormula.getString(j).equals(new String("+")))
                             && !(inputFormula.getString(j).equals(new String("-")))) {
                                 try {
-                                    var bigDecimalNumber = new BigDecimal(inputFormula.getString(j));
-                                    formulaToRun.append(bigDecimalNumber.toString());
+                                    // Check if any values in the formula are blank
+                                    if (inputFormula.getString(j).isBlank()) {
+                                        var bigDecimalNumber = 0;
+                                        formulaToRun.append(String.valueOf(bigDecimalNumber));
+                                    } else {
+                                        var bigDecimalNumber = new BigDecimal(inputFormula.getString(j));
+                                        formulaToRun.append(bigDecimalNumber.toString());
+                                    }
                                 } catch (NumberFormatException error) {
                                     throw new InvalidDerivedResponseException("Error converting response to Big decimal: ", error);
                                 }
@@ -188,6 +196,7 @@ public class calculateDerviedValuesResponse {
         var resultsArray = calculateDerviedValues();
         var responseArray = parseResponseData().getJSONArray("response_data");
         var updatedResponseArray = new JSONArray();
+        log.info("Response array in updatedDerivedQuestionResponses: " + responseArray.toString());
         for (int i = 0; i < resultsArray.length(); i++) {
             for (int j = 0; j < responseArray.length(); j++) {
                 if (resultsArray.getJSONObject(i).getString("questioncode")
@@ -199,6 +208,7 @@ public class calculateDerviedValuesResponse {
                     updatedResponseArray.put(updatedResponsesObject);
                 }  
             }
+            log.info("Updated response array: " + updatedResponseArray.toString());
         }
         JSONObject updatedDerivedResponses = new JSONObject().put("responses", updatedResponseArray);
         log.info("Updated Derived Question Responses: " + updatedDerivedResponses.toString());
