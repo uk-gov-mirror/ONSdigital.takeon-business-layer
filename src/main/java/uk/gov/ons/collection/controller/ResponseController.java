@@ -62,8 +62,6 @@ public class ResponseController {
             qlFormResponse = qlService.qlSearch(formQuery);
             qlResponsesResponse = qlService.qlSearch(responseQuery);
             updatedResponses = new calculateDerviedValuesResponse(qlFormResponse, qlResponsesResponse).updateDerivedQuestionResponses();
-            log.info("Parsed form Data in controller: " + qlFormResponse);
-            log.info("Parsed Response Data in controller: " + qlResponsesResponse);
         } catch (Exception err) {
             log.error("Exception: " + err);
             return "{\"error\":\"Failed to update Derived Question responses\"}";

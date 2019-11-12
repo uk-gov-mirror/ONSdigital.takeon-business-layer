@@ -196,7 +196,6 @@ public class calculateDerviedValuesResponse {
         var resultsArray = calculateDerviedValues();
         var responseArray = parseResponseData().getJSONArray("response_data");
         var updatedResponseArray = new JSONArray();
-        log.info("Response array in updatedDerivedQuestionResponses: " + responseArray.toString());
         for (int i = 0; i < resultsArray.length(); i++) {
             for (int j = 0; j < responseArray.length(); j++) {
                 if (resultsArray.getJSONObject(i).getString("questioncode")
@@ -208,7 +207,6 @@ public class calculateDerviedValuesResponse {
                     updatedResponseArray.put(updatedResponsesObject);
                 }  
             }
-            log.info("Updated response array: " + updatedResponseArray.toString());
         }
         JSONObject updatedDerivedResponses = new JSONObject().put("responses", updatedResponseArray);
         log.info("Updated Derived Question Responses: " + updatedDerivedResponses.toString());
