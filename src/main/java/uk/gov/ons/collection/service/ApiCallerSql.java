@@ -1,5 +1,7 @@
 package uk.gov.ons.collection.service;
 
+import java.lang.reflect.Array;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,5 +36,5 @@ public class ApiCallerSql implements ApiCaller {
     public Iterable<FormDefinitionEntity> loadFormDefinition(String reference, String period, String survey) {
         return formDefinitionService.getForm(new Helpers().buildUriParameters(reference, period, survey));
     }
-
 }
+

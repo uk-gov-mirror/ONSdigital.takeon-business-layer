@@ -79,4 +79,20 @@ public class QlQueryResponse {
 
     }
 
+    public String getViewForm() {
+        var outputObject = new JSONObject();
+        var formArray = new JSONArray();
+        var responseArray = new JSONArray();
+        if (jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").length() > 0){
+            formArray = jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").getJSONObject(0)
+                          .getJSONObject("formByFormid").getJSONObject("formdefinitionsByFormid").getJSONArray("nodes");
+            responseArray = jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").getJSONObject(0)
+            .getJSONObject("responsesByReferenceAndPeriodAndSurvey").getJSONArray("nodes");              
+        }   
+        outputObject.put("responses", responseArray);
+        outputObject.put("form_data", formArray);
+        return outputObject.toString();
+
+    }
+
 }

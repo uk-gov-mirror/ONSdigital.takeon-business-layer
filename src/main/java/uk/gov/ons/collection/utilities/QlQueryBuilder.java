@@ -86,4 +86,24 @@ public class QlQueryBuilder {
         return contributorDetailsQuery.toString();    
     }
 
+    public String buildViewFormQuery(){
+        StringBuilder viewFormQuery = new StringBuilder();
+        viewFormQuery.append("{\"query\": \"query responsecontributorformdefinition($period: String, $reference: String, $survey: String) " +
+        "{ allContributors(condition: {reference: $reference, period: $period, survey: $survey}) {" +
+            "nodes {reference period survey " +
+            "formid status receiptdate lockedby lockeddate checkletter frozensicoutdated rusicoutdated frozensic " +
+            "rusic frozenemployees employees frozenemployment employment frozenfteemployment fteemployment frozenturnover " +
+            "turnover enterprisereference wowenterprisereference cellnumber currency vatreference payereference " +
+            "companyregistrationnumber numberlivelocalunits numberlivevat numberlivepaye legalstatus " +
+            "reportingunitmarker region birthdate tradingstyle contact telephone fax selectiontype inclusionexclusion " +
+            "createdby createddate lastupdatedby lastupdateddate " +
+            "formByFormid {formdefinitionsByFormid {nodes {questioncode type derivedformula}}}" +
+            "responsesByReferenceAndPeriodAndSurvey {nodes {instance questioncode response}}}}}\"," +
+            "\"variables\": {");
+
+        viewFormQuery.append(buildVariables());
+        viewFormQuery.append("}}");
+        return viewFormQuery.toString();
+    }
+
 }
