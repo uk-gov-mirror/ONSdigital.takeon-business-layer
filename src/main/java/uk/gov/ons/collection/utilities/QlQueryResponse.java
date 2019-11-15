@@ -3,7 +3,9 @@ package uk.gov.ons.collection.utilities;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 public class QlQueryResponse {
 
     private JSONObject jsonQlResponse;
@@ -93,6 +95,40 @@ public class QlQueryResponse {
         outputObject.put("form_data", formArray);
         return outputObject.toString();
 
+    }
+
+    public String combineFormAndResponse(){
+        var outputObject = new JSONObject();
+        var outputArray = new JSONArray();
+        var inputString = getViewForm();
+        JSONObject inputObject;
+        JSONArray formArray = new JSONArray();
+        JSONArray responseArray = new JSONArray();
+        try {
+            inputObject = new JSONObject(inputString);
+            formArray = inputObject.getJSONArray("form_data");
+            responseArray = inputObject.getJSONArray("responses");
+        } catch (Exception e) {
+            inputString = "{}";
+            inputObject = new JSONObject(inputString);
+        }
+        for(int i = 0; i < formArray.length(); i++){
+            var rowObject = new JSONObject();
+            for(int j = 0; j < responseArray.length(); j++){
+                if(formArray.getJSONObject(i).getString("questioncode").equals(responseArray.getJSONObject(j).getString("questioncode"))) {
+                    rowObject.put("questioncode", formArray.getJSONObject(i).getString("questioncode"));
+                    rowObject.put("displaytext", formArray.getJSONObject(i).getString("displaytext"));
+                    rowObject.put("displayquestionnumber", formArray.getJSONObject(i).getString("displayquestionnumber"));
+                    rowObject.put("type", formArray.getJSONObject(i).getString("type"));
+                    rowObject.put("response", responseArray.getJSONObject(j).getString("response"));
+                    rowObject.put("instance", responseArray.getJSONObject(j).getInt("instance"));
+                }
+            }
+            outputArray.put(rowObject);
+        }
+        outputObject.put("view_form_responses", outputArray);
+        log.info("output array.tostring" + outputObject.toString());
+        return outputObject.toString();
     }
 
 }

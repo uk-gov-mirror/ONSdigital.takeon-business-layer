@@ -48,11 +48,11 @@ GraphQlService qlService;
         @ApiResponse(code = 200, message = "Successful retrieval of Contributor details", response = String.class)})
     public String viewFormDetails(@MatrixVariable Map<String, String> searchParameters) {
     String qlQuery = new QlQueryBuilder(searchParameters).buildViewFormQuery();
-        String responseText;
+    String responseText;
     log.info("Query sent to service: " + qlQuery);
     try {
         QlQueryResponse response = new QlQueryResponse(qlService.qlSearch(qlQuery));
-        responseText = response.getViewForm();
+        responseText = response.combineFormAndResponse();
     } catch (Exception e) {
         responseText = "{\"error\":\"Invalid response from graphQL\"}";
     }
@@ -60,42 +60,5 @@ GraphQlService qlService;
     return responseText;
     }
 }
-
-
-
-
-    //     log.info("API CALL!! --> /getAllViewForm/{vars} :: " + searchParameters);
-        // String period = searchParameters.get("period");
-        // String reference = searchParameters.get("reference");
-        // String survey = searchParameters.get("survey");
-        
-        // String view_form;
-        // List<String> viewForm = new ArrayList<>();
-        // JSONArray viewforms = new JSONArray();
-
-        // try { 
-            // for (int i = 0; i < viewForm.size(); i++) {
-            //     HashMap<String,String> spr = new HashMap<>();
-            //     spr.put("reference", reference);
-            //     spr.put("survey", survey);
-            //     spr.put("period", viewForm.get(i));
-
-            //     String query = new QlQueryBuilder(spr).buildViewFormQuery();
-            //     QlQueryResponse queryResponse = new QlQueryResponse(qlService.qlSearch(query));
-                
-            //     JSONArray viewform = queryResponse.getViewForm();
-            //     if (viewform.length() > 0) {
-            //         viewforms.put(viewform);
-            //     }
-        //     }
-        // } catch (Exception e) {
-        //     log.info("Exception: " + e);
-        //     return "{\"error\":\"Invalid contributor/response/form definition details from graphQL\"}";
-        // }
-        // String qlQuery = new QlQueryBuilder(searchParameters).buildViewFormQuery();
-        // log.info("\n\nFinal view form: " + viewforms);
-        // log.info("API CALL!! --> /viewform/getAllViewForm :: Complete");
-        // var outputJson = new JSONObject().put("viewform", viewforms).put("reference", reference).put("period", period).put("survey", survey);
-        // return qlQuery.toString();
 
 

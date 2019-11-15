@@ -203,5 +203,6 @@ public class ContributorController {
                                 .put("period",period).put("survey",survey).put("periodicity", periodicity);
         return outputJson.toString();
     }
+    
 
 }

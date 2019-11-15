@@ -97,7 +97,7 @@ public class QlQueryBuilder {
             "companyregistrationnumber numberlivelocalunits numberlivevat numberlivepaye legalstatus " +
             "reportingunitmarker region birthdate tradingstyle contact telephone fax selectiontype inclusionexclusion " +
             "createdby createddate lastupdatedby lastupdateddate " +
-            "formByFormid {formdefinitionsByFormid {nodes {questioncode type derivedformula}}}" +
+            "formByFormid {formdefinitionsByFormid {nodes {questioncode type derivedformula displaytext displayquestionnumber}}}" +
             "responsesByReferenceAndPeriodAndSurvey {nodes {instance questioncode response}}}}}\"," +
             "\"variables\": {");
 
