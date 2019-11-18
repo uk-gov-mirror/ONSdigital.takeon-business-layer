@@ -9,10 +9,10 @@ import uk.gov.ons.collection.utilities.calculateDerviedValuesResponse;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Assertions;
 
@@ -159,9 +159,9 @@ class calculateDerivedValuesTest {
     @Test
     void calculateDerviedValues_returnsExpectedValues(){
 
-        var expectedOutput = "[{\"result\":\"21\",\"instance\":0,\"questioncode\":\"4000\"}," +
-                            "{\"result\":\"19\",\"instance\":0,\"questioncode\":\"4001\"}]";
-        JSONArray response = new JSONArray();
+        var expectedOutput = "[{result=21, instance=0, updatedformula=[20, +, 1], questioncode=4000, formulatorun=[20, +, 1]}," +
+                                " {result=19, instance=0, updatedformula=[20, -, 1], questioncode=4001, formulatorun=[20, -, 1]}]";
+        ArrayList<HashMap<String, Object>> response = new ArrayList<>();
         try {
             response = new calculateDerviedValuesResponse(formInput, responseInput).calculateDerviedValues();
         } catch (Exception e) {
@@ -212,9 +212,9 @@ class calculateDerivedValuesTest {
         + "}"
         + "}";
 
-        var expectedOutput = "[{\"result\":\"21.688\",\"instance\":0,\"questioncode\":\"4000\"}," +
-        "{\"result\":\"19.002\",\"instance\":0,\"questioncode\":\"4001\"}]";
-        JSONArray response = new JSONArray();
+        var expectedOutput = "[{result=21.688, instance=0, updatedformula=[20.345, +, 1.343], questioncode=4000, formulatorun=[20.345, +, 1.343]}," + 
+                            " {result=19.002, instance=0, updatedformula=[20.345, -, 1.343], questioncode=4001, formulatorun=[20.345, -, 1.343]}]";
+        ArrayList<HashMap<String, Object>> response = new ArrayList<>();
         try {
             response = new calculateDerviedValuesResponse(formInput, responseDecimalInput).calculateDerviedValues();
         } catch (Exception e) {
@@ -325,9 +325,12 @@ class calculateDerivedValuesTest {
         + "}"
         + "}";
 
-        var expectedOutput = "[{\"result\":\"1.0\",\"instance\":0,\"questioncode\":\"4000\"}," +
-        "{\"result\":\"-1.0\",\"instance\":0,\"questioncode\":\"4001\"}]";
-        JSONArray response = new JSONArray();
+        //var expectedOutput = "[{\"result\":\"1.0\",\"instance\":0,\"questioncode\":\"4000\"}," +
+        //"{\"result\":\"-1.0\",\"instance\":0,\"questioncode\":\"4001\"}]";
+
+        var expectedOutput  ="[{result=1.00000000, instance=0, updatedformula=[0, +, 1.00000000], questioncode=4000, formulatorun=[, +, 1.00000000]}," +
+                            " {result=-1.00000000, instance=0, updatedformula=[0, -, 1.00000000], questioncode=4001, formulatorun=[, -, 1.00000000]}]";
+        ArrayList<HashMap<String, Object>> response = new ArrayList<>();
         try {
             response = new calculateDerviedValuesResponse(formInput, responseStringInput).calculateDerviedValues();
         } catch (Exception e) {
