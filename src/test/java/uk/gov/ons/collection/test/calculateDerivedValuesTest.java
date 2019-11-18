@@ -2,6 +2,7 @@ package uk.gov.ons.collection.test;
 
 import org.junit.jupiter.api.Test;
 
+import uk.gov.ons.collection.exception.FormulaCalculationException;
 import uk.gov.ons.collection.exception.InvalidDerivedResponseException;
 import uk.gov.ons.collection.exception.InvalidJsonException;
 import uk.gov.ons.collection.utilities.calculateDerivedValuesQuery;
@@ -338,6 +339,21 @@ class calculateDerivedValuesTest {
         }
         assertEquals(expectedOutput, response.toString());
 
+    }
+
+    @Test
+    void incorrectFormula_returnsDerivedResponseException() {
+        String incorrectFormInput = "{" + "\"data\": {" + "\"allContributors\": {" + "\"nodes\": [" + "{" + "\"formByFormid\": {"
+        + "\"formdefinitionsByFormid\": {" + "\"nodes\": [" + "{" + "\"questioncode\": \"1000\","
+        + "\"derivedformula\": \"\"" + "}," + "{" + "\"questioncode\": \"1001\"," + "\"derivedformula\": \"\""
+        + "}," + "{" + "\"questioncode\": \"2000\"," + "\"derivedformula\": \"\"" + "}," + "{"
+        + "\"questioncode\": \"3000\"," + "\"derivedformula\": \"\"" + "}," + "{" + "\"questioncode\": \"4000\","
+        + "\"derivedformula\": \"1000 + + + 1001\"" + "}," + "{" + "\"questioncode\": \"4001\","
+        + "\"derivedformula\": \"1000 - 1001\"" + "}" + "]" + "}" + "}" + "}" + "]" + "}" + "}" + "}";
+
+        Assertions.assertThrows(FormulaCalculationException.class, () -> {
+            new calculateDerviedValuesResponse(incorrectFormInput, responseInput).calculateDerviedValues();
+        });
     }
 
 

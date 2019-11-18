@@ -159,10 +159,11 @@ public class calculateDerviedValuesResponse {
         ArrayList<HashMap<String, Object>> inputArray = getQuestionResponses();
         for (int i = 0; i < inputArray.size(); i++) {
             // Will return a string of the formula after converted to BigDecimal
+            @SuppressWarnings("unchecked")
             ArrayList<Object> updatedFormula = convertDerivedResponsesToBigDecimal((ArrayList<String>)inputArray.get(i).get("formulatorun"));
             inputArray.get(i).put("updatedformula", updatedFormula);
         }
-        System.out.println("Conversion to Big Decimal: " + inputArray.toString());
+        log.info("Conversion to Big Decimal: " + inputArray.toString());
         return inputArray;
     }
 
@@ -173,6 +174,7 @@ public class calculateDerviedValuesResponse {
         var calcFormulaArray = callConvertToBigDecimal();
         try {
             for (int i=0; i < calcFormulaArray.size(); i++) {
+                @SuppressWarnings("unchecked")
                 var calculateFormulaList = (ArrayList<Object>)calcFormulaArray.get(i).get("updatedformula");
                 log.info("Calculate Formula List:" + calculateFormulaList.toString());
                 BigDecimal formulaResult = new BigDecimal(0);
