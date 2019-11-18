@@ -93,17 +93,18 @@ public class QlQueryResponse {
         }   
         outputObject.put("responses", responseArray);
         outputObject.put("form_data", formArray);
+        log.info("output array.tostring" + outputObject.toString());
         return outputObject.toString();
 
     }
 
     public String combineFormAndResponse(){
         var outputObject = new JSONObject();
-        var outputArray = new JSONArray();
         var inputString = getViewForm();
         JSONObject inputObject;
         JSONArray formArray = new JSONArray();
         JSONArray responseArray = new JSONArray();
+        var outputFormArray = new JSONArray();
         try {
             inputObject = new JSONObject(inputString);
             formArray = inputObject.getJSONArray("form_data");
@@ -113,20 +114,25 @@ public class QlQueryResponse {
             inputObject = new JSONObject(inputString);
         }
         for(int i = 0; i < formArray.length(); i++){
-            var rowObject = new JSONObject();
+            var formObject = new JSONObject();
+            formObject.put("questioncode", formArray.getJSONObject(i).getString("questioncode"));
+            formObject.put("displaytext", formArray.getJSONObject(i).getString("displaytext"));
+            formObject.put("displayquestionnumber", formArray.getJSONObject(i).getString("displayquestionnumber"));
+            formObject.put("type", formArray.getJSONObject(i).getString("type"));
+            formObject.put("response", "");
+            formObject.put("instance", "");
+
+            outputFormArray.put(formObject);
+        }
+        for(int i = 0; i < outputFormArray.length(); i++){
             for(int j = 0; j < responseArray.length(); j++){
-                if(formArray.getJSONObject(i).getString("questioncode").equals(responseArray.getJSONObject(j).getString("questioncode"))) {
-                    rowObject.put("questioncode", formArray.getJSONObject(i).getString("questioncode"));
-                    rowObject.put("displaytext", formArray.getJSONObject(i).getString("displaytext"));
-                    rowObject.put("displayquestionnumber", formArray.getJSONObject(i).getString("displayquestionnumber"));
-                    rowObject.put("type", formArray.getJSONObject(i).getString("type"));
-                    rowObject.put("response", responseArray.getJSONObject(j).getString("response"));
-                    rowObject.put("instance", responseArray.getJSONObject(j).getInt("instance"));
+                if(outputFormArray.getJSONObject(i).getString("questioncode").equals(responseArray.getJSONObject(j).getString("questioncode"))) {
+                    outputFormArray.getJSONObject(i).put("response", responseArray.getJSONObject(j).getString("response"));
+                    outputFormArray.getJSONObject(i).put("instance", responseArray.getJSONObject(j).getInt("instance"));
                 }
             }
-            outputArray.put(rowObject);
         }
-        outputObject.put("view_form_responses", outputArray);
+        outputObject.put("view_form_responses", outputFormArray);
         log.info("output array.tostring" + outputObject.toString());
         return outputObject.toString();
     }
