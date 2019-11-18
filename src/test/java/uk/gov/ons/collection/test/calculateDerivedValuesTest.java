@@ -70,6 +70,21 @@ class calculateDerivedValuesTest {
     }
 
     @Test
+    void incorrectJSON_returnsInvalidJsonException() {
+        String incorrectFormInput = "\"allContributors\": {" + "\"nodes\": [" + "{" + "\"formByFormid\": {"
+        + "\"formdefinitionsByFormid\": {" + "\"nodes\": [" + "{" + "\"questioncode\": \"1000\","
+        + "\"derivedformula\": \"\"" + "}," + "{" + "\"questioncode\": \"1001\"," + "\"derivedformula\": \"\""
+        + "}," + "{" + "\"questioncode\": \"2000\"," + "\"derivedformula\": \"\"" + "}," + "{"
+        + "\"questioncode\": \"3000\"," + "\"derivedformula\": \"\"" + "}," + "{" + "\"questioncode\": \"4000\","
+        + "\"derivedformula\": \"1000 + 1001\"" + "}," + "{" + "\"questioncode\": \"4001\","
+        + "\"derivedformula\": \"1000 - 1001\"" + "}" + "]" + "}" + "}" + "}" + "]" + "}" + "}" + "}";
+
+        Assertions.assertThrows(InvalidJsonException.class, () -> {
+            new calculateDerviedValuesResponse(incorrectFormInput, responseInput);
+        });
+    }
+
+    @Test
     void parseFormData_returnsExpectedOutput_validInput(){
         var expectedOutput =  "{"
             +           "\"form_data\":["
@@ -353,5 +368,45 @@ class calculateDerivedValuesTest {
         });
     }
 
+    @Test
+    void incorrectFormulaFormat_returnsResultEqualsZero() {
+        String incorrectFormInput = "{" + "\"data\": {" + "\"allContributors\": {" + "\"nodes\": [" + "{" + "\"formByFormid\": {"
+        + "\"formdefinitionsByFormid\": {" + "\"nodes\": [" + "{" + "\"questioncode\": \"1000\","
+        + "\"derivedformula\": \"\"" + "}," + "{" + "\"questioncode\": \"1001\"," + "\"derivedformula\": \"\""
+        + "}," + "{" + "\"questioncode\": \"2000\"," + "\"derivedformula\": \"\"" + "}," + "{"
+        + "\"questioncode\": \"3000\"," + "\"derivedformula\": \"\"" + "}," + "{" + "\"questioncode\": \"4000\","
+        + "\"derivedformula\": \"1000+1001\"" + "}," + "{" + "\"questioncode\": \"4001\","
+        + "\"derivedformula\": \"1000 - 1001\"" + "}" + "]" + "}" + "}" + "}" + "]" + "}" + "}" + "}";
 
+        var expectedOutput = "[{result=0, instance=0, updatedformula=[], questioncode=4000, formulatorun=[]}," +
+                        " {result=19, instance=0, updatedformula=[20, -, 1], questioncode=4001, formulatorun=[20, -, 1]}]";
+        ArrayList<HashMap<String, Object>> response = new ArrayList<>();
+        try {
+            response = new calculateDerviedValuesResponse(incorrectFormInput, responseInput).calculateDerviedValues();
+        } catch (Exception e) {
+            System.out.println("Can't calculate derived values" + e);
+        }
+        assertEquals(expectedOutput, response.toString());
+    }
+
+    // If all derivedformulas = blank
+    @Test
+    void noDerivedFormulas_returnsEmptyArray() {
+        String incorrectFormInput = "{" + "\"data\": {" + "\"allContributors\": {" + "\"nodes\": [" + "{" + "\"formByFormid\": {"
+        + "\"formdefinitionsByFormid\": {" + "\"nodes\": [" + "{" + "\"questioncode\": \"1000\","
+        + "\"derivedformula\": \"\"" + "}," + "{" + "\"questioncode\": \"1001\"," + "\"derivedformula\": \"\""
+        + "}," + "{" + "\"questioncode\": \"2000\"," + "\"derivedformula\": \"\"" + "}," + "{"
+        + "\"questioncode\": \"3000\"," + "\"derivedformula\": \"\"" + "}," + "{" + "\"questioncode\": \"4000\","
+        + "\"derivedformula\": \"\"" + "}," + "{" + "\"questioncode\": \"4001\","
+        + "\"derivedformula\": \"\"" + "}" + "]" + "}" + "}" + "}" + "]" + "}" + "}" + "}";
+
+        var expectedOutput = "{\"responses\":[]}";
+        JSONObject response = new JSONObject();
+        try {
+            response = new calculateDerviedValuesResponse(incorrectFormInput, responseInput).updateDerivedQuestionResponses();
+        } catch (Exception e) {
+            System.out.println("Can't calculate derived values" + e);
+        }
+        assertEquals(expectedOutput, response.toString());
+    }
 }

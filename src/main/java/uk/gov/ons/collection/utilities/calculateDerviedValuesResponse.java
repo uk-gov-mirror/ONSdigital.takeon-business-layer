@@ -82,6 +82,7 @@ public class calculateDerviedValuesResponse {
                 formulaMap.put(questionCode, getQuestionCodes(formArray.getJSONObject(i).getString("derivedformula")));
             }
         }
+        log.info("Map of derived formulas: " + formulaMap.toString());
         return formulaMap;
     }
 

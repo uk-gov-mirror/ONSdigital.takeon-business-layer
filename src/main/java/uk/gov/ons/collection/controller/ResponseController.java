@@ -65,6 +65,11 @@ public class ResponseController {
             return "{\"error\":\"Failed to update Derived Question responses\"}";
         }
 
+        // If no derived responses to calculate, dont't update responses
+        if (updatedResponses.getJSONArray("responses").isEmpty()){
+            return "{\"continue\":\"No derived formulas to calculate\"}";
+        };
+
         // Create new object with reference, period, survey and user included before saving
         upsertResponses.put("reference", searchParameters.get("reference"));
         upsertResponses.put("period", searchParameters.get("period"));
