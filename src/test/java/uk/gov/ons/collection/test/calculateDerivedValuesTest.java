@@ -326,9 +326,6 @@ class calculateDerivedValuesTest {
         + "}"
         + "}";
 
-        //var expectedOutput = "[{\"result\":\"1.0\",\"instance\":0,\"questioncode\":\"4000\"}," +
-        //"{\"result\":\"-1.0\",\"instance\":0,\"questioncode\":\"4001\"}]";
-
         var expectedOutput  ="[{result=1.00000000, instance=0, updatedformula=[0, +, 1.00000000], questioncode=4000, formulatorun=[, +, 1.00000000]}," +
                             " {result=-1.00000000, instance=0, updatedformula=[0, -, 1.00000000], questioncode=4001, formulatorun=[, -, 1.00000000]}]";
         ArrayList<HashMap<String, Object>> response = new ArrayList<>();
