@@ -87,10 +87,10 @@ public class ResponseController {
 
         try {
             // Call to save updated derived responses
-            var upsertSaveResponse = new UpsertResponse(upsertResponses.toString());
-            var saveQuery = upsertSaveResponse.buildUpsertByArrayQuery();
-            //saveResponses(upsertResponses.toString());
-            qlService.qlSearch(saveQuery);
+            //var upsertSaveResponse = new UpsertResponse(upsertResponses.toString());
+            //var saveQuery = upsertSaveResponse.buildUpsertByArrayQuery();
+            //qlService.qlSearch(saveQuery);
+            saveResponses(upsertResponses.toString());
         } catch (Exception err) {
             log.error("Exception: " + err);
             return "{\"error\":\"Failed to save derived Question responses\"}";
@@ -99,26 +99,23 @@ public class ResponseController {
         
     }
    
-    // Commented out for now until we agree a single way of saving responses
-    // @ApiOperation(value = "Save validation outputs", response = String.class)
-    // @RequestMapping(value = "/saveResponses", method = {RequestMethod.POST, RequestMethod.PUT})
-    // @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful save of all question responses", response = String.class)})
-    // @ResponseBody
-    // public String saveResponses(String jsonString) {
+    @ApiOperation(value = "Save validation outputs", response = String.class)
+    @RequestMapping(value = "/saveResponses", method = {RequestMethod.POST, RequestMethod.PUT})
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful save of all question responses", response = String.class)})
+    @ResponseBody
+    public String saveResponses(String jsonString) {
 
-    //     try {
-    //         // Should do this but can't for now as there are two different structures
-    //         // in 2 different constructors for UpsertResponse
-    //         //var upsertSaveResponse = new UpsertResponse(jsonString);
-    //         //var saveQuery = upsertSaveResponse.buildUpsertByArrayQuery();
-    //         String saveResponseOutput = qlService.qlSearch(saveQuery);
-    //         log.info("Output after saving the responses {}", saveResponseOutput);
-    //     } catch (Exception err) {
-    //         log.error("Failed to save responses: " + saveQuery + err);
-    //         return "{\"error\":\"Failed to save Question responses\"}";
-    //     }
-    //     return "{\"Success\":\"Question responses saved successfully\"}";
-    // }
+        try {
+            var upsertSaveResponse = new UpsertResponse(jsonString);
+            var saveQuery = upsertSaveResponse.buildUpsertByArrayQuery();
+            String saveResponseOutput = qlService.qlSearch(saveQuery);
+            log.info("Output after saving the responses {}", saveResponseOutput);
+        } catch (Exception err) {
+            log.error("Failed to save responses: " + err);
+            return "{\"error\":\"Failed to save Question responses\"}";
+        }
+        return "{\"Success\":\"Question responses saved successfully\"}";
+    }
 
     @ApiOperation(value = "Save question responses", response = String.class)
     @RequestMapping(value = "/save/{vars}", method = {RequestMethod.POST, RequestMethod.PUT})
