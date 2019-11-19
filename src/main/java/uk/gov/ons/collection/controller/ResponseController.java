@@ -12,9 +12,9 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import lombok.extern.log4j.Log4j2;
 import uk.gov.ons.collection.service.GraphQlService;
+import uk.gov.ons.collection.utilities.CalculateDerivedValuesQuery;
 import uk.gov.ons.collection.utilities.UpsertResponse;
-import uk.gov.ons.collection.utilities.calculateDerivedValuesQuery;
-import uk.gov.ons.collection.utilities.calculateDerviedValuesResponse;
+import uk.gov.ons.collection.utilities.CalculateDerivedValuesResponse;
 import org.json.JSONArray;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,12 +30,13 @@ import uk.gov.ons.collection.service.CompareUiAndCurrentResponses;
 @RestController
 @RequestMapping(value = "/response")
 public class ResponseController {
-   @Autowired
-   GraphQlService qlService;
+    @Autowired
+    GraphQlService qlService;
 
     @ApiOperation(value = "Calculate derived question formulas", response = String.class)
-    @RequestMapping(value = "/calculateDerivedQuestions/{vars}", method = {RequestMethod.POST, RequestMethod.PUT})
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful calculation of all derived question responses", response = String.class)})
+    @RequestMapping(value = "/calculateDerivedQuestions/{vars}", method = { RequestMethod.POST, RequestMethod.PUT })
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful calculation of all derived question responses", response = String.class) })
     @ResponseBody
     public String calculateDerivedValues(@MatrixVariable Map<String, String> searchParameters) {
 
@@ -44,12 +45,11 @@ public class ResponseController {
         String qlFormResponse;
         String qlResponsesResponse;
         JSONObject updatedResponses = new JSONObject();
-        JSONObject upsertResponses = new JSONObject();
 
         // Build queries
         try {
-            formQuery = new calculateDerivedValuesQuery(searchParameters).buildFormDefinitionQuery();
-            responseQuery = new calculateDerivedValuesQuery(searchParameters).buildGetResponsesQuery();
+            formQuery = new CalculateDerivedValuesQuery(searchParameters).buildFormDefinitionQuery();
+            responseQuery = new CalculateDerivedValuesQuery(searchParameters).buildGetResponsesQuery();
         } catch (Exception err) {
             log.error("Exception: " + err);
             return "{\"error\":\"Failed to build Form Defintion and/or Response Query for calculating derived values\"}";
@@ -59,18 +59,20 @@ public class ResponseController {
         try {
             qlFormResponse = qlService.qlSearch(formQuery);
             qlResponsesResponse = qlService.qlSearch(responseQuery);
-            updatedResponses = new calculateDerviedValuesResponse(qlFormResponse, qlResponsesResponse).updateDerivedQuestionResponses();
+            updatedResponses = new CalculateDerivedValuesResponse(qlFormResponse, qlResponsesResponse)
+                    .updateDerivedQuestionResponses();
         } catch (Exception err) {
             log.error("Exception: " + err);
             return "{\"error\":\"Failed to update Derived Question responses\"}";
         }
 
         // If no derived responses to calculate, dont't update responses
-        if (updatedResponses.getJSONArray("responses").isEmpty()){
+        if (updatedResponses.getJSONArray("responses").isEmpty()) {
             return "{\"continue\":\"No derived formulas to calculate\"}";
         };
 
         // Create new object with reference, period, survey and user included before saving
+        JSONObject upsertResponses = new JSONObject();
         upsertResponses.put("reference", searchParameters.get("reference"));
         upsertResponses.put("period", searchParameters.get("period"));
         upsertResponses.put("survey", searchParameters.get("survey"));

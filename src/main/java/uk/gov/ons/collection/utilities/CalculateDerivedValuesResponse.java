@@ -16,15 +16,15 @@ import uk.gov.ons.collection.exception.InvalidDerivedResponseException;
 import uk.gov.ons.collection.exception.InvalidJsonException;
 
 @Log4j2
-public class calculateDerviedValuesResponse {
+public class CalculateDerivedValuesResponse {
 
-    private JSONObject formInputJSON;
-    private JSONObject responseInputJSON;
+    private JSONObject formInputJson;
+    private JSONObject responseInputJson;
 
-    public calculateDerviedValuesResponse(String formJSON, String responseJSON) throws InvalidJsonException {
+    public CalculateDerivedValuesResponse(String formJson, String responseJson) throws InvalidJsonException {
         try {
-            formInputJSON = new JSONObject(formJSON);
-            responseInputJSON = new JSONObject(responseJSON);
+            formInputJson = new JSONObject(formJson);
+            responseInputJson = new JSONObject(responseJson);
         } catch (JSONException e) {
             throw new InvalidJsonException("Given string could not be converted/processed: " + e);
         }
@@ -33,8 +33,8 @@ public class calculateDerviedValuesResponse {
     // Parse form data to remove nested structure
     public JSONObject parseFormData() {
         var outputArray = new JSONArray();
-        if (formInputJSON.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").length() > 0) {
-            outputArray = formInputJSON.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes")
+        if (formInputJson.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").length() > 0) {
+            outputArray = formInputJson.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes")
                     .getJSONObject(0).getJSONObject("formByFormid").getJSONObject("formdefinitionsByFormid")
                     .getJSONArray("nodes");
         }
@@ -45,8 +45,8 @@ public class calculateDerviedValuesResponse {
     // Parse response data to remove nested structure
     public JSONObject parseResponseData() {
         var outputArray = new JSONArray();
-        if (responseInputJSON.getJSONObject("data").getJSONObject("allResponses").getJSONArray("nodes").length() > 0) {
-            outputArray = responseInputJSON.getJSONObject("data").getJSONObject("allResponses").getJSONArray("nodes");
+        if (responseInputJson.getJSONObject("data").getJSONObject("allResponses").getJSONArray("nodes").length() > 0) {
+            outputArray = responseInputJson.getJSONObject("data").getJSONObject("allResponses").getJSONArray("nodes");
         }
         log.info("Parsed Response Data: " + outputArray.toString());
         return new JSONObject().put("response_data", outputArray);
@@ -55,7 +55,7 @@ public class calculateDerviedValuesResponse {
     // Splits the extracted formulae on whitespace and returns a list
     // *** Take a look at refactoring this / making it more robust ***
     private ArrayList<String> getQuestionCodes(String derivedFormula) {
-        String questionCodes[] = derivedFormula.split("\\s+");
+        String[] questionCodes = derivedFormula.split("\\s+");
         ArrayList<String> questionCodeList = new ArrayList<>();
         for (int i = 0; i < questionCodes.length; i++) {
             questionCodeList.add(questionCodes[i]);
@@ -104,8 +104,8 @@ public class calculateDerviedValuesResponse {
             // Get each formula list
             ArrayList<String> formulaList = new ArrayList<>(mapElement.getValue());
             ArrayList<String> responseList = new ArrayList<>();
-            for (int i=0; i < formulaList.size(); i++) {
-                for (int j=0; j < responseArray.length(); j++) {
+            for (int i = 0; i < formulaList.size(); i++) {
+                for (int j = 0; j < responseArray.length(); j++) {
                     if (formulaList.get(i).equals(responseArray.getJSONObject(j).getString("questioncode"))) {
                         responseList.add(responseArray.getJSONObject(j).getString("response"));
                         instance = responseArray.getJSONObject(j).getInt("instance");
@@ -128,27 +128,27 @@ public class calculateDerviedValuesResponse {
     }
 
     // Convert all reponses in formulatorun in each hashmap to BigDecimal
-    private ArrayList<Object> convertDerivedResponsesToBigDecimal(ArrayList<String> UpdatedFormulaList)
+    private ArrayList<Object> convertDerivedResponsesToBigDecimal(ArrayList<String> updatedFormulaList)
             throws InvalidDerivedResponseException {
         var updatedFormulaArray = new ArrayList<>();
-        for (int i = 0; i < UpdatedFormulaList.size(); i++){
-            log.info("Input formula: " + UpdatedFormulaList.get(i));
-            if (!(UpdatedFormulaList.get(i).equals(new String("+")))
-            && !(UpdatedFormulaList.get(i).equals(new String("-")))) {
+        for (int i = 0; i < updatedFormulaList.size(); i++) {
+            log.info("Input formula: " + updatedFormulaList.get(i));
+            if (!(updatedFormulaList.get(i).equals(new String("+")))
+                && !(updatedFormulaList.get(i).equals(new String("-")))) {
                 try {
                     // Check if any values in the formula are blank
-                    if (UpdatedFormulaList.get(i).isBlank()) {
+                    if (updatedFormulaList.get(i).isBlank()) {
                         var bigDecimalNumber = BigDecimal.ZERO;
                         updatedFormulaArray.add(bigDecimalNumber);
                     } else {
-                        var bigDecimalNumber = new BigDecimal(UpdatedFormulaList.get(i));
+                        var bigDecimalNumber = new BigDecimal(updatedFormulaList.get(i));
                         updatedFormulaArray.add(bigDecimalNumber);
                     }
                 } catch (NumberFormatException error) {
                     throw new InvalidDerivedResponseException("Error converting response to Big decimal: ", error);
                 }
             } else {
-            updatedFormulaArray.add(UpdatedFormulaList.get(i));
+                updatedFormulaArray.add(updatedFormulaList.get(i));
             }
         }
         return updatedFormulaArray;
@@ -174,22 +174,22 @@ public class calculateDerviedValuesResponse {
             throws InvalidDerivedResponseException, InvalidJsonException, FormulaCalculationException {
         var calcFormulaArray = callConvertToBigDecimal();
         try {
-            for (int i=0; i < calcFormulaArray.size(); i++) {
+            for (int i = 0; i < calcFormulaArray.size(); i++) {
                 @SuppressWarnings("unchecked")
                 var calculateFormulaList = (ArrayList<Object>)calcFormulaArray.get(i).get("updatedformula");
                 log.info("Calculate Formula List:" + calculateFormulaList.toString());
                 BigDecimal formulaResult = new BigDecimal(0);
-                for (int j = 0; j < calculateFormulaList.size(); j+=2) {
+                for (int j = 0; j < calculateFormulaList.size(); j += 2) {
                     if (j == 0) {
                         BigDecimal bigDecimalNumber = (BigDecimal)calculateFormulaList.get(j);
                         formulaResult = formulaResult.add(bigDecimalNumber);
                     } else if (j != 0) {
-                        if (calculateFormulaList.get(j-1).equals(new String("+"))) {
+                        if (calculateFormulaList.get(j - 1).equals(new String("+"))) {
                             BigDecimal addBigDecimalNumber = new BigDecimal(0);
                             addBigDecimalNumber = (BigDecimal)calculateFormulaList.get(j);
                             log.info("Add bd number:" + addBigDecimalNumber.toString());
                             formulaResult = formulaResult.add(addBigDecimalNumber);
-                        } else if (calculateFormulaList.get(j-1).equals(new String("-"))) {
+                        } else if (calculateFormulaList.get(j - 1).equals(new String("-"))) {
                             BigDecimal subtractBigDecimalNumber = new BigDecimal(0);
                             subtractBigDecimalNumber = (BigDecimal)calculateFormulaList.get(j);
                             log.info("Subtract bd number:" + subtractBigDecimalNumber.toString());
@@ -217,7 +217,7 @@ public class calculateDerviedValuesResponse {
         for (int i = 0; i < resultsArray.size(); i++) {
             for (int j = 0; j < responseArray.length(); j++) {
                 if (resultsArray.get(i).get("questioncode")
-                .equals(responseArray.getJSONObject(j).getString("questioncode"))) {
+                    .equals(responseArray.getJSONObject(j).getString("questioncode"))) {
                     var updatedResponsesObject = new JSONObject();
                     updatedResponsesObject.put("instance", resultsArray.get(i).get("instance"));
                     updatedResponsesObject.put("questioncode", resultsArray.get(i).get("questioncode"));

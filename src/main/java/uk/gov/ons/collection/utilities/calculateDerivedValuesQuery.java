@@ -10,11 +10,11 @@ import java.util.Map;
 import java.util.StringJoiner;
 
 @Log4j2
-public class calculateDerivedValuesQuery {
+public class CalculateDerivedValuesQuery {
 
     private JSONObject inputKey;
 
-    public calculateDerivedValuesQuery(Map<String, String> variables) throws InvalidJsonException {
+    public CalculateDerivedValuesQuery(Map<String, String> variables) throws InvalidJsonException {
         try {
             inputKey = new JSONObject(variables);
         } catch (JSONException e) {
@@ -45,9 +45,9 @@ public class calculateDerivedValuesQuery {
     // Gets reference, period, survey from the input JSON
     private String getReferencePeriodAndSurvey() {
         StringJoiner joiner = new StringJoiner(",");
-            joiner.add("reference: \\\"" + inputKey.getString("reference") + "\\\"");
-            joiner.add("period: \\\""    + inputKey.getString("period")    + "\\\"");
-            joiner.add("survey: \\\""    + inputKey.getString("survey")    + "\\\"");
+        joiner.add("reference: \\\"" + inputKey.getString("reference") + "\\\"");
+        joiner.add("period: \\\""    + inputKey.getString("period")    + "\\\"");
+        joiner.add("survey: \\\""    + inputKey.getString("survey")    + "\\\"");
         return joiner.toString();
     }
 
