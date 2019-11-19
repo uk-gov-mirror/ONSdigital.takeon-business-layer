@@ -5,8 +5,9 @@ import org.junit.jupiter.api.Test;
 import uk.gov.ons.collection.exception.FormulaCalculationException;
 import uk.gov.ons.collection.exception.InvalidDerivedResponseException;
 import uk.gov.ons.collection.exception.InvalidJsonException;
-import uk.gov.ons.collection.utilities.CalculateDerivedValuesQuery;
 import uk.gov.ons.collection.utilities.CalculateDerivedValuesResponse;
+import uk.gov.ons.collection.utilities.CalculateDerivedValuesQuery;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,7 +18,7 @@ import java.util.Map;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Assertions;
 
-class calculateDerivedValuesTest {
+class CalculateDerivedValuesTest {
 
     String formInput = "{" + "\"data\": {" + "\"allContributors\": {" + "\"nodes\": [" + "{" + "\"formByFormid\": {"
             + "\"formdefinitionsByFormid\": {" + "\"nodes\": [" + "{" + "\"questioncode\": \"1000\","
