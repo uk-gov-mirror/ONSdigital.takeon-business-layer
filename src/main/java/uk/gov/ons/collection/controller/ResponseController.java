@@ -62,7 +62,7 @@ public class ResponseController {
             JSONObject qlFormResponseObject = new JSONObject(qlResponsesResponse);
             log.info("qlFormResponseObject = " + qlFormResponseObject.toString());
             if (qlFormResponseObject.getJSONObject("data").getJSONObject("allResponses").getJSONArray("nodes").isEmpty()) {
-                return "{\"error\":\"No response data for this Reference, Period, Survey combination\"}";
+                return "{\"error\":\"No response data for this Reference/Period/Survey combination\"}";
             } else {
                 updatedResponses = new CalculateDerivedValuesResponse(qlFormResponse, qlResponsesResponse)
                 .updateDerivedQuestionResponses();
