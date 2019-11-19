@@ -12,6 +12,7 @@ import java.util.StringJoiner;
 @Log4j2
 public class CalculateDerivedValuesQuery {
 
+    // Input key of ref, period and survey
     private JSONObject inputKey;
 
     public CalculateDerivedValuesQuery(Map<String, String> variables) throws InvalidJsonException {

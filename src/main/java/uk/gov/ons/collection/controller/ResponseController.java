@@ -59,13 +59,19 @@ public class ResponseController {
         try {
             qlFormResponse = qlService.qlSearch(formQuery);
             qlResponsesResponse = qlService.qlSearch(responseQuery);
-            updatedResponses = new CalculateDerivedValuesResponse(qlFormResponse, qlResponsesResponse)
-                    .updateDerivedQuestionResponses();
+            JSONObject qlFormResponseObject = new JSONObject(qlResponsesResponse);
+            log.info("qlFormResponseObject = " + qlFormResponseObject.toString());
+            if (qlFormResponseObject.getJSONObject("data").getJSONObject("allResponses").getJSONArray("nodes").isEmpty()) {
+                return "{\"error\":\"No response data for this Reference, Period, Survey combination\"}";
+            } else {
+                updatedResponses = new CalculateDerivedValuesResponse(qlFormResponse, qlResponsesResponse)
+                .updateDerivedQuestionResponses();
+            }
         } catch (Exception err) {
             log.error("Exception: " + err);
             return "{\"error\":\"Failed to update Derived Question responses\"}";
         }
-
+        
         // If no derived responses to calculate, dont't update responses
         if (updatedResponses.getJSONArray("responses").isEmpty()) {
             return "{\"continue\":\"No derived formulas to calculate\"}";
@@ -83,7 +89,7 @@ public class ResponseController {
             // Call to save updated derived responses
             var upsertSaveResponse = new UpsertResponse(upsertResponses.toString());
             var saveQuery = upsertSaveResponse.buildUpsertByArrayQuery();
-            //saveResponses(saveQuery);
+            //saveResponses(upsertResponses.toString());
             qlService.qlSearch(saveQuery);
         } catch (Exception err) {
             log.error("Exception: " + err);
