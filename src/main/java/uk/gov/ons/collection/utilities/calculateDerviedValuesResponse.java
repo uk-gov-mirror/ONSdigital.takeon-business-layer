@@ -170,7 +170,7 @@ public class calculateDerviedValuesResponse {
 
     // Get first value then get next 2, and instead of i++, i+2 to get operator and right value every time and -1 on index
     // If error, throw exception
-    public ArrayList<HashMap<String, Object>> calculateDerviedValues()
+    public ArrayList<HashMap<String, Object>> calculateDerivedValues()
             throws InvalidDerivedResponseException, InvalidJsonException, FormulaCalculationException {
         var calcFormulaArray = callConvertToBigDecimal();
         try {
@@ -211,7 +211,7 @@ public class calculateDerviedValuesResponse {
     // from the result in above output array (matching by question code) and is ready to be used
     // by Postgres Upsert function
     public JSONObject updateDerivedQuestionResponses() throws InvalidDerivedResponseException, InvalidJsonException, FormulaCalculationException {
-        var resultsArray = calculateDerviedValues();
+        var resultsArray = calculateDerivedValues();
         var responseArray = parseResponseData().getJSONArray("response_data");
         var updatedResponseArray = new JSONArray();
         for (int i = 0; i < resultsArray.size(); i++) {

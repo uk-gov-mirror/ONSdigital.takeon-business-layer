@@ -179,7 +179,7 @@ class calculateDerivedValuesTest {
                                 " {result=19, instance=0, updatedformula=[20, -, 1], questioncode=4001, formulatorun=[20, -, 1]}]";
         ArrayList<HashMap<String, Object>> response = new ArrayList<>();
         try {
-            response = new calculateDerviedValuesResponse(formInput, responseInput).calculateDerviedValues();
+            response = new calculateDerviedValuesResponse(formInput, responseInput).calculateDerivedValues();
         } catch (Exception e) {
             System.out.println("Can't calculate derived values" + e);
         }
@@ -232,7 +232,7 @@ class calculateDerivedValuesTest {
                             " {result=19.002, instance=0, updatedformula=[20.345, -, 1.343], questioncode=4001, formulatorun=[20.345, -, 1.343]}]";
         ArrayList<HashMap<String, Object>> response = new ArrayList<>();
         try {
-            response = new calculateDerviedValuesResponse(formInput, responseDecimalInput).calculateDerviedValues();
+            response = new calculateDerviedValuesResponse(formInput, responseDecimalInput).calculateDerivedValues();
         } catch (Exception e) {
             System.out.println("Can't calculate derived values" + e);
         }
@@ -282,7 +282,7 @@ class calculateDerivedValuesTest {
         + "}";
 
         Assertions.assertThrows(InvalidDerivedResponseException.class, () -> {
-            new calculateDerviedValuesResponse(formInput, responseStringInput).calculateDerviedValues();
+            new calculateDerviedValuesResponse(formInput, responseStringInput).calculateDerivedValues();
         });
     }
 
@@ -345,7 +345,7 @@ class calculateDerivedValuesTest {
                             " {result=-1.00000000, instance=0, updatedformula=[0, -, 1.00000000], questioncode=4001, formulatorun=[, -, 1.00000000]}]";
         ArrayList<HashMap<String, Object>> response = new ArrayList<>();
         try {
-            response = new calculateDerviedValuesResponse(formInput, responseStringInput).calculateDerviedValues();
+            response = new calculateDerviedValuesResponse(formInput, responseStringInput).calculateDerivedValues();
         } catch (Exception e) {
             System.out.println("Can't calculate derived values" + e);
         }
@@ -364,7 +364,7 @@ class calculateDerivedValuesTest {
         + "\"derivedformula\": \"1000 - 1001\"" + "}" + "]" + "}" + "}" + "}" + "]" + "}" + "}" + "}";
 
         Assertions.assertThrows(FormulaCalculationException.class, () -> {
-            new calculateDerviedValuesResponse(incorrectFormInput, responseInput).calculateDerviedValues();
+            new calculateDerviedValuesResponse(incorrectFormInput, responseInput).calculateDerivedValues();
         });
     }
 
@@ -382,7 +382,7 @@ class calculateDerivedValuesTest {
                         " {result=19, instance=0, updatedformula=[20, -, 1], questioncode=4001, formulatorun=[20, -, 1]}]";
         ArrayList<HashMap<String, Object>> response = new ArrayList<>();
         try {
-            response = new calculateDerviedValuesResponse(incorrectFormInput, responseInput).calculateDerviedValues();
+            response = new calculateDerviedValuesResponse(incorrectFormInput, responseInput).calculateDerivedValues();
         } catch (Exception e) {
             System.out.println("Can't calculate derived values" + e);
         }
