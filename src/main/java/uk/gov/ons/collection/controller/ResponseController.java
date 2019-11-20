@@ -1,6 +1,8 @@
 package uk.gov.ons.collection.controller;
 
 import java.util.Map;
+import java.io.IOException;
+import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.List;
 
@@ -15,6 +17,12 @@ import uk.gov.ons.collection.service.GraphQlService;
 import uk.gov.ons.collection.utilities.UpsertResponse;
 import uk.gov.ons.collection.utilities.CalculateDerivedValuesResponse;
 import uk.gov.ons.collection.utilities.CalculateDerivedValuesQuery;
+
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.json.JSONArray;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.MatrixVariable;
 import uk.gov.ons.collection.entity.ResponseData;
+import uk.gov.ons.collection.exception.ResponsesNotSavedException;
 import uk.gov.ons.collection.service.CompareUiAndCurrentResponses;
 
 @Log4j2
@@ -38,7 +47,7 @@ public class ResponseController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful calculation of all derived question responses", response = String.class) })
     @ResponseBody
-    public String calculateDerivedValues(@MatrixVariable Map<String, String> searchParameters) {
+    public String calculateDerivedValues(@MatrixVariable Map<String, String> searchParameters) throws IOException {
 
         String formQuery = new String();
         String responseQuery = new String();
@@ -85,26 +94,32 @@ public class ResponseController {
         upsertResponses.put("responses", updatedResponses.getJSONArray("responses"));
         log.info("Upsert Responses: " + upsertResponses.toString());
 
+        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         try {
-            // Call to save updated derived responses
-            //var upsertSaveResponse = new UpsertResponse(upsertResponses.toString());
-            //var saveQuery = upsertSaveResponse.buildUpsertByArrayQuery();
-            //qlService.qlSearch(saveQuery);
-            saveResponses(upsertResponses.toString());
+            // Call to save API to save updated derived responses
+            InetAddress inetAddress = InetAddress.getLocalHost();
+            System.out.println("IP Address:" + inetAddress.getHostAddress());
+            String businessLayerAddress = inetAddress.getHostAddress();
+            String businessLayerServicePort = System.getenv("BUSINESS_LAYER_SERVICE_PORT");
+            HttpPost request = new HttpPost("http://" + businessLayerAddress + ":" + businessLayerServicePort + "/response/saveResponses");
+            StringEntity params = new StringEntity(upsertResponses.toString(), ContentType.APPLICATION_JSON);
+            request.addHeader("Content-Type", "application/json");
+            request.setEntity(params);
+            httpClient.execute(request);
         } catch (Exception err) {
             log.error("Exception: " + err);
             return "{\"error\":\"Failed to save derived Question responses\"}";
+        } finally {
+            httpClient.close();
         }
         return "{\"Success\":\"Successfully saved derived Question responses\"}";
-        
     }
    
     @ApiOperation(value = "Save validation outputs", response = String.class)
     @RequestMapping(value = "/saveResponses", method = {RequestMethod.POST, RequestMethod.PUT})
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful save of all question responses", response = String.class)})
     @ResponseBody
-    public String saveResponses(String jsonString) {
-
+    public String saveResponses(@RequestBody String jsonString) throws ResponsesNotSavedException {
         try {
             var upsertSaveResponse = new UpsertResponse(jsonString);
             var saveQuery = upsertSaveResponse.buildUpsertByArrayQuery();
@@ -112,7 +127,7 @@ public class ResponseController {
             log.info("Output after saving the responses {}", saveResponseOutput);
         } catch (Exception err) {
             log.error("Failed to save responses: " + err);
-            return "{\"error\":\"Failed to save Question responses\"}";
+            throw new ResponsesNotSavedException("Failed to save responses" + err);
         }
         return "{\"Success\":\"Question responses saved successfully\"}";
     }
