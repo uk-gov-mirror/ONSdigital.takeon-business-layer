@@ -18,11 +18,6 @@ import uk.gov.ons.collection.utilities.UpsertResponse;
 import uk.gov.ons.collection.utilities.CalculateDerivedValuesResponse;
 import uk.gov.ons.collection.utilities.CalculateDerivedValuesQuery;
 
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.json.JSONArray;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,6 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.MatrixVariable;
 import uk.gov.ons.collection.entity.ResponseData;
 import uk.gov.ons.collection.exception.ResponsesNotSavedException;
+import uk.gov.ons.collection.service.ApiRequest;
 import uk.gov.ons.collection.service.CompareUiAndCurrentResponses;
 
 @Log4j2
@@ -94,23 +90,23 @@ public class ResponseController {
         upsertResponses.put("responses", updatedResponses.getJSONArray("responses"));
         log.info("Upsert Responses: " + upsertResponses.toString());
 
-        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         try {
             // Call to save API to save updated derived responses
             InetAddress inetAddress = InetAddress.getLocalHost();
             System.out.println("IP Address:" + inetAddress.getHostAddress());
+            String protocol = "http://";
             String businessLayerAddress = inetAddress.getHostAddress();
-            String businessLayerServicePort = System.getenv("BUSINESS_LAYER_SERVICE_PORT");
-            HttpPost request = new HttpPost("http://" + businessLayerAddress + ":" + businessLayerServicePort + "/response/saveResponses");
-            StringEntity params = new StringEntity(upsertResponses.toString(), ContentType.APPLICATION_JSON);
-            request.addHeader("Content-Type", "application/json");
-            request.setEntity(params);
-            httpClient.execute(request);
+            String businessLayerServicePort = "8080";
+            //String businessLayerServicePort = System.getenv("BUSINESS_LAYER_SERVICE_PORT");
+            StringBuilder url = new StringBuilder(protocol).append(businessLayerAddress)
+                                                           .append(":").append(businessLayerServicePort)
+                                                           .append("/response/saveResponses");
+            System.out.println("Request Url: " + url.toString());
+            ApiRequest request = new ApiRequest(url.toString(), upsertResponses.toString());
+            request.apiPostJson();
         } catch (Exception err) {
             log.error("Exception: " + err);
             return "{\"error\":\"Failed to save derived Question responses\"}";
-        } finally {
-            httpClient.close();
         }
         return "{\"Success\":\"Successfully saved derived Question responses\"}";
     }
