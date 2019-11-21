@@ -180,20 +180,17 @@ public class ResponseController {
             String qlStatusOutput = qlService.qlSearch(contributorStatusQuery);
             log.info("Output after updating the form status {}", qlStatusOutput);
             // Finally call to calculate derived values
-            Map<String,String> refPerSur = new HashMap<>();
-            refPerSur.put("reference", updatedResponsesJson.getString("reference"));
-            refPerSur.put("period", updatedResponsesJson.getString("period"));
-            refPerSur.put("survey", updatedResponsesJson.getString("survey"));
-
             StringBuilder derivedUrl = new StringBuilder(protocol).append(businessLayerAddress)
-                                                                  .append(":").append(businessLayerServicePort)
-                                                                  .append("/calculateDerivedQuestions/")
-                                                                  .append(refPerSur);
+                    .append(":").append(businessLayerServicePort)
+                    .append("/response/calculateDerivedQuestions/")
+                    .append("reference=")
+                    .append(updatedResponsesJson.getString("reference")).append(";period=")
+                    .append(updatedResponsesJson.getString("period")).append(";survey=")
+                    .append(updatedResponsesJson.getString("survey"))
+                    .append(";");
             ApiRequest derivedRequest = new ApiRequest(derivedUrl.toString());
             log.info("Request Url: " + derivedUrl.toString());
             derivedRequest.apiPostParameters();
-            
-            //calculateDerivedValues(refPerSur);
 
         } catch (Exception e) {
             e.printStackTrace();
