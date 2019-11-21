@@ -35,6 +35,10 @@ import uk.gov.ons.collection.service.CompareUiAndCurrentResponses;
 @RestController
 @RequestMapping(value = "/response")
 public class ResponseController {
+    
+    final String businessLayerServicePort = "8088";
+    final String protocol = "http://";
+    
     @Autowired
     GraphQlService qlService;
 
@@ -93,15 +97,12 @@ public class ResponseController {
         try {
             // Call to save API to save updated derived responses
             InetAddress inetAddress = InetAddress.getLocalHost();
-            System.out.println("IP Address:" + inetAddress.getHostAddress());
-            String protocol = "http://";
+            log.info("IP Address:" + inetAddress.getHostAddress());
             String businessLayerAddress = inetAddress.getHostAddress();
-            String businessLayerServicePort = "8088";
-            //String businessLayerServicePort = System.getenv("BUSINESS_LAYER_SERVICE_PORT");
             StringBuilder url = new StringBuilder(protocol).append(businessLayerAddress)
                                                            .append(":").append(businessLayerServicePort)
                                                            .append("/response/saveResponses");
-            System.out.println("Request Url: " + url.toString());
+            log.info("Request Url: " + url.toString());
             ApiRequest request = new ApiRequest(url.toString(), upsertResponses.toString());
             request.apiPostJson();
         } catch (Exception err) {
@@ -164,7 +165,15 @@ public class ResponseController {
                 return "{\"continue\":\"No question responses to save\"}";
             }
             //Calling common Save
-            saveResponses(upsertResponse.processConsolidatedJsonList(responsesToPassToDatabase, updatedResponses));
+            InetAddress inetAddress = InetAddress.getLocalHost();
+            log.info("IP Address:" + inetAddress.getHostAddress());
+            String businessLayerAddress = inetAddress.getHostAddress();
+            StringBuilder url = new StringBuilder(protocol).append(businessLayerAddress)
+                                                           .append(":").append(businessLayerServicePort)
+                                                           .append("/response/saveResponses");
+            log.info("Request Url: " + url.toString());
+            ApiRequest request = new ApiRequest(url.toString(), upsertResponse.processConsolidatedJsonList(responsesToPassToDatabase, updatedResponses));
+            request.apiPostJson();
             // Updating the Form Status
             var contributorStatusQuery = upsertResponse.updateContributorStatus();
             log.info("GraphQL Query for updating Form Status {}", contributorStatusQuery);
@@ -175,7 +184,16 @@ public class ResponseController {
             refPerSur.put("reference", updatedResponsesJson.getString("reference"));
             refPerSur.put("period", updatedResponsesJson.getString("period"));
             refPerSur.put("survey", updatedResponsesJson.getString("survey"));
-            calculateDerivedValues(refPerSur);
+
+            StringBuilder derivedUrl = new StringBuilder(protocol).append(businessLayerAddress)
+                                                                  .append(":").append(businessLayerServicePort)
+                                                                  .append("/calculateDerivedQuestions/")
+                                                                  .append(refPerSur);
+            ApiRequest derivedRequest = new ApiRequest(derivedUrl.toString());
+            log.info("Request Url: " + derivedUrl.toString());
+            derivedRequest.apiPostParameters();
+            
+            //calculateDerivedValues(refPerSur);
 
         } catch (Exception e) {
             e.printStackTrace();

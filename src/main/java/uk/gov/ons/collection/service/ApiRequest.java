@@ -46,4 +46,20 @@ public class ApiRequest {
             httpClient.close();
         }
     }
+
+    public void apiPostParameters() throws ApiRequestException, IOException {
+        httpClient = HttpClientBuilder.create().build();
+        try {
+            HttpPost request = new HttpPost(url);
+            HttpResponse httpResp = httpClient.execute(request);
+            statusCode = httpResp.getStatusLine().getStatusCode();
+            log.info("HTTP Status Code: " + statusCode);
+        } catch (Exception err) {
+            log.error("Exception: " + err);
+            throw new ApiRequestException("Error with request, HTTP Status code:" + statusCode);
+        } finally {
+            httpClient.close();
+        }
+    }
+
 }
