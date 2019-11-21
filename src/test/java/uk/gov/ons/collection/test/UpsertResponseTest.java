@@ -67,7 +67,11 @@ class UpsertResponseTest {
             var expectedQuery = "{\"query\" : \"mutation saveResponse {saveresponsearray(input: {arg0: " +
                     "[{reference: \\\"12345678000\\\",period: \\\"201801\\\",survey: \\\"999A\\\"," +
                     "questioncode: \\\"1000\\\",instance: 0,response: \\\"test\\\",createdby: \\\"fisdba\\\"," +
-                    "createddate: \\\"" + upsertResponse.getTime() + "\\\"}]}){clientMutationId}}\"}";
+                    "createddate: \\\"" + upsertResponse.getTime() + "\\\",lastupdatedby: \\\"fisdba\\\"," +
+                    "lastupdateddate: \\\"" + upsertResponse.getTime() + "\\\"}]}){clientMutationId}}\"}";
+
+            System.out.println(expectedQuery);
+            System.out.println(query);
 
             assertEquals(expectedQuery, query);
         } catch (Exception e) {
@@ -89,11 +93,16 @@ class UpsertResponseTest {
             var expectedQuery = "{\"query\" : \"mutation saveResponse {saveresponsearray" +
                     "(input: {arg0: [{reference: \\\"12345678000\\\",period: \\\"201801\\\"," +
                     "survey: \\\"999A\\\",questioncode: \\\"1000\\\",instance: 0,response: \\\"test\\\"," +
-                    "createdby: \\\"fisdba\\\",createddate: \\\"" + upsertResponse.getTime() + "\\\"}," +
+                    "createdby: \\\"fisdba\\\",createddate: \\\"" + upsertResponse.getTime() +
+                    "\\\",lastupdatedby: \\\"fisdba\\\",lastupdateddate: \\\"" + upsertResponse.getTime() + "\\\"}," +
                     "{reference: \\\"12345678000\\\",period: \\\"201801\\\"," +
                     "survey: \\\"999A\\\",questioncode: \\\"2000\\\",instance: 0,response: \\\"test\\\"," +
-                    "createdby: \\\"fisdba\\\",createddate: \\\"" + upsertResponse.getTime() + "\\\"}]" +
+                    "createdby: \\\"fisdba\\\",createddate: \\\"" + upsertResponse.getTime() +
+                    "\\\",lastupdatedby: \\\"fisdba\\\",lastupdateddate: \\\"" + upsertResponse.getTime() + "\\\"}]" +
                     "}){clientMutationId}}\"}";
+
+            System.out.println(expectedQuery);
+            System.out.println(query);
 
             assertEquals(expectedQuery, query);
         } catch (Exception e) {
@@ -149,9 +158,11 @@ class UpsertResponseTest {
             //Veryfying how many number of elements changed.
             assertEquals(responseChangeCount, responsesToPassToDatabase.size());
 
-            JSONArray jsonArray = new JSONArray(responsesToPassToDatabase);
-            var upsertSaveResponse = new UpsertResponse(jsonArray);
-            var saveQuery = upsertSaveResponse.buildConsolidateUpsertByArrayQuery();
+
+            var processedJsonStr = upsertResponse.processConsolidatedJsonList(responsesToPassToDatabase, json1);
+            var upsertSaveResponse = new UpsertResponse(processedJsonStr);
+            var saveQuery = upsertSaveResponse.buildUpsertByArrayQuery();
+            System.out.println("Save Query:"+saveQuery);
             //Save Query contains current updated date. So I cannot compare the actual query with expected query.
             // Verifying whether the query which was built has database function or not
             assertTrue(saveQuery.contains("mutation saveResponse {saveresponsearray(input: {arg0:"));

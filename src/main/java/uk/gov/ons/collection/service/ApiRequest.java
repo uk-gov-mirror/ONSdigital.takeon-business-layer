@@ -10,7 +10,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 import lombok.extern.log4j.Log4j2;
-import uk.gov.ons.collection.exception.apiRequestException;
+import uk.gov.ons.collection.exception.ApiRequestException;
 
 @Log4j2
 public class ApiRequest {
@@ -29,10 +29,10 @@ public class ApiRequest {
         this.data = dataToSend;
     }
 
-    public void apiPostJson() throws apiRequestException, IOException {
+    public void apiPostJson() throws ApiRequestException, IOException {
         httpClient = HttpClientBuilder.create().build();
         try {
-            HttpPost request = new HttpPost("http://" + url);
+            HttpPost request = new HttpPost(url);
             StringEntity params = new StringEntity(data, ContentType.APPLICATION_JSON);
             request.addHeader("Content-Type", "application/json");
             request.setEntity(params);
@@ -41,7 +41,7 @@ public class ApiRequest {
             log.info("HTTP Status Code: " + statusCode);
         } catch (Exception err) {
             log.error("Exception: " + err);
-            throw new apiRequestException("Error with request, HTTP Status code:" + statusCode);
+            throw new ApiRequestException("Error with request, HTTP Status code:" + statusCode);
         } finally {
             httpClient.close();
         }

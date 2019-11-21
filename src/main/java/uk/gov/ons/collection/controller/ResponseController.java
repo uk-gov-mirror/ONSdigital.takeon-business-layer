@@ -80,7 +80,7 @@ public class ResponseController {
         // If no derived responses to calculate, dont't update responses
         if (updatedResponses.getJSONArray("responses").isEmpty()) {
             return "{\"continue\":\"No derived formulas to calculate\"}";
-        };
+        }
 
         // Create new object with reference, period, survey and user included before saving
         JSONObject upsertResponses = new JSONObject();
@@ -96,7 +96,7 @@ public class ResponseController {
             System.out.println("IP Address:" + inetAddress.getHostAddress());
             String protocol = "http://";
             String businessLayerAddress = inetAddress.getHostAddress();
-            String businessLayerServicePort = "8080";
+            String businessLayerServicePort = "8088";
             //String businessLayerServicePort = System.getenv("BUSINESS_LAYER_SERVICE_PORT");
             StringBuilder url = new StringBuilder(protocol).append(businessLayerAddress)
                                                            .append(":").append(businessLayerServicePort)
@@ -119,6 +119,7 @@ public class ResponseController {
         try {
             var upsertSaveResponse = new UpsertResponse(jsonString);
             var saveQuery = upsertSaveResponse.buildUpsertByArrayQuery();
+            log.info("GraphQL query for save {}", saveQuery);
             String saveResponseOutput = qlService.qlSearch(saveQuery);
             log.info("Output after saving the responses {}", saveResponseOutput);
         } catch (Exception err) {
@@ -132,7 +133,7 @@ public class ResponseController {
     @RequestMapping(value = "/save/{vars}", method = {RequestMethod.POST, RequestMethod.PUT})
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful in saving of all question responses", response = String.class)})
     @ResponseBody
-    public void saveQuestionResponses(@RequestBody String updatedResponses) {
+    public String saveQuestionResponses(@RequestBody String updatedResponses) {
 
         log.info("API CALL!! --> /response/save :: Updated UI Responses" + updatedResponses);
 
@@ -158,14 +159,12 @@ public class ResponseController {
             // Get only the updated responses and not the responses that were already in the
             // DB
             List<ResponseData> responsesToPassToDatabase = responseComparison.getFinalConsolidatedResponses();
-            JSONArray jsonArray = new JSONArray(responsesToPassToDatabase);
-            var upsertSaveResponse = new UpsertResponse(jsonArray);
-            // Constructing GraphQL query for Save
-            var saveQuery = upsertSaveResponse.buildConsolidateUpsertByArrayQuery();
-            log.info("GraphQL query for save {}", saveQuery);
-            // *** Extract out this call ? *** //
-            String qlSaveResponseOutput = qlService.qlSearch(saveQuery);
-            log.info("Output after saving the responses {}", qlSaveResponseOutput);
+            // If no responses to pass to database, don't call save function
+            if (responsesToPassToDatabase.isEmpty()) {
+                return "{\"continue\":\"No question responses to save\"}";
+            }
+            //Calling common Save
+            saveResponses(upsertResponse.processConsolidatedJsonList(responsesToPassToDatabase, updatedResponses));
             // Updating the Form Status
             var contributorStatusQuery = upsertResponse.updateContributorStatus();
             log.info("GraphQL Query for updating Form Status {}", contributorStatusQuery);
@@ -181,6 +180,8 @@ public class ResponseController {
         } catch (Exception e) {
             e.printStackTrace();
             log.error("Error in saving :: " + e.getMessage());
+            return "{\"error\":\"Failed to save Question responses\"}";
         }
+        return "{\"Success\":\"Question responses saved successfully\"}";
     }
 }
