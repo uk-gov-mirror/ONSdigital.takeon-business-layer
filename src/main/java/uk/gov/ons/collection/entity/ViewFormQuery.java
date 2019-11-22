@@ -12,9 +12,12 @@ public class ViewFormQuery{
     private HashMap<String, String> variables;
     private List<String> intVariables = new ArrayList<>(Arrays.asList("first", "last", "formid"));
 
-    public String buildViewFormQuery(Map<String, String> variables) {
+    public ViewFormQuery(Map<String, String> variables) {
+        this.variables = (variables == null) ? new HashMap<>() : new HashMap<>(variables);
+    }
+
+    public String buildViewFormQuery() {
         
-    this.variables = (variables == null) ? new HashMap<>() : new HashMap<>(variables);
         StringBuilder viewFormQuery = new StringBuilder();
         viewFormQuery.append("{\"query\": \"query responsecontributorformdefinition($period: String, $reference: String, $survey: String) " +
         "{ allContributors(condition: {reference: $reference, period: $period, survey: $survey}) {" +

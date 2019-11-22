@@ -45,7 +45,7 @@ class ViewFormTestResponse {
                 "]}";
         
     @Test
-    void parseViewFormTest(){
+    void viewFormQuery_ExpectedJSONDataEqualsActualJSONData_ParsedData(){
         String response = new String();
         try {
             response = new ViewFormResponse(inputJSON).parseViewForm();
@@ -57,7 +57,7 @@ class ViewFormTestResponse {
     }
 
     @Test
-    void wrongJSONreturnError(){
+    void viewFormQuery_invalidJson_throwsException(){
         String wrongInput = "\"allContributors\": {\"nodes\": [{\"formByFormid\": {\"formdefinitionsByFormid\": "+
         "{\"nodes\": [" +
             "{\"derivedformula\": \"\", \"questioncode\": \"1000\", \"type\": \"NUMERIC\"}," +

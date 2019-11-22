@@ -19,24 +19,33 @@ public class ViewFormResponse {
         }
     }
     public String parseViewForm() {
-        log.info("JSONql response" + jsonQlResponse.toString());
+        log.info("Form response" + jsonQlResponse.toString());
         var outputObject = new JSONObject();
         var formArray = new JSONArray();
-        var responseArray = new JSONArray();
         if (jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").length() > 0){
             formArray = jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").getJSONObject(0)
-                        .getJSONObject("formByFormid").getJSONObject("formdefinitionsByFormid").getJSONArray("nodes");
-            responseArray = jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").getJSONObject(0)
-            .getJSONObject("responsesByReferenceAndPeriodAndSurvey").getJSONArray("nodes");              
+                        .getJSONObject("formByFormid").getJSONObject("formdefinitionsByFormid").getJSONArray("nodes");             
         }   
-        outputObject.put("responses", responseArray);
         outputObject.put("form_data", formArray);
-        log.info("output array.tostring" + outputObject.toString());
+        log.info("Form data object" + outputObject.toString());
         return outputObject.toString();
 
     }
 
-    public JSONArray extractFormData(){
+    public String parseResponseData() {
+        log.info("Responses" + jsonQlResponse.toString());
+        var responseArray = new JSONArray();
+        var outputObject = new JSONObject();
+        if (jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").length() > 0){
+            responseArray = jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").getJSONObject(0)
+            .getJSONObject("responsesByReferenceAndPeriodAndSurvey").getJSONArray("nodes"); 
+        }
+        outputObject.put("responses", responseArray);
+        log.info("Response data object" + outputObject.toString());
+        return outputObject.toString();
+    }
+
+    public JSONArray extractFormData() throws InvalidJsonException {
         var inputString = parseViewForm();
         JSONObject inputObject;
         JSONArray formArray = new JSONArray();
@@ -44,9 +53,9 @@ public class ViewFormResponse {
         try {
             inputObject = new JSONObject(inputString);
             formArray = inputObject.getJSONArray("form_data");
-        } catch (Exception e) {
-            inputString = "{}";
-            inputObject = new JSONObject(inputString);
+        } catch (JSONException e) {
+            log.info("exception" + e.toString());
+            throw new InvalidJsonException("Given string could not be converted/processed: " + e);
         }
         for(int i = 0; i < formArray.length(); i++){
             var formObject = new JSONObject();
@@ -62,22 +71,22 @@ public class ViewFormResponse {
         return outputFormArray;
     }
 
-    public String combineFormAndResponseData() {
+    public String combineFormAndResponseData() throws InvalidJsonException {
         var outputObject = new JSONObject();
         var outputFormArray = extractFormData();
-        var inputString = parseViewForm();
+        var inputString = parseResponseData();
         JSONObject inputObject;
         JSONArray responseArray = new JSONArray();
         try {
             inputObject = new JSONObject(inputString);
             responseArray = inputObject.getJSONArray("responses");
-        } catch (Exception e) {
-            inputString = "{}";
-            inputObject = new JSONObject(inputString);
+        } catch (JSONException e) {
+            log.info("exception" + e.toString());
+            throw new InvalidJsonException("Given string could not be converted/processed: " + e);
         }
         for(int i = 0; i < outputFormArray.length(); i++){
             for(int j = 0; j < responseArray.length(); j++){
-                if(outputFormArray.getJSONObject(i).getString("questioncode").equals(responseArray.getJSONObject(j).getString("questioncode"))); {
+                if(outputFormArray.getJSONObject(i).getString("questioncode").equals(responseArray.getJSONObject(j).getString("questioncode"))) {
                     outputFormArray.getJSONObject(i).put("response", responseArray.getJSONObject(j).getString("response"));
                     outputFormArray.getJSONObject(i).put("instance", responseArray.getJSONObject(j).getInt("instance"));
                 }

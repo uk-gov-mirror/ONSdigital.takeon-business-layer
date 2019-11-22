@@ -10,14 +10,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.MatrixVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import uk.gov.ons.collection.entity.ViewFormQuery;
 import uk.gov.ons.collection.entity.ViewFormResponse;
 import uk.gov.ons.collection.service.GraphQlService;
 import java.util.Map;
 
 @Log4j2
-@Api(value = "View Form Controller", description = "Entry point for View Form using Graphql")
+@Api(value = "View Form Controller", description = "Entry point for View Form")
 @RestController
 @RequestMapping(value = "/viewform")
 public class ViewFormController {
@@ -25,11 +24,11 @@ public class ViewFormController {
 @Autowired
 GraphQlService qlService;
 
-    @GetMapping(value = "/qlSearch/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/responses/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Successful retrieval of Contributor details", response = String.class)})
     public String viewFormDetails(@MatrixVariable Map<String, String> searchParameters) {
-    String qlQuery = new ViewFormQuery().buildViewFormQuery(searchParameters);
+    String qlQuery = new ViewFormQuery(searchParameters).buildViewFormQuery();
     String responseText;
     log.info("Query sent to service: " + qlQuery);
     try {
