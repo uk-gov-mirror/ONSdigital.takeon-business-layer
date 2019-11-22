@@ -1,11 +1,16 @@
 package uk.gov.ons.collection.entity;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 
 public class ViewFormQuery{
 
     private HashMap<String, String> variables;
+    private List<String> intVariables = new ArrayList<>(Arrays.asList("first", "last", "formid"));
 
     public String buildViewFormQuery(Map<String, String> variables) {
         
@@ -22,7 +27,15 @@ public class ViewFormQuery{
         return viewFormQuery.toString();
     }
 
-    private Object buildVariables() {
-        return null;
+    public String buildVariables() {    
+        StringJoiner joiner = new StringJoiner(",");
+        variables.forEach((key,value) -> {
+            if (intVariables.contains(key)) {
+                joiner.add("\"" + key + "\": " + value);
+            } else {
+                joiner.add("\"" + key + "\": \"" + value + "\"");
+            }
+        });
+        return joiner.toString();
     }
 }
