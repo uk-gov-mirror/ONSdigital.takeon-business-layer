@@ -66,4 +66,23 @@ public class QlQueryBuilder {
         query.append("}}");
         return query.toString();
     }
+
+    public String buildContribResponseFormDetailsQuery() {	
+        StringBuilder contributorDetailsQuery = new StringBuilder();	
+        contributorDetailsQuery.append("{\"query\": \"query contributordetails($period: String, $reference: String, $survey: String)" +	
+            "{ allContributors(condition: {reference: $reference, period: $period, survey: $survey}) {" +	
+                "nodes {reference period survey surveyBySurvey {periodicity} " +	
+                "formid status receiptdate lockedby lockeddate checkletter frozensicoutdated rusicoutdated frozensic "+	
+                "rusic frozenemployees employees frozenemployment employment frozenfteemployment fteemployment frozenturnover " +	
+                "turnover enterprisereference wowenterprisereference cellnumber currency vatreference payereference " +	
+                "companyregistrationnumber numberlivelocalunits numberlivevat numberlivepaye legalstatus " +	
+                "reportingunitmarker region birthdate tradingstyle contact telephone fax selectiontype inclusionexclusion " +	
+                "createdby createddate lastupdatedby lastupdateddate " +	
+                "formByFormid {survey formdefinitionsByFormid {nodes {questioncode type}}}" +	
+                "responsesByReferenceAndPeriodAndSurvey {nodes {reference period survey instance questioncode response }}}}}\"," +	
+                "\"variables\": {");	
+        contributorDetailsQuery.append(buildVariables());	
+        contributorDetailsQuery.append("}}");	
+        return contributorDetailsQuery.toString();    	
+    }
 }
