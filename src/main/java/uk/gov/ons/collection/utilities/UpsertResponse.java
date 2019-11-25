@@ -19,7 +19,6 @@ public class UpsertResponse {
     private JSONArray responseArray;
     private JSONObject responseObject;
     private final Timestamp time = new Timestamp(new Date().getTime());
-    private JSONArray consolidatedArray;
 
     public UpsertResponse(String jsonString) throws InvalidJsonException {
         try {
@@ -30,11 +29,6 @@ public class UpsertResponse {
             throw new InvalidJsonException("Given string could not be converted/processed: " + jsonString, err);
         }
     }
-
-    public UpsertResponse(JSONArray finalOutputArray) {
-        this.consolidatedArray = finalOutputArray;
-    }
-
 
     // Builds query to retrieve old response data currently held in the database
     public String buildRetrieveOldResponseQuery() throws InvalidJsonException {
@@ -90,14 +84,6 @@ public class UpsertResponse {
 
     }
 
-    // Builds Upsert query
-    public String buildConsolidateUpsertByArrayQuery() throws InvalidJsonException {
-        var queryJson = new StringBuilder();
-        queryJson.append("{\"query\" : \"mutation saveResponse {saveresponsearray(input: {arg0: ");
-        queryJson.append("[" + getConsolidateResponseOutputs() + "]");
-        queryJson.append("}){clientMutationId}}\"}");
-        return queryJson.toString();
-    }
 
     // Builds Upsert query
     public String buildUpsertByArrayQuery() throws InvalidJsonException {
@@ -133,14 +119,6 @@ public class UpsertResponse {
         return currentResponseEntities;
     }
 
-    // Loop through the given Consolidated output array json and convert it into a graphQL compatable format
-    private String getConsolidateResponseOutputs() throws InvalidJsonException {
-        StringJoiner joiner = new StringJoiner(",");
-        for (int i = 0; i < consolidatedArray.length(); i++) {
-            joiner.add("{" + extractResponseOutputRow(i) + "}");
-        }
-        return joiner.toString();
-    }
 
     // Loop through the given validation output array json and convert it into a graphQL compatable format
     private String getResponseOutputs() throws InvalidJsonException {
@@ -169,31 +147,43 @@ public class UpsertResponse {
             joiner.add("response: \\\"" + outputRow.getString("response") + "\\\"");
             joiner.add("createdby: \\\"fisdba\\\"");
             joiner.add("createddate: \\\"" + time.toString() + "\\\"");
+            joiner.add("lastupdatedby: \\\"fisdba\\\"");
+            joiner.add("lastupdateddate: \\\"" + time.toString() + "\\\"");
             return joiner.toString();
         } catch (Exception err) {
             throw new InvalidJsonException("Error processing response json structure: " + responseArray, err);
         }
     }
 
-    // Convert a row for the given index and provide it in graphQL desired format
-    private String extractResponseOutputRow(int index) throws InvalidJsonException {
-        StringJoiner joiner = new StringJoiner(",");
-        try {
-            var outputRow = consolidatedArray.getJSONObject(index);
+    public String processConsolidatedJsonList(List<ResponseData> responsesToPassToDatabase, String updatedResponses)
+            throws InvalidJsonException {
 
-            joiner.add("reference: \\\"" + outputRow.getString("reference") + "\\\"");
-            joiner.add("period: \\\"" + outputRow.getString("period") + "\\\"");
-            joiner.add("survey: \\\"" + outputRow.getString("survey") + "\\\"");
-            joiner.add("questioncode: \\\"" + outputRow.getString("questionCode") + "\\\"");
-            joiner.add("instance: " + outputRow.getInt("instance"));
-            joiner.add("response: \\\"" + outputRow.getString("response") + "\\\"");
-            joiner.add("createdby: \\\"fisdba\\\"");
-            joiner.add("createddate: \\\"" + time.toString() + "\\\"");
-            joiner.add("lastupdatedby: \\\"" + outputRow.getString("lastUpdatedBy") + "\\\"");
-            joiner.add("lastupdateddate: \\\"" + outputRow.getString("lastUpdateDate") + "\\\"");
-            return joiner.toString();
+        JSONObject updatedResponsesJson = new JSONObject(updatedResponses);
+        JSONObject upsertResponses = new JSONObject();
+
+        var updatedResponseArray = new JSONArray();
+        try {
+
+            for (ResponseData response : responsesToPassToDatabase) {
+                var updatedResponsesObject = new JSONObject();
+                updatedResponsesObject.put("instance", response.getInstance());
+                updatedResponsesObject.put("questioncode", response.getQuestionCode());
+                updatedResponsesObject.put("response", response.getResponse());
+                updatedResponseArray.put(updatedResponsesObject);
+            }
+            JSONObject updatedDerivedResponses = new JSONObject().put("responses", updatedResponseArray);
+            // Create new object with reference, period, survey and user included before saving
+            upsertResponses.put("reference", updatedResponsesJson.get("reference"));
+            upsertResponses.put("period", updatedResponsesJson.get("period"));
+            upsertResponses.put("survey", updatedResponsesJson.get("survey"));
+            upsertResponses.put("user", updatedResponsesJson.get("user"));
+            upsertResponses.put("responses", updatedDerivedResponses.getJSONArray("responses"));
+
         } catch (Exception err) {
-            throw new InvalidJsonException("Error processing response json structure: " + responseArray, err);
+            throw new InvalidJsonException("Error processing response json structure: " + updatedResponseArray, err);
         }
+
+        return upsertResponses.toString();
+
     }
 }
