@@ -85,6 +85,7 @@ public class QlQueryBuilder {
         contributorDetailsQuery.append("}}");	
         return contributorDetailsQuery.toString();    	
     }
+
     public String buildValidationOutputQuery() {
         StringBuilder validationOutputQuery = new StringBuilder();
         validationOutputQuery.append("{\"query\": \"query allValidationOutputs($reference: String, $period: String, $survey: String) " +

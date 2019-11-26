@@ -79,6 +79,7 @@ public class QlQueryResponse {
         }
         return outputArray;
     }
+
     public JSONObject parseValidationOutputs() {
         var outputArray = new JSONArray();
         var valOutputArray = new JSONArray();
