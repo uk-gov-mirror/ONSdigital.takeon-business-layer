@@ -2,7 +2,6 @@ package uk.gov.ons.collection.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import uk.gov.ons.collection.entity.ContributorEntity;
 import uk.gov.ons.collection.entity.FormDefinitionEntity;
 import uk.gov.ons.collection.entity.QuestionResponseEntity;
@@ -34,5 +33,5 @@ public class ApiCallerSql implements ApiCaller {
     public Iterable<FormDefinitionEntity> loadFormDefinition(String reference, String period, String survey) {
         return formDefinitionService.getForm(new Helpers().buildUriParameters(reference, period, survey));
     }
-
 }
+

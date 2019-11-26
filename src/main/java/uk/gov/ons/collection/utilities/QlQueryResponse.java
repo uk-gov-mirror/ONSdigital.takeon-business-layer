@@ -3,7 +3,9 @@ package uk.gov.ons.collection.utilities;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 public class QlQueryResponse {
 
     private JSONObject jsonQlResponse;
@@ -76,9 +78,9 @@ public class QlQueryResponse {
             outputArray = jsonQlResponse.getJSONObject("data").getJSONObject("allValidationrules").getJSONArray("nodes");
         }
         return outputArray;
-
     }
-	public JSONObject parseValidationOutputs() {
+
+    public JSONObject parseValidationOutputs() {
         var outputArray = new JSONArray();
         var valOutputArray = new JSONArray();
         System.out.println("Output from Validation Query before parsing: " + jsonQlResponse.toString());
@@ -102,5 +104,4 @@ public class QlQueryResponse {
         var validationOutputs = new JSONObject().put("validation_outputs", valOutputArray);
         return validationOutputs;
     }
-
 }
