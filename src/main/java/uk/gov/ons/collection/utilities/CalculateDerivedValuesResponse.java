@@ -212,19 +212,13 @@ public class CalculateDerivedValuesResponse {
     // by Postgres Upsert function
     public JSONObject updateDerivedQuestionResponses() throws InvalidDerivedResponseException, InvalidJsonException, FormulaCalculationException {
         var resultsArray = calculateDerivedValues();
-        var responseArray = parseResponseData().getJSONArray("response_data");
         var updatedResponseArray = new JSONArray();
         for (int i = 0; i < resultsArray.size(); i++) {
-            for (int j = 0; j < responseArray.length(); j++) {
-                if (resultsArray.get(i).get("questioncode")
-                    .equals(responseArray.getJSONObject(j).getString("questioncode"))) {
-                    var updatedResponsesObject = new JSONObject();
-                    updatedResponsesObject.put("instance", resultsArray.get(i).get("instance"));
-                    updatedResponsesObject.put("questioncode", resultsArray.get(i).get("questioncode"));
-                    updatedResponsesObject.put("response", resultsArray.get(i).get("result").toString());
-                    updatedResponseArray.put(updatedResponsesObject);
-                }  
-            }
+            var updatedResponsesObject = new JSONObject();
+            updatedResponsesObject.put("instance", resultsArray.get(i).get("instance"));
+            updatedResponsesObject.put("questioncode", resultsArray.get(i).get("questioncode"));
+            updatedResponsesObject.put("response", resultsArray.get(i).get("result").toString());
+            updatedResponseArray.put(updatedResponsesObject);
         }
         JSONObject updatedDerivedResponses = new JSONObject().put("responses", updatedResponseArray);
         log.info("Updated Derived Question Responses: " + updatedDerivedResponses.toString());
