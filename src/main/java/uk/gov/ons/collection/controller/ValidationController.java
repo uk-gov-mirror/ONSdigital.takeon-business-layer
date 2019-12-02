@@ -196,9 +196,9 @@ public class ValidationController {
     }
 
     @ApiOperation(value = "Validation output to UI", response = String.class)
-    @GetMapping(value="/validationoutput/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/validationoutput/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
-    @ApiResponse(code = 200, message = "Successful", response = String.class)})
+        @ApiResponse(code = 200, message = "Successful", response = String.class)})
     public String validationoutput(@MatrixVariable Map<String, String> searchParameters){
         String validationOutputsQuery = "";
         JSONObject validationOutputs = new JSONObject();
