@@ -109,13 +109,15 @@ public class CalculateDerivedValuesResponse {
                     if (formulaList.get(i).equals(responseArray.getJSONObject(j).getString("questioncode"))) {
                         responseList.add(responseArray.getJSONObject(j).getString("response"));
                         instance = responseArray.getJSONObject(j).getInt("instance");
+                    } else if (formulaList.get(i).isEmpty()) {
+                        responseList.add(new String("0"));
                     }
                 }
                 if (formulaList.get(i).equals(new String("+"))) {
                     responseList.add(formulaList.get(i));
                 } else if (formulaList.get(i).equals(new String("-"))) {
                     responseList.add(formulaList.get(i));
-                }
+                } 
             }
             HashMap<String, Object> questions = new HashMap<>();
             questions.put("instance", instance);
@@ -124,6 +126,7 @@ public class CalculateDerivedValuesResponse {
 
             derivedArray.add(questions);
         }
+        log.info("Derived Array:" + derivedArray);
         return derivedArray;
     }
 
