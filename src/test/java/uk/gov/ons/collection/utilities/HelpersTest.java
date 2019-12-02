@@ -3,7 +3,6 @@ package uk.gov.ons.collection.utilities;
 import org.junit.jupiter.api.Test;
 import uk.gov.ons.collection.entity.FormDefinitionEntity;
 import uk.gov.ons.collection.entity.QuestionResponseEntity;
-import uk.gov.ons.collection.service.ApiCallerTest;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class HelpersTest {
-
+/*
     @Test
     void placeIntoMap_twoInstances_OneQuestionCode() {
         List<QuestionResponseEntity> testResponses = new ArrayList<>();
@@ -172,4 +171,5 @@ class HelpersTest {
         setup_checkAllQuestionsPresent();
         assertFalse(new Helpers().checkQuestionCodePresent(null, testResponses));
     }
+    */
 }

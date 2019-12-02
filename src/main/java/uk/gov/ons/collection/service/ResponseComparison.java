@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class ResponseComparison {
-
+    /*
     private JSONArray updatedResponseData;
     private String user;
     private String reference;
@@ -107,4 +107,5 @@ public class ResponseComparison {
         String params = "reference=" + reference + ";period=" + period + ";survey=" + survey;
         return currentResponseService.getCurrentResponses(params);
     }
+    */
 }
