@@ -4,6 +4,7 @@ import java.util.Map;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import io.swagger.annotations.Api;
@@ -19,12 +20,15 @@ import uk.gov.ons.collection.utilities.CalculateDerivedValuesResponse;
 import uk.gov.ons.collection.utilities.CalculateDerivedValuesQuery;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.MatrixVariable;
+
+import uk.gov.ons.collection.entity.BatchDataQuery;
 import uk.gov.ons.collection.entity.ResponseData;
 import uk.gov.ons.collection.exception.ResponsesNotSavedException;
 import uk.gov.ons.collection.service.ApiRequest;
@@ -35,10 +39,10 @@ import uk.gov.ons.collection.service.CompareUiAndCurrentResponses;
 @RestController
 @RequestMapping(value = "/response")
 public class ResponseController {
-    
+
     final String businessLayerServicePort = "8088";
     final String protocol = "http://";
-    
+
     @Autowired
     GraphQlService qlService;
 
@@ -70,23 +74,25 @@ public class ResponseController {
             qlResponsesResponse = qlService.qlSearch(responseQuery);
             JSONObject qlFormResponseObject = new JSONObject(qlResponsesResponse);
             log.info("qlFormResponseObject = " + qlFormResponseObject.toString());
-            if (qlFormResponseObject.getJSONObject("data").getJSONObject("allResponses").getJSONArray("nodes").isEmpty()) {
+            if (qlFormResponseObject.getJSONObject("data").getJSONObject("allResponses").getJSONArray("nodes")
+                    .isEmpty()) {
                 return "{\"error\":\"No response data for this Reference/Period/Survey combination\"}";
             } else {
                 updatedResponses = new CalculateDerivedValuesResponse(qlFormResponse, qlResponsesResponse)
-                .updateDerivedQuestionResponses();
+                        .updateDerivedQuestionResponses();
             }
         } catch (Exception err) {
             log.error("Exception: " + err);
             return "{\"error\":\"Failed to update Derived Question responses\"}";
         }
-        
+
         // If no derived responses to calculate, dont't update responses
         if (updatedResponses.getJSONArray("responses").isEmpty()) {
             return "{\"continue\":\"No derived formulas to calculate\"}";
         }
 
-        // Create new object with reference, period, survey and user included before saving
+        // Create new object with reference, period, survey and user included before
+        // saving
         JSONObject upsertResponses = new JSONObject();
         upsertResponses.put("reference", searchParameters.get("reference"));
         upsertResponses.put("period", searchParameters.get("period"));
@@ -99,9 +105,8 @@ public class ResponseController {
             InetAddress inetAddress = InetAddress.getLocalHost();
             log.info("IP Address:" + inetAddress.getHostAddress());
             String businessLayerAddress = inetAddress.getHostAddress();
-            StringBuilder url = new StringBuilder(protocol).append(businessLayerAddress)
-                                                           .append(":").append(businessLayerServicePort)
-                                                           .append("/response/saveResponses");
+            StringBuilder url = new StringBuilder(protocol).append(businessLayerAddress).append(":")
+                    .append(businessLayerServicePort).append("/response/saveResponses");
             log.info("Request Url: " + url.toString());
             ApiRequest request = new ApiRequest(url.toString(), upsertResponses.toString());
             request.apiPostJson();
@@ -111,10 +116,11 @@ public class ResponseController {
         }
         return "{\"Success\":\"Successfully saved derived Question responses\"}";
     }
-   
-    @ApiOperation(value = "Save validation outputs", response = String.class)
-    @RequestMapping(value = "/saveResponses", method = {RequestMethod.POST, RequestMethod.PUT})
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful save of all question responses", response = String.class)})
+
+    @ApiOperation(value = "Save all responses", response = String.class)
+    @RequestMapping(value = "/saveResponses", method = { RequestMethod.POST, RequestMethod.PUT })
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful save of all question responses", response = String.class) })
     @ResponseBody
     public String saveResponses(@RequestBody String jsonString) throws ResponsesNotSavedException {
         try {
@@ -131,14 +137,15 @@ public class ResponseController {
     }
 
     @ApiOperation(value = "Save question responses", response = String.class)
-    @RequestMapping(value = "/save/{vars}", method = {RequestMethod.POST, RequestMethod.PUT})
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful in saving of all question responses", response = String.class)})
+    @RequestMapping(value = "/save/{vars}", method = { RequestMethod.POST, RequestMethod.PUT })
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful in saving of all question responses", response = String.class) })
     @ResponseBody
     public String saveQuestionResponses(@RequestBody String updatedResponses) {
 
         log.info("API CALL!! --> /response/save :: Updated UI Responses" + updatedResponses);
 
-        List<ResponseData>  currentResponseEntities;
+        List<ResponseData> currentResponseEntities;
         JSONObject updatedResponsesJson = new JSONObject(updatedResponses);
         CompareUiAndCurrentResponses responseComparison;
 
@@ -164,15 +171,15 @@ public class ResponseController {
             if (responsesToPassToDatabase.isEmpty()) {
                 return "{\"continue\":\"No question responses to save\"}";
             }
-            //Calling common Save
+            // Calling common Save
             InetAddress inetAddress = InetAddress.getLocalHost();
             log.info("IP Address:" + inetAddress.getHostAddress());
             String businessLayerAddress = inetAddress.getHostAddress();
-            StringBuilder url = new StringBuilder(protocol).append(businessLayerAddress)
-                                                           .append(":").append(businessLayerServicePort)
-                                                           .append("/response/saveResponses");
+            StringBuilder url = new StringBuilder(protocol).append(businessLayerAddress).append(":")
+                    .append(businessLayerServicePort).append("/response/saveResponses");
             log.info("Request Url: " + url.toString());
-            ApiRequest request = new ApiRequest(url.toString(), upsertResponse.processConsolidatedJsonList(responsesToPassToDatabase, updatedResponses));
+            ApiRequest request = new ApiRequest(url.toString(),
+                    upsertResponse.processConsolidatedJsonList(responsesToPassToDatabase, updatedResponses));
             request.apiPostJson();
             // Updating the Form Status
             var contributorStatusQuery = upsertResponse.updateContributorStatus();
@@ -180,14 +187,11 @@ public class ResponseController {
             String qlStatusOutput = qlService.qlSearch(contributorStatusQuery);
             log.info("Output after updating the form status {}", qlStatusOutput);
             // Finally call to calculate derived values
-            StringBuilder derivedUrl = new StringBuilder(protocol).append(businessLayerAddress)
-                    .append(":").append(businessLayerServicePort)
-                    .append("/response/calculateDerivedQuestions/")
-                    .append("reference=")
-                    .append(updatedResponsesJson.getString("reference")).append(";period=")
+            StringBuilder derivedUrl = new StringBuilder(protocol).append(businessLayerAddress).append(":")
+                    .append(businessLayerServicePort).append("/response/calculateDerivedQuestions/")
+                    .append("reference=").append(updatedResponsesJson.getString("reference")).append(";period=")
                     .append(updatedResponsesJson.getString("period")).append(";survey=")
-                    .append(updatedResponsesJson.getString("survey"))
-                    .append(";");
+                    .append(updatedResponsesJson.getString("survey")).append(";");
             ApiRequest derivedRequest = new ApiRequest(derivedUrl.toString());
             log.info("Request Url: " + derivedUrl.toString());
             derivedRequest.apiPostParameters();
@@ -198,5 +202,83 @@ public class ResponseController {
             return "{\"error\":\"Failed to save Question responses\"}";
         }
         return "{\"Success\":\"Question responses saved successfully\"}";
+    }
+
+    @ApiOperation(value = "Save batch/PCK responses", response = String.class)
+    @RequestMapping(value = "/saveBatchResponses", method = { RequestMethod.POST, RequestMethod.PUT })
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful save of all question responses", response = String.class) })
+    @ResponseBody
+    public String saveBatchResponses(@RequestBody String batchResponses) {
+        JSONObject inputJSON = new JSONObject();
+        JSONArray referenceArray = new JSONArray();
+        HashMap<String, String> variables = new HashMap<>();
+        String referenceExistsResponse = new String();
+
+        // Check batchResponses JSON structure
+        try {
+            inputJSON = new JSONObject(batchResponses);
+            referenceArray = new JSONArray(inputJSON.getJSONArray("batch_data"));
+        } catch (JSONException e) {
+            log.info("Batch responses are not valid JSON" + e);
+        }
+
+        // Extract each ref/period/survey and check if exists
+        try {
+            for (int i = 0; i < referenceArray.length(); i++) {
+                JSONObject individualObject = new JSONObject(referenceArray.getJSONObject(i));
+                String reference = individualObject.getString("reference");
+                String period = individualObject.getString("period");
+                String survey = individualObject.getString("survey");
+                variables.put("reference", reference);
+                variables.put("period", reference);
+                variables.put("survey", reference);
+                referenceExistsResponse = qlService
+                        .qlSearch(new BatchDataQuery(variables).buildCheckReferenceExistsQuery());
+                JSONObject referenceExistsObject = new JSONObject();
+                JSONArray checkArray = new JSONArray();
+                try {
+                    referenceExistsObject = new JSONObject(referenceExistsResponse);
+                    checkArray = new JSONArray(referenceExistsObject.getJSONObject("data")
+                            .getJSONObject("allContributors").getJSONArray("nodes"));
+                } catch (JSONException e) {
+                    log.info("Invalid JSON from contributor exists query response");
+                }
+                if (checkArray.isEmpty()) {
+                    log.info("Contributor doesn't exist in database: " + reference + " " + period + " " + survey);
+                } else {
+                    // Continue processing
+                    var upsertResponse = new UpsertResponse(individualObject.toString());
+                    InetAddress inetAddress = InetAddress.getLocalHost();
+                    log.info("IP Address:" + inetAddress.getHostAddress());
+                    String businessLayerAddress = inetAddress.getHostAddress();
+                    StringBuilder url = new StringBuilder(protocol).append(businessLayerAddress).append(":")
+                            .append(businessLayerServicePort).append("/response/saveResponses");
+                    log.info("Request Url: " + url.toString());
+                    ApiRequest request = new ApiRequest(url.toString(), individualObject.toString());
+                    request.apiPostJson();
+                    // Updating the Form Status
+                    var contributorStatusQuery = upsertResponse.updateContributorStatus();
+                    log.info("GraphQL Query for updating Form Status {}", contributorStatusQuery);
+                    String qlStatusOutput = qlService.qlSearch(contributorStatusQuery);
+                    log.info("Output after updating the form status {}", qlStatusOutput);
+                    // Finally call to calculate derived values
+                    StringBuilder derivedUrl = new StringBuilder(protocol).append(businessLayerAddress).append(":")
+                            .append(businessLayerServicePort).append("/response/calculateDerivedQuestions/")
+                            .append("reference=").append(individualObject.getString("reference")).append(";period=")
+                            .append(individualObject.getString("period")).append(";survey=")
+                            .append(individualObject.getString("survey")).append(";");
+                    ApiRequest derivedRequest = new ApiRequest(derivedUrl.toString());
+                    log.info("Request Url: " + derivedUrl.toString());
+                    derivedRequest.apiPostParameters();
+                }
+            }
+        } catch (Exception e) {
+            log.info("Can't build Batch Data Query / Invalid Response from GraphQL: " + e);
+            return "{\"error\":\"Failed to save Batch Question responses\"}";
+        }
+        // Now return array of outcomes
+        return "";
+
     }
 }
