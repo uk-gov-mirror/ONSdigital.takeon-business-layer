@@ -1,7 +1,5 @@
 package uk.gov.ons.collection.service;
 
-import java.util.HashSet;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -218,7 +218,7 @@ public class ResponseController {
         // Check batchResponses JSON structure
         try {
             inputJSON = new JSONObject(batchResponses);
-            referenceArray = new JSONArray(inputJSON.getJSONArray("batch_data"));
+            referenceArray = inputJSON.getJSONArray("batch_data");
         } catch (JSONException e) {
             log.info("Batch responses are not valid JSON" + e);
         }
@@ -226,21 +226,21 @@ public class ResponseController {
         // Extract each ref/period/survey and check if exists
         try {
             for (int i = 0; i < referenceArray.length(); i++) {
-                JSONObject individualObject = new JSONObject(referenceArray.getJSONObject(i));
+                JSONObject individualObject = referenceArray.getJSONObject(i);
                 String reference = individualObject.getString("reference");
                 String period = individualObject.getString("period");
                 String survey = individualObject.getString("survey");
                 variables.put("reference", reference);
-                variables.put("period", reference);
-                variables.put("survey", reference);
+                variables.put("period", period);
+                variables.put("survey", survey);
                 referenceExistsResponse = qlService
                         .qlSearch(new BatchDataQuery(variables).buildCheckReferenceExistsQuery());
                 JSONObject referenceExistsObject = new JSONObject();
                 JSONArray checkArray = new JSONArray();
                 try {
                     referenceExistsObject = new JSONObject(referenceExistsResponse);
-                    checkArray = new JSONArray(referenceExistsObject.getJSONObject("data")
-                            .getJSONObject("allContributors").getJSONArray("nodes"));
+                    checkArray = referenceExistsObject.getJSONObject("data")
+                            .getJSONObject("allContributors").getJSONArray("nodes");
                 } catch (JSONException e) {
                     log.info("Invalid JSON from contributor exists query response");
                 }
@@ -248,16 +248,18 @@ public class ResponseController {
                     log.info("Contributor doesn't exist in database: " + reference + " " + period + " " + survey);
                 } else {
                     // Continue processing
-                    var upsertResponse = new UpsertResponse(individualObject.toString());
                     InetAddress inetAddress = InetAddress.getLocalHost();
                     log.info("IP Address:" + inetAddress.getHostAddress());
                     String businessLayerAddress = inetAddress.getHostAddress();
                     StringBuilder url = new StringBuilder(protocol).append(businessLayerAddress).append(":")
                             .append(businessLayerServicePort).append("/response/saveResponses");
                     log.info("Request Url: " + url.toString());
+                    log.info("Individual Object: " + individualObject.toString());
                     ApiRequest request = new ApiRequest(url.toString(), individualObject.toString());
                     request.apiPostJson();
+                    // Split all queries out and catch exceptions
                     // Updating the Form Status
+                    var upsertResponse = new UpsertResponse(individualObject.toString());
                     var contributorStatusQuery = upsertResponse.updateContributorStatus();
                     log.info("GraphQL Query for updating Form Status {}", contributorStatusQuery);
                     String qlStatusOutput = qlService.qlSearch(contributorStatusQuery);
