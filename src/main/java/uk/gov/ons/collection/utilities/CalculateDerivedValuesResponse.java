@@ -103,21 +103,28 @@ public class CalculateDerivedValuesResponse {
         for (Entry<String, ArrayList<String>> mapElement : formulaMap.entrySet()) {
             // Get each formula list
             ArrayList<String> formulaList = new ArrayList<>(mapElement.getValue());
+            log.info("Formula List: " + formulaList.toString());
             ArrayList<String> responseList = new ArrayList<>();
             for (int i = 0; i < formulaList.size(); i++) {
+                boolean condition = false;
                 for (int j = 0; j < responseArray.length(); j++) {
                     if (formulaList.get(i).equals(responseArray.getJSONObject(j).getString("questioncode"))) {
                         responseList.add(responseArray.getJSONObject(j).getString("response"));
                         instance = responseArray.getJSONObject(j).getInt("instance");
-                    } else if (formulaList.get(i).isEmpty()) {
-                        responseList.add(new String("0"));
-                    }
+                        condition = true;
+                    } 
                 }
                 if (formulaList.get(i).equals(new String("+"))) {
                     responseList.add(formulaList.get(i));
+                    condition = true;
                 } else if (formulaList.get(i).equals(new String("-"))) {
                     responseList.add(formulaList.get(i));
+                    condition = true;
                 } 
+                if (!condition) {
+                    responseList.add(new String("0"));
+                }
+                log.info("Condition: " + condition);
             }
             HashMap<String, Object> questions = new HashMap<>();
             questions.put("instance", instance);
