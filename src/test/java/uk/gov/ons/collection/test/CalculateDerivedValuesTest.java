@@ -303,7 +303,7 @@ class CalculateDerivedValuesTest {
         + "\"derivedformula\": \"1000+1001\"" + "}," + "{" + "\"questioncode\": \"4001\","
         + "\"derivedformula\": \"1000 - 1001\"" + "}" + "]" + "}" + "}" + "}" + "]" + "}" + "}" + "}";
 
-        var expectedOutput = "[{result=0, instance=0, updatedformula=[0], questioncode=4000, formulatorun=[0]}," +
+        var expectedOutput = "[{result=0, instance=0, updatedformula=[], questioncode=4000, formulatorun=[]}," +
                         " {result=19, instance=0, updatedformula=[20, -, 1], questioncode=4001, formulatorun=[20, -, 1]}]";
         ArrayList<HashMap<String, Object>> response = new ArrayList<>();
         try {
