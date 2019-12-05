@@ -4,7 +4,6 @@ import java.util.Map;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 import io.swagger.annotations.Api;
@@ -14,6 +13,7 @@ import io.swagger.annotations.ApiResponses;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import lombok.extern.log4j.Log4j2;
+import uk.gov.ons.collection.service.BatchDataIngest;
 import uk.gov.ons.collection.service.GraphQlService;
 import uk.gov.ons.collection.utilities.UpsertResponse;
 import uk.gov.ons.collection.utilities.CalculateDerivedValuesResponse;
@@ -204,83 +204,21 @@ public class ResponseController {
         return "{\"Success\":\"Question responses saved successfully\"}";
     }
 
+
     @ApiOperation(value = "Save batch/PCK responses", response = String.class)
     @RequestMapping(value = "/saveBatchResponses", method = { RequestMethod.POST, RequestMethod.PUT })
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful save of all question responses", response = String.class) })
+            @ApiResponse(code = 200, message = "Successful save of all Batch question responses", response = String.class) })
     @ResponseBody
     public String saveBatchResponses(@RequestBody String batchResponses) {
-        JSONObject inputJSON = new JSONObject();
-        JSONArray referenceArray = new JSONArray();
-        HashMap<String, String> variables = new HashMap<>();
-        String referenceExistsResponse = new String();
-
-        // Check batchResponses JSON structure
+        String result;
         try {
-            inputJSON = new JSONObject(batchResponses);
-            referenceArray = inputJSON.getJSONArray("batch_data");
-        } catch (JSONException e) {
-            log.info("Batch responses are not valid JSON" + e);
-        }
-
-        // Extract each ref/period/survey and check if exists
-        try {
-            for (int i = 0; i < referenceArray.length(); i++) {
-                JSONObject individualObject = referenceArray.getJSONObject(i);
-                String reference = individualObject.getString("reference");
-                String period = individualObject.getString("period");
-                String survey = individualObject.getString("survey");
-                variables.put("reference", reference);
-                variables.put("period", period);
-                variables.put("survey", survey);
-                referenceExistsResponse = qlService
-                        .qlSearch(new BatchDataQuery(variables).buildCheckReferenceExistsQuery());
-                JSONObject referenceExistsObject = new JSONObject();
-                JSONArray checkArray = new JSONArray();
-                try {
-                    referenceExistsObject = new JSONObject(referenceExistsResponse);
-                    checkArray = referenceExistsObject.getJSONObject("data")
-                            .getJSONObject("allContributors").getJSONArray("nodes");
-                } catch (JSONException e) {
-                    log.info("Invalid JSON from contributor exists query response");
-                }
-                if (checkArray.isEmpty()) {
-                    log.info("Contributor doesn't exist in database: " + reference + " " + period + " " + survey);
-                } else {
-                    // Continue processing
-                    InetAddress inetAddress = InetAddress.getLocalHost();
-                    log.info("IP Address:" + inetAddress.getHostAddress());
-                    String businessLayerAddress = inetAddress.getHostAddress();
-                    StringBuilder url = new StringBuilder(protocol).append(businessLayerAddress).append(":")
-                            .append(businessLayerServicePort).append("/response/saveResponses");
-                    log.info("Request Url: " + url.toString());
-                    log.info("Individual Object: " + individualObject.toString());
-                    ApiRequest request = new ApiRequest(url.toString(), individualObject.toString());
-                    request.apiPostJson();
-                    // Split all queries out and catch exceptions
-                    // Updating the Form Status
-                    var upsertResponse = new UpsertResponse(individualObject.toString());
-                    var contributorStatusQuery = upsertResponse.updateContributorStatus();
-                    log.info("GraphQL Query for updating Form Status {}", contributorStatusQuery);
-                    String qlStatusOutput = qlService.qlSearch(contributorStatusQuery);
-                    log.info("Output after updating the form status {}", qlStatusOutput);
-                    // Finally call to calculate derived values
-                    StringBuilder derivedUrl = new StringBuilder(protocol).append(businessLayerAddress).append(":")
-                            .append(businessLayerServicePort).append("/response/calculateDerivedQuestions/")
-                            .append("reference=").append(individualObject.getString("reference")).append(";period=")
-                            .append(individualObject.getString("period")).append(";survey=")
-                            .append(individualObject.getString("survey")).append(";");
-                    ApiRequest derivedRequest = new ApiRequest(derivedUrl.toString());
-                    log.info("Request Url: " + derivedUrl.toString());
-                    derivedRequest.apiPostParameters();
-                }
-            }
+            BatchDataIngest batchData = new BatchDataIngest(batchResponses, qlService);
+            result = batchData.processBatchData();
         } catch (Exception e) {
             log.info("Can't build Batch Data Query / Invalid Response from GraphQL: " + e);
             return "{\"error\":\"Failed to save Batch Question responses\"}";
         }
-        // Now return array of outcomes
-        return "";
-
+        return result;
     }
 }
