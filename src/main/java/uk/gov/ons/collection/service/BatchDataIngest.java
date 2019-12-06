@@ -17,19 +17,19 @@ public class BatchDataIngest {
 
 
     private GraphQlService qlService;
-    private JSONArray referenceArray ;
+    private JSONArray referenceArray;
     private static final String BUSINESS_SERVICE_PORT = "8088";
     private static final String PROTOCOL = "http://";
 
     public BatchDataIngest(String batchResponses, GraphQlService qlGraphService) throws InvalidJsonException {
 
-        JSONObject inputJSON;
+        JSONObject inputJson;
         try {
-            inputJSON = new JSONObject(batchResponses);
-            referenceArray = inputJSON.getJSONArray("batch_data");
+            inputJson = new JSONObject(batchResponses);
+            referenceArray = inputJson.getJSONArray("batch_data");
             qlService = qlGraphService;
 
-            log.info("Reference Array:"+referenceArray);
+            log.info("Reference Array:" + referenceArray);
         } catch (JSONException excep) {
             log.error("Batch responses are not valid JSON" + excep);
             throw new InvalidJsonException("Batch responses cannot be processed: " + batchResponses, excep);
@@ -53,7 +53,12 @@ public class BatchDataIngest {
                 referenceExistsResponse = qlService
                         .qlSearch(new BatchDataQuery(variables).buildCheckReferenceExistsQuery());
                 if (isContributorEmpty(referenceExistsResponse)) {
+                    StringBuilder sbContribError = new StringBuilder("{\"error\":\"")
+                            .append("Contributor doesn't exist in database ");
+                    sbContribError.append("Reference ").append(reference).append(" Period ").append(period)
+                            .append(" Survey ").append(survey).append("\"}");
                     log.info("Contributor doesn't exist in database: " + reference + " " + period + " " + survey);
+                    return sbContribError.toString();
                 } else {
                     //Call to Save Responses
                     invokeSaveResponsesRequest(individualObject);
@@ -71,7 +76,7 @@ public class BatchDataIngest {
         return "{\"Success\":\"Batch Question responses saved successfully\"}";
     }
 
-    private void invokeFormUpdate(String individualObjectJsonStr) throws InvalidJsonException{
+    private void invokeFormUpdate(String individualObjectJsonStr) throws InvalidJsonException {
         try {
             var upsertResponse = new UpsertResponse(individualObjectJsonStr);
             var contributorStatusQuery = upsertResponse.updateContributorStatus();
@@ -79,7 +84,7 @@ public class BatchDataIngest {
             String qlStatusOutput = qlService.qlSearch(contributorStatusQuery);
             log.info("Output after updating the form status {}", qlStatusOutput);
         } catch (JSONException e) {
-            log.error("Invalid JSON from contributor exists query response "+e);
+            log.error("Invalid JSON from contributor exists query response " + e);
             throw new InvalidJsonException("Invalid JSON from contributor exists query response: " + individualObjectJsonStr, e);
         }
 
@@ -88,21 +93,21 @@ public class BatchDataIngest {
 
     private boolean isContributorEmpty(String referenceExistsResponse) throws InvalidJsonException {
 
-        JSONObject referenceExistsObject ;
+        JSONObject referenceExistsObject;
         JSONArray checkArray;
         try {
             referenceExistsObject = new JSONObject(referenceExistsResponse);
             checkArray = referenceExistsObject.getJSONObject("data")
                     .getJSONObject("allContributors").getJSONArray("nodes");
         } catch (JSONException e) {
-            log.error("Invalid JSON from contributor exists query response "+e);
+            log.error("Invalid JSON from contributor exists query response " + e);
             throw new InvalidJsonException("Invalid JSON from contributor exists query response: " + referenceExistsResponse, e);
         }
 
         return checkArray != null && checkArray.isEmpty();
     }
 
-    private String getBusinessLayerAddress() throws Exception{
+    private String getBusinessLayerAddress() throws Exception {
         InetAddress inetAddress = InetAddress.getLocalHost();
         String businessLayerAddress = inetAddress.getHostAddress();
         log.info("IP Address:" + businessLayerAddress);
@@ -121,7 +126,7 @@ public class BatchDataIngest {
     }
 
 
-    private void invokeDerivedFormulaCalculationRequest(JSONObject responseJsonObject) throws Exception{
+    private void invokeDerivedFormulaCalculationRequest(JSONObject responseJsonObject) throws Exception {
         StringBuilder derivedUrl = new StringBuilder();
         String businessLayerAddress = getBusinessLayerAddress();
         derivedUrl.append(PROTOCOL).append(businessLayerAddress).append(":")

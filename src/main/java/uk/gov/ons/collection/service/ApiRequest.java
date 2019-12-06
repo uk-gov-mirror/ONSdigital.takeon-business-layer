@@ -39,7 +39,7 @@ public class ApiRequest {
             request.setEntity(params);
             HttpResponse httpResp = httpClient.execute(request);
             statusCode = httpResp.getStatusLine().getStatusCode();
-            if(statusCode != STATUS_OK) {
+            if (statusCode != STATUS_OK) {
                 throw new IOException("Exception in calling Save Response");
             }
             log.info("HTTP Status Code: " + statusCode);
@@ -58,7 +58,7 @@ public class ApiRequest {
             HttpResponse httpResp = httpClient.execute(request);
             statusCode = httpResp.getStatusLine().getStatusCode();
             log.info("HTTP Status Code: " + statusCode);
-            if(statusCode != STATUS_OK) {
+            if (statusCode != STATUS_OK) {
                 throw new IOException("Exception in calling Derived Save Response");
             }
         } catch (Exception err) {
