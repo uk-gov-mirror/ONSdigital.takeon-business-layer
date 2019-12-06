@@ -47,7 +47,7 @@ public class BatchDataIngestTest {
     }
 
     @Test
-    void verify_ContributorExists_inValidjson_throwsException() {
+    void verify_ContributorExists_inValidJson_throwsException() {
 
         var contributorJson1 = "{\"data\":{\"allContributors\":{\"nods\":[]}}}";
         assertThrows(InvalidJsonException.class, () -> new BatchDataIngest().isContributorEmpty(contributorJson1));
