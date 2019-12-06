@@ -5,7 +5,9 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import uk.gov.ons.collection.entity.ResponseData;
 import uk.gov.ons.collection.exception.InvalidJsonException;
+import uk.gov.ons.collection.service.BatchDataIngest;
 import uk.gov.ons.collection.service.CompareUiAndCurrentResponses;
+import uk.gov.ons.collection.service.GraphQlService;
 import uk.gov.ons.collection.utilities.UpsertResponse;
 
 import java.util.List;
@@ -176,7 +178,6 @@ class UpsertResponseTest {
         }
 
     }
-
 
 
 }

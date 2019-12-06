@@ -21,6 +21,10 @@ public class BatchDataIngest {
     private static final String BUSINESS_SERVICE_PORT = "8088";
     private static final String PROTOCOL = "http://";
 
+    public BatchDataIngest() {
+
+    }
+
     public BatchDataIngest(String batchResponses, GraphQlService qlGraphService) throws InvalidJsonException {
 
         JSONObject inputJson;
@@ -52,6 +56,7 @@ public class BatchDataIngest {
                 variables.put("survey", survey);
                 referenceExistsResponse = qlService
                         .qlSearch(new BatchDataQuery(variables).buildCheckReferenceExistsQuery());
+                log.info("Reference exists response:" + referenceExistsResponse);
                 if (isContributorEmpty(referenceExistsResponse)) {
                     StringBuilder sbContribError = new StringBuilder("{\"error\":\"")
                             .append("Contributor doesn't exist in database ");
@@ -92,7 +97,7 @@ public class BatchDataIngest {
     }
 
 
-    private boolean isContributorEmpty(String referenceExistsResponse) throws InvalidJsonException {
+    public boolean isContributorEmpty(String referenceExistsResponse) throws InvalidJsonException {
 
         JSONObject referenceExistsObject;
         JSONArray checkArray;
