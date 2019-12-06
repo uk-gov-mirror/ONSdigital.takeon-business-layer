@@ -57,8 +57,9 @@ public class BatchDataIngest {
                             .append("Contributor doesn't exist in database ");
                     sbContribError.append("Reference ").append(reference).append(" Period ").append(period)
                             .append(" Survey ").append(survey).append("\"}");
-                    log.info("Contributor doesn't exist in database: " + reference + " " + period + " " + survey);
-                    return sbContribError.toString();
+                    log.info(sbContribError.toString());
+                    //Commenting return statement as we want to continue in processing the next response
+                    //return sbContribError.toString();
                 } else {
                     //Call to Save Responses
                     invokeSaveResponsesRequest(individualObject);
