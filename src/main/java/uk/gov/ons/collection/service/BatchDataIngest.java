@@ -11,6 +11,7 @@ import uk.gov.ons.collection.utilities.UpsertResponse;
 
 import java.net.InetAddress;
 import java.util.HashMap;
+import java.util.HashSet;
 
 @Log4j2
 public class BatchDataIngest {
@@ -40,7 +41,7 @@ public class BatchDataIngest {
         }
     }
 
-    public String processBatchData() {
+    public String processBatchData(HashSet<String> refPerSur) {
 
         HashMap<String, String> variables = new HashMap<>();
         String referenceExistsResponse;
@@ -63,6 +64,9 @@ public class BatchDataIngest {
                     sbContribError.append("Reference ").append(reference).append(" Period ").append(period)
                             .append(" Survey ").append(survey).append("\"}");
                     log.info(sbContribError.toString());
+                    StringBuilder refString = new StringBuilder();
+                    refString.append(reference).append(period).append(survey);
+                    refPerSur.add(refString.toString());
                     //Commenting return statement as we want to continue in processing the next response
                     //return sbContribError.toString();
                 } else {

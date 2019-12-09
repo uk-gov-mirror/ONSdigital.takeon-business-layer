@@ -3,7 +3,7 @@ package uk.gov.ons.collection.controller;
 import java.util.Map;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import io.swagger.annotations.Api;
@@ -20,7 +20,6 @@ import uk.gov.ons.collection.utilities.CalculateDerivedValuesResponse;
 import uk.gov.ons.collection.utilities.CalculateDerivedValuesQuery;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.MatrixVariable;
 
-import uk.gov.ons.collection.entity.BatchDataQuery;
 import uk.gov.ons.collection.entity.ResponseData;
 import uk.gov.ons.collection.exception.ResponsesNotSavedException;
 import uk.gov.ons.collection.service.ApiRequest;
@@ -212,13 +210,14 @@ public class ResponseController {
     @ResponseBody
     public String saveBatchResponses(@RequestBody String batchResponses) {
         String result;
+        HashSet<String> refPerSur = new HashSet<String>();
         try {
             BatchDataIngest batchData = new BatchDataIngest(batchResponses, qlService);
-            result = batchData.processBatchData();
+            result = batchData.processBatchData(refPerSur);
         } catch (Exception e) {
             log.info("Can't build Batch Data Query / Invalid Response from GraphQL: " + e);
             return "{\"error\":\"Failed to save Batch Question responses\"}";
         }
-        return result;
+        return  refPerSur.isEmpty() ? result : refPerSur.toString();
     }
 }
