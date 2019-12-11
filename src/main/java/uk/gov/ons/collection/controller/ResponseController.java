@@ -3,7 +3,6 @@ package uk.gov.ons.collection.controller;
 import java.util.Map;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.HashSet;
 import java.util.List;
 
 import io.swagger.annotations.Api;
