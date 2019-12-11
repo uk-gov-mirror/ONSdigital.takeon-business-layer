@@ -6,7 +6,6 @@ import uk.gov.ons.collection.service.ServiceInterface;
 
 import org.json.JSONObject;
 
-@Log4j2
 public class Contributor {
 
     private ServiceInterface service;
@@ -21,7 +20,7 @@ public class Contributor {
         "(input: {reference: $reference, period: $period, survey: $survey, contributorPatch: {status: $status}}) " +
         "{contributor { reference period survey status }}}";
 
-    private String loadSingleQuery = "query contrib($period: String!, $reference: String!, $survey: String!) " + 
+    private String loadSingleQuery = "query contrib($period: String!, $reference: String!, $survey: String!) " +
         "{contributorByReferenceAndPeriodAndSurvey(reference: $reference, period:$period, survey:$survey) " +
         "{reference formid period survey surveyBySurvey {id periodicity description}}}";
 
@@ -30,7 +29,7 @@ public class Contributor {
         this.period = period;
         this.survey = survey;
         this.service = service;
-    }    
+    }
 
     private String buildUpdateQuery(String statusText) {
         var updateQuery = new StringBuilder();
@@ -42,7 +41,7 @@ public class Contributor {
     }
 
     private String buildLoadSingleQuery() {
-        String query = "{\"query\": \"" + this.loadSingleQuery + "\",\"variables\": {" + "\"reference\": \"" + reference 
+        String query = "{\"query\": \"" + this.loadSingleQuery + "\",\"variables\": {" + "\"reference\": \"" + reference
             + "\",\"period\": \"" + period + "\"," + "\"survey\": \"" + survey + "\"}}";
         return query;
     }
@@ -61,33 +60,16 @@ public class Contributor {
             return jsonResponse.getJSONObject("data").getJSONObject("contributorByReferenceAndPeriodAndSurvey").getInt("formid");
         } catch (Exception err) {
             throw new InvalidJsonException("Given JSON did not contain formID in the expected location: " + jsonResponse, err);
-        } 
+        }
     }
 
     public String getSurveyPeriodicity() throws InvalidJsonException {
-        try {   
+        try {
             return jsonResponse.getJSONObject("data").getJSONObject("contributorByReferenceAndPeriodAndSurvey")
                 .getJSONObject("surveyBySurvey").getString("periodicity");
         } catch (Exception err) {
             throw new InvalidJsonException("Given JSON did not contain formID in the expected location: " + jsonResponse, err);
-        } 
+        }
     }
-
-    /*
-    {
-  "data": {
-    "contributorByReferenceAndPeriodAndSurvey": {
-      "reference": "12345678000",
-      "period": "201801",
-      "survey": "999A",
-      "surveyBySurvey": {
-        "id": "WyJzdXJ2ZXlzIiwiOTk5QSJd",
-        "periodicity": "Monthly",
-        "description": "Generic Monthly Testing Survey"
-      }
-    }
-  }
-}
-*/
 
 }
