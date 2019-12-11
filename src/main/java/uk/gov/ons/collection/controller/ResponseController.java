@@ -209,15 +209,18 @@ public class ResponseController {
             @ApiResponse(code = 200, message = "Successful save of all Batch question responses", response = String.class) })
     @ResponseBody
     public String saveBatchResponses(@RequestBody String batchResponses) {
-        String result;
-        HashSet<String> refPerSur = new HashSet<String>();
+
+        var outcomesObj = new JSONObject();
+        var outcomesArr = new JSONArray();
         try {
+
             BatchDataIngest batchData = new BatchDataIngest(batchResponses, qlService);
-            result = batchData.processBatchData(refPerSur);
+            batchData.processBatchData(outcomesArr);
         } catch (Exception e) {
             log.info("Can't build Batch Data Query / Invalid Response from GraphQL: " + e);
             return "{\"error\":\"Failed to save Batch Question responses\"}";
         }
-        return  refPerSur.isEmpty() ? result : refPerSur.toString();
+        outcomesObj.put("outcomes", outcomesArr);
+        return  outcomesObj.toString();
     }
 }

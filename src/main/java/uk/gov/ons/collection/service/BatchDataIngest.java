@@ -11,7 +11,7 @@ import uk.gov.ons.collection.utilities.UpsertResponse;
 
 import java.net.InetAddress;
 import java.util.HashMap;
-import java.util.HashSet;
+
 
 @Log4j2
 public class BatchDataIngest {
@@ -41,13 +41,15 @@ public class BatchDataIngest {
         }
     }
 
-    public String processBatchData(HashSet<String> refPerSur) {
+    public void processBatchData(JSONArray outcomesArray) {
 
         HashMap<String, String> variables = new HashMap<>();
         String referenceExistsResponse;
         // Extract each ref/period/survey and check if exists
-        try {
-            for (int i = 0; i < referenceArray.length(); i++) {
+        for (int i = 0; i < referenceArray.length(); i++) {
+            var outcomeObject = new JSONObject();
+            try {
+
                 JSONObject individualObject = referenceArray.getJSONObject(i);
                 String reference = individualObject.getString("reference");
                 String period = individualObject.getString("period");
@@ -55,20 +57,19 @@ public class BatchDataIngest {
                 variables.put("reference", reference);
                 variables.put("period", period);
                 variables.put("survey", survey);
+                outcomeObject.put("reference", reference);
+                outcomeObject.put("period", period);
+                outcomeObject.put("survey", survey);
                 referenceExistsResponse = qlService
-                        .qlSearch(new BatchDataQuery(variables).buildCheckReferenceExistsQuery());
+                            .qlSearch(new BatchDataQuery(variables).buildCheckReferenceExistsQuery());
                 log.info("Reference exists response:" + referenceExistsResponse);
                 if (isContributorEmpty(referenceExistsResponse)) {
-                    StringBuilder sbContribError = new StringBuilder("{\"error\":\"")
-                            .append("Contributor doesn't exist in database ");
+                    StringBuilder sbContribError = new StringBuilder("Contributor doesn't exist in database ");
                     sbContribError.append("Reference ").append(reference).append(" Period ").append(period)
-                            .append(" Survey ").append(survey).append("\"}");
+                                .append(" Survey ").append(survey);
                     log.info(sbContribError.toString());
-                    StringBuilder refString = new StringBuilder();
-                    refString.append(reference).append(period).append(survey);
-                    refPerSur.add(refString.toString());
-                    //Commenting return statement as we want to continue in processing the next response
-                    //return sbContribError.toString();
+                    outcomeObject.put("outcome", "Failure");
+                    outcomeObject.put("error", sbContribError.toString());
                 } else {
                     //Call to Save Responses
                     invokeSaveResponsesRequest(individualObject);
@@ -76,14 +77,21 @@ public class BatchDataIngest {
                     invokeFormUpdate(individualObject.toString());
                     // Finally call to calculate derived values
                     invokeDerivedFormulaCalculationRequest(individualObject);
+                    outcomeObject.put("outcome", "TakeOn Successful");
                 }
+
+            } catch (Exception e) {
+                log.error("Can't process Batch data responses: " + e);
+                outcomeObject.put("outcome", "Failure");
+                outcomeObject.put("error", e.getMessage());
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            log.error("Can't process Batch data responses: " + e);
-            e.printStackTrace();
-            return "{\"error\":\"Failed to save Batch Question responses\"}";
+            outcomesArray.put(outcomeObject);
+
         }
-        return "{\"Success\":\"Batch Question responses saved successfully\"}";
+
+        log.info("Outcomes Array object " + outcomesArray.toString());
+
     }
 
     private void invokeFormUpdate(String individualObjectJsonStr) throws InvalidJsonException {
