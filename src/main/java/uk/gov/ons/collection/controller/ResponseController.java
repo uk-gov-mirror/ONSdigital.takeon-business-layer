@@ -3,7 +3,6 @@ package uk.gov.ons.collection.controller;
 import java.util.Map;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.HashMap;
 import java.util.List;
 
 import io.swagger.annotations.Api;
@@ -35,10 +34,10 @@ import uk.gov.ons.collection.service.CompareUiAndCurrentResponses;
 @RestController
 @RequestMapping(value = "/response")
 public class ResponseController {
-    
+
     final String businessLayerServicePort = "8088";
     final String protocol = "http://";
-    
+
     @Autowired
     GraphQlService qlService;
 
@@ -80,7 +79,7 @@ public class ResponseController {
             log.error("Exception: " + err);
             return "{\"error\":\"Failed to update Derived Question responses\"}";
         }
-        
+
         // If no derived responses to calculate, dont't update responses
         if (updatedResponses.getJSONArray("responses").isEmpty()) {
             return "{\"continue\":\"No derived formulas to calculate\"}";
@@ -111,7 +110,7 @@ public class ResponseController {
         }
         return "{\"Success\":\"Successfully saved derived Question responses\"}";
     }
-   
+
     @ApiOperation(value = "Save validation outputs", response = String.class)
     @RequestMapping(value = "/saveResponses", method = {RequestMethod.POST, RequestMethod.PUT})
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful save of all question responses", response = String.class)})
