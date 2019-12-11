@@ -38,7 +38,7 @@ public class CalculateDerivedValuesResponse {
                     .getJSONObject(0).getJSONObject("formByFormid").getJSONObject("formdefinitionsByFormid")
                     .getJSONArray("nodes");
         }
-        log.info("Parsed Form Data: " + outputArray.toString());
+        // log.info("Parsed Form Data: " + outputArray.toString());
         return new JSONObject().put("form_data", outputArray);
     }
 
@@ -48,7 +48,7 @@ public class CalculateDerivedValuesResponse {
         if (responseInputJson.getJSONObject("data").getJSONObject("allResponses").getJSONArray("nodes").length() > 0) {
             outputArray = responseInputJson.getJSONObject("data").getJSONObject("allResponses").getJSONArray("nodes");
         }
-        log.info("Parsed Response Data: " + outputArray.toString());
+        // log.info("Parsed Response Data: " + outputArray.toString());
         return new JSONObject().put("response_data", outputArray);
     }
 
@@ -60,7 +60,7 @@ public class CalculateDerivedValuesResponse {
         for (int i = 0; i < questionCodes.length; i++) {
             questionCodeList.add(questionCodes[i]);
         }
-        log.info("Question Codes List: " + questionCodeList.toString());
+        // log.info("Question Codes List: " + questionCodeList.toString());
         return questionCodeList;
     }
 
@@ -82,7 +82,7 @@ public class CalculateDerivedValuesResponse {
                 formulaMap.put(questionCode, getQuestionCodes(formArray.getJSONObject(i).getString("derivedformula")));
             }
         }
-        log.info("Map of derived formulas: " + formulaMap.toString());
+        // log.info("Map of derived formulas: " + formulaMap.toString());
         return formulaMap;
     }
 
@@ -126,7 +126,7 @@ public class CalculateDerivedValuesResponse {
 
             derivedArray.add(questions);
         }
-        log.info("Derived Array:" + derivedArray);
+        // log.info("Derived Array:" + derivedArray);
         return derivedArray;
     }
 
@@ -135,7 +135,7 @@ public class CalculateDerivedValuesResponse {
             throws InvalidDerivedResponseException {
         var updatedFormulaArray = new ArrayList<>();
         for (int i = 0; i < updatedFormulaList.size(); i++) {
-            log.info("Input formula: " + updatedFormulaList.get(i));
+            // log.info("Input formula: " + updatedFormulaList.get(i));
             if (!(updatedFormulaList.get(i).equals(new String("+")))
                 && !(updatedFormulaList.get(i).equals(new String("-")))) {
                 try {
@@ -167,7 +167,7 @@ public class CalculateDerivedValuesResponse {
             ArrayList<Object> updatedFormula = convertDerivedResponsesToBigDecimal((ArrayList<String>)inputArray.get(i).get("formulatorun"));
             inputArray.get(i).put("updatedformula", updatedFormula);
         }
-        log.info("Conversion to Big Decimal: " + inputArray.toString());
+        // log.info("Conversion to Big Decimal: " + inputArray.toString());
         return inputArray;
     }
 
@@ -180,7 +180,7 @@ public class CalculateDerivedValuesResponse {
             for (int i = 0; i < calcFormulaArray.size(); i++) {
                 @SuppressWarnings("unchecked")
                 var calculateFormulaList = (ArrayList<Object>)calcFormulaArray.get(i).get("updatedformula");
-                log.info("Calculate Formula List:" + calculateFormulaList.toString());
+                // log.info("Calculate Formula List:" + calculateFormulaList.toString());
                 BigDecimal formulaResult = new BigDecimal(0);
                 for (int j = 0; j < calculateFormulaList.size(); j += 2) {
                     if (j == 0) {
@@ -190,23 +190,23 @@ public class CalculateDerivedValuesResponse {
                         if (calculateFormulaList.get(j - 1).equals(new String("+"))) {
                             BigDecimal addBigDecimalNumber = new BigDecimal(0);
                             addBigDecimalNumber = (BigDecimal)calculateFormulaList.get(j);
-                            log.info("Add bd number:" + addBigDecimalNumber.toString());
+                            // log.info("Add bd number:" + addBigDecimalNumber.toString());
                             formulaResult = formulaResult.add(addBigDecimalNumber);
                         } else if (calculateFormulaList.get(j - 1).equals(new String("-"))) {
                             BigDecimal subtractBigDecimalNumber = new BigDecimal(0);
                             subtractBigDecimalNumber = (BigDecimal)calculateFormulaList.get(j);
-                            log.info("Subtract bd number:" + subtractBigDecimalNumber.toString());
+                            // log.info("Subtract bd number:" + subtractBigDecimalNumber.toString());
                             formulaResult = formulaResult.subtract(subtractBigDecimalNumber);
                         }
                     }
                 }
                 calcFormulaArray.get(i).put("result", formulaResult);
-                log.info("Result of calculation:" + formulaResult.toString()); 
+                // log.info("Result of calculation:" + formulaResult.toString()); 
             }
         } catch (Exception err) {
             throw new FormulaCalculationException("Error Evaluating formula:", err);
         }
-        log.info("Calc formula array: " + calcFormulaArray.toString());
+        // log.info("Calc formula array: " + calcFormulaArray.toString());
         return calcFormulaArray;
     }
 
@@ -224,7 +224,7 @@ public class CalculateDerivedValuesResponse {
             updatedResponseArray.put(updatedResponsesObject);
         }
         JSONObject updatedDerivedResponses = new JSONObject().put("responses", updatedResponseArray);
-        log.info("Updated Derived Question Responses: " + updatedDerivedResponses.toString());
+        // log.info("Updated Derived Question Responses: " + updatedDerivedResponses.toString());
         return updatedDerivedResponses;
     }
 }
