@@ -44,7 +44,10 @@ public class DataPrepConfig {
     }
 
     private JSONObject loadContributorResponseConfig(List<String> idbrPeriods) throws InvalidJsonException {
-        var respConfig = new ContributorConfig(this.reference, idbrPeriods, this.survey, this.service).load();
+        var responses = new ContributorConfigQuery(this.reference, idbrPeriods, this.survey, this.service).load();
+        // log.info("ContributorConfigQuery-responses :: " + responses);
+        var respConfig = new ContributorConfig(responses).getContributorConfig();
+        // log.info("respConfig :: " + respConfig);
         return new JSONObject(respConfig);
     }
 

@@ -2,9 +2,6 @@ package uk.gov.ons.collection.entity;
 
 import lombok.extern.log4j.Log4j2;
 import uk.gov.ons.collection.exception.InvalidJsonException;
-import uk.gov.ons.collection.service.ServiceInterface;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -18,54 +15,21 @@ import org.json.JSONObject;
 */
 public class ContributorConfig {
 
-    private final ServiceInterface service;
-    private final String reference;
-    private final List<String> periods;
-    private final String survey;
+    private final List<String> responses;
 
-    private final String loadQuery = "query contributordetails($period: String!, $reference: String!, $survey: String!)" +
-            "{ contributorByReferenceAndPeriodAndSurvey(reference: $reference, period: $period, survey: $survey) " +
-                "{reference period survey surveyBySurvey {periodicity} " +
-                "formid status receiptdate lockedby lockeddate checkletter frozensicoutdated rusicoutdated frozensic " +
-                "rusic frozenemployees employees frozenemployment employment frozenfteemployment fteemployment frozenturnover " +
-                "turnover enterprisereference wowenterprisereference cellnumber currency vatreference payereference " +
-                "companyregistrationnumber numberlivelocalunits numberlivevat numberlivepaye legalstatus " +
-                "reportingunitmarker region birthdate tradingstyle contact telephone fax selectiontype inclusionexclusion " +
-                "createdby createddate lastupdatedby lastupdateddate " +
-                "formByFormid {survey formdefinitionsByFormid {nodes {questioncode type}}}" +
-                "responsesByReferenceAndPeriodAndSurvey {nodes {reference period survey instance questioncode response }}}}";
-
-    public ContributorConfig(String reference, List<String> idbrPeriods, String survey, ServiceInterface service) {
-        this.reference = reference;
-        this.periods = idbrPeriods;
-        this.survey = survey;
-        this.service = service;
+    public ContributorConfig(List<String> responses) {
+        this.responses = responses;
     }
 
-    private String buildLoadQuery(String period) {
-        return "{\"query\": \"" + this.loadQuery + "\",\"variables\": {"
-            + "\"reference\": \"" + reference
-            + "\",\"period\": \"" + period
-            + "\",\"survey\": \"" + survey + "\"}}";
-    }
-
-    public String load() throws InvalidJsonException {
-
-        var configResponses = new ArrayList<String>();
-        for (int i = 0; i < periods.size(); i++) {
-            var period = periods.get(i);
-            var response = service.runQuery(this.buildLoadQuery(period));
-            configResponses.add(response);
-        }
-
+    public String getContributorConfig() throws InvalidJsonException {
         try {
-            return parseJsonResponses(configResponses);
+            return parseJsonResponses(responses);
         } catch (JSONException e) {
-            log.info("Error parsing contributor config JSON: " + configResponses);
-            throw new InvalidJsonException("Error processing responses within contributor json: " + configResponses, e);
+            log.info("Error parsing contributor config JSON: " + responses);
+            throw new InvalidJsonException("Error processing responses within contributor json: " + responses, e);
         } catch (NullPointerException e) {
-            log.info("Error parsing contributor config JSON: " + configResponses);
-            throw new InvalidJsonException("Error processing responses within contributor json: " + configResponses, e);
+            log.info("Error parsing contributor config JSON: " + responses);
+            throw new InvalidJsonException("Error processing responses within contributor json: " + responses, e);
         }
     }
 
@@ -79,7 +43,6 @@ public class ContributorConfig {
         var forms = new JSONArray();
 
         for (String config : jsonList) {
-
             var contributor = new JSONObject(config).getJSONObject("data").optJSONObject("contributorByReferenceAndPeriodAndSurvey");
 
             // A contributor may not have been selected for the given period. Skip if they don't exist
@@ -95,7 +58,7 @@ public class ContributorConfig {
             // Extract the form definition and add in any desired attributes (some flattening of the structure)
             var formArray = contributor.getJSONObject("formByFormid").getJSONObject("formdefinitionsByFormid").getJSONArray("nodes");
             for (int j = 0; j < formArray.length(); j++) {
-                formArray.getJSONObject(j).put("survey",survey)
+                formArray.getJSONObject(j).put("survey",contributor.getString("survey"))
                                           .put("period",contributor.getString("period"));
                 forms.put(formArray.getJSONObject(j));
             }
@@ -105,7 +68,6 @@ public class ContributorConfig {
             contributor.remove("responsesByReferenceAndPeriodAndSurvey");
             contributor.remove("formByFormid");
             contributors.put(contributor);
-
         }
 
         var parsedConfig = new JSONObject().put("contributor",contributors)
