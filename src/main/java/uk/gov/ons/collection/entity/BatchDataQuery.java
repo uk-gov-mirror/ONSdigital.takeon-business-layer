@@ -38,15 +38,11 @@ public class BatchDataQuery {
     }
 
     // Gets reference, period, survey from the input Key
-    private String getReferencePeriodAndSurvey() throws InvalidJsonException {
+    private String getReferencePeriodAndSurvey() {
         StringJoiner joiner = new StringJoiner(",");
-        try {
-            joiner.add("reference: \\\"" + inputKey.getString("reference") + "\\\"");
-            joiner.add("period: \\\""    + inputKey.getString("period")    + "\\\"");
-            joiner.add("survey: \\\""    + inputKey.getString("survey")    + "\\\"");
-        } catch (JSONException e) {
-            throw new InvalidJsonException("Can't build Query for checking if reference/period/survey exists for Batch ingest of data: " + inputKey, e);
-        }
+        joiner.add("reference: \\\"" + inputKey.getString("reference") + "\\\"");
+        joiner.add("period: \\\""    + inputKey.getString("period")    + "\\\"");
+        joiner.add("survey: \\\""    + inputKey.getString("survey")    + "\\\"");
         return joiner.toString();
     }
 }
