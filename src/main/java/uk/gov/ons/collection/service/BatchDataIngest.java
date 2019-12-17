@@ -28,7 +28,7 @@ public class BatchDataIngest {
     private static final String REFERENCE = "reference";
     private static final String PERIOD = "period";
     private static final String SURVEY = "survey";
-    private static final String  TAKEON_SUCCESSFUL = "TakeOn Successful";
+    private static final String TAKEON_SUCCESSFUL = "TakeOn Successful";
     private static final String BATCH_DATA = "batch_data";
 
 
