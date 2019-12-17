@@ -23,22 +23,30 @@ public class BatchDataQuery {
         }
     }
 
-    public String buildCheckReferenceExistsQuery() {
+    public String buildCheckReferenceExistsQuery() throws InvalidJsonException {
         StringBuilder referenceQuery = new StringBuilder();
-        referenceQuery.append("{\"query\":\"query contributorExists {");
-        referenceQuery.append("allContributors(condition: {");
-        referenceQuery.append(getReferencePeriodAndSurvey());
-        referenceQuery.append("}){nodes {reference period survey}}}\"}");
-        log.info("Output of checking reference exists for batch data query {}", referenceQuery.toString());
+        try {
+            referenceQuery.append("{\"query\":\"query contributorExists {");
+            referenceQuery.append("allContributors(condition: {");
+            referenceQuery.append(getReferencePeriodAndSurvey());
+            referenceQuery.append("}){nodes {reference period survey}}}\"}");
+            log.info("Output of checking reference exists for batch data query {}", referenceQuery.toString());
+        } catch (JSONException e) {
+            throw new InvalidJsonException("Can't build Query for checking if reference/period/survey exists for Batch ingest of data: " + inputKey, e);
+        }
         return referenceQuery.toString();
     }
 
     // Gets reference, period, survey from the input Key
-    private String getReferencePeriodAndSurvey() {
+    private String getReferencePeriodAndSurvey() throws InvalidJsonException {
         StringJoiner joiner = new StringJoiner(",");
-        joiner.add("reference: \\\"" + inputKey.getString("reference") + "\\\"");
-        joiner.add("period: \\\""    + inputKey.getString("period")    + "\\\"");
-        joiner.add("survey: \\\""    + inputKey.getString("survey")    + "\\\"");
+        try {
+            joiner.add("reference: \\\"" + inputKey.getString("reference") + "\\\"");
+            joiner.add("period: \\\""    + inputKey.getString("period")    + "\\\"");
+            joiner.add("survey: \\\""    + inputKey.getString("survey")    + "\\\"");
+        } catch (JSONException e) {
+            throw new InvalidJsonException("Can't build Query for checking if reference/period/survey exists for Batch ingest of data: " + inputKey, e);
+        }
         return joiner.toString();
     }
 }

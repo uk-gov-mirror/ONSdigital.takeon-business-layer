@@ -21,6 +21,16 @@ public class BatchDataIngest {
     private JSONArray referenceArray;
     private static final String BUSINESS_SERVICE_PORT = "8088";
     private static final String PROTOCOL = "http://";
+    private static final String OUTCOME = "outcome";
+    private static final String FAILURE = "Failure";
+    private static final String CONTRIBUTOR_ERROR = "Contributor doesn't exist in database ";
+    private static final String ERROR = "error";
+    private static final String REFERENCE = "reference";
+    private static final String PERIOD = "period";
+    private static final String SURVEY = "survey";
+    private static final String  TAKEON_SUCCESSFUL = "TakeOn Successful";
+    private static final String BATCH_DATA = "batch_data";
+
 
     public BatchDataIngest() {
 
@@ -29,11 +39,10 @@ public class BatchDataIngest {
     public BatchDataIngest(String batchResponses, GraphQlService qlGraphService) throws InvalidJsonException {
 
         JSONObject inputJson;
+        qlService = qlGraphService;
         try {
             inputJson = new JSONObject(batchResponses);
-            referenceArray = inputJson.getJSONArray("batch_data");
-            qlService = qlGraphService;
-
+            referenceArray = inputJson.getJSONArray(BATCH_DATA);
             log.info("Reference Array:" + referenceArray);
         } catch (JSONException excep) {
             log.error("Batch responses are not valid JSON" + excep);
@@ -51,39 +60,23 @@ public class BatchDataIngest {
             try {
 
                 JSONObject individualObject = referenceArray.getJSONObject(i);
-                String reference = individualObject.getString("reference");
-                String period = individualObject.getString("period");
-                String survey = individualObject.getString("survey");
-                variables.put("reference", reference);
-                variables.put("period", period);
-                variables.put("survey", survey);
-                outcomeObject.put("reference", reference);
-                outcomeObject.put("period", period);
-                outcomeObject.put("survey", survey);
+                String reference = individualObject.getString(REFERENCE);
+                String period = individualObject.getString(PERIOD);
+                String survey = individualObject.getString(SURVEY);
+                variables.put(REFERENCE, reference);
+                variables.put(PERIOD, period);
+                variables.put(SURVEY, survey);
+                outcomeObject.put(REFERENCE, reference);
+                outcomeObject.put(PERIOD, period);
+                outcomeObject.put(SURVEY, survey);
                 referenceExistsResponse = qlService
                             .qlSearch(new BatchDataQuery(variables).buildCheckReferenceExistsQuery());
-                log.info("Reference exists response:" + referenceExistsResponse);
-                if (isContributorEmpty(referenceExistsResponse)) {
-                    StringBuilder sbContribError = new StringBuilder("Contributor doesn't exist in database ");
-                    sbContribError.append("Reference ").append(reference).append(" Period ").append(period)
-                                .append(" Survey ").append(survey);
-                    log.info(sbContribError.toString());
-                    outcomeObject.put("outcome", "Failure");
-                    outcomeObject.put("error", sbContribError.toString());
-                } else {
-                    //Call to Save Responses
-                    invokeSaveResponsesRequest(individualObject);
-                    // Call to Update the Form Status
-                    invokeFormUpdate(individualObject.toString());
-                    // Finally call to calculate derived values
-                    invokeDerivedFormulaCalculationRequest(individualObject);
-                    outcomeObject.put("outcome", "TakeOn Successful");
-                }
+                buildOutcomeJson(referenceExistsResponse, outcomeObject, individualObject);
 
             } catch (Exception e) {
                 log.error("Can't process Batch data responses: " + e);
-                outcomeObject.put("outcome", "Failure");
-                outcomeObject.put("error", e.getMessage());
+                outcomeObject.put(OUTCOME, FAILURE);
+                outcomeObject.put(ERROR, e.getMessage());
                 e.printStackTrace();
             }
             outcomesArray.put(outcomeObject);
@@ -91,6 +84,26 @@ public class BatchDataIngest {
         }
 
         log.info("Outcomes Array object " + outcomesArray.toString());
+
+    }
+
+
+    private void buildOutcomeJson(String referenceExistsResponse, JSONObject outcomeObject, JSONObject individualObject)
+            throws Exception {
+
+        log.info("Reference exists response:" + referenceExistsResponse);
+        if (isContributorEmpty(referenceExistsResponse)) {
+            outcomeObject.put(OUTCOME, FAILURE);
+            outcomeObject.put(ERROR, CONTRIBUTOR_ERROR);
+        } else {
+            //Call to Save Responses
+            invokeSaveResponsesRequest(individualObject);
+            // Call to Update the Form Status
+            invokeFormUpdate(individualObject.toString());
+            // Finally call to calculate derived values
+            invokeDerivedFormulaCalculationRequest(individualObject);
+            outcomeObject.put(OUTCOME, TAKEON_SUCCESSFUL);
+        }
 
     }
 
@@ -110,11 +123,9 @@ public class BatchDataIngest {
 
 
     public boolean isContributorEmpty(String referenceExistsResponse) throws InvalidJsonException {
-
-        JSONObject referenceExistsObject;
         JSONArray checkArray;
         try {
-            referenceExistsObject = new JSONObject(referenceExistsResponse);
+            JSONObject referenceExistsObject = new JSONObject(referenceExistsResponse);
             checkArray = referenceExistsObject.getJSONObject("data")
                     .getJSONObject("allContributors").getJSONArray("nodes");
         } catch (JSONException e) {
