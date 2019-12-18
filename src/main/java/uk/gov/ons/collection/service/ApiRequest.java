@@ -19,6 +19,7 @@ public class ApiRequest {
     private String data;
     CloseableHttpClient httpClient;
     int statusCode;
+    private static final int STATUS_OK = 200;
 
     public ApiRequest(String url) {
         this.url = url;
@@ -38,6 +39,9 @@ public class ApiRequest {
             request.setEntity(params);
             HttpResponse httpResp = httpClient.execute(request);
             statusCode = httpResp.getStatusLine().getStatusCode();
+            if (statusCode != STATUS_OK) {
+                throw new IOException("Exception in calling Save Response");
+            }
             log.info("HTTP Status Code: " + statusCode);
         } catch (Exception err) {
             log.error("Exception: " + err);
@@ -54,6 +58,9 @@ public class ApiRequest {
             HttpResponse httpResp = httpClient.execute(request);
             statusCode = httpResp.getStatusLine().getStatusCode();
             log.info("HTTP Status Code: " + statusCode);
+            if (statusCode != STATUS_OK) {
+                throw new IOException("Exception in calling Derived Save Response");
+            }
         } catch (Exception err) {
             log.error("Exception: " + err);
             throw new ApiRequestException("Error with request, HTTP Status code:" + statusCode);
