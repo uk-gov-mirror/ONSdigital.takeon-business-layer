@@ -30,6 +30,8 @@ public class BatchDataIngest {
     private static final String SURVEY = "survey";
     private static final String TAKEON_SUCCESSFUL = "TakeOn Successful";
     private static final String BATCH_DATA = "batch_data";
+    private static final String FORM_SENT_OUT = "Form Sent Out";
+    private static final String DUPLICATE_RECORD_ERROR = "Duplicate Record";
 
 
     public BatchDataIngest() {
@@ -90,19 +92,29 @@ public class BatchDataIngest {
 
     private void buildOutcomeJson(String referenceExistsResponse, JSONObject outcomeObject, JSONObject individualObject)
             throws Exception {
-
         log.info("Reference exists response:" + referenceExistsResponse);
-        if (isContributorEmpty(referenceExistsResponse)) {
+        JSONArray contributorArray = getContributorArray(referenceExistsResponse);
+        if (contributorArray != null && contributorArray.isEmpty()) {
             outcomeObject.put(OUTCOME, FAILURE);
             outcomeObject.put(ERROR, CONTRIBUTOR_ERROR);
         } else {
-            //Call to Save Responses
-            invokeSaveResponsesRequest(individualObject);
-            // Call to Update the Form Status
-            invokeFormUpdate(individualObject.toString());
-            // Finally call to calculate derived values
-            invokeDerivedFormulaCalculationRequest(individualObject);
-            outcomeObject.put(OUTCOME, TAKEON_SUCCESSFUL);
+            //Retrieve the Contributor Status
+            String contributorStatus = getContributorStatus(contributorArray);
+            log.info("Contributor Status {}", contributorStatus);
+            if(!contributorStatus.equals(FORM_SENT_OUT)) {
+                outcomeObject.put(OUTCOME, FAILURE);
+                outcomeObject.put(ERROR, DUPLICATE_RECORD_ERROR);
+            } else {
+                //Call to Save Responses
+                invokeSaveResponsesRequest(individualObject);
+                // Call to Update the Form Status
+                invokeFormUpdate(individualObject.toString());
+                // Finally call to calculate derived values
+                invokeDerivedFormulaCalculationRequest(individualObject);
+                outcomeObject.put(OUTCOME, TAKEON_SUCCESSFUL);
+
+            }
+
         }
 
     }
@@ -166,6 +178,35 @@ public class BatchDataIngest {
         ApiRequest derivedRequest = new ApiRequest(derivedUrl.toString());
         log.info("Request Url: " + derivedUrl.toString());
         derivedRequest.apiPostParameters();
+    }
+
+    public JSONArray getContributorArray(String referenceExistsResponse) throws InvalidJsonException {
+
+        JSONArray contributorArray;
+        try {
+            JSONObject referenceExistsObject = new JSONObject(referenceExistsResponse);
+            contributorArray = referenceExistsObject.getJSONObject("data")
+                    .getJSONObject("allContributors").getJSONArray("nodes");
+        } catch (JSONException e) {
+            log.error("Invalid JSON from contributor exists query response " + e);
+            throw new InvalidJsonException("Invalid JSON from contributor exists query response: " + referenceExistsResponse, e);
+        }
+        return contributorArray;
+    }
+
+    public String getContributorStatus(JSONArray contributorArray) throws InvalidJsonException {
+
+        String contributorStatus = "";
+        JSONObject referenceExistsObject;
+        try {
+            referenceExistsObject = contributorArray.getJSONObject(0);
+            contributorStatus = referenceExistsObject.getString("status");
+        } catch (JSONException e) {
+            log.error("Invalid JSON from contributor query response " + e);
+            throw new InvalidJsonException("Invalid JSON from contributor query response: ", e);
+        }
+
+        return  contributorStatus;
     }
 
 
