@@ -10,8 +10,8 @@ import org.json.JSONObject;
 
 @Log4j2
 /**
- * This class is responsible for constructing valid graphQL JSON queries to obtain contributor configuration data.
- * It provides the configuration for a single contributor (reference|period|survey)
+ * This class is responsible for accepting graphQL JSON query responses and parsing/providing
+ * the configuration for a single contributor (reference|period|survey) in a suitable format
 */
 public class ContributorConfig {
 
@@ -36,7 +36,7 @@ public class ContributorConfig {
     // We now have an array of configuration JSON responses. Each contains form responses, the form definition and the contributor details
     // We restructure this to simplify the format
     // All exceptions are passed back up to the calling method
-    private String parseJsonResponses(List<String> jsonList) {
+    private String parseJsonResponses(List<String> jsonList) throws InvalidJsonException {
 
         var responses = new JSONArray();
         var contributors = new JSONArray();
@@ -57,6 +57,10 @@ public class ContributorConfig {
 
             // Extract the form definition and add in any desired attributes (some flattening of the structure)
             var formArray = contributor.getJSONObject("formByFormid").getJSONObject("formdefinitionsByFormid").getJSONArray("nodes");
+            if (formArray.isEmpty()) {
+                throw new InvalidJsonException("Form defininition has no responses: " + config);
+            }
+
             for (int j = 0; j < formArray.length(); j++) {
                 formArray.getJSONObject(j).put("survey",contributor.getString("survey"))
                                           .put("period",contributor.getString("period"));
@@ -70,6 +74,9 @@ public class ContributorConfig {
             contributors.put(contributor);
         }
 
+        if (contributors.isEmpty()) {
+            throw new InvalidJsonException("Error processing responses within contributor json: " + jsonList);
+        }
         var parsedConfig = new JSONObject().put("contributor",contributors)
                                            .put("response",responses)
                                            .put("question_schema",forms);
