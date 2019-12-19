@@ -32,18 +32,18 @@ public class Contributor {
     }
 
     private String buildUpdateQuery(String statusText) {
-        var updateQuery = new StringBuilder();
-        updateQuery.append("{\"query\": \"" + this.updateQuery);
-        updateQuery.append("\",\"variables\": {");
-        updateQuery.append("\"reference\": \"" + reference + "\",\"period\": \"" + period + "\",");
-        updateQuery.append("\"survey\": \"" + survey + "\",\"status\": \"" + statusText + "\"}}");
-        return updateQuery.toString();
+        return "{\"query\": \"" + this.updateQuery + "\",\"variables\": {" +
+            "\"reference\": \"" + reference + "\"," +
+            "\"period\": \"" + period + "\"," +
+            "\"survey\": \"" + survey + "\"," +
+            "\"status\": \"" + statusText + "\"}}";
     }
 
     private String buildLoadSingleQuery() {
-        String query = "{\"query\": \"" + this.loadSingleQuery + "\",\"variables\": {" + "\"reference\": \"" + reference
-            + "\",\"period\": \"" + period + "\"," + "\"survey\": \"" + survey + "\"}}";
-        return query;
+        return "{\"query\": \"" + this.loadSingleQuery + "\",\"variables\": {" +
+            "\"reference\": \"" + reference + "\"," +
+            "\"period\": \"" + period + "\"," +
+            "\"survey\": \"" + survey + "\"}}";
     }
 
     public void updateStatus(String statusText) {
