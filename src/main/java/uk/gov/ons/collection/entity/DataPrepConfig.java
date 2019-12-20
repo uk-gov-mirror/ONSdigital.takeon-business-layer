@@ -37,8 +37,8 @@ public class DataPrepConfig {
     }
 
     private void loadFormIdAndPeriodicity() throws InvalidJsonException {
-        var currentContributor = new Contributor(reference, period, survey, service);
-        currentContributor.load();
+        var currentContributorResponse = new ContributorQuery(reference, period, survey, service).load();
+        var currentContributor = new Contributor(currentContributorResponse);
         this.formId = currentContributor.getFormId();
         this.periodicity = currentContributor.getSurveyPeriodicity();
     }
