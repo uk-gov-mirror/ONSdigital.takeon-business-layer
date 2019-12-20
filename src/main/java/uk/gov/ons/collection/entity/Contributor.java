@@ -1,6 +1,5 @@
 package uk.gov.ons.collection.entity;
 
-import lombok.extern.log4j.Log4j2;
 import uk.gov.ons.collection.exception.InvalidJsonException;
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -36,10 +36,10 @@ public class ContributorConfigQuery {
     }
 
     private String buildLoadQuery(String period) {
-        return "{\"query\": \"" + this.loadQuery + "\",\"variables\": {"
-            + "\"reference\": \"" + reference
-            + "\",\"period\": \"" + period
-            + "\",\"survey\": \"" + survey + "\"}}";
+        return "{\"query\": \"" + this.loadQuery + "\",\"variables\": {" +
+            "\"reference\": \"" + reference + "\"," +
+            "\"period\": \"" + period + "\"," +
+            "\"survey\": \"" + survey + "\"}}";
     }
 
     public List<String> load() throws InvalidJsonException {
