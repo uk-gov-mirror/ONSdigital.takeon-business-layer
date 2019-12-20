@@ -105,6 +105,7 @@ public class BatchDataIngest {
                 outcomeObject.put(OUTCOME, FAILURE);
                 outcomeObject.put(ERROR, DUPLICATE_RECORD_ERROR);
             } else {
+                //Perform Form Tpe Error Checks here
                 //Call to Save Responses
                 invokeSaveResponsesRequest(individualObject);
                 // Call to Update the Form Status
