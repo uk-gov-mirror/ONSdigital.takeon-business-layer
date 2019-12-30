@@ -29,7 +29,12 @@ public class BatchDataQuery {
             referenceQuery.append("{\"query\":\"query contributorExists {");
             referenceQuery.append("allContributors(condition: {");
             referenceQuery.append(getReferencePeriodAndSurvey());
-            referenceQuery.append("}){nodes {reference period survey status}}}\"}");
+            referenceQuery.append("}){nodes {reference period survey status formid ");
+            referenceQuery.append("formByFormid { formdefinitionsByFormid(condition: {");
+            referenceQuery.append("derivedformula: \\\"");
+            referenceQuery.append(inputKey.getString("derivedformula") + "\\\"");
+            referenceQuery.append("}){nodes {questioncode}}}");
+            referenceQuery.append("}}}\"}");
             log.info("Output of checking reference exists for batch data query {}", referenceQuery.toString());
         } catch (JSONException e) {
             throw new InvalidJsonException("Can't build Query for checking if reference/period/survey exists for Batch ingest of data: " + inputKey, e);

@@ -11,6 +11,10 @@ import uk.gov.ons.collection.utilities.UpsertResponse;
 
 import java.net.InetAddress;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 
 
 @Log4j2
@@ -28,6 +32,7 @@ public class BatchDataIngest {
     private static final String REFERENCE = "reference";
     private static final String PERIOD = "period";
     private static final String SURVEY = "survey";
+    private static final String DERIVED_FORMULA = "derivedformula";
     private static final String TAKEON_SUCCESSFUL = "TakeOn Successful";
     private static final String BATCH_DATA = "batch_data";
     private static final String FORM_SENT_OUT = "Form Sent Out";
@@ -68,6 +73,7 @@ public class BatchDataIngest {
                 variables.put(REFERENCE, reference);
                 variables.put(PERIOD, period);
                 variables.put(SURVEY, survey);
+                variables.put(DERIVED_FORMULA, "");
                 outcomeObject.put(REFERENCE, reference);
                 outcomeObject.put(PERIOD, period);
                 outcomeObject.put(SURVEY, survey);
@@ -94,6 +100,8 @@ public class BatchDataIngest {
             throws Exception {
         log.info("Reference exists response:" + referenceExistsResponse);
         JSONArray contributorArray = getContributorArray(referenceExistsResponse);
+        JSONArray errorArray = new JSONArray();
+        var errorJsonObject = new JSONObject();
         if (contributorArray != null && contributorArray.isEmpty()) {
             outcomeObject.put(OUTCOME, FAILURE);
             outcomeObject.put(ERROR, CONTRIBUTOR_ERROR);
@@ -106,6 +114,7 @@ public class BatchDataIngest {
                 outcomeObject.put(ERROR, DUPLICATE_RECORD_ERROR);
             } else {
                 //Perform Form Tpe Error Checks here
+
                 //Call to Save Responses
                 invokeSaveResponsesRequest(individualObject);
                 // Call to Update the Form Status
@@ -209,6 +218,73 @@ public class BatchDataIngest {
 
         return  contributorStatus;
     }
+
+    public List<String> getQuestionListFromFormDefinitionArray(String referenceExistsResponse) throws InvalidJsonException {
+
+        JSONArray formDefinitionArray;
+        List<String> questionCodeList = new ArrayList<String>();
+        try {
+            JSONObject referenceExistsObject = new JSONObject(referenceExistsResponse);
+            formDefinitionArray = referenceExistsObject.getJSONObject("data")
+                    .getJSONObject("allContributors").getJSONArray("nodes").getJSONObject(0)
+                    .getJSONObject("formByFormid").getJSONObject("formdefinitionsByFormid").getJSONArray("nodes");
+            for(int i = 0; i < formDefinitionArray.length(); i++) {
+                questionCodeList.add(formDefinitionArray.getJSONObject(i).getString("questioncode"));
+            }
+
+        } catch (JSONException e) {
+            log.error("Invalid JSON from contributor formdefinition response " + e);
+            throw new InvalidJsonException("Invalid JSON from contributor formdefinition query response: " + referenceExistsResponse, e);
+        }
+        return questionCodeList;
+    }
+
+    public List<String> getQuestionListFromInputJsonArray(JSONObject responseJsonObject) throws InvalidJsonException {
+
+        List<String> questionCodeList = new ArrayList<String>();
+
+        try {
+            JSONArray responsesArray = responseJsonObject.getJSONArray("responses");
+
+            for(int i = 0; i < responsesArray.length() ; i++) {
+                questionCodeList.add(responsesArray.getJSONObject(i).getString("questioncode"));
+            }
+
+        } catch (JSONException e) {
+            log.error("Invalid JSON from contributor formdefinition response " + e);
+            throw new InvalidJsonException("Invalid JSON from contributor formdefinition query response: " + responseJsonObject.toString(), e);
+        }
+
+
+        return questionCodeList;
+    }
+
+    public List<String> getErrorList(List<String> listArray1, List<String> listArray2) {
+        List<String> errorList = new ArrayList<String>();
+        for (String element: listArray2) {         // go through all in second list
+            if (! listArray1.contains(element)) {  // if string not in master list
+                errorList.add(element);
+            }
+        }
+        return errorList;
+    }
+
+    public List<String> getDuplicateErrorList(List<String> jsonList) {
+
+        Set<String> uniqueList = new HashSet<String>();
+        List<String> duplicateList = new ArrayList<String>();
+
+        for(String questionCode : jsonList) {
+            if(uniqueList.add(questionCode) == false) {
+                log.info("The following question code is duplicated" + questionCode);
+                duplicateList.add(questionCode);
+            }
+        }
+
+        return duplicateList;
+
+    }
+
 
 
 }
