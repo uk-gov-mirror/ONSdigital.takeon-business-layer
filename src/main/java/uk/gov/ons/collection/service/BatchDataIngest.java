@@ -29,6 +29,7 @@ public class BatchDataIngest {
     private static final String FAILURE = "Failure";
     private static final String CONTRIBUTOR_ERROR = "Contributor doesn't exist in database ";
     private static final String ERROR = "error";
+    private static final String ERRORS = "errors";
     private static final String REFERENCE = "reference";
     private static final String PERIOD = "period";
     private static final String SURVEY = "survey";
@@ -101,27 +102,59 @@ public class BatchDataIngest {
         log.info("Reference exists response:" + referenceExistsResponse);
         JSONArray contributorArray = getContributorArray(referenceExistsResponse);
         JSONArray errorArray = new JSONArray();
-        var errorJsonObject = new JSONObject();
+
         if (contributorArray != null && contributorArray.isEmpty()) {
             outcomeObject.put(OUTCOME, FAILURE);
-            outcomeObject.put(ERROR, CONTRIBUTOR_ERROR);
+            JSONObject errorJsonObject = new JSONObject().put(ERROR, CONTRIBUTOR_ERROR);
+            errorArray.put(errorJsonObject);
+            outcomeObject.put(ERRORS, errorArray);
+            //outcomeObject.put(ERROR, CONTRIBUTOR_ERROR);
         } else {
             //Retrieve the Contributor Status
             String contributorStatus = getContributorStatus(contributorArray);
             log.info("Contributor Status {}", contributorStatus);
             if(!contributorStatus.equals(FORM_SENT_OUT)) {
                 outcomeObject.put(OUTCOME, FAILURE);
-                outcomeObject.put(ERROR, DUPLICATE_RECORD_ERROR);
+                //Adding
+                JSONObject errorJsonObject = new JSONObject().put(ERROR, DUPLICATE_RECORD_ERROR);
+                errorArray.put(errorJsonObject);
+                outcomeObject.put(ERRORS, errorArray);
+                //End
+                //outcomeObject.put(ERROR, DUPLICATE_RECORD_ERROR);
             } else {
                 //Perform Form Tpe Error Checks here
 
-                //Call to Save Responses
-                invokeSaveResponsesRequest(individualObject);
-                // Call to Update the Form Status
-                invokeFormUpdate(individualObject.toString());
-                // Finally call to calculate derived values
-                invokeDerivedFormulaCalculationRequest(individualObject);
-                outcomeObject.put(OUTCOME, TAKEON_SUCCESSFUL);
+                //Testing 1
+                List<String> list1 = getQuestionListFromFormDefinitionArray(referenceExistsResponse);
+
+                //Testing 2
+                List<String> list2 = getQuestionListFromInputJsonArray(individualObject);
+
+                //Testing 3 Comparison FormDefinition as Master
+                List<String> list3 = getErrorList(list1, list2, errorArray, false);
+
+                //Testing 4 Comparison Input JSON as Master
+                List<String> list4 = getErrorList(list2, list1, errorArray, true);
+
+                //Testing 5 Comparison Duplicate elements in JSON
+                List<String> list5 = getDuplicateErrorList(list2, errorArray);
+
+                if(list3.isEmpty() && list4.isEmpty() && list5.isEmpty()) {
+                    //Call to Save Responses
+                    invokeSaveResponsesRequest(individualObject);
+                    // Call to Update the Form Status
+                    invokeFormUpdate(individualObject.toString());
+                    // Finally call to calculate derived values
+                    invokeDerivedFormulaCalculationRequest(individualObject);
+                    outcomeObject.put(OUTCOME, TAKEON_SUCCESSFUL);
+
+                } else {
+                    //Process Errors JSON Array
+                    outcomeObject.put(OUTCOME, FAILURE);
+                    outcomeObject.put(ERRORS, errorArray);
+
+                }
+
 
             }
 
@@ -236,6 +269,8 @@ public class BatchDataIngest {
             log.error("Invalid JSON from contributor formdefinition response " + e);
             throw new InvalidJsonException("Invalid JSON from contributor formdefinition query response: " + referenceExistsResponse, e);
         }
+
+        log.info("Question List from FormDefinition Database Table "+ questionCodeList.toString());
         return questionCodeList;
     }
 
@@ -255,28 +290,47 @@ public class BatchDataIngest {
             throw new InvalidJsonException("Invalid JSON from contributor formdefinition query response: " + responseJsonObject.toString(), e);
         }
 
+        log.info("Question List from Input Json Array "+questionCodeList.toString());
 
         return questionCodeList;
     }
 
-    public List<String> getErrorList(List<String> listArray1, List<String> listArray2) {
+    public List<String> getErrorList(List<String> listArray1, List<String> listArray2, JSONArray errorArray, boolean isMasterInputJson) {
         List<String> errorList = new ArrayList<String>();
         for (String element: listArray2) {         // go through all in second list
             if (! listArray1.contains(element)) {  // if string not in master list
+                StringBuilder sbError = new StringBuilder("The Question Code ");
+                sbError.append(element);
+                sbError.append(" Exists in ");
+                sbError = isMasterInputJson ? sbError.append("FormDefinition") : sbError.append("Input Json");
+                sbError.append(" and Missing from ");
+                sbError = isMasterInputJson ? sbError.append("Input Json") : sbError.append("FormDefinition");
+                JSONObject errorJsonObject = new JSONObject().put(ERROR, sbError.toString());
+                errorArray.put(errorJsonObject);
                 errorList.add(element);
             }
         }
+
+        log.info("Error List by comparing JSON and FormDefinition Table"+errorList.toString());
+        log.info("Error List by comparing JSON and FormDefinition Table Size of array "+errorList.size());
         return errorList;
     }
 
-    public List<String> getDuplicateErrorList(List<String> jsonList) {
+    public List<String> getDuplicateErrorList(List<String> jsonList, JSONArray errorArray) {
 
         Set<String> uniqueList = new HashSet<String>();
         List<String> duplicateList = new ArrayList<String>();
 
+
         for(String questionCode : jsonList) {
             if(uniqueList.add(questionCode) == false) {
                 log.info("The following question code is duplicated" + questionCode);
+                //Adding
+                StringBuilder sbError = new StringBuilder("The Question Code ");
+                sbError.append(questionCode);
+                sbError.append(" is duplicated in Input Json Batch Response");
+                JSONObject errorJsonObject = new JSONObject().put(ERROR, sbError.toString());
+                errorArray.put(errorJsonObject);
                 duplicateList.add(questionCode);
             }
         }
