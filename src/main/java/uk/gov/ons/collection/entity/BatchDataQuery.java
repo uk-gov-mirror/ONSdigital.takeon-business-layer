@@ -26,7 +26,7 @@ public class BatchDataQuery {
     public String buildCheckReferenceExistsQuery() throws InvalidJsonException {
         StringBuilder referenceQuery = new StringBuilder();
         try {
-            referenceQuery.append("{\"query\":\"query contributorExists {");
+            referenceQuery.append("{\"query\":\"query contributorformdefinition {");
             referenceQuery.append("allContributors(condition: {");
             referenceQuery.append(getReferencePeriodAndSurvey());
             referenceQuery.append("}){nodes {reference period survey status formid ");
