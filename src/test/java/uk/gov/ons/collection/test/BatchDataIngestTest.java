@@ -7,6 +7,10 @@ import uk.gov.ons.collection.service.GraphQlService;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.Arrays;
+import java.util.List;
+
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class BatchDataIngestTest {
@@ -102,4 +106,95 @@ public class BatchDataIngestTest {
             assertTrue(false);
         }
     }
+
+    @Test
+    void verify_DuplicateErrorList_Exists() {
+        BatchDataIngest batchData = new BatchDataIngest();
+        JSONArray errorArray = new JSONArray();
+        List<String> inputJsonList = Arrays.asList("1000", "1001", "1000");
+        List<String> errorList = batchData.getDuplicateErrorList(inputJsonList, errorArray);
+        assertFalse(errorList.isEmpty());
+        assertTrue(errorList.contains("1000"));
+        String expectedError = "[{\"error\":\"The Question Code 1000 is duplicated in Input Json Batch Response\"}]";
+        assertEquals(expectedError, errorArray.toString());
+
+    }
+
+    @Test
+    void verify_FormDefinition_InputJsonErrorList_Exists() {
+        BatchDataIngest batchData = new BatchDataIngest();
+        JSONArray errorArray = new JSONArray();
+        List<String> inputJsonList = Arrays.asList("1000", "1001");
+
+        List<String> formDefinitionList = Arrays.asList("1000", "1001", "2000");
+
+        List<String> errorList = batchData.getErrorList(inputJsonList, formDefinitionList, errorArray, true);
+        assertTrue(errorList.contains("2000"));
+
+    }
+
+    @Test
+    void verify_QuestionListFromInputJsonArray() {
+        BatchDataIngest batchData = new BatchDataIngest();
+        String responseStr = "{\n" +
+                "                'user': 'fisdba',\n" +
+                "                'reference': '12345679900', \n" +
+                "                'period': '201801', \n" +
+                "                'survey': '999A',\n" +
+                "                'responses': [\n" +
+                "                    {'questioncode': '1000', 'response': '2', 'instance': '0'},    \n" +
+                "                    {'questioncode': '1001', 'response': '3', 'instance': '0'}]\n" +
+                "            }";
+        JSONObject individualObject = new JSONObject(responseStr);
+        List<String> expectedInputJsonList = Arrays.asList("1000", "1001");
+
+        try {
+            List<String> questionCodeList = batchData.getQuestionListFromInputJsonArray(individualObject);
+            assertTrue(questionCodeList.equals(expectedInputJsonList));
+        } catch(Exception e) {
+            assertTrue(false);
+        }
+    }
+
+    @Test
+    void verify_QuestionListFromFormDefinition() {
+        BatchDataIngest batchData = new BatchDataIngest();
+        String referenceExistsResponse = "{\"data\":{\"allContributors\":{\"nodes\":[{\"reference\":\"12345678001\",\"period\":\"201801\",\"survey\":\"999A\",\"status\":\"Form Sent Out\",\"formid\":1,\"formByFormid\":{\"formdefinitionsByFormid\":{\"nodes\":[{\"questioncode\":\"1000\"},{\"questioncode\":\"1001\"},{\"questioncode\":\"2000\"},{\"questioncode\":\"3000\"}]}}}]}}}";
+        List<String> expectedQuestionCodeList = Arrays.asList("1000", "1001", "2000", "3000");
+        try {
+            List<String> questionCodeList = batchData.getQuestionListFromFormDefinitionArray(referenceExistsResponse);
+            assertTrue(questionCodeList.equals(expectedQuestionCodeList));
+        } catch(Exception e) {
+            assertTrue(false);
+        }
+    }
+
+    @Test
+    void verify_QuestionListFromFormDefinition__inValidJson_throwsException() {
+
+        String referenceExistsResponse = "{\"data\":{\"allContibutors\":{\"nodes\":[{\"reference\":\"12345678001\",\"period\":\"201801\",\"survey\":\"999A\",\"status\":\"Form Sent Out\",\"formid\":1,\"formByFormid\":{\"formdefinitionsByFormid\":{\"nodes\":[{\"questioncode\":\"1000\"},{\"questioncode\":\"1001\"},{\"questioncode\":\"2000\"},{\"questioncode\":\"3000\"}]}}}]}}}";
+        assertThrows(InvalidJsonException.class, () -> new BatchDataIngest().getQuestionListFromFormDefinitionArray(referenceExistsResponse));
+    }
+
+    @Test
+    void verify_QuestionList_inValidJson_throwsException() {
+
+        String responseStr = "{\n" +
+                "                'user': 'fisdba',\n" +
+                "                'reference': '12345679900', \n" +
+                "                'period': '201801', \n" +
+                "                'survey': '999A',\n" +
+                "                'respones': [\n" +
+                "                    {'questioncode': '1000', 'response': '2', 'instance': '0'},    \n" +
+                "                    {'questioncode': '1001', 'response': '3', 'instance': '0'}]\n" +
+                "            }";
+        JSONObject individualObject = new JSONObject(responseStr);
+        assertThrows(InvalidJsonException.class, () -> new BatchDataIngest().getQuestionListFromInputJsonArray(individualObject));
+
+    }
+
+
+
+
+
 }

@@ -108,19 +108,15 @@ public class BatchDataIngest {
             JSONObject errorJsonObject = new JSONObject().put(ERROR, CONTRIBUTOR_ERROR);
             errorArray.put(errorJsonObject);
             outcomeObject.put(ERRORS, errorArray);
-            //outcomeObject.put(ERROR, CONTRIBUTOR_ERROR);
         } else {
             //Retrieve the Contributor Status
             String contributorStatus = getContributorStatus(contributorArray);
             log.info("Contributor Status {}", contributorStatus);
             if (!contributorStatus.equals(FORM_SENT_OUT)) {
                 outcomeObject.put(OUTCOME, FAILURE);
-                //Adding
                 JSONObject errorJsonObject = new JSONObject().put(ERROR, DUPLICATE_RECORD_ERROR);
                 errorArray.put(errorJsonObject);
                 outcomeObject.put(ERRORS, errorArray);
-                //End
-                //outcomeObject.put(ERROR, DUPLICATE_RECORD_ERROR);
             } else {
                 processSaveAndErrorResponses(referenceExistsResponse, individualObject, errorArray, outcomeObject);
             }
@@ -132,14 +128,14 @@ public class BatchDataIngest {
     private void processSaveAndErrorResponses(String referenceExistsResponse, JSONObject individualObject,
                                               JSONArray errorArray, JSONObject outcomeObject) throws Exception {
 
-        //Perform Form Tpe Error Checks here
+        //Perform Form Type Error Checks here
         List<String> questionCodeList = getQuestionListFromFormDefinitionArray(referenceExistsResponse);
         List<String> questionCodeJsonList = getQuestionListFromInputJsonArray(individualObject);
 
-        //Comparison FormDefinition as Master with Input Json
+        //Comparison - FormDefinition as Master with Input Json
         List<String> formDefErrorList = getErrorList(questionCodeList, questionCodeJsonList, errorArray, false);
 
-        //Comparison Input JSON as Master with FormDefinition
+        //Comparison - Input JSON as Master with FormDefinition
         List<String> inputJsonErrorList = getErrorList(questionCodeJsonList, questionCodeList, errorArray, true);
 
         //Comparison Duplicate elements in JSON
@@ -310,7 +306,6 @@ public class BatchDataIngest {
             }
         }
         log.info("Error List by comparing JSON and FormDefinition Table" + errorList.toString());
-        log.info("Error List by comparing JSON and FormDefinition Table Size of array " + errorList.size());
         return errorList;
     }
 
