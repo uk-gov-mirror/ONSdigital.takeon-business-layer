@@ -38,6 +38,12 @@ public class BatchDataIngest {
     private static final String BATCH_DATA = "batch_data";
     private static final String FORM_SENT_OUT = "Form Sent Out";
     private static final String DUPLICATE_RECORD_ERROR = "Duplicate Record";
+    private static final String DUPLICATE_MESSAGE_INPUT_JSON = " is duplicated in Input Json Batch Response";
+    private static final String QUESTION_CODE = "The Question Code ";
+    private static final String FORM_DEFINITION = "FormDefinition";
+    private static final String INPUT_JSON = "Input Json";
+    private static final String EXISTS_IN = " Exists in ";
+    private static final String MISSING_FROM = " and Missing from ";
 
 
     public BatchDataIngest() {
@@ -138,7 +144,7 @@ public class BatchDataIngest {
         //Comparison - Input JSON as Master with FormDefinition
         List<String> inputJsonErrorList = getErrorList(questionCodeJsonList, questionCodeList, errorArray, true);
 
-        //Comparison Duplicate elements in JSON
+        //Find Duplicate elements in Input JSON
         List<String> duplicateErrorList = getDuplicateErrorList(questionCodeJsonList, errorArray);
 
         if (formDefErrorList.isEmpty() && inputJsonErrorList.isEmpty() && duplicateErrorList.isEmpty()) {
@@ -167,8 +173,8 @@ public class BatchDataIngest {
             String qlStatusOutput = qlService.qlSearch(contributorStatusQuery);
             log.info("Output after updating the form status {}", qlStatusOutput);
         } catch (JSONException e) {
-            log.error("Invalid JSON from contributor exists query response " + e);
-            throw new InvalidJsonException("Invalid JSON from contributor exists query response: " + individualObjectJsonStr, e);
+            log.error("Invalid JSON from contributor FormDefinition exists query response " + e);
+            throw new InvalidJsonException("Invalid JSON from contributor FormDefinition exists query response: " + individualObjectJsonStr, e);
         }
 
     }
@@ -181,8 +187,8 @@ public class BatchDataIngest {
             checkArray = referenceExistsObject.getJSONObject("data")
                     .getJSONObject("allContributors").getJSONArray("nodes");
         } catch (JSONException e) {
-            log.error("Invalid JSON from contributor exists query response " + e);
-            throw new InvalidJsonException("Invalid JSON from contributor exists query response: " + referenceExistsResponse, e);
+            log.error("Invalid JSON from contributor FormDefinition exists query response " + e);
+            throw new InvalidJsonException("Invalid JSON from contributor FormDefinition exists query response: " + referenceExistsResponse, e);
         }
 
         return checkArray != null && checkArray.isEmpty();
@@ -289,17 +295,17 @@ public class BatchDataIngest {
         return questionCodeList;
     }
 
-    public List<String> getErrorList(List<String> listArray1, List<String> listArray2, JSONArray errorArray, boolean isMasterInputJson) {
+    public List<String> getErrorList(List<String> questCodeList1, List<String> questCodeList2, JSONArray errorArray, boolean isMasterInputJson) {
 
         List<String> errorList = new ArrayList<String>();
-        for (String element: listArray2) {         // go through all in second list
-            if (! listArray1.contains(element)) {  // if string not in master list
-                StringBuilder sbError = new StringBuilder("The Question Code ");
+        for (String element: questCodeList2) {         // go through all in second list
+            if (! questCodeList1.contains(element)) {  // if string not in master list
+                StringBuilder sbError = new StringBuilder(QUESTION_CODE);
                 sbError.append(element);
-                sbError.append(" Exists in ");
-                sbError = isMasterInputJson ? sbError.append("FormDefinition") : sbError.append("Input Json");
-                sbError.append(" and Missing from ");
-                sbError = isMasterInputJson ? sbError.append("Input Json") : sbError.append("FormDefinition");
+                sbError.append(EXISTS_IN);
+                sbError = isMasterInputJson ? sbError.append(FORM_DEFINITION) : sbError.append(INPUT_JSON);
+                sbError.append(MISSING_FROM);
+                sbError = isMasterInputJson ? sbError.append(INPUT_JSON) : sbError.append(FORM_DEFINITION);
                 JSONObject errorJsonObject = new JSONObject().put(ERROR, sbError.toString());
                 errorArray.put(errorJsonObject);
                 errorList.add(element);
@@ -315,14 +321,15 @@ public class BatchDataIngest {
         List<String> duplicateList = new ArrayList<String>();
         for (String questionCode : jsonList) {
             if (uniqueList.add(questionCode) == false) {
-                log.info("The following question code is duplicated" + questionCode);
-                //Adding
-                StringBuilder sbError = new StringBuilder("The Question Code ");
-                sbError.append(questionCode);
-                sbError.append(" is duplicated in Input Json Batch Response");
-                JSONObject errorJsonObject = new JSONObject().put(ERROR, sbError.toString());
-                errorArray.put(errorJsonObject);
-                duplicateList.add(questionCode);
+                if (!duplicateList.contains(questionCode)) {
+                    log.info("The following question code is duplicated" + questionCode);
+                    StringBuilder sbError = new StringBuilder(QUESTION_CODE);
+                    sbError.append(questionCode);
+                    sbError.append(DUPLICATE_MESSAGE_INPUT_JSON);
+                    JSONObject errorJsonObject = new JSONObject().put(ERROR, sbError.toString());
+                    errorArray.put(errorJsonObject);
+                    duplicateList.add(questionCode);
+                }
             }
         }
         return duplicateList;

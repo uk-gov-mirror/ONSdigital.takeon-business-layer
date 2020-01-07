@@ -111,7 +111,7 @@ public class BatchDataIngestTest {
     void verify_DuplicateErrorList_Exists() {
         BatchDataIngest batchData = new BatchDataIngest();
         JSONArray errorArray = new JSONArray();
-        List<String> inputJsonList = Arrays.asList("1000", "1001", "1000");
+        List<String> inputJsonList = Arrays.asList("1000", "1001", "1000","1000");
         List<String> errorList = batchData.getDuplicateErrorList(inputJsonList, errorArray);
         assertFalse(errorList.isEmpty());
         assertTrue(errorList.contains("1000"));
@@ -159,7 +159,9 @@ public class BatchDataIngestTest {
     @Test
     void verify_QuestionListFromFormDefinition() {
         BatchDataIngest batchData = new BatchDataIngest();
-        String referenceExistsResponse = "{\"data\":{\"allContributors\":{\"nodes\":[{\"reference\":\"12345678001\",\"period\":\"201801\",\"survey\":\"999A\",\"status\":\"Form Sent Out\",\"formid\":1,\"formByFormid\":{\"formdefinitionsByFormid\":{\"nodes\":[{\"questioncode\":\"1000\"},{\"questioncode\":\"1001\"},{\"questioncode\":\"2000\"},{\"questioncode\":\"3000\"}]}}}]}}}";
+        String referenceExistsResponse = "{\"data\":{\"allContributors\":{\"nodes\":[{\"reference\":\"12345678001\",\"period\":\"201801\",\"survey\":\"999A\"," +
+                "\"status\":\"Form Sent Out\",\"formid\":1,\"formByFormid\":{\"formdefinitionsByFormid\":{\"nodes\":[{\"questioncode\":\"1000\"}," +
+                "{\"questioncode\":\"1001\"},{\"questioncode\":\"2000\"},{\"questioncode\":\"3000\"}]}}}]}}}";
         List<String> expectedQuestionCodeList = Arrays.asList("1000", "1001", "2000", "3000");
         try {
             List<String> questionCodeList = batchData.getQuestionListFromFormDefinitionArray(referenceExistsResponse);
@@ -172,7 +174,9 @@ public class BatchDataIngestTest {
     @Test
     void verify_QuestionListFromFormDefinition__inValidJson_throwsException() {
 
-        String referenceExistsResponse = "{\"data\":{\"allContibutors\":{\"nodes\":[{\"reference\":\"12345678001\",\"period\":\"201801\",\"survey\":\"999A\",\"status\":\"Form Sent Out\",\"formid\":1,\"formByFormid\":{\"formdefinitionsByFormid\":{\"nodes\":[{\"questioncode\":\"1000\"},{\"questioncode\":\"1001\"},{\"questioncode\":\"2000\"},{\"questioncode\":\"3000\"}]}}}]}}}";
+        String referenceExistsResponse = "{\"data\":{\"allContibutors\":{\"nodes\":[{\"reference\":\"12345678001\",\"period\":\"201801\",\"survey\":\"999A\"," +
+                "\"status\":\"Form Sent Out\",\"formid\":1,\"formByFormid\":{\"formdefinitionsByFormid\":{\"nodes\":[{\"questioncode\":\"1000\"}," +
+                "{\"questioncode\":\"1001\"},{\"questioncode\":\"2000\"},{\"questioncode\":\"3000\"}]}}}]}}}";
         assertThrows(InvalidJsonException.class, () -> new BatchDataIngest().getQuestionListFromFormDefinitionArray(referenceExistsResponse));
     }
 
