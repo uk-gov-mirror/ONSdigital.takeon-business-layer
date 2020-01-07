@@ -71,6 +71,7 @@ public class BatchDataIngest {
         // Extract each ref/period/survey and check if exists
         for (int i = 0; i < referenceArray.length(); i++) {
             var outcomeObject = new JSONObject();
+            JSONArray errorArray = new JSONArray();
             try {
 
                 JSONObject individualObject = referenceArray.getJSONObject(i);
@@ -86,12 +87,14 @@ public class BatchDataIngest {
                 outcomeObject.put(SURVEY, survey);
                 referenceExistsResponse = qlService
                             .qlSearch(new BatchDataQuery(variables).buildCheckReferenceExistsQuery());
-                buildOutcomeJson(referenceExistsResponse, outcomeObject, individualObject);
+                buildOutcomeJson(referenceExistsResponse, outcomeObject, individualObject, errorArray);
 
             } catch (Exception e) {
                 log.error("Can't process Batch data responses: " + e);
+                JSONObject errorJsonObject = new JSONObject().put(ERROR, e.getMessage());
+                errorArray.put(errorJsonObject);
                 outcomeObject.put(OUTCOME, FAILURE);
-                outcomeObject.put(ERROR, e.getMessage());
+                outcomeObject.put(ERRORS, errorArray);
                 e.printStackTrace();
             }
             outcomesArray.put(outcomeObject);
@@ -103,11 +106,10 @@ public class BatchDataIngest {
     }
 
 
-    private void buildOutcomeJson(String referenceExistsResponse, JSONObject outcomeObject, JSONObject individualObject)
+    private void buildOutcomeJson(String referenceExistsResponse, JSONObject outcomeObject, JSONObject individualObject, JSONArray errorArray)
             throws Exception {
         log.info("Reference exists response:" + referenceExistsResponse);
         JSONArray contributorArray = getContributorArray(referenceExistsResponse);
-        JSONArray errorArray = new JSONArray();
 
         if (contributorArray != null && contributorArray.isEmpty()) {
             outcomeObject.put(OUTCOME, FAILURE);
