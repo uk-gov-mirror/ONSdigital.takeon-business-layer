@@ -28,12 +28,11 @@ import uk.gov.ons.collection.entity.PeriodOffsetQuery;
 import uk.gov.ons.collection.entity.PeriodOffsetResponse;
 import uk.gov.ons.collection.entity.ValidationConfigQuery;
 import uk.gov.ons.collection.entity.ValidationOutputs;
-import uk.gov.ons.collection.exception.ResponsesNotSavedException;
 import uk.gov.ons.collection.service.GraphQlService;
 import uk.gov.ons.collection.utilities.RelativePeriod;
 import uk.gov.ons.collection.utilities.QlQueryBuilder;
 import uk.gov.ons.collection.utilities.QlQueryResponse;
-import uk.gov.ons.collection.utilities.UpsertResponse;
+
 
 @Log4j2
 @Api(value = "Validation Controller", description = "Entry points primarily involving validation queries")
@@ -227,7 +226,7 @@ public class ValidationController {
 
         } catch (Exception err) {
             log.error("Failed to save validation overrides: " + err);
-            return "{\"error\":\"Error saving validation overrides\"}";
+            return "{\"error\":\"Error in saving validation overrides\"}";
         }
         return "{\"Success\":\"Validation overrides saved successfully\"}";
     }
