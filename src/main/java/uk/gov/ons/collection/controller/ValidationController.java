@@ -29,6 +29,7 @@ import uk.gov.ons.collection.entity.PeriodOffsetResponse;
 import uk.gov.ons.collection.entity.ValidationConfigQuery;
 import uk.gov.ons.collection.entity.ValidationOutputs;
 import uk.gov.ons.collection.service.GraphQlService;
+import uk.gov.ons.collection.service.ValidationOverrideService;
 import uk.gov.ons.collection.utilities.RelativePeriod;
 import uk.gov.ons.collection.utilities.QlQueryBuilder;
 import uk.gov.ons.collection.utilities.QlQueryResponse;
@@ -222,7 +223,12 @@ public class ValidationController {
             @ApiResponse(code = 200, message = "Successful save of all validation overrides", response = String.class) })
     @ResponseBody
     public String saveOverrides(@RequestBody String jsonString)  {
+
+        log.info("API CALL!! --> /saveOverrides :: Save Validation overrides" + jsonString);
         try {
+
+            ValidationOverrideService validationService = new ValidationOverrideService(jsonString, qlService);
+            validationService.processValidationDataAndSave();
 
         } catch (Exception err) {
             log.error("Failed to save validation overrides: " + err);
