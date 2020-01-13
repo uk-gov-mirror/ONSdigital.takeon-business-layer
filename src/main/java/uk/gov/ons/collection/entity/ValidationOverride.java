@@ -5,7 +5,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import uk.gov.ons.collection.exception.InvalidJsonException;
+
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.StringJoiner;
 import lombok.Getter;
@@ -21,6 +24,8 @@ public class ValidationOverride {
     private String reference;
     private String period;
     private String survey;
+
+    private final Timestamp time = new Timestamp(new Date().getTime());
 
 
     public ValidationOverride(String jsonString) throws InvalidJsonException {
@@ -70,6 +75,34 @@ public class ValidationOverride {
             throw new InvalidJsonException("Invalid JSON from validation output query response: " + validationOutputResponse, e);
         }
         return validationDataList;
+    }
+
+    public List<ValidationData> extractUpdatedValidationOutputData(List<ValidationData> validationUIList, List<ValidationData> validationDBList) {
+        List<ValidationData> updatedList = new ArrayList<ValidationData>();
+
+        for (ValidationData validationDBData : validationDBList) {
+            for (ValidationData validationUIData : validationUIList) {
+                if(validationDBData.getValidationOutputId() == validationUIData.getValidationOutputId()) {
+                    boolean condition = false;
+                    if(validationUIData.isOverride() && (validationDBData.getOverriddenBy() == null && validationDBData.getOverriddenDate() == null)) {
+                        validationDBData.setOverriddenBy(validationUIData.getOverriddenBy());
+                        validationDBData.setOverriddenDate(time.toString());
+                        condition = true;
+                    } else if(!validationUIData.isOverride() && (validationDBData.getOverriddenBy() != null && validationDBData.getOverriddenDate() != null)){
+                        validationDBData.setOverriddenBy(null);
+                        validationDBData.setOverriddenDate(null);
+                        condition = true;
+                    }
+                    if(condition) {
+                        updatedList.add(validationDBData);
+                    }
+
+                }
+
+            }
+        }
+
+        return updatedList;
     }
 
     public String buildValidationOutputQuery() throws InvalidJsonException {
