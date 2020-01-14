@@ -33,10 +33,15 @@ public class ValidationOverrideService {
         log.info("Validation Output Data " + validationDataUIList.toString());
 
         String validationQuery = overrideObject.buildValidationOutputQuery();
+        log.info(" GraphQl Service " + qlService);
         String validationOutputResponse = qlService
                 .qlSearch(validationQuery);
+        log.info("Output ValidationOutput table " + validationOutputResponse);
         List<ValidationData>  validationDatabaseList = overrideObject.extractValidationDataFromDatabase(validationOutputResponse);
 
+        List<ValidationData> validationUpdatedList = overrideObject.extractUpdatedValidationOutputData(validationDataUIList, validationDatabaseList);
+
+        log.info ("Updated List " + validationUpdatedList.toString());
 
     }
 

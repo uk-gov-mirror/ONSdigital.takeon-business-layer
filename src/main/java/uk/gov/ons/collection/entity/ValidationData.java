@@ -15,9 +15,19 @@ import lombok.Setter;
 public class ValidationData {
 
     private Integer validationOutputId;
-    private boolean override;
+    private boolean overridden;
     private String overriddenBy;
     private String overriddenDate;
+
+    @Override
+    public String toString() {
+        return "ValidationOutData{" +
+                "validationOutputId=" + validationOutputId +
+                ", overridden=" + overridden +
+                ", overriddenBy='" + overriddenBy + '\'' +
+                ", overriddenDate='" + overriddenDate + '\'' +
+                '}';
+    }
 
 
 }

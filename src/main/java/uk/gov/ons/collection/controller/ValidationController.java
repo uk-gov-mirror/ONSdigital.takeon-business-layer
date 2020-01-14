@@ -231,6 +231,7 @@ public class ValidationController {
             validationService.processValidationDataAndSave();
 
         } catch (Exception err) {
+            err.printStackTrace();
             log.error("Failed to save validation overrides: " + err);
             return "{\"error\":\"Error in saving validation overrides\"}";
         }

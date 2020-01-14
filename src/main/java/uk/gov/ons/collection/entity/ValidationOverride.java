@@ -42,14 +42,19 @@ public class ValidationOverride {
         period = validationOutputOverrideObject.getString("period");
         survey = validationOutputOverrideObject.getString("survey");
 
+        log.info(" Reference " + reference);
+        log.info(" Period " + period);
+        log.info(" Survey " + survey);
+
         List<ValidationData> validationDataList = new ArrayList<ValidationData>();
         for (int i = 0; i < validationOutputArray.length(); i++) {
             ValidationData validationData = new ValidationData();
             validationData.setValidationOutputId(validationOutputArray.getJSONObject(i).getInt("validationoutputid"));
             validationData.setOverriddenBy(validationOutputArray.getJSONObject(i).getString("user"));
-            validationData.setOverride(validationOutputArray.getJSONObject(i).getBoolean("override"));
+            validationData.setOverridden(validationOutputArray.getJSONObject(i).getBoolean("override"));
             validationDataList.add(validationData);
         }
+        log.info("Validation List from UI " + validationDataList.toString());
         return validationDataList;
     }
 
@@ -62,11 +67,16 @@ public class ValidationOverride {
             validationOutputArray = referenceExistsObject.getJSONObject("data")
                     .getJSONObject("allValidationoutputs").getJSONArray("nodes");
 
+            log.info( "Validation Output from database " + validationOutputArray.toString());
+
             for (int i = 0; i < validationOutputArray.length(); i++) {
                 ValidationData validationData = new ValidationData();
                 validationData.setValidationOutputId(validationOutputArray.getJSONObject(i).getInt("validationoutputid"));
-                validationData.setOverriddenBy(validationOutputArray.getJSONObject(i).getString("overriddenby"));
-                validationData.setOverriddenDate(validationOutputArray.getJSONObject(i).getString("overriddendate"));
+                Object obOverriddenDate = validationOutputArray.getJSONObject(i).get("overriddendate");
+                validationData.setOverriddenDate(obOverriddenDate == null ? "" : obOverriddenDate.toString());
+                Object obOverriddenBy = validationOutputArray.getJSONObject(i).get("overriddenby");
+                validationData.setOverriddenBy(obOverriddenBy == null ? "" : obOverriddenBy.toString());
+                validationData.setOverridden(validationOutputArray.getJSONObject(i).getBoolean("overridden"));
                 validationDataList.add(validationData);
             }
 
@@ -84,13 +94,18 @@ public class ValidationOverride {
             for (ValidationData validationUIData : validationUIList) {
                 if(validationDBData.getValidationOutputId() == validationUIData.getValidationOutputId()) {
                     boolean condition = false;
-                    if(validationUIData.isOverride() && (validationDBData.getOverriddenBy() == null && validationDBData.getOverriddenDate() == null)) {
+
+                    if(validationUIData.isOverridden() && !validationDBData.isOverridden()) {
+                        validationDBData.setOverridden(true);
                         validationDBData.setOverriddenBy(validationUIData.getOverriddenBy());
                         validationDBData.setOverriddenDate(time.toString());
+                        log.info("Validation Output " + validationDBData.toString());
                         condition = true;
-                    } else if(!validationUIData.isOverride() && (validationDBData.getOverriddenBy() != null && validationDBData.getOverriddenDate() != null)){
-                        validationDBData.setOverriddenBy(null);
-                        validationDBData.setOverriddenDate(null);
+                    } else if(!validationUIData.isOverridden() && validationDBData.isOverridden()){
+                        validationDBData.setOverridden(false);
+                        validationDBData.setOverriddenBy(validationUIData.getOverriddenBy());
+                        validationDBData.setOverriddenDate(time.toString());
+                        log.info("Validation Output " + validationDBData.toString());
                         condition = true;
                     }
                     if(condition) {
@@ -102,6 +117,8 @@ public class ValidationOverride {
             }
         }
 
+        log.info( "Updated Validation List " + updatedList.toString());
+
         return updatedList;
     }
 
@@ -111,7 +128,7 @@ public class ValidationOverride {
             referenceQuery.append("{\"query\":\"query validationoutputinformation {");
             referenceQuery.append("allValidationoutputs(condition: {");
             referenceQuery.append(getReferencePeriodSurveyAndTriggered());
-            referenceQuery.append("}){nodes {validationoutputid overriddenby overriddendate ");
+            referenceQuery.append("}){nodes {validationoutputid overriddenby overriddendate overridden ");
             referenceQuery.append("}}}\"}");
             log.info("Output of validationoutputinformation query {}", referenceQuery.toString());
         } catch (JSONException e) {
@@ -125,7 +142,7 @@ public class ValidationOverride {
         joiner.add("reference: \\\"" + reference + "\\\"");
         joiner.add("period: \\\""    + period    + "\\\"");
         joiner.add("survey: \\\""    + survey    + "\\\"");
-        joiner.add("triggered: \\"    + true    + "\\");
+        joiner.add("triggered: "    + true);
         return joiner.toString();
     }
 
