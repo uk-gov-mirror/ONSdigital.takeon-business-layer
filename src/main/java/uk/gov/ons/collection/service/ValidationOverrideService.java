@@ -25,24 +25,21 @@ public class ValidationOverrideService {
 
     public void processValidationDataAndSave() throws Exception {
         ValidationOverride overrideObject = new ValidationOverride(inputJson);
-        List<ValidationData> validationDataUIList = overrideObject.extractValidationDataFromUI();
+        List<ValidationData> validationDataUiList = overrideObject.extractValidationDataFromUI();
 
         log.info("Reference " + overrideObject.getReference());
         log.info("Period " + overrideObject.getPeriod());
         log.info("Survey " + overrideObject.getSurvey());
-        log.info("Validation Output Data from UI " + validationDataUIList.toString());
+        log.info("Validation Output Data from UI " + validationDataUiList.toString());
 
         String validationQuery = overrideObject.buildValidationOutputQuery();
         String validationOutputResponse = qlService
                 .qlSearch(validationQuery);
         log.info("Output after executing ValidationOutput GraphQl query " + validationOutputResponse);
         List<ValidationData>  validationDatabaseList = overrideObject.extractValidationDataFromDatabase(validationOutputResponse);
-        List<ValidationData> validationUpdatedList = overrideObject.extractUpdatedValidationOutputData(validationDataUIList, validationDatabaseList);
-        log.info ("Updated List " + validationUpdatedList.toString());
+        List<ValidationData> validationUpdatedList = overrideObject.extractUpdatedValidationOutputData(validationDataUiList, validationDatabaseList);
+        log.info("Updated List " + validationUpdatedList.toString());
 
     }
-
-
-
 
 }
