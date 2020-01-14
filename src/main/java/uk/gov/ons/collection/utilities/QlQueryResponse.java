@@ -94,6 +94,8 @@ public class QlQueryResponse {
             validationRule.put("lastupdatedby", outputArray.getJSONObject(i).get("lastupdatedby"));
             validationRule.put("lastupdateddate", outputArray.getJSONObject(i).get("lastupdateddate"));
             validationRule.put("instance", outputArray.getJSONObject(i).get("instance"));
+            validationRule.put("validationoutputid", outputArray.getJSONObject(i).get("validationoutputid"));
+            validationRule.put("overridden", outputArray.getJSONObject(i).get("overridden"));
             validationRule.put("severity", outputArray.getJSONObject(i).getJSONObject("validationformByValidationid").get("severity"));
             validationRule.put("validationid", outputArray.getJSONObject(i).getJSONObject("validationformByValidationid").get("validationid"));
             validationRule.put("rule", outputArray.getJSONObject(i).getJSONObject("validationformByValidationid").get("rule"));
