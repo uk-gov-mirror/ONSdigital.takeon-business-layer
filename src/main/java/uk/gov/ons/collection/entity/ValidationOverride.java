@@ -67,8 +67,6 @@ public class ValidationOverride {
             validationOutputArray = referenceExistsObject.getJSONObject("data")
                     .getJSONObject("allValidationoutputs").getJSONArray("nodes");
 
-            log.info( "Validation Output from database " + validationOutputArray.toString());
-
             for (int i = 0; i < validationOutputArray.length(); i++) {
                 ValidationData validationData = new ValidationData();
                 validationData.setValidationOutputId(validationOutputArray.getJSONObject(i).getInt("validationoutputid"));
@@ -79,7 +77,6 @@ public class ValidationOverride {
                 validationData.setOverridden(validationOutputArray.getJSONObject(i).getBoolean("overridden"));
                 validationDataList.add(validationData);
             }
-
         } catch (JSONException e) {
             log.error("Invalid JSON from validation output query response " + e);
             throw new InvalidJsonException("Invalid JSON from validation output query response: " + validationOutputResponse, e);
@@ -94,31 +91,23 @@ public class ValidationOverride {
             for (ValidationData validationUIData : validationUIList) {
                 if(validationDBData.getValidationOutputId() == validationUIData.getValidationOutputId()) {
                     boolean condition = false;
-
                     if(validationUIData.isOverridden() && !validationDBData.isOverridden()) {
                         validationDBData.setOverridden(true);
                         validationDBData.setOverriddenBy(validationUIData.getOverriddenBy());
                         validationDBData.setOverriddenDate(time.toString());
-                        log.info("Validation Output " + validationDBData.toString());
                         condition = true;
                     } else if(!validationUIData.isOverridden() && validationDBData.isOverridden()){
                         validationDBData.setOverridden(false);
                         validationDBData.setOverriddenBy(validationUIData.getOverriddenBy());
                         validationDBData.setOverriddenDate(time.toString());
-                        log.info("Validation Output " + validationDBData.toString());
                         condition = true;
                     }
                     if(condition) {
                         updatedList.add(validationDBData);
                     }
-
                 }
-
             }
         }
-
-        log.info( "Updated Validation List " + updatedList.toString());
-
         return updatedList;
     }
 
