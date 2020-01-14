@@ -31,7 +31,6 @@ public class ValidationOverrideService {
         log.info("Period " + overrideObject.getPeriod());
         log.info("Survey " + overrideObject.getSurvey());
         log.info("Validation Output Data from UI " + validationDataUiList.toString());
-
         String validationQuery = overrideObject.buildValidationOutputQuery();
         String validationOutputResponse = qlService
                 .qlSearch(validationQuery);
@@ -39,8 +38,10 @@ public class ValidationOverrideService {
         List<ValidationData>  validationDatabaseList = overrideObject.extractValidationDataFromDatabase(validationOutputResponse);
         List<ValidationData> validationUpdatedList = overrideObject.extractUpdatedValidationOutputData(validationDataUiList, validationDatabaseList);
         log.info("Updated List " + validationUpdatedList.toString());
-
-
+        String updateQuery = overrideObject.buildUpdateByArrayQuery(validationUpdatedList);
+        String validationOutputUpdateResponse = qlService
+                .qlSearch(updateQuery);
+        log.info("Output after executing ValidationOutput UpdateGraphQl query " + validationOutputUpdateResponse);
 
     }
 

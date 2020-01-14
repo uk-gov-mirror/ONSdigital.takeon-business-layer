@@ -24,9 +24,7 @@ public class ValidationOverride {
     private String reference;
     private String period;
     private String survey;
-
     private final Timestamp time = new Timestamp(new Date().getTime());
-
 
     public ValidationOverride(String jsonString) throws InvalidJsonException {
         try {
@@ -127,6 +125,34 @@ public class ValidationOverride {
         joiner.add("period: \\\""    + period    + "\\\"");
         joiner.add("survey: \\\""    + survey    + "\\\"");
         joiner.add("triggered: "    + true);
+        return joiner.toString();
+    }
+
+    // Builds Batch Update query
+    public String buildUpdateByArrayQuery(List<ValidationData> validationList)  {
+        var queryJson = new StringBuilder();
+        queryJson.append("{\"query\" : \"mutation updateValidation {updateValidationoutputMulti(input: {arg0: ");
+        queryJson.append("[" + getValidationOutputs(validationList) + "]");
+        queryJson.append("}){clientMutationId}}\"}");
+        return queryJson.toString();
+    }
+
+    // Loop through the given validation output array json and convert it into a graphQL compatable format
+    private String getValidationOutputs(List<ValidationData> validationList) {
+        StringJoiner joiner = new StringJoiner(",");
+        for (int i = 0; i < validationList.size(); i++) {
+            joiner.add("{" + extractValidationOutputRow(validationList.get(i)) + "}");
+        }
+        return joiner.toString();
+    }
+
+
+    private String extractValidationOutputRow(ValidationData validationData)  {
+        StringJoiner joiner = new StringJoiner(",");
+        joiner.add("validationoutputid: " + validationData.getValidationOutputId());
+        joiner.add("overridden: " + validationData.isOverridden());
+        joiner.add("overriddenby: \\\"" + validationData.getOverriddenBy() + "\\\"");
+        joiner.add("overriddendate: \\\"" + validationData.getOverriddenDate() + "\\\"");
         return joiner.toString();
     }
 
