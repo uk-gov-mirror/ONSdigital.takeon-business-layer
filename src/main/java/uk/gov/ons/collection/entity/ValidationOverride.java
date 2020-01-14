@@ -42,10 +42,6 @@ public class ValidationOverride {
         period = validationOutputOverrideObject.getString("period");
         survey = validationOutputOverrideObject.getString("survey");
 
-        log.info(" Reference " + reference);
-        log.info(" Period " + period);
-        log.info(" Survey " + survey);
-
         List<ValidationData> validationDataList = new ArrayList<ValidationData>();
         for (int i = 0; i < validationOutputArray.length(); i++) {
             ValidationData validationData = new ValidationData();
@@ -54,7 +50,6 @@ public class ValidationOverride {
             validationData.setOverridden(validationOutputArray.getJSONObject(i).getBoolean("override"));
             validationDataList.add(validationData);
         }
-        log.info("Validation List from UI " + validationDataList.toString());
         return validationDataList;
     }
 
