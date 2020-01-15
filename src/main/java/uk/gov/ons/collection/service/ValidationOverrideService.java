@@ -1,10 +1,8 @@
 package uk.gov.ons.collection.service;
 
 import lombok.extern.log4j.Log4j2;
-import uk.gov.ons.collection.entity.BatchDataQuery;
 import uk.gov.ons.collection.entity.ValidationData;
 import uk.gov.ons.collection.entity.ValidationOverride;
-import uk.gov.ons.collection.exception.InvalidJsonException;
 
 import java.util.List;
 
@@ -39,6 +37,7 @@ public class ValidationOverrideService {
         List<ValidationData> validationUpdatedList = overrideObject.extractUpdatedValidationOutputData(validationDataUiList, validationDatabaseList);
         log.info("Updated List " + validationUpdatedList.toString());
         String updateQuery = overrideObject.buildUpdateByArrayQuery(validationUpdatedList);
+        log.info("GraphQl query for batch update " + updateQuery);
         String validationOutputUpdateResponse = qlService
                 .qlSearch(updateQuery);
         log.info("Output after executing ValidationOutput UpdateGraphQl query " + validationOutputUpdateResponse);

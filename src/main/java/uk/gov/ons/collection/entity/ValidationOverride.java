@@ -59,7 +59,6 @@ public class ValidationOverride {
             JSONObject referenceExistsObject = new JSONObject(validationOutputResponse);
             validationOutputArray = referenceExistsObject.getJSONObject("data")
                     .getJSONObject("allValidationoutputs").getJSONArray("nodes");
-
             for (int i = 0; i < validationOutputArray.length(); i++) {
                 ValidationData validationData = new ValidationData();
                 validationData.setValidationOutputId(validationOutputArray.getJSONObject(i).getInt("validationoutputid"));
@@ -137,7 +136,7 @@ public class ValidationOverride {
         return queryJson.toString();
     }
 
-    // Loop through the given validation output array json and convert it into a graphQL compatable format
+    // Loop through the given validation output array list and convert it into a graphQL compatible format
     private String getValidationOutputs(List<ValidationData> validationList) {
         StringJoiner joiner = new StringJoiner(",");
         for (int i = 0; i < validationList.size(); i++) {
@@ -145,7 +144,6 @@ public class ValidationOverride {
         }
         return joiner.toString();
     }
-
 
     private String extractValidationOutputRow(ValidationData validationData)  {
         StringJoiner joiner = new StringJoiner(",");
