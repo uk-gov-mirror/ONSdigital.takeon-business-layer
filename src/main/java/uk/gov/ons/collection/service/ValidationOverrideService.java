@@ -30,18 +30,18 @@ public class ValidationOverrideService {
         log.info("Survey " + overrideObject.getSurvey());
         log.info("Validation Output Data from UI " + validationDataUiList.toString());
         String validationQuery = overrideObject.buildValidationOutputQuery();
-        String validationOutputResponse = qlService
-                .qlSearch(validationQuery);
+        String validationOutputResponse = qlService.qlSearch(validationQuery);
         log.info("Output after executing ValidationOutput GraphQl query " + validationOutputResponse);
         List<ValidationData>  validationDatabaseList = overrideObject.extractValidationDataFromDatabase(validationOutputResponse);
         List<ValidationData> validationUpdatedList = overrideObject.extractUpdatedValidationOutputData(validationDataUiList, validationDatabaseList);
         log.info("Updated List " + validationUpdatedList.toString());
-        String updateQuery = overrideObject.buildUpdateByArrayQuery(validationUpdatedList);
-        log.info("GraphQl query for batch update " + updateQuery);
-        String validationOutputUpdateResponse = qlService
-                .qlSearch(updateQuery);
-        log.info("Output after executing ValidationOutput UpdateGraphQl query " + validationOutputUpdateResponse);
-
+        if (validationUpdatedList.size() > 0) {
+            String updateQuery = overrideObject.buildUpdateByArrayQuery(validationUpdatedList);
+            log.info("GraphQl query for batch update " + updateQuery);
+            String validationOutputUpdateResponse = qlService
+                    .qlSearch(updateQuery);
+            log.info("Output after executing ValidationOutput UpdateGraphQl query " + validationOutputUpdateResponse);
+        }
     }
 
 }
