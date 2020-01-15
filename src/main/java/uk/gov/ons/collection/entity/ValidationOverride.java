@@ -85,16 +85,14 @@ public class ValidationOverride {
                     boolean condition = false;
                     if(validationUIData.isOverridden() && !validationDBData.isOverridden()) {
                         validationDBData.setOverridden(true);
-                        validationDBData.setOverriddenBy(validationUIData.getOverriddenBy());
-                        validationDBData.setOverriddenDate(time.toString());
                         condition = true;
                     } else if(!validationUIData.isOverridden() && validationDBData.isOverridden()){
                         validationDBData.setOverridden(false);
-                        validationDBData.setOverriddenBy(validationUIData.getOverriddenBy());
-                        validationDBData.setOverriddenDate(time.toString());
                         condition = true;
                     }
                     if(condition) {
+                        validationDBData.setOverriddenBy(validationUIData.getOverriddenBy());
+                        validationDBData.setOverriddenDate(time.toString());
                         updatedList.add(validationDBData);
                     }
                 }
