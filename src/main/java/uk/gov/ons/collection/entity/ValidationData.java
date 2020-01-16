@@ -14,16 +14,17 @@ public class ValidationData {
 
     private Integer validationOutputId;
     private boolean overridden;
-    private String overriddenBy;
-    private String overriddenDate;
+    private String lastupdatedBy;
+    private String lastupdatedDate;
+
 
     @Override
     public String toString() {
         return "ValidationOutData{" +
                 "validationOutputId=" + validationOutputId +
                 ", overridden=" + overridden +
-                ", overriddenBy='" + overriddenBy + '\'' +
-                ", overriddenDate='" + overriddenDate + '\'' +
+                ", lastupdatedBy='" + lastupdatedBy + '\'' +
+                ", lastupdatedDate='" + lastupdatedDate + '\'' +
                 '}';
     }
 

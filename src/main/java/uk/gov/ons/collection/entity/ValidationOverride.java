@@ -40,7 +40,7 @@ public class ValidationOverride {
         for (int i = 0; i < validationOutputArray.length(); i++) {
             ValidationData validationData = new ValidationData();
             validationData.setValidationOutputId(validationOutputArray.getJSONObject(i).getInt("validationoutputid"));
-            validationData.setOverriddenBy(validationOutputArray.getJSONObject(i).getString("user"));
+            validationData.setLastupdatedBy(validationOutputArray.getJSONObject(i).getString("user"));
             validationData.setOverridden(validationOutputArray.getJSONObject(i).getBoolean("override"));
             validationDataList.add(validationData);
         }
@@ -58,10 +58,6 @@ public class ValidationOverride {
             for (int i = 0; i < validationOutputArray.length(); i++) {
                 ValidationData validationData = new ValidationData();
                 validationData.setValidationOutputId(validationOutputArray.getJSONObject(i).getInt("validationoutputid"));
-                Object obOverriddenDate = validationOutputArray.getJSONObject(i).get("overriddendate");
-                validationData.setOverriddenDate(obOverriddenDate == null ? "" : obOverriddenDate.toString());
-                Object obOverriddenBy = validationOutputArray.getJSONObject(i).get("overriddenby");
-                validationData.setOverriddenBy(obOverriddenBy == null ? "" : obOverriddenBy.toString());
                 validationData.setOverridden(validationOutputArray.getJSONObject(i).getBoolean("overridden"));
                 validationDataList.add(validationData);
             }
@@ -87,8 +83,8 @@ public class ValidationOverride {
                         condition = true;
                     }
                     if(condition) {
-                        validationDBData.setOverriddenBy(validationUIData.getOverriddenBy());
-                        validationDBData.setOverriddenDate(time.toString());
+                        validationDBData.setLastupdatedBy(validationUIData.getLastupdatedBy());
+                        validationDBData.setLastupdatedDate(time.toString());
                         updatedList.add(validationDBData);
                     }
                 }
@@ -103,7 +99,7 @@ public class ValidationOverride {
             referenceQuery.append("{\"query\":\"query validationoutputinformation {");
             referenceQuery.append("allValidationoutputs(condition: {");
             referenceQuery.append(getReferencePeriodSurveyAndTriggered());
-            referenceQuery.append("}){nodes {validationoutputid overriddenby overriddendate overridden ");
+            referenceQuery.append("}){nodes {validationoutputid overridden ");
             referenceQuery.append("}}}\"}");
             log.info("Output of validationoutputinformation query {}", referenceQuery.toString());
         } catch (JSONException e) {
@@ -143,8 +139,8 @@ public class ValidationOverride {
         StringJoiner joiner = new StringJoiner(",");
         joiner.add("validationoutputid: " + validationData.getValidationOutputId());
         joiner.add("overridden: " + validationData.isOverridden());
-        joiner.add("overriddenby: \\\"" + validationData.getOverriddenBy() + "\\\"");
-        joiner.add("overriddendate: \\\"" + validationData.getOverriddenDate() + "\\\"");
+        joiner.add("lastupdatedby: \\\"" + validationData.getLastupdatedBy() + "\\\"");
+        joiner.add("lastupdateddate: \\\"" + validationData.getLastupdatedDate() + "\\\"");
         return joiner.toString();
     }
 
