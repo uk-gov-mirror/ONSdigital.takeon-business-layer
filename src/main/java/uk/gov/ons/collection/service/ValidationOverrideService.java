@@ -25,9 +25,6 @@ public class ValidationOverrideService {
         ValidationOverride overrideObject = new ValidationOverride(inputJson);
         List<ValidationData> validationDataUiList = overrideObject.extractValidationDataFromUI();
 
-        log.info("Reference " + overrideObject.getReference());
-        log.info("Period " + overrideObject.getPeriod());
-        log.info("Survey " + overrideObject.getSurvey());
         log.info("Validation Output Data from UI " + validationDataUiList.toString());
         String validationQuery = overrideObject.buildValidationOutputQuery();
         String validationOutputResponse = qlService.qlSearch(validationQuery);

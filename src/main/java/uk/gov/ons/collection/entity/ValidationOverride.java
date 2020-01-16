@@ -11,11 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.StringJoiner;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 @Log4j2
 public class ValidationOverride {
 
