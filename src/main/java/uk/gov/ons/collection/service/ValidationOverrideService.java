@@ -12,9 +12,6 @@ public class ValidationOverrideService {
     private GraphQlService qlService;
     private String inputJson;
 
-    public ValidationOverrideService() {
-
-    }
 
     public ValidationOverrideService(String validationOutputStr, GraphQlService qlGraphService) {
         qlService = qlGraphService;

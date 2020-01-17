@@ -106,10 +106,18 @@ public class ValidationOverrideTest {
 
     }
 
+    @Test
+    void test_invalidJson_validationoutput_from_database_throwsException() {
+        String graphQlOutput = "{\"data\":{\"allValidationoutput\":{\"nodes\":[{\"validationoutputid\":35,\"overridden\":true}," +
+                "{\"validationoutputid\":36,\"overridden\":false},{\"validationoutputid\":39,\"overridden\":true}," +
+                "{\"validationoutputid\":40,\"overridden\":false}]}}}";
 
+        assertThrows(InvalidJsonException.class, () -> new ValidationOverride(inputJson).extractValidationDataFromDatabase(graphQlOutput));
+
+    }
 
     @Test
-    void class_validation_override_no_graphql_service_throwsExeption() {
+    void test_validation_override_no_graphql_service_throwsException() {
         GraphQlService service = new GraphQlService();
         ValidationOverrideService validationService = new ValidationOverrideService(inputJson, service);
 

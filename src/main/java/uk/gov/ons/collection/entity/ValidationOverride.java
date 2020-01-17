@@ -95,16 +95,12 @@ public class ValidationOverride {
 
     public String buildValidationOutputQuery() throws InvalidJsonException {
         StringBuilder referenceQuery = new StringBuilder();
-        try {
-            referenceQuery.append("{\"query\":\"query validationoutputinformation {");
-            referenceQuery.append("allValidationoutputs(condition: {");
-            referenceQuery.append(getReferencePeriodSurveyAndTriggered());
-            referenceQuery.append("}){nodes {validationoutputid overridden ");
-            referenceQuery.append("}}}\"}");
-            log.info("Output of validationoutputinformation query {}", referenceQuery.toString());
-        } catch (JSONException e) {
-            throw new InvalidJsonException("Can't build Query for getting validation details from validationoutput table: " + validationOutputOverrideObject, e);
-        }
+        referenceQuery.append("{\"query\":\"query validationoutputinformation {");
+        referenceQuery.append("allValidationoutputs(condition: {");
+        referenceQuery.append(getReferencePeriodSurveyAndTriggered());
+        referenceQuery.append("}){nodes {validationoutputid overridden ");
+        referenceQuery.append("}}}\"}");
+        log.info("Output of validationoutputinformation query {}", referenceQuery.toString());
         return referenceQuery.toString();
     }
 
