@@ -3,7 +3,6 @@ package uk.gov.ons.collection.test;
 import org.junit.jupiter.api.Test;
 import uk.gov.ons.collection.entity.ValidationOutputs;
 import uk.gov.ons.collection.exception.InvalidJsonException;
-import uk.gov.ons.collection.utilities.QlQueryBuilder;
 import uk.gov.ons.collection.utilities.QlQueryResponse;
 
 import static org.junit.Assert.assertEquals;
@@ -77,19 +76,19 @@ public class ValidationOutputsTest {
     @Test
     void getReference_missingReference_throwsException() {
         assertThrows(InvalidJsonException.class,
-                () -> new ValidationOutputs("{\"validation_outputs\": []}").getReference());
+            () -> new ValidationOutputs("{\"validation_outputs\": []}").getReference());
     }
 
     @Test
     void getPeriod_missingAttribute_throwsException() {
         assertThrows(InvalidJsonException.class,
-                () -> new ValidationOutputs("{\"validation_outputs\": []}").getPeriod());
+            () -> new ValidationOutputs("{\"validation_outputs\": []}").getPeriod());
     }
 
     @Test
     void getSurvey_missingAttribute_throwsException() {
         assertThrows(InvalidJsonException.class,
-                () -> new ValidationOutputs("{\"validation_outputs\": []}").getSurvey());
+            () -> new ValidationOutputs("{\"validation_outputs\": []}").getSurvey());
     }
 
     @Test
@@ -119,7 +118,7 @@ public class ValidationOutputsTest {
     @Test
     void getStatusText_missingTriggeredAttribute_throwsException() {
         assertThrows(InvalidJsonException.class,
-                () -> new ValidationOutputs("{\"validation_outputs\": [{\"a\":\"b\"}]}").getStatusText());
+            () -> new ValidationOutputs("{\"validation_outputs\": [{\"a\":\"b\"}]}").getStatusText());
     }
 
     @Test
@@ -178,7 +177,7 @@ public class ValidationOutputsTest {
                 + "\"overridden\": true, \"validationoutputid\": 35,"
                 + "\"validationformByValidationid\": {\"severity\": \"W\", \"validationid\": 10, \"rule\": VP,"
                 + "\"primaryquestion\": \"3000\", \"validationruleByRule\": {\"name\": \"Value Present\"}}}]}}}";
-        
+
         String expectedOutput = "{\"validation_outputs\":[{\"severity\":\"W\",\"primaryquestion\":\"3000\",\"triggered\":true,"
                 + "\"instance\":0,\"validationoutputid\":35,\"validationid\":10,\"lastupdateddate\":null,\"lastupdatedby\":null,\"name\":\"Value Present\","
                 + "\"formula\":\"1=1\",\"rule\":\"VP\",\"overridden\":true"
@@ -188,6 +187,6 @@ public class ValidationOutputsTest {
         System.out.println("Actual output " + response.parseValidationOutputs().toString());
         System.out.println("Expected output " + expectedOutput);
         assertEquals(expectedOutput, response.parseValidationOutputs().toString());
-        }
+    }
 
 }

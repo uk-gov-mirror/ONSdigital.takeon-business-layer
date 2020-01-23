@@ -52,10 +52,6 @@ public class QlQueryBuilder {
         return joiner.toString();
     }
 
-    public String buildOffsetPeriodQuery() {
-        return "{\"query\": \"query periodoffset { allValidationperiods { nodes { periodoffset }}}\"}";
-    }
-
     public String buildContributorQuery() {
         StringBuilder query = new StringBuilder();
         query.append("{\"query\": \"query contrib($period: String, $reference: String, $survey: String) { " +
@@ -67,30 +63,11 @@ public class QlQueryBuilder {
         return query.toString();
     }
 
-    public String buildContribResponseFormDetailsQuery() {	
-        StringBuilder contributorDetailsQuery = new StringBuilder();	
-        contributorDetailsQuery.append("{\"query\": \"query contributordetails($period: String, $reference: String, $survey: String)" +	
-            "{ allContributors(condition: {reference: $reference, period: $period, survey: $survey}) {" +	
-                "nodes {reference period survey surveyBySurvey {periodicity} " +	
-                "formid status receiptdate lockedby lockeddate checkletter frozensicoutdated rusicoutdated frozensic "+	
-                "rusic frozenemployees employees frozenemployment employment frozenfteemployment fteemployment frozenturnover " +	
-                "turnover enterprisereference wowenterprisereference cellnumber currency vatreference payereference " +	
-                "companyregistrationnumber numberlivelocalunits numberlivevat numberlivepaye legalstatus " +	
-                "reportingunitmarker region birthdate tradingstyle contact telephone fax selectiontype inclusionexclusion " +	
-                "createdby createddate lastupdatedby lastupdateddate " +	
-                "formByFormid {survey formdefinitionsByFormid {nodes {questioncode type}}}" +	
-                "responsesByReferenceAndPeriodAndSurvey {nodes {reference period survey instance questioncode response }}}}}\"," +	
-                "\"variables\": {");	
-        contributorDetailsQuery.append(buildVariables());	
-        contributorDetailsQuery.append("}}");	
-        return contributorDetailsQuery.toString();    	
-    }
-
     public String buildValidationOutputQuery() {
         StringBuilder validationOutputQuery = new StringBuilder();
         validationOutputQuery.append("{\"query\": \"query allValidationOutputs($reference: String, $period: String, $survey: String) " +
-         "{ allValidationoutputs(condition: {reference: $reference, period: $period, survey: $survey}) {" +
-              "nodes {formula triggered lastupdatedby lastupdateddate instance validationoutputid overridden " +
+            "{ allValidationoutputs(condition: {reference: $reference, period: $period, survey: $survey}) {" +
+                "nodes {formula triggered lastupdatedby lastupdateddate instance validationoutputid overridden " +
                 "validationformByValidationid {severity validationid rule primaryquestion " +
                 "validationruleByRule {name}}}}}\"," +
                 "\"variables\": {");

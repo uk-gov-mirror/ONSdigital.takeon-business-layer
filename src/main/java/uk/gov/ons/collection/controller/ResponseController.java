@@ -114,6 +114,7 @@ public class ResponseController {
         return "{\"Success\":\"Successfully saved derived Question responses\"}";
     }
 
+  
     @ApiOperation(value = "Save all responses", response = String.class)
     @RequestMapping(value = "/saveResponses", method = { RequestMethod.POST, RequestMethod.PUT })
     @ApiResponses(value = {
@@ -212,7 +213,6 @@ public class ResponseController {
         var outcomesObj = new JSONObject();
         var outcomesArr = new JSONArray();
         try {
-
             BatchDataIngest batchData = new BatchDataIngest(batchResponses, qlService);
             batchData.processBatchData(outcomesArr);
         } catch (Exception e) {
