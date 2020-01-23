@@ -1,32 +1,87 @@
 package uk.gov.ons.collection.entity;
 
+import uk.gov.ons.collection.service.ServiceInterface;
+
+/**
+ * This class is responsible for constructing valid graphQL JSON queries to obtain validation configuration data.
+ * It provides the configuration for a single (given) form.
+*/
 public class ValidationConfigQuery {
 
-    private int formId;
-    private final String baseQuery = 
-        "query valconfig($formid: Int) {" +
-        "allValidationrules {nodes {" +
-            "rule baseformula " +
-            "validationformsByRule(condition: {formid: $formid}) {nodes {" +
-                "validationid primaryquestion defaultvalue " + 
-                "validationparametersByValidationid {nodes {" +                    
-                    "parameter value source periodoffset" +
-                "}}}}}}}";
-    private String qlQuery;
+    private final int formId;
+    private final ServiceInterface service;
+    private final String baseQuery = "query config($formid: Int) {" +
+        "allValidationforms(condition: {formid: $formid}) { nodes {" +
+            "id " +
+            "validationid " +
+            "formid " +
+            "rule " +
+            "primaryquestion " +
+            "defaultvalue " +
+            "severity " +
+            "createdby " +
+            "createddate " +
+            "lastupdatedby " +
+            "lastupdateddate " +
+            "validationparametersByValidationid { nodes {" +
+                "id " +
+                "validationid " +
+                "attributename " +
+                "attributevalue " +
+                "parameter " +
+                "value " +
+                "source " +
+                "periodoffset " +
+                "createdby " +
+                "createddate " +
+                "lastupdatedby " +
+                "lastupdateddate " +
+                "}}" +
+            "validationruleByRule {" +
+              "rule " +
+              "name " +
+              "baseformula " +
+              "createdby " +
+              "createddate " +
+              "lastupdatedby " +
+              "lastupdateddate " +
+              "validationperiodsByRule { nodes {" +
+                  "id " +
+                  "rule " +
+                  "periodoffset " +
+                  "createdby " +
+                  "createddate " +
+                  "lastupdatedby " +
+                  "lastupdateddate " +
+                "}}" +
+            "} " +
+        "}}}";
 
-    public ValidationConfigQuery(int formId) {
+    /**
+     * Constructor.
+     * @param   formId  Unique number that identifies the form we are obtaining the configuration for
+     * @param   service This class determines graphQL query target
+    */
+    public ValidationConfigQuery(int formId, ServiceInterface service) {
         this.formId = formId;
-        qlQuery = buildQuery();
+        this.service = service;
     }
 
-    private String buildQuery() {
-        StringBuilder validationConfigQuery = new StringBuilder();
-        validationConfigQuery.append("{\"query\": \"" + baseQuery + "\"");
-        validationConfigQuery.append(",\"variables\": {\"formid\": " + Integer.toString(formId) + "}}");
-        return validationConfigQuery.toString();
-    }    
-
-    public String getQlQuery() {
-        return qlQuery;
+    /**
+     * Provide the complete JSON query that will be sent to the graphQL service.
+     * @return  A graphQL query JSON structure as a String
+    */    
+    public String getQuery() {
+        return "{\"query\": \"" + baseQuery + "\",\"variables\": {\"formid\": " + Integer.toString(formId) + "}}";
     }
+
+    /**
+     * Invokes the graphQL service to obtain a string JSON response of the validation configuration data.
+     * @return  A JSON data structure as a String
+     * @see     ServiceInterface
+    */
+    public String load() {
+        return service.runQuery(this.getQuery());
+    }
+
 }

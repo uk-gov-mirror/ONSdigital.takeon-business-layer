@@ -1,16 +1,15 @@
 package uk.gov.ons.collection.utilities;
 
-import uk.gov.ons.collection.entity.FormDefinitionEntity;
-import uk.gov.ons.collection.entity.QuestionResponseEntity;
-import uk.gov.ons.collection.service.ApiCaller;
+//import uk.gov.ons.collection.entity.FormDefinitionEntity;
+//import uk.gov.ons.collection.entity.QuestionResponseEntity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+// import java.util.ArrayList;
+// import java.util.HashMap;
+// import java.util.List;
+// import java.util.Map;
 
 public class Helpers {
-
+/*
     public String buildUriParameters(String reference, String period, String survey) {
         return "reference=" + reference + ";" + "period=" + period + ";" + "survey=" + survey;
     }
@@ -59,4 +58,5 @@ public class Helpers {
         }
         return false;
     }
+    */
 }
