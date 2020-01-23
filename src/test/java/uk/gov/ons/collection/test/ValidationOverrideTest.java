@@ -55,7 +55,7 @@ public class ValidationOverrideTest {
     }
 
     @Test
-    void test_validationoutput_override_graphql_query() {
+    void test_validationOutput_override_graphQl_query() {
 
         try {
             ValidationOverride overrideObject = new ValidationOverride(inputJson);
@@ -73,7 +73,7 @@ public class ValidationOverrideTest {
     }
 
     @Test
-    void test_validation_override__updatelist_updatequery_todatabase() {
+    void test_validationOverride_updatedList_sentToDatabase() {
 
         try {
             ValidationOverride overrideObject = new ValidationOverride(inputJson);
@@ -107,7 +107,7 @@ public class ValidationOverrideTest {
     }
 
     @Test
-    void test_invalidJson_validationoutput_from_database_throwsException() {
+    void test_invalidJson_validationOutput_from_database_throwsException() {
         String graphQlOutput = "{\"data\":{\"allValidationoutput\":{\"nodes\":[{\"validationoutputid\":35,\"overridden\":true}," +
                 "{\"validationoutputid\":36,\"overridden\":false},{\"validationoutputid\":39,\"overridden\":true}," +
                 "{\"validationoutputid\":40,\"overridden\":false}]}}}";
@@ -117,7 +117,7 @@ public class ValidationOverrideTest {
     }
 
     @Test
-    void test_validation_override_no_graphql_service_throwsException() {
+    void test_validation_override_no_graphQl_service_throwsException() {
         GraphQlService service = new GraphQlService();
         ValidationOverrideService validationService = new ValidationOverrideService(inputJson, service);
 

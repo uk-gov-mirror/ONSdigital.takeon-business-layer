@@ -74,15 +74,8 @@ public class ValidationOverride {
         for (ValidationData validationDBData : validationDBList) {
             for (ValidationData validationUIData : validationUIList) {
                 if(validationDBData.getValidationOutputId() == validationUIData.getValidationOutputId()) {
-                    boolean condition = false;
-                    if(validationUIData.isOverridden() && !validationDBData.isOverridden()) {
-                        validationDBData.setOverridden(true);
-                        condition = true;
-                    } else if(!validationUIData.isOverridden() && validationDBData.isOverridden()){
-                        validationDBData.setOverridden(false);
-                        condition = true;
-                    }
-                    if(condition) {
+                    if(validationUIData.isOverridden() != validationDBData.isOverridden()) {
+                        validationDBData.setOverridden(validationUIData.isOverridden());
                         validationDBData.setLastupdatedBy(validationUIData.getLastupdatedBy());
                         validationDBData.setLastupdatedDate(time.toString());
                         updatedList.add(validationDBData);
