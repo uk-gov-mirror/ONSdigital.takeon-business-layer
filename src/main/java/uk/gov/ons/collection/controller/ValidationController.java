@@ -25,6 +25,8 @@ import uk.gov.ons.collection.entity.DataPrepConfig;
 import uk.gov.ons.collection.entity.ValidationOutputs;
 import uk.gov.ons.collection.exception.InvalidJsonException;
 import uk.gov.ons.collection.service.GraphQlService;
+import uk.gov.ons.collection.service.ValidationOverrideService;
+import uk.gov.ons.collection.utilities.RelativePeriod;
 import uk.gov.ons.collection.utilities.QlQueryBuilder;
 import uk.gov.ons.collection.utilities.QlQueryResponse;
 
@@ -141,6 +143,27 @@ public class ValidationController {
         }
         log.info("Validation Outputs Query: " + validationOutputs.toString());
         return validationOutputs.toString();
+    }
+
+    @ApiOperation(value = "Save all overrides", response = String.class)
+    @RequestMapping(value = "/saveOverrides", method = { RequestMethod.POST, RequestMethod.PUT })
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful save of all validation overrides", response = String.class) })
+    @ResponseBody
+    public String saveOverrides(@RequestBody String jsonString)  {
+
+        log.info("API CALL!! --> /saveOverrides :: Save Validation overrides" + jsonString);
+        try {
+
+            ValidationOverrideService validationService = new ValidationOverrideService(jsonString, qlService);
+            validationService.processValidationDataAndSave();
+
+        } catch (Exception err) {
+            err.printStackTrace();
+            log.error("Failed to save validation overrides: " + err);
+            return "{\"error\":\"Error in saving validation overrides\"}";
+        }
+        return "{\"Success\":\"Validation overrides saved successfully\"}";
     }
 
 }
