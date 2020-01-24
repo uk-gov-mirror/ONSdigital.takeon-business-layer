@@ -73,7 +73,7 @@ public class ValidationOverride {
 
         for (ValidationData validationDBData : validationDBList) {
             for (ValidationData validationUIData : validationUIList) {
-                if(validationDBData.getValidationOutputId() == validationUIData.getValidationOutputId()) {
+                if(validationDBData.getValidationOutputId().equals(validationUIData.getValidationOutputId())) {
                     if(validationUIData.isOverridden() != validationDBData.isOverridden()) {
                         validationDBData.setOverridden(validationUIData.isOverridden());
                         validationDBData.setLastupdatedBy(validationUIData.getLastupdatedBy());
