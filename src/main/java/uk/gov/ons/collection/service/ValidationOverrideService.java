@@ -36,6 +36,16 @@ public class ValidationOverrideService {
                     .qlSearch(updateQuery);
             log.info("Output after executing ValidationOutput UpdateGraphQl query " + validationOutputUpdateResponse);
         }
+
+        // Updating the Form Status for Override
+        int triggerCount = validationDatabaseList.size();
+        if (triggerCount > 0) {
+            String contributorStatusQuery = overrideObject.buildContributorStatusQuery(triggerCount);
+            log.info("GraphQL Query for updating Override Form Status {}", contributorStatusQuery);
+            String qlStatusOutput = qlService.qlSearch(contributorStatusQuery);
+            log.info("Output after updating the Override form status {}", qlStatusOutput);
+        }
+
     }
 
 }

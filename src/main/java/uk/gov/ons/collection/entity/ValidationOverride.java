@@ -75,6 +75,9 @@ public class ValidationOverride {
         for (ValidationData validationDBData : validationDBList) {
             for (ValidationData validationUIData : validationUIList) {
                 if(validationDBData.getValidationOutputId().equals(validationUIData.getValidationOutputId())) {
+                    if(validationUIData.isOverridden()) {
+                        overrideCount ++;
+                    }
                     if(validationUIData.isOverridden() != validationDBData.isOverridden()) {
                         validationDBData.setOverridden(validationUIData.isOverridden());
                         validationDBData.setLastupdatedBy(validationUIData.getLastupdatedBy());
@@ -84,7 +87,16 @@ public class ValidationOverride {
                 }
             }
         }
+        log.info("Override Count {}", overrideCount);
         return updatedList;
+    }
+
+    public String buildContributorStatusQuery(int triggerCount) {
+        log.info("Trigger Count {}", triggerCount);
+        String statusText = triggerCount == overrideCount ? "Clear - overridden" : "Check needed" ;
+        log.info("Status Text {}", statusText);
+        ContributorStatus status = new ContributorStatus(reference,period,survey,statusText);
+        return status.buildUpdateQuery();
     }
 
     public String buildValidationOutputQuery() throws InvalidJsonException {
