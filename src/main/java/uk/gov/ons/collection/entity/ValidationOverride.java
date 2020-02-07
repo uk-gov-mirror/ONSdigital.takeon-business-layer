@@ -20,6 +20,7 @@ public class ValidationOverride {
     private String reference;
     private String period;
     private String survey;
+    private int overrideCount;
     private final Timestamp time = new Timestamp(new Date().getTime());
 
     public ValidationOverride(String jsonString) throws InvalidJsonException {
@@ -131,6 +132,14 @@ public class ValidationOverride {
         joiner.add("lastupdatedby: \\\"" + validationData.getLastupdatedBy() + "\\\"");
         joiner.add("lastupdateddate: \\\"" + validationData.getLastupdatedDate() + "\\\"");
         return joiner.toString();
+    }
+
+    public int getOverrideCount() {
+        return overrideCount;
+    }
+
+    public void setOverrideCount(int overrideCount) {
+        this.overrideCount = overrideCount;
     }
 
 }
