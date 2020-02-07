@@ -23,6 +23,10 @@ public class ValidationOverride {
     private int overrideCount;
     private final Timestamp time = new Timestamp(new Date().getTime());
 
+    private static final String STATUS_CLEAR_OVERRIDDEN = "Clear - overridden";
+    private static final String STATUS_CHECK_NEEDED = "Check needed";
+
+
     public ValidationOverride(String jsonString) throws InvalidJsonException {
         try {
             validationOutputOverrideObject = new JSONObject(jsonString);
@@ -93,7 +97,7 @@ public class ValidationOverride {
 
     public String buildContributorStatusQuery(int triggerCount) {
         log.info("Trigger Count {}", triggerCount);
-        String statusText = triggerCount == overrideCount ? "Clear - overridden" : "Check needed" ;
+        String statusText = triggerCount == overrideCount ? STATUS_CLEAR_OVERRIDDEN : STATUS_CHECK_NEEDED ;
         log.info("Status Text {}", statusText);
         ContributorStatus status = new ContributorStatus(reference,period,survey,statusText);
         return status.buildUpdateQuery();
@@ -146,12 +150,5 @@ public class ValidationOverride {
         return joiner.toString();
     }
 
-    public int getOverrideCount() {
-        return overrideCount;
-    }
-
-    public void setOverrideCount(int overrideCount) {
-        this.overrideCount = overrideCount;
-    }
 
 }
