@@ -30,6 +30,20 @@ public class ValidationOverrideTest {
     String graphQlOutput = "{\"data\":{\"allValidationoutputs\":{\"nodes\":[{\"validationoutputid\":35,\"overridden\":true}," +
             "{\"validationoutputid\":36,\"overridden\":false},{\"validationoutputid\":39,\"overridden\":true}," +
             "{\"validationoutputid\":40,\"overridden\":false}]}}}";
+    String graphQlOutput1 = "{\"data\":{\"allValidationoutputs\":{\"nodes\":[{\"validationoutputid\":35,\"overridden\":true}," +
+            "{\"validationoutputid\":36,\"overridden\":true},{\"validationoutputid\":39,\"overridden\":true}," +
+            "{\"validationoutputid\":40,\"overridden\":true}]}}}";
+
+    String inputJson1 = "{\n" +
+            "       'reference': '12345678000', \n" +
+            "       'period': '201801', \n" +
+            "       'survey': '999A',\n" +
+            "       'validation_outputs': [\n" +
+            "       {'validationoutputid': 35, 'override': true, 'user': 'fisdba'}, \n" +
+            "       {'validationoutputid': 36, 'override': true, 'user': 'fisdba1'}, \n" +
+            "       {'validationoutputid': 39, 'override': true, 'user': 'fisdba2'},   \n" +
+            "       {'validationoutputid': 40, 'override': true, 'user': 'fisdba'}]\n" +
+            "    }";
     @Test
     void class_validation_override_invalidJson_throwsExeption() {
         assertThrows(InvalidJsonException.class, () -> new ValidationOverride("dummy_validation_output_data"));
@@ -124,4 +138,40 @@ public class ValidationOverrideTest {
         assertThrows(NullPointerException.class, () -> validationService.processValidationDataAndSave());
 
     }
+
+    @Test
+    void test_validationOverride_formStatus_clear() {
+
+        try {
+            ValidationOverride overrideObject = new ValidationOverride(inputJson1);
+            List<ValidationData> databaseList = overrideObject.extractValidationDataFromDatabase(graphQlOutput1);
+            List<ValidationData> uiList = overrideObject.extractValidationDataFromUI();
+            overrideObject.extractUpdatedValidationOutputData(uiList, databaseList);
+            int triggerCount = databaseList.size();
+            String contributorStatusQuery = overrideObject.buildContributorStatusQuery(triggerCount);
+            //check Form Status Clear
+            assertTrue(contributorStatusQuery.contains("Clear - overridden"));
+        } catch (Exception exp) {
+            assertTrue(false);
+        }
+    }
+
+    @Test
+    void test_validationOverride_formStatus_checkNeeded() {
+
+        try {
+            ValidationOverride overrideObject = new ValidationOverride(inputJson);
+            List<ValidationData> databaseList = overrideObject.extractValidationDataFromDatabase(graphQlOutput);
+            List<ValidationData> uiList = overrideObject.extractValidationDataFromUI();
+            overrideObject.extractUpdatedValidationOutputData(uiList, databaseList);
+            int triggerCount = databaseList.size();
+            String contributorStatusQuery = overrideObject.buildContributorStatusQuery(triggerCount);
+            //check Form Status - Check needed
+            assertTrue(contributorStatusQuery.contains("Check needed"));
+        } catch (Exception exp) {
+            assertTrue(false);
+        }
+    }
+
+
 }
