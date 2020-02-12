@@ -39,8 +39,10 @@ public class ValidationOverrideService {
 
         // Updating the Form Status for Override
         int triggerCount = validationDatabaseList.size();
+        log.info("Trigger Count {}", triggerCount);
         if (triggerCount > 0) {
-            String contributorStatusQuery = overrideObject.buildContributorStatusQuery(triggerCount);
+            String statusText = overrideObject.processStatusMessage(triggerCount);
+            String contributorStatusQuery = overrideObject.buildContributorStatusQuery(statusText);
             log.info("GraphQL Query for updating Override Form Status {}", contributorStatusQuery);
             String qlStatusOutput = qlService.qlSearch(contributorStatusQuery);
             log.info("Output after updating the Override form status {}", qlStatusOutput);

@@ -44,6 +44,10 @@ public class ValidationOverrideTest {
             "       {'validationoutputid': 39, 'override': true, 'user': 'fisdba2'},   \n" +
             "       {'validationoutputid': 40, 'override': true, 'user': 'fisdba'}]\n" +
             "    }";
+
+    private static final String STATUS_CLEAR_OVERRIDDEN = "Clear - overridden";
+    private static final String STATUS_CHECK_NEEDED = "Check needed";
+
     @Test
     void class_validation_override_invalidJson_throwsExeption() {
         assertThrows(InvalidJsonException.class, () -> new ValidationOverride("dummy_validation_output_data"));
@@ -148,9 +152,11 @@ public class ValidationOverrideTest {
             List<ValidationData> uiList = overrideObject.extractValidationDataFromUI();
             overrideObject.extractUpdatedValidationOutputData(uiList, databaseList);
             int triggerCount = databaseList.size();
-            String contributorStatusQuery = overrideObject.buildContributorStatusQuery(triggerCount);
-            //check Form Status Clear
-            assertTrue(contributorStatusQuery.contains("Clear - overridden"));
+            String statusText = overrideObject.processStatusMessage(triggerCount);
+            //check Form Status - Clear
+            assertEquals(STATUS_CLEAR_OVERRIDDEN, statusText);
+            String contributorStatusQuery = overrideObject.buildContributorStatusQuery(statusText);
+            assertTrue(contributorStatusQuery.contains(STATUS_CLEAR_OVERRIDDEN));
         } catch (Exception exp) {
             assertTrue(false);
         }
@@ -165,9 +171,11 @@ public class ValidationOverrideTest {
             List<ValidationData> uiList = overrideObject.extractValidationDataFromUI();
             overrideObject.extractUpdatedValidationOutputData(uiList, databaseList);
             int triggerCount = databaseList.size();
-            String contributorStatusQuery = overrideObject.buildContributorStatusQuery(triggerCount);
+            String statusText = overrideObject.processStatusMessage(triggerCount);
+            assertEquals(STATUS_CHECK_NEEDED, statusText);
+            String contributorStatusQuery = overrideObject.buildContributorStatusQuery(statusText);
             //check Form Status - Check needed
-            assertTrue(contributorStatusQuery.contains("Check needed"));
+            assertTrue(contributorStatusQuery.contains(STATUS_CHECK_NEEDED));
         } catch (Exception exp) {
             assertTrue(false);
         }
