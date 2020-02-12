@@ -20,7 +20,12 @@ public class ValidationOverride {
     private String reference;
     private String period;
     private String survey;
+    private int overrideCount;
     private final Timestamp time = new Timestamp(new Date().getTime());
+
+    private static final String STATUS_CLEAR_OVERRIDDEN = "Clear - overridden";
+    private static final String STATUS_CHECK_NEEDED = "Check needed";
+
 
     public ValidationOverride(String jsonString) throws InvalidJsonException {
         try {
@@ -68,23 +73,39 @@ public class ValidationOverride {
         return validationDataList;
     }
 
-    public List<ValidationData> extractUpdatedValidationOutputData(List<ValidationData> validationUIList, List<ValidationData> validationDBList) {
+    public List<ValidationData> extractUpdatedValidationOutputData(List<ValidationData> validationUiList, List<ValidationData> validationDbList) {
         List<ValidationData> updatedList = new ArrayList<ValidationData>();
 
-        for (ValidationData validationDBData : validationDBList) {
-            for (ValidationData validationUIData : validationUIList) {
-                if(validationDBData.getValidationOutputId().equals(validationUIData.getValidationOutputId())) {
-                    if(validationUIData.isOverridden() != validationDBData.isOverridden()) {
-                        validationDBData.setOverridden(validationUIData.isOverridden());
-                        validationDBData.setLastupdatedBy(validationUIData.getLastupdatedBy());
-                        validationDBData.setLastupdatedDate(time.toString());
-                        updatedList.add(validationDBData);
+        for (ValidationData validationDbData : validationDbList) {
+            for (ValidationData validationUiData : validationUiList) {
+                if (validationDbData.getValidationOutputId().equals(validationUiData.getValidationOutputId())) {
+                    if (validationUiData.isOverridden()) {
+                        overrideCount++;
+                    }
+                    if (validationUiData.isOverridden() != validationDbData.isOverridden()) {
+                        validationDbData.setOverridden(validationUiData.isOverridden());
+                        validationDbData.setLastupdatedBy(validationUiData.getLastupdatedBy());
+                        validationDbData.setLastupdatedDate(time.toString());
+                        updatedList.add(validationDbData);
                     }
                 }
             }
         }
+        log.info("Override Count {}", overrideCount);
         return updatedList;
     }
+
+    public String processStatusMessage(int triggerCount) {
+        String statusText = (triggerCount == overrideCount) ? STATUS_CLEAR_OVERRIDDEN : STATUS_CHECK_NEEDED;
+        log.info("Status Text {}", statusText);
+        return statusText;
+    }
+
+    public String buildContributorStatusQuery(String statusText) {
+        ContributorStatus status = new ContributorStatus(reference,period,survey,statusText);
+        return status.buildUpdateQuery();
+    }
+
 
     public String buildValidationOutputQuery() throws InvalidJsonException {
         StringBuilder referenceQuery = new StringBuilder();
@@ -132,5 +153,6 @@ public class ValidationOverride {
         joiner.add("lastupdateddate: \\\"" + validationData.getLastupdatedDate() + "\\\"");
         return joiner.toString();
     }
+
 
 }
