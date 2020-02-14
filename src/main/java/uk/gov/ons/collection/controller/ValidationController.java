@@ -73,6 +73,8 @@ public class ValidationController {
         String deleteQuery;
         String insertQuery;
 
+        //Changes - LU-4370 - Retain Override status after Re- Validate
+
         // 1 - Convert params to JSON Object and extract Reference | Period | Survey
         try {
             outputs = new ValidationOutputs(validationOutputsJson);
