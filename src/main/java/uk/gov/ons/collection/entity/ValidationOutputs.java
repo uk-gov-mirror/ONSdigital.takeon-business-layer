@@ -1,15 +1,19 @@
 package uk.gov.ons.collection.entity;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.StringJoiner;
 
+import lombok.extern.log4j.Log4j2;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import uk.gov.ons.collection.exception.InvalidJsonException;
 
+@Log4j2
 public class ValidationOutputs {
 
     private JSONArray outputArray;
@@ -23,6 +27,17 @@ public class ValidationOutputs {
         } catch (JSONException err) {
             throw new InvalidJsonException("Given string could not be converted/processed: " + jsonString, err);
         }
+    }
+
+    public String buildValidationOutputQuery() throws InvalidJsonException {
+        StringBuilder referenceQuery = new StringBuilder();
+        referenceQuery.append("{\"query\":\"query validationoutputdata {");
+        referenceQuery.append("allValidationoutputs(condition: {");
+        referenceQuery.append(getReferencePeriodSurvey());
+        referenceQuery.append("}){nodes {reference period survey formula validationid triggered overridden ");
+        referenceQuery.append("}}}\"}");
+        log.info("Validation Output query {}", referenceQuery.toString());
+        return referenceQuery.toString();
     }
 
     public String buildDeleteOutputQuery() throws InvalidJsonException {
@@ -76,6 +91,54 @@ public class ValidationOutputs {
         }
     }
 
+    public List<ValidationOutputData> extractValidationDataFromDatabase(String validationOutputResponse) throws InvalidJsonException {
+
+        List<ValidationOutputData> validationDataList = new ArrayList<ValidationOutputData>();
+        JSONArray validationOutputArray;
+        try {
+            JSONObject referenceExistsObject = new JSONObject(validationOutputResponse);
+            validationOutputArray = referenceExistsObject.getJSONObject("data")
+                    .getJSONObject("allValidationoutputs").getJSONArray("nodes");
+            for (int i = 0; i < validationOutputArray.length(); i++) {
+                ValidationOutputData validationData = new ValidationOutputData();
+                validationData.setValidationOutputId(validationOutputArray.getJSONObject(i).getInt("validationoutputid"));
+                validationData.setOverridden(validationOutputArray.getJSONObject(i).getBoolean("overridden"));
+                validationData.setTriggered(validationOutputArray.getJSONObject(i).getBoolean("triggered"));
+                validationData.setFormula(validationOutputArray.getJSONObject(i).getString("formula"));
+                validationData.setValidationId(validationOutputArray.getJSONObject(i).getInt("validationid"));
+                validationDataList.add(validationData);
+            }
+        } catch (JSONException e) {
+            log.error("Invalid JSON from validation output query response " + e);
+            throw new InvalidJsonException("Invalid JSON from validation output query response: " + validationOutputResponse, e);
+        }
+        return validationDataList;
+    }
+
+    public List<ValidationOutputData> extractValidationDataFromLambda() throws InvalidJsonException {
+
+        List<ValidationOutputData> validationLambdaList = new ArrayList<ValidationOutputData>();
+        try {
+            for (int i = 0; i < outputArray.length(); i++) {
+                var outputRow = outputArray.getJSONObject(i);
+                ValidationOutputData validationLambdaData = new ValidationOutputData();
+                validationLambdaData.setReference(outputRow.getString("reference"));
+                validationLambdaData.setPeriod(outputRow.getString("period"));
+                validationLambdaData.setSurvey(outputRow.getString("survey"));
+                validationLambdaData.setFormula(outputRow.getString("formula"));
+                validationLambdaData.setValidationId(outputRow.getInt("validationid"));
+                validationLambdaData.setInstance(outputRow.getInt("instance"));
+                validationLambdaData.setTriggered(outputRow.getBoolean("triggered"));
+                validationLambdaList.add(validationLambdaData);
+            }
+
+        } catch (JSONException e) {
+            log.error("Invalid JSON from validation output query response " + e);
+            throw new InvalidJsonException("Invalid JSON from validation output query response: " + outputArray, e);
+        }
+        return validationLambdaList;
+    }
+
     private String getFirstRowAttribute(String attribute) throws InvalidJsonException {
         try {   
             return outputArray.getJSONObject(0).getString(attribute);
@@ -114,6 +177,14 @@ public class ValidationOutputs {
             throw new InvalidJsonException("Given JSON did not contain triggered in the expected location(s): " + outputArray, err);
         } 
         return false;
+    }
+
+    private String getReferencePeriodSurvey() throws InvalidJsonException {
+        StringJoiner joiner = new StringJoiner(",");
+        joiner.add("reference: \\\"" + getReference() + "\\\"");
+        joiner.add("period: \\\""    + getPeriod()    + "\\\"");
+        joiner.add("survey: \\\""    + getSurvey()    + "\\\"");
+        return joiner.toString();
     }
 
 }
