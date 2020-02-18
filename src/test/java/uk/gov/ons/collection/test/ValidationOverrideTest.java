@@ -2,6 +2,8 @@ package uk.gov.ons.collection.test;
 
 import org.junit.jupiter.api.Test;
 import uk.gov.ons.collection.entity.ValidationData;
+import uk.gov.ons.collection.entity.ValidationOutputData;
+import uk.gov.ons.collection.entity.ValidationOutputs;
 import uk.gov.ons.collection.entity.ValidationOverride;
 import uk.gov.ons.collection.exception.InvalidJsonException;
 import uk.gov.ons.collection.service.GraphQlService;
@@ -180,6 +182,83 @@ public class ValidationOverrideTest {
             assertTrue(false);
         }
     }
+
+    @Test
+    void test_validationOutput() {
+
+        try {
+            String graphQLOutput = "{\n" +
+                    "    \"data\": {\n" +
+                    "      \"allValidationoutputs\": {\n" +
+                    "        \"nodes\": [\n" +
+                    "          {\n" +
+                    "            \"reference\": \"12345678012\",\n" +
+                    "            \"period\": \"201801\",\n" +
+                    "            \"survey\": \"999A\",\n" +
+                    "            \"validationoutputid\": 33,\n" +
+                    "            \"triggered\": true,\n" +
+                    "            \"formula\": \"abs(40000 - 10000) > 20000 AND 400000 > 0 AND 10000 > 0\",\n" +
+                    "            \"validationid\": \"10\",\n" +
+                    "            \"overridden\": false\n" +
+                    "          },\n" +
+                    "          {\n" +
+                    "            \"reference\": \"12345678012\",\n" +
+                    "            \"period\": \"201801\",\n" +
+                    "            \"survey\": \"999A\",\n" +
+                    "            \"validationoutputid\": 34,\n" +
+                    "            \"triggered\": true,\n" +
+                    "            \"formula\": \"2 = 2\",\n" +
+                    "            \"validationid\": \"20\",\n" +
+                    "            \"overridden\": false\n" +
+                    "          },\n" +
+                    "          {\n" +
+                    "            \"reference\": \"12345678012\",\n" +
+                    "            \"period\": \"201801\",\n" +
+                    "            \"survey\": \"999A\",\n" +
+                    "            \"validationoutputid\": 36,\n" +
+                    "            \"triggered\": true,\n" +
+                    "            \"formula\": \"'0' != ''\",\n" +
+                    "            \"validationid\": \"30\",\n" +
+                    "            \"overridden\": false\n" +
+                    "          },\n" +
+                    "          {\n" +
+                    "            \"reference\": \"12345678012\",\n" +
+                    "            \"period\": \"201801\",\n" +
+                    "            \"survey\": \"999A\",\n" +
+                    "            \"validationoutputid\": 39,\n" +
+                    "            \"triggered\": true,\n" +
+                    "            \"formula\": \"543 != 5143\",\n" +
+                    "            \"validationid\": \"100\",\n" +
+                    "            \"overridden\": false\n" +
+                    "          }  \n" +
+                    "        ]\n" +
+                    "      }\n" +
+                    "    }\n" +
+                    "  }";
+            String lambdaoutput = "{\"validation_outputs\": [\n" +
+                    "      {\"formula\": \"999999 = 2\", \"triggered\": false, \"validation\": \"CPBMI\", \"reference\": \"12345678012\", \"period\": \"201801\", \"survey\": \"999A\", \"validationid\": 70, \"bpmid\": \"0\", \"instance\": 0}, \n" +
+                    "      {\"formula\": \"2 = 2\", \"triggered\": true, \"validation\": \"CPBMI\", \"reference\": \"12345678012\", \"period\": \"201801\", \"survey\": \"999A\", \"validationid\": 20, \"bpmid\": \"0\", \"instance\": 0},\n" +
+                    "      {\"formula\": \"0 != 0\", \"triggered\": false, \"validation\": \"QVDQ\", \"reference\": \"12345678012\", \"period\": \"201801\", \"survey\": \"999A\", \"validationid\": 30, \"bpmid\": \"0\", \"instance\": 0}]}";
+            ValidationOutputs outputs = new  ValidationOutputs(lambdaoutput);
+
+            List<ValidationOutputData> validationData = outputs.extractValidationDataFromDatabase(graphQLOutput);
+            List<ValidationOutputData> lambdaData = outputs.extractValidationDataFromLambda();
+
+            System.out.println("Lambda Count " + lambdaData.size());
+            System.out.println("Graph QL Validation output record count " + validationData.size());
+
+            System.out.println("Validation Data" + validationData.toString());
+            System.out.println("Lambda Data" + lambdaData.toString());
+
+            outputs.getConsolidatedUpsertValidationOutputList(lambdaData, validationData);
+
+        } catch (Exception exp) {
+            exp.printStackTrace();
+            assertTrue(false);
+        }
+    }
+
+
 
 
 }

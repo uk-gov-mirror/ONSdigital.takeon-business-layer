@@ -1,4 +1,5 @@
 package uk.gov.ons.collection.entity;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,9 +30,10 @@ public class ValidationOutputData {
     public String toString() {
         return "ValidationOutData{" +
                 "validationOutputId=" + validationOutputId +
+                ", validationId=" + validationId +
                 ", overridden=" + overridden +
-                ", lastupdatedBy='" + lastupdatedBy + '\'' +
-                ", lastupdatedDate='" + lastupdatedDate + '\'' +
+                ", triggered=" + triggered +
+                ", formula=" + formula +
                 '}';
     }
 

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 import lombok.extern.log4j.Log4j2;
 import org.json.JSONArray;
@@ -137,6 +138,64 @@ public class ValidationOutputs {
             throw new InvalidJsonException("Invalid JSON from validation output query response: " + outputArray, e);
         }
         return validationLambdaList;
+    }
+
+    public List<ValidationOutputData> getConsolidatedUpsertValidationOutputList(List<ValidationOutputData> validationLambdaList,
+        List<ValidationOutputData> validationDataList) {
+
+        List<ValidationOutputData> finalValidationList = new ArrayList<ValidationOutputData>();
+
+        List<ValidationOutputData> insertedList = validationLambdaList.stream().filter(lambdadata -> validationDataList.stream().noneMatch(validationdata ->
+                (validationdata.getValidationId().equals(lambdadata.getValidationId())))).collect(Collectors.toList());
+
+        List<ValidationOutputData> matchedList = validationLambdaList.stream().filter(lambdadata -> validationDataList.stream().anyMatch(validationdata ->
+                (validationdata.getValidationId().equals(lambdadata.getValidationId())))).collect(Collectors.toList());
+
+        List<ValidationOutputData> formulaEqualList = matchedList.stream().filter(matcheddata -> validationDataList.stream().anyMatch(validationdata ->
+                (validationdata.getValidationId().equals(matcheddata.getValidationId())  && validationdata.getFormula().equals(matcheddata.getFormula())))).collect(Collectors.toList());
+
+        List<ValidationOutputData> comparisonList = matchedList.stream().filter(matcheddata -> formulaEqualList.stream().noneMatch(formulaequaldata ->
+                (formulaequaldata.getValidationId().equals(matcheddata.getValidationId())))).collect(Collectors.toList());
+
+        //Test
+        List<ValidationOutputData> testList = validationLambdaList.stream().filter(lambdadata -> validationDataList.stream().anyMatch(validationdata ->
+                (validationdata.getValidationId().equals(lambdadata.getValidationId()) && !(validationdata.getFormula().equals(lambdadata.getFormula()))))).collect(Collectors.toList());
+        //End
+
+
+
+        System.out.println("Inserted List :" + insertedList.toString());
+        System.out.println("Matched List :" + matchedList.toString());
+
+        System.out.println("Formula Equal List :" + formulaEqualList.toString());
+
+        System.out.println("Updated List :" + comparisonList.toString());
+        System.out.println("Test List :" + testList.toString());
+
+        List<ValidationOutputData> deletedList = validationDataList.stream().filter(validationdata -> validationLambdaList.stream().noneMatch(lambdadata ->
+                (lambdadata.getValidationId().equals(validationdata.getValidationId())))).collect(Collectors.toList());
+
+        System.out.println("Deleted List :" + deletedList.toString());
+
+
+
+        for (ValidationOutputData lambdaData : validationLambdaList) {
+
+            for (ValidationOutputData validationOutputData : validationDataList) {
+
+                if(lambdaData.getValidationId().equals(validationOutputData.getValidationId())) {
+
+
+
+
+
+                }
+
+            }
+
+        }
+
+        return finalValidationList;
     }
 
     private String getFirstRowAttribute(String attribute) throws InvalidJsonException {
