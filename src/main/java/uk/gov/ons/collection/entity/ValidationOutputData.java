@@ -34,6 +34,14 @@ public class ValidationOutputData {
                 ", overridden=" + overridden +
                 ", triggered=" + triggered +
                 ", formula=" + formula +
+                ", createdBy=" + createdBy +
+                ", createdDate=" + createdDate +
+                ", lastupdatedBy=" + lastupdatedBy +
+                ", lastupdatedDate=" + lastupdatedDate +
+                ", reference=" + reference +
+                ", period=" + period +
+                ", survey=" + survey +
+                ", instance=" + instance +
                 '}';
     }
 

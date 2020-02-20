@@ -22,6 +22,7 @@ import lombok.extern.log4j.Log4j2;
 
 import uk.gov.ons.collection.entity.ContributorStatus;
 import uk.gov.ons.collection.entity.DataPrepConfig;
+import uk.gov.ons.collection.entity.ValidationOutputData;
 import uk.gov.ons.collection.entity.ValidationOutputs;
 import uk.gov.ons.collection.exception.InvalidJsonException;
 import uk.gov.ons.collection.service.GraphQlService;
@@ -29,6 +30,7 @@ import uk.gov.ons.collection.service.ValidationOverrideService;
 import uk.gov.ons.collection.utilities.RelativePeriod;
 import uk.gov.ons.collection.utilities.QlQueryBuilder;
 import uk.gov.ons.collection.utilities.QlQueryResponse;
+import java.util.List;
 
 
 @Log4j2
@@ -70,8 +72,8 @@ public class ValidationController {
         String reference;
         String survey;
         String statusText;
-        String deleteQuery;
-        String insertQuery;
+        String qlResponse;
+
 
         //Changes - LU-4370 - Retain Override status after Re- Validate
 
@@ -82,33 +84,26 @@ public class ValidationController {
             period = outputs.getPeriod();
             survey = outputs.getSurvey();
             statusText = outputs.getStatusText();
-            deleteQuery = outputs.buildDeleteOutputQuery();
-            insertQuery = outputs.buildInsertByArrayQuery();
+            String validationOutputQuery = outputs.buildValidationOutputQuery();
+
+            log.info("Validation Output Query " + validationOutputQuery);
+            qlResponse = qlService.qlSearch(validationOutputQuery);
+            log.info("Output from Validation Output table " + qlResponse);
+            List<ValidationOutputData> validationOutputData = outputs.extractValidationDataFromDatabase(qlResponse);
+            log.info("ValidationOutput Data " + validationOutputData.toString());
+            List<ValidationOutputData> lambdaData = outputs.extractValidationDataFromLambda();
+            log.info("Lambda Data " + lambdaData.toString());
+            List<ValidationOutputData> upsertAndInsertData = outputs.getUpsertAndInsertValidationOutputList(lambdaData, validationOutputData);
+            log.info("Upsert And Insert Data " + lambdaData.toString());
+            List<ValidationOutputData> deleteData = outputs.getDeleteValidationOutputList(lambdaData, validationOutputData);
+            log.info("Delete Data " + deleteData.toString());
+            String upsertAndDeleteQuery = outputs.buildUpsertByArrayQuery(upsertAndInsertData, deleteData);
+            log.info("Upsert And DeleteQuery " + upsertAndDeleteQuery);
+            qlResponse = qlService.qlSearch(upsertAndDeleteQuery);
+            log.info("Upsert Query response " + qlResponse);
         } catch (Exception e) {
             log.info("Exception caught: " + e);
-            return "{\"error\":\"Unable to resolve validation output JSON\"}";
-        }
-
-        String qlResponse = new String();
-
-        // 1: Delete outputs
-        try {
-            qlResponse = qlService.qlSearch(deleteQuery);
-        } catch (Exception e) {
-            log.info("Exception: " + e);
-            log.info("Delete: " + deleteQuery);
-            log.info("QL Response: " + qlResponse);
-            return "{\"error\":\"Error removing existing validation outputs\"}";
-        }
-
-        // 2: Insert outputs
-        try {
-            qlResponse = qlService.qlSearch(insertQuery);
-        } catch (Exception e) {
-            log.info("Exception: " + e);
-            log.info("Insert: " + insertQuery);
-            log.info("QL Response: " + qlResponse);
-            return "{\"error\":\"Error saving validation outputs\"}";
+            return "{\"error\":\"Unable to save ValidationOutputs\"}";
         }
 
         // 3: Update status
@@ -117,9 +112,9 @@ public class ValidationController {
             updateStatusQuery = new ContributorStatus(reference, period, survey, statusText).buildUpdateQuery();
             qlResponse = qlService.qlSearch(updateStatusQuery);
         } catch (Exception e) {
-            log.info("Exception: " + e);
-            log.info("Update: " + insertQuery);
-            log.info("QL Response: " + updateStatusQuery);
+            //log.info("Exception: " + e);
+            //log.info("Update: " + insertQuery);
+            //log.info("QL Response: " + updateStatusQuery);
             return "{\"error\":\"Error updating contributor status\"}";
         }
 

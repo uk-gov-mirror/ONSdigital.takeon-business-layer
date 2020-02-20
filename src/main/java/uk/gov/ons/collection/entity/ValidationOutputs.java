@@ -35,7 +35,7 @@ public class ValidationOutputs {
         referenceQuery.append("{\"query\":\"query validationoutputdata {");
         referenceQuery.append("allValidationoutputs(condition: {");
         referenceQuery.append(getReferencePeriodSurvey());
-        referenceQuery.append("}){nodes {reference period survey formula validationid triggered overridden ");
+        referenceQuery.append("}){nodes {reference period survey formula validationid triggered overridden instance ");
         referenceQuery.append("}}}\"}");
         log.info("Validation Output query {}", referenceQuery.toString());
         return referenceQuery.toString();
@@ -58,6 +58,23 @@ public class ValidationOutputs {
         return queryJson.toString();
     }
 
+    public String buildUpsertByArrayQuery(List<ValidationOutputData> upsertData, List<ValidationOutputData> deleteData) throws InvalidJsonException {
+        var queryJson = new StringBuilder();
+        queryJson.append("{\"query\": \"mutation upsertOutputArray{upsertDeleteValidationoutput(input: {arg0:");
+        queryJson.append("[" + getValidationOutputsForUpsertAndDelete(upsertData) + "], arg1:");
+        queryJson.append("[" + getValidationOutputsForUpsertAndDelete(deleteData) + "]");
+        queryJson.append("}){clientMutationId}}\"}");
+        return queryJson.toString();
+    }
+
+    private String getValidationOutputsForUpsertAndDelete(List<ValidationOutputData> validationOutputData) throws InvalidJsonException {
+        StringJoiner joiner = new StringJoiner(",");
+        for (ValidationOutputData data : validationOutputData) {
+            joiner.add("{" + extractValidationOutputRowForUpsertAndDelete(data) + "}");
+        }
+        return joiner.toString();
+    }
+
     // Loop through the given validation output array json and convert it into a graphQL compatable format
     private String getValidationOutputs() throws InvalidJsonException {
         StringJoiner joiner = new StringJoiner(",");
@@ -69,6 +86,30 @@ public class ValidationOutputs {
 
     public String getTime() {
         return time.toString();
+    }
+
+
+    // Convert a row for the given index and provide it in graphQL desired format
+    private String extractValidationOutputRowForUpsertAndDelete(ValidationOutputData data) throws InvalidJsonException {
+        StringJoiner joiner = new StringJoiner(",");
+        try {
+
+            joiner.add("reference: \\\"" + data.getReference() + "\\\"");
+            joiner.add("period: \\\"" + data.getPeriod() + "\\\"");
+            joiner.add("survey: \\\"" + data.getSurvey() + "\\\"");
+            joiner.add("formula: \\\"" + data.getFormula() + "\\\"");
+            joiner.add("validationid: \\\"" + data.getValidationId() + "\\\"");
+            joiner.add("instance: " + data.getInstance());
+            joiner.add("triggered: " + data.isTriggered());
+            joiner.add("createdby: \\\"" + data.getCreatedBy() + "\\\"");
+            joiner.add("createddate: \\\"" + (data.getCreatedDate() == null ? "" : data.getCreatedDate()) + "\\\"");
+            joiner.add("lastupdatedby: \\\"" + data.getLastupdatedBy() + "\\\"");
+            joiner.add("lastupdateddate: \\\"" + (data.getLastupdatedDate() == null ? "" : data.getLastupdatedDate())  + "\\\"");
+            return joiner.toString();
+
+        } catch (Exception err) {
+            throw new InvalidJsonException("Error processing validation output json structure: " + err + " JSON: " + outputArray, err);
+        }
     }
 
     // Convert a row for the given index and provide it in graphQL desired format
@@ -102,11 +143,15 @@ public class ValidationOutputs {
                     .getJSONObject("allValidationoutputs").getJSONArray("nodes");
             for (int i = 0; i < validationOutputArray.length(); i++) {
                 ValidationOutputData validationData = new ValidationOutputData();
-                validationData.setValidationOutputId(validationOutputArray.getJSONObject(i).getInt("validationoutputid"));
+                //validationData.setValidationOutputId(validationOutputArray.getJSONObject(i).getInt("validationoutputid"));
                 validationData.setOverridden(validationOutputArray.getJSONObject(i).getBoolean("overridden"));
                 validationData.setTriggered(validationOutputArray.getJSONObject(i).getBoolean("triggered"));
                 validationData.setFormula(validationOutputArray.getJSONObject(i).getString("formula"));
                 validationData.setValidationId(validationOutputArray.getJSONObject(i).getInt("validationid"));
+                validationData.setInstance(validationOutputArray.getJSONObject(i).getInt("instance"));
+                validationData.setReference(validationOutputArray.getJSONObject(i).getString("reference"));
+                validationData.setPeriod(validationOutputArray.getJSONObject(i).getString("period"));
+                validationData.setSurvey(validationOutputArray.getJSONObject(i).getString("survey"));
                 validationDataList.add(validationData);
             }
         } catch (JSONException e) {
@@ -126,10 +171,11 @@ public class ValidationOutputs {
                 validationLambdaData.setReference(outputRow.getString("reference"));
                 validationLambdaData.setPeriod(outputRow.getString("period"));
                 validationLambdaData.setSurvey(outputRow.getString("survey"));
-                validationLambdaData.setFormula(outputRow.getString("formula"));
+                validationLambdaData.setFormula(outputRow.getString("formula").replace("\"","'"));
                 validationLambdaData.setValidationId(outputRow.getInt("validationid"));
                 validationLambdaData.setInstance(outputRow.getInt("instance"));
                 validationLambdaData.setTriggered(outputRow.getBoolean("triggered"));
+
                 validationLambdaList.add(validationLambdaData);
             }
 
@@ -140,13 +186,50 @@ public class ValidationOutputs {
         return validationLambdaList;
     }
 
-    public List<ValidationOutputData> getConsolidatedUpsertValidationOutputList(List<ValidationOutputData> validationLambdaList,
+
+    public List<ValidationOutputData> getUpsertAndInsertValidationOutputList(List<ValidationOutputData> validationLambdaList,
+                                                                                List<ValidationOutputData> validationDataList) {
+
+        List<ValidationOutputData> insertedList = validationLambdaList.stream().filter(lambdadata -> validationDataList.stream().noneMatch(validationdata ->
+                (validationdata.getValidationId().equals(lambdadata.getValidationId())))).collect(Collectors.toList());
+        insertedList.forEach(insertBy -> insertBy.setCreatedBy("fisdba"));
+        insertedList.forEach(insertDate -> insertDate.setCreatedDate(time.toString()));
+
+        List<ValidationOutputData> modifiedList = validationLambdaList.stream().filter(lambdadata -> validationDataList.stream().anyMatch(validationdata ->
+                (validationdata.getValidationId().equals(lambdadata.getValidationId()) && !(validationdata.getFormula().equals(lambdadata.getFormula()))))).collect(Collectors.toList());
+        modifiedList.forEach(modifiedBy -> modifiedBy.setLastupdatedBy("fisdba"));
+        modifiedList.forEach(modifiedDate -> modifiedDate.setLastupdatedDate(time.toString()));
+        modifiedList.addAll(insertedList);
+        System.out.println("Final List containing both update and insert :" + modifiedList.toString());
+
+        return modifiedList;
+
+    }
+
+    public List<ValidationOutputData> getDeleteValidationOutputList(List<ValidationOutputData> validationLambdaList,
+                                                                             List<ValidationOutputData> validationDataList) {
+        List<ValidationOutputData> deletedList = validationDataList.stream().filter(validationdata -> validationLambdaList.stream().noneMatch(lambdadata ->
+                (lambdadata.getValidationId().equals(validationdata.getValidationId())))).collect(Collectors.toList());
+
+        System.out.println("Deleted List :" + deletedList.toString());
+
+        return deletedList;
+
+    }
+
+
+
+
+        public List<ValidationOutputData> getConsolidatedUpsertValidationOutputList(List<ValidationOutputData> validationLambdaList,
         List<ValidationOutputData> validationDataList) {
 
         List<ValidationOutputData> finalValidationList = new ArrayList<ValidationOutputData>();
 
         List<ValidationOutputData> insertedList = validationLambdaList.stream().filter(lambdadata -> validationDataList.stream().noneMatch(validationdata ->
                 (validationdata.getValidationId().equals(lambdadata.getValidationId())))).collect(Collectors.toList());
+        insertedList.forEach(insertBy -> insertBy.setCreatedBy("fisdba"));
+        insertedList.forEach(insertDate -> insertDate.setCreatedDate(time.toString()));
+
 
         List<ValidationOutputData> matchedList = validationLambdaList.stream().filter(lambdadata -> validationDataList.stream().anyMatch(validationdata ->
                 (validationdata.getValidationId().equals(lambdadata.getValidationId())))).collect(Collectors.toList());
@@ -158,8 +241,11 @@ public class ValidationOutputs {
                 (formulaequaldata.getValidationId().equals(matcheddata.getValidationId())))).collect(Collectors.toList());
 
         //Test
-        List<ValidationOutputData> testList = validationLambdaList.stream().filter(lambdadata -> validationDataList.stream().anyMatch(validationdata ->
+        List<ValidationOutputData> modifiedList = validationLambdaList.stream().filter(lambdadata -> validationDataList.stream().anyMatch(validationdata ->
                 (validationdata.getValidationId().equals(lambdadata.getValidationId()) && !(validationdata.getFormula().equals(lambdadata.getFormula()))))).collect(Collectors.toList());
+        modifiedList.forEach(modifiedBy -> modifiedBy.setLastupdatedBy("fisdba"));
+        modifiedList.forEach(modifiedDate -> modifiedDate.setLastupdatedDate(time.toString()));
+        modifiedList.addAll(insertedList);
         //End
 
 
@@ -170,7 +256,7 @@ public class ValidationOutputs {
         System.out.println("Formula Equal List :" + formulaEqualList.toString());
 
         System.out.println("Updated List :" + comparisonList.toString());
-        System.out.println("Test List :" + testList.toString());
+        System.out.println("Final List containing both update and insert :" + modifiedList.toString());
 
         List<ValidationOutputData> deletedList = validationDataList.stream().filter(validationdata -> validationLambdaList.stream().noneMatch(lambdadata ->
                 (lambdadata.getValidationId().equals(validationdata.getValidationId())))).collect(Collectors.toList());

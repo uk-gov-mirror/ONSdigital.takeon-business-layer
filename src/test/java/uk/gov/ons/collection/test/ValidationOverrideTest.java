@@ -187,6 +187,15 @@ public class ValidationOverrideTest {
     void test_validationOutput() {
 
         try {
+            String graphQLOutput1 = "{\n" +
+                    "  \"data\": {\n" +
+                    "    \"allValidationoutputs\": {\n" +
+                    "      \"nodes\": []\n" +
+                    "    }\n" +
+                    "  }\n" +
+                    "}";
+
+
             String graphQLOutput = "{\n" +
                     "    \"data\": {\n" +
                     "      \"allValidationoutputs\": {\n" +
@@ -197,6 +206,7 @@ public class ValidationOverrideTest {
                     "            \"survey\": \"999A\",\n" +
                     "            \"validationoutputid\": 33,\n" +
                     "            \"triggered\": true,\n" +
+                    "            \"instance\": 0,\n" +
                     "            \"formula\": \"abs(40000 - 10000) > 20000 AND 400000 > 0 AND 10000 > 0\",\n" +
                     "            \"validationid\": \"10\",\n" +
                     "            \"overridden\": false\n" +
@@ -207,6 +217,7 @@ public class ValidationOverrideTest {
                     "            \"survey\": \"999A\",\n" +
                     "            \"validationoutputid\": 34,\n" +
                     "            \"triggered\": true,\n" +
+                    "            \"instance\": 0,\n" +
                     "            \"formula\": \"2 = 2\",\n" +
                     "            \"validationid\": \"20\",\n" +
                     "            \"overridden\": false\n" +
@@ -217,6 +228,7 @@ public class ValidationOverrideTest {
                     "            \"survey\": \"999A\",\n" +
                     "            \"validationoutputid\": 36,\n" +
                     "            \"triggered\": true,\n" +
+                    "            \"instance\": 0,\n" +
                     "            \"formula\": \"'0' != ''\",\n" +
                     "            \"validationid\": \"30\",\n" +
                     "            \"overridden\": false\n" +
@@ -227,6 +239,7 @@ public class ValidationOverrideTest {
                     "            \"survey\": \"999A\",\n" +
                     "            \"validationoutputid\": 39,\n" +
                     "            \"triggered\": true,\n" +
+                    "            \"instance\": 0,\n" +
                     "            \"formula\": \"543 != 5143\",\n" +
                     "            \"validationid\": \"100\",\n" +
                     "            \"overridden\": false\n" +
@@ -251,6 +264,12 @@ public class ValidationOverrideTest {
             System.out.println("Lambda Data" + lambdaData.toString());
 
             outputs.getConsolidatedUpsertValidationOutputList(lambdaData, validationData);
+
+            List<ValidationOutputData> upsertData = outputs.getUpsertAndInsertValidationOutputList(lambdaData, validationData);
+            List<ValidationOutputData> deleteData = outputs.getDeleteValidationOutputList(lambdaData, validationData);
+
+            String graphQLQuery = outputs.buildUpsertByArrayQuery(upsertData, deleteData);
+            System.out.println(graphQLQuery);
 
         } catch (Exception exp) {
             exp.printStackTrace();
