@@ -99,12 +99,17 @@ public class ValidationOutputs {
             joiner.add("survey: \\\"" + data.getSurvey() + "\\\"");
             joiner.add("formula: \\\"" + data.getFormula() + "\\\"");
             joiner.add("validationid: \\\"" + data.getValidationId() + "\\\"");
-            joiner.add("instance: " + data.getInstance());
+            joiner.add("instance: \\\"" + data.getInstance() + "\\\"");
             joiner.add("triggered: " + data.isTriggered());
-            joiner.add("createdby: \\\"" + data.getCreatedBy() + "\\\"");
-            joiner.add("createddate: \\\"" + (data.getCreatedDate() == null ? "" : data.getCreatedDate()) + "\\\"");
-            joiner.add("lastupdatedby: \\\"" + data.getLastupdatedBy() + "\\\"");
-            joiner.add("lastupdateddate: \\\"" + (data.getLastupdatedDate() == null ? "" : data.getLastupdatedDate())  + "\\\"");
+            joiner.add("overridden: " + data.isOverridden());
+//            joiner.add("createdby: \\\"" + data.getCreatedBy() + "\\\"");
+//            joiner.add("createddate: \\\"" + (data.getCreatedDate() == null ? "" : data.getCreatedDate()) + "\\\"");
+//            joiner.add("lastupdatedby: \\\"" + data.getLastupdatedBy() + "\\\"");
+//            joiner.add("lastupdateddate: \\\"" + (data.getLastupdatedDate() == null ? "" : data.getLastupdatedDate())  + "\\\"");
+            joiner.add("createdby: \\\"fisdba\\\"");
+            joiner.add("createddate: \\\"" + time.toString() + "\\\"");
+            joiner.add("lastupdatedby: \\\"fisdba\\\"");
+            joiner.add("lastupdateddate: \\\"" + time.toString() + "\\\"");
             return joiner.toString();
 
         } catch (Exception err) {
@@ -143,7 +148,6 @@ public class ValidationOutputs {
                     .getJSONObject("allValidationoutputs").getJSONArray("nodes");
             for (int i = 0; i < validationOutputArray.length(); i++) {
                 ValidationOutputData validationData = new ValidationOutputData();
-                //validationData.setValidationOutputId(validationOutputArray.getJSONObject(i).getInt("validationoutputid"));
                 validationData.setOverridden(validationOutputArray.getJSONObject(i).getBoolean("overridden"));
                 validationData.setTriggered(validationOutputArray.getJSONObject(i).getBoolean("triggered"));
                 validationData.setFormula(validationOutputArray.getJSONObject(i).getString("formula"));
@@ -189,38 +193,27 @@ public class ValidationOutputs {
 
     public List<ValidationOutputData> getUpsertAndInsertValidationOutputList(List<ValidationOutputData> validationLambdaList,
                                                                                 List<ValidationOutputData> validationDataList) {
-
         List<ValidationOutputData> insertedList = validationLambdaList.stream().filter(lambdadata -> validationDataList.stream().noneMatch(validationdata ->
                 (validationdata.getValidationId().equals(lambdadata.getValidationId())))).collect(Collectors.toList());
-        insertedList.forEach(insertBy -> insertBy.setCreatedBy("fisdba"));
-        insertedList.forEach(insertDate -> insertDate.setCreatedDate(time.toString()));
-
         List<ValidationOutputData> modifiedList = validationLambdaList.stream().filter(lambdadata -> validationDataList.stream().anyMatch(validationdata ->
                 (validationdata.getValidationId().equals(lambdadata.getValidationId()) && !(validationdata.getFormula().equals(lambdadata.getFormula()))))).collect(Collectors.toList());
-        modifiedList.forEach(modifiedBy -> modifiedBy.setLastupdatedBy("fisdba"));
-        modifiedList.forEach(modifiedDate -> modifiedDate.setLastupdatedDate(time.toString()));
         modifiedList.addAll(insertedList);
         System.out.println("Final List containing both update and insert :" + modifiedList.toString());
-
         return modifiedList;
-
     }
 
     public List<ValidationOutputData> getDeleteValidationOutputList(List<ValidationOutputData> validationLambdaList,
                                                                              List<ValidationOutputData> validationDataList) {
         List<ValidationOutputData> deletedList = validationDataList.stream().filter(validationdata -> validationLambdaList.stream().noneMatch(lambdadata ->
                 (lambdadata.getValidationId().equals(validationdata.getValidationId())))).collect(Collectors.toList());
-
         System.out.println("Deleted List :" + deletedList.toString());
-
         return deletedList;
-
     }
 
 
 
 
-        public List<ValidationOutputData> getConsolidatedUpsertValidationOutputList(List<ValidationOutputData> validationLambdaList,
+    public List<ValidationOutputData> getConsolidatedUpsertValidationOutputList(List<ValidationOutputData> validationLambdaList,
         List<ValidationOutputData> validationDataList) {
 
         List<ValidationOutputData> finalValidationList = new ArrayList<ValidationOutputData>();
@@ -248,8 +241,6 @@ public class ValidationOutputs {
         modifiedList.addAll(insertedList);
         //End
 
-
-
         System.out.println("Inserted List :" + insertedList.toString());
         System.out.println("Matched List :" + matchedList.toString());
 
@@ -262,24 +253,6 @@ public class ValidationOutputs {
                 (lambdadata.getValidationId().equals(validationdata.getValidationId())))).collect(Collectors.toList());
 
         System.out.println("Deleted List :" + deletedList.toString());
-
-
-
-        for (ValidationOutputData lambdaData : validationLambdaList) {
-
-            for (ValidationOutputData validationOutputData : validationDataList) {
-
-                if(lambdaData.getValidationId().equals(validationOutputData.getValidationId())) {
-
-
-
-
-
-                }
-
-            }
-
-        }
 
         return finalValidationList;
     }
@@ -334,17 +307,4 @@ public class ValidationOutputs {
 
 }
 
-
-
-// mutation insertOutputArray {
-//   insertvalidationoutputbyarray(input: {arg0: [
-//     {reference: "123", period: "123", survey: "123", formula: "123", validationid: "12", instance:"0",
-//     triggered: true, createdby:"testuser",createddate:"2016-06-22 22:10:25-04"},
-//     {reference: "123", period: "123", survey: "123", formula: "123", validationid: "12", instance:"0",
-//     triggered: true, createdby:"testuser",createddate:"2016-06-22 22:10:25-04"}
-//   ]}
-//   ) {
-//     clientMutationId
-//   }
-// }
 
