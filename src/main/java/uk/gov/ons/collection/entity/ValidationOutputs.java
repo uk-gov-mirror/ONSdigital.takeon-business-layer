@@ -59,10 +59,6 @@ public class ValidationOutputs {
     }
 
 
-    public String getTime() {
-        return time.toString();
-    }
-
 
     // Convert a row for the given index and provide it in graphQL desired format
     private String extractValidationOutputRowForUpsertAndDelete(ValidationOutputData data) throws InvalidJsonException {

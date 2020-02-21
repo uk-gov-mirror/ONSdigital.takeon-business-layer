@@ -101,10 +101,9 @@ public class ValidationController {
         try {
             updateStatusQuery = new ContributorStatus(reference, period, survey, statusText).buildUpdateQuery();
             qlResponse = qlService.qlSearch(updateStatusQuery);
+            log.info("Update Status Query response " + qlResponse);
         } catch (Exception e) {
-            log.info("Exception: " + e);
-            //log.info("Update: " + insertQuery);
-            //log.info("QL Response: " + updateStatusQuery);
+            log.error("Exception: " + e.getMessage());
             return "{\"error\":\"Error updating contributor status\"}";
         }
 
