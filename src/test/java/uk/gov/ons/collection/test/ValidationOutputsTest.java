@@ -1,9 +1,12 @@
 package uk.gov.ons.collection.test;
 
 import org.junit.jupiter.api.Test;
+import uk.gov.ons.collection.entity.ValidationOutputData;
 import uk.gov.ons.collection.entity.ValidationOutputs;
 import uk.gov.ons.collection.exception.InvalidJsonException;
 import uk.gov.ons.collection.utilities.QlQueryResponse;
+
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -16,50 +19,6 @@ public class ValidationOutputsTest {
         assertThrows(InvalidJsonException.class, () -> new ValidationOutputs("Dummy"));
     }
 
-    @Test
-    void buildDeleteOutputQuery_3validAttributes_validDeleteQueryGenerated() {
-        var inputJson = "{\"validation_outputs\": [{\"reference\": \"ABC\", \"period\": \"DEF\", \"survey\": \"HIJ\"}]}";
-        var expectedQuery = "{\"query\": \"mutation deleteOutput($period: String!, $reference: String!, $survey: String!)"
-                + "{deleteoutput(input: {reference: $reference, period: $period, survey: $survey}){clientMutationId}}\","
-                + "\"variables\":{\"reference\": \"ABC\",\"period\": \"DEF\",\"survey\": \"HIJ\"}}";
-        try {
-            var query = new ValidationOutputs(inputJson).buildDeleteOutputQuery();
-            assertEquals(expectedQuery, query);
-        } catch (Exception e) {
-            assertTrue(false);
-        }
-    }
-
-    @Test
-    void buildInsertByArrayQuery_validJson_validInsertQueryGenerated() {
-        var inputJson = "{\"validation_outputs\":[{\"validationid\":10,\"reference\":\"12345678000\",\"period\": \"201801\","
-                + "\"survey\": \"999A\",\"triggered\": false,\"formula\": \"47\\\"X\\\"45634 > 5\",\"instance\": 0},"
-                + "{\"validationid\": 11,\"reference\": \"12345678000\",\"period\": \"201801\",\"survey\": \"999A\","
-                + "\"triggered\": false,\"formula\": \"1233.52 > 5\",\"instance\": 0}]}";
-        try {
-            var validationOutput = new ValidationOutputs(inputJson);
-            var query = validationOutput.buildInsertByArrayQuery();
-            var expectedQuery = "{\"query\": \"mutation insertOutputArray{insertvalidationoutputbyarray(input:"
-                    + " {arg0:[{reference: \\\"12345678000\\\",period: \\\"201801\\\",survey: \\\"999A\\\",formula: \\\"47'X'45634 > 5\\\""
-                    + ",validationid: \\\"10\\\",instance: \\\"0\\\",triggered: false,createdby: \\\"fisdba\\\",createddate: \\\""
-                    + validationOutput.getTime()
-                    + "\\\"},{reference: \\\"12345678000\\\",period: \\\"201801\\\",survey: \\\"999A\\\",formula: \\\"1233.52 > 5\\\",validationid: \\\"11\\\","
-                    + "instance: \\\"0\\\",triggered: false,createdby: \\\"fisdba\\\",createddate: \\\""
-                    + validationOutput.getTime() + "\\\"}]}){clientMutationId}}\"}";
-            assertEquals(expectedQuery, query);
-        } catch (Exception e) {
-            assertEquals("", e);
-        }
-    }
-
-    @Test
-    void buildInsertByArrayQuery_validJsonMissingAttribute_throwsException() {
-        var inputJson = "{\"validation_outputs\":[{\"validationid\":10,\"reference\":\"12345678000\",\"period\": \"201801\","
-                + "\"survey\": \"999A\",\"formula\": \"4745634 > 5\",\"instance\": 0},"
-                + "{\"validationid\": 11,\"reference\": \"12345678000\",\"period\": \"201801\",\"survey\": \"999A\","
-                + "\"triggered\": false,\"formula\": \"1233.52 > 5\",\"instance\": 0}]}";
-        assertThrows(InvalidJsonException.class, () -> new ValidationOutputs(inputJson).buildInsertByArrayQuery());
-    }
 
     @Test
     void getReference_validJson_returnsGivenReference() {
@@ -187,6 +146,101 @@ public class ValidationOutputsTest {
         System.out.println("Actual output " + response.parseValidationOutputs().toString());
         System.out.println("Expected output " + expectedOutput);
         assertEquals(expectedOutput, response.parseValidationOutputs().toString());
+    }
+
+    @Test
+    void test_validationOutput() {
+
+        try {
+            String graphQLOutput1 = "{\n" +
+                    "  \"data\": {\n" +
+                    "    \"allValidationoutputs\": {\n" +
+                    "      \"nodes\": []\n" +
+                    "    }\n" +
+                    "  }\n" +
+                    "}";
+
+
+            String graphQLOutput = "{\n" +
+                    "    \"data\": {\n" +
+                    "      \"allValidationoutputs\": {\n" +
+                    "        \"nodes\": [\n" +
+                    "          {\n" +
+                    "            \"reference\": \"12345678012\",\n" +
+                    "            \"period\": \"201801\",\n" +
+                    "            \"survey\": \"999A\",\n" +
+                    "            \"validationoutputid\": 33,\n" +
+                    "            \"triggered\": true,\n" +
+                    "            \"instance\": 0,\n" +
+                    "            \"formula\": \"abs(40000 - 10000) > 20000 AND 400000 > 0 AND 10000 > 0\",\n" +
+                    "            \"validationid\": \"10\",\n" +
+                    "            \"overridden\": false\n" +
+                    "          },\n" +
+                    "          {\n" +
+                    "            \"reference\": \"12345678012\",\n" +
+                    "            \"period\": \"201801\",\n" +
+                    "            \"survey\": \"999A\",\n" +
+                    "            \"validationoutputid\": 34,\n" +
+                    "            \"triggered\": true,\n" +
+                    "            \"instance\": 0,\n" +
+                    "            \"formula\": \"2 = 2\",\n" +
+                    "            \"validationid\": \"20\",\n" +
+                    "            \"overridden\": false\n" +
+                    "          },\n" +
+                    "          {\n" +
+                    "            \"reference\": \"12345678012\",\n" +
+                    "            \"period\": \"201801\",\n" +
+                    "            \"survey\": \"999A\",\n" +
+                    "            \"validationoutputid\": 36,\n" +
+                    "            \"triggered\": true,\n" +
+                    "            \"instance\": 0,\n" +
+                    "            \"formula\": \"'0' != ''\",\n" +
+                    "            \"validationid\": \"30\",\n" +
+                    "            \"overridden\": false\n" +
+                    "          },\n" +
+                    "          {\n" +
+                    "            \"reference\": \"12345678012\",\n" +
+                    "            \"period\": \"201801\",\n" +
+                    "            \"survey\": \"999A\",\n" +
+                    "            \"validationoutputid\": 39,\n" +
+                    "            \"triggered\": true,\n" +
+                    "            \"instance\": 0,\n" +
+                    "            \"formula\": \"543 != 5143\",\n" +
+                    "            \"validationid\": \"100\",\n" +
+                    "            \"overridden\": false\n" +
+                    "          }  \n" +
+                    "        ]\n" +
+                    "      }\n" +
+                    "    }\n" +
+                    "  }";
+            String lambdaoutput = "{\"validation_outputs\": [\n" +
+                    "      {\"formula\": \"999999 = 2\", \"triggered\": false, \"validation\": \"CPBMI\", \"reference\": \"12345678012\", \"period\": \"201801\", \"survey\": \"999A\", \"validationid\": 70, \"bpmid\": \"0\", \"instance\": 0}, \n" +
+                    "      {\"formula\": \"2 = 2\", \"triggered\": true, \"validation\": \"CPBMI\", \"reference\": \"12345678012\", \"period\": \"201801\", \"survey\": \"999A\", \"validationid\": 20, \"bpmid\": \"0\", \"instance\": 0},\n" +
+                    "      {\"formula\": \"0 != 0\", \"triggered\": false, \"validation\": \"QVDQ\", \"reference\": \"12345678012\", \"period\": \"201801\", \"survey\": \"999A\", \"validationid\": 30, \"bpmid\": \"0\", \"instance\": 0}]}";
+            ValidationOutputs outputs = new  ValidationOutputs(lambdaoutput);
+
+            List<ValidationOutputData> validationData = outputs.extractValidationDataFromDatabase(graphQLOutput);
+            List<ValidationOutputData> lambdaData = outputs.extractValidationDataFromLambda();
+
+            System.out.println("Lambda Count " + lambdaData.size());
+            System.out.println("Graph QL Validation output record count " + validationData.size());
+
+            System.out.println("Validation Data" + validationData.toString());
+            System.out.println("Lambda Data" + lambdaData.toString());
+
+
+            List<ValidationOutputData> insertList = outputs.getValidationOutputInsertList(lambdaData, validationData);
+            List<ValidationOutputData> modifiedList = outputs.getValidationOutputModifiedList(lambdaData, validationData);
+            List<ValidationOutputData> upsertList = outputs.getValidationOutputUpsertList(modifiedList, insertList);
+            List<ValidationOutputData> deleteData = outputs.getDeleteValidationOutputList(lambdaData, validationData);
+
+            String graphQLQuery = outputs.buildUpsertByArrayQuery(upsertList, deleteData);
+            System.out.println(graphQLQuery);
+
+        } catch (Exception exp) {
+            exp.printStackTrace();
+            assertTrue(false);
+        }
     }
 
 }

@@ -27,7 +27,6 @@ import uk.gov.ons.collection.entity.ValidationOutputs;
 import uk.gov.ons.collection.exception.InvalidJsonException;
 import uk.gov.ons.collection.service.GraphQlService;
 import uk.gov.ons.collection.service.ValidationOverrideService;
-import uk.gov.ons.collection.utilities.RelativePeriod;
 import uk.gov.ons.collection.utilities.QlQueryBuilder;
 import uk.gov.ons.collection.utilities.QlQueryResponse;
 import java.util.List;
@@ -74,10 +73,6 @@ public class ValidationController {
         String statusText;
         String qlResponse;
 
-
-        //Changes - LU-4370 - Retain Override status after Re- Validate
-
-        // 1 - Convert params to JSON Object and extract Reference | Period | Survey
         try {
             outputs = new ValidationOutputs(validationOutputsJson);
             reference = outputs.getReference();
@@ -85,24 +80,19 @@ public class ValidationController {
             survey = outputs.getSurvey();
             statusText = outputs.getStatusText();
             String validationOutputQuery = outputs.buildValidationOutputQuery();
-
-            log.info("Validation Output Query " + validationOutputQuery);
             qlResponse = qlService.qlSearch(validationOutputQuery);
             log.info("Output from Validation Output table " + qlResponse);
             List<ValidationOutputData> validationOutputData = outputs.extractValidationDataFromDatabase(qlResponse);
-            log.info("ValidationOutput Data " + validationOutputData.toString());
-            List<ValidationOutputData> lambdaData = outputs.extractValidationDataFromLambda();
-            log.info("Lambda Data " + lambdaData.toString());
-            List<ValidationOutputData> upsertAndInsertData = outputs.getUpsertAndInsertValidationOutputList(lambdaData, validationOutputData);
-            log.info("Upsert And Insert Data " + lambdaData.toString());
-            List<ValidationOutputData> deleteData = outputs.getDeleteValidationOutputList(lambdaData, validationOutputData);
-            log.info("Delete Data " + deleteData.toString());
-            String upsertAndDeleteQuery = outputs.buildUpsertByArrayQuery(upsertAndInsertData, deleteData);
-            log.info("Upsert And DeleteQuery " + upsertAndDeleteQuery);
+            List<ValidationOutputData> lambdaValidationOutputData = outputs.extractValidationDataFromLambda();
+            List<ValidationOutputData> validationOutputInsertData = outputs.getValidationOutputInsertList(lambdaValidationOutputData, validationOutputData);
+            List<ValidationOutputData> validationOutputModifiedData = outputs.getValidationOutputModifiedList(lambdaValidationOutputData, validationOutputData);
+            List<ValidationOutputData> validationOutputUpsertData = outputs.getValidationOutputUpsertList(validationOutputModifiedData, validationOutputInsertData);
+            List<ValidationOutputData> validationOutputDeleteData = outputs.getDeleteValidationOutputList(lambdaValidationOutputData, validationOutputData);
+            String upsertAndDeleteQuery = outputs.buildUpsertByArrayQuery(validationOutputUpsertData, validationOutputDeleteData);
             qlResponse = qlService.qlSearch(upsertAndDeleteQuery);
             log.info("Upsert Query response " + qlResponse);
         } catch (Exception e) {
-            log.info("Exception caught: " + e);
+            log.error("Exception caught: " + e.getMessage());
             return "{\"error\":\"Unable to save ValidationOutputs\"}";
         }
 
@@ -112,7 +102,7 @@ public class ValidationController {
             updateStatusQuery = new ContributorStatus(reference, period, survey, statusText).buildUpdateQuery();
             qlResponse = qlService.qlSearch(updateStatusQuery);
         } catch (Exception e) {
-            //log.info("Exception: " + e);
+            log.info("Exception: " + e);
             //log.info("Update: " + insertQuery);
             //log.info("QL Response: " + updateStatusQuery);
             return "{\"error\":\"Error updating contributor status\"}";

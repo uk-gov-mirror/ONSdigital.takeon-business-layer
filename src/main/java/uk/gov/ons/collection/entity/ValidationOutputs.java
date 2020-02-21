@@ -41,22 +41,8 @@ public class ValidationOutputs {
         return referenceQuery.toString();
     }
 
-    public String buildDeleteOutputQuery() throws InvalidJsonException {
-        var queryJson = new StringBuilder();
-        queryJson.append("{\"query\": \""); 
-        queryJson.append(qlDeleteQuery); 
-        queryJson.append("\",\"variables\":" + 
-            "{\"reference\": \"" + getReference() + "\",\"period\": \"" + getPeriod() + "\",\"survey\": \"" + getSurvey() + "\"}}");
-        return queryJson.toString();
-    }
 
-    public String buildInsertByArrayQuery() throws InvalidJsonException {
-        var queryJson = new StringBuilder();
-        queryJson.append("{\"query\": \"mutation insertOutputArray{insertvalidationoutputbyarray(input: {arg0:");
-        queryJson.append("[" + getValidationOutputs() + "]");
-        queryJson.append("}){clientMutationId}}\"}");
-        return queryJson.toString();
-    }
+
 
     public String buildUpsertByArrayQuery(List<ValidationOutputData> upsertData, List<ValidationOutputData> deleteData) throws InvalidJsonException {
         var queryJson = new StringBuilder();
@@ -64,6 +50,7 @@ public class ValidationOutputs {
         queryJson.append("[" + getValidationOutputsForUpsertAndDelete(upsertData) + "], arg1:");
         queryJson.append("[" + getValidationOutputsForUpsertAndDelete(deleteData) + "]");
         queryJson.append("}){clientMutationId}}\"}");
+        log.info("Upsert And DeleteQuery " + queryJson.toString());
         return queryJson.toString();
     }
 
@@ -75,14 +62,6 @@ public class ValidationOutputs {
         return joiner.toString();
     }
 
-    // Loop through the given validation output array json and convert it into a graphQL compatable format
-    private String getValidationOutputs() throws InvalidJsonException {
-        StringJoiner joiner = new StringJoiner(",");
-        for (int i = 0; i < outputArray.length(); i++) {
-            joiner.add("{" + extractValidationOutputRow(i) + "}");
-        }
-        return joiner.toString();
-    }
 
     public String getTime() {
         return time.toString();
@@ -102,35 +81,10 @@ public class ValidationOutputs {
             joiner.add("instance: \\\"" + data.getInstance() + "\\\"");
             joiner.add("triggered: " + data.isTriggered());
             joiner.add("overridden: " + data.isOverridden());
-//            joiner.add("createdby: \\\"" + data.getCreatedBy() + "\\\"");
-//            joiner.add("createddate: \\\"" + (data.getCreatedDate() == null ? "" : data.getCreatedDate()) + "\\\"");
-//            joiner.add("lastupdatedby: \\\"" + data.getLastupdatedBy() + "\\\"");
-//            joiner.add("lastupdateddate: \\\"" + (data.getLastupdatedDate() == null ? "" : data.getLastupdatedDate())  + "\\\"");
             joiner.add("createdby: \\\"fisdba\\\"");
             joiner.add("createddate: \\\"" + time.toString() + "\\\"");
             joiner.add("lastupdatedby: \\\"fisdba\\\"");
             joiner.add("lastupdateddate: \\\"" + time.toString() + "\\\"");
-            return joiner.toString();
-
-        } catch (Exception err) {
-            throw new InvalidJsonException("Error processing validation output json structure: " + err + " JSON: " + outputArray, err);
-        }
-    }
-
-    // Convert a row for the given index and provide it in graphQL desired format
-    private String extractValidationOutputRow(int index) throws InvalidJsonException {
-        StringJoiner joiner = new StringJoiner(",");
-        try {
-            var outputRow = outputArray.getJSONObject(index);
-            joiner.add("reference: \\\"" + outputRow.getString("reference") + "\\\"");   
-            joiner.add("period: \\\"" + outputRow.getString("period") + "\\\"");
-            joiner.add("survey: \\\"" + outputRow.getString("survey") + "\\\"");
-            joiner.add("formula: \\\"" + outputRow.getString("formula").replace("\"","'") + "\\\"");
-            joiner.add("validationid: \\\"" + outputRow.getInt("validationid") + "\\\"");
-            joiner.add("instance: \\\"" + outputRow.getInt("instance") + "\\\"");
-            joiner.add("triggered: " + outputRow.getBoolean("triggered"));
-            joiner.add("createdby: \\\"fisdba\\\"");
-            joiner.add("createddate: \\\"" + time.toString() + "\\\"");
             return joiner.toString();
 
         } catch (Exception err) {
@@ -162,6 +116,7 @@ public class ValidationOutputs {
             log.error("Invalid JSON from validation output query response " + e);
             throw new InvalidJsonException("Invalid JSON from validation output query response: " + validationOutputResponse, e);
         }
+        log.info("ValidationOutput Data " + validationDataList.toString());
         return validationDataList;
     }
 
@@ -187,75 +142,45 @@ public class ValidationOutputs {
             log.error("Invalid JSON from validation output query response " + e);
             throw new InvalidJsonException("Invalid JSON from validation output query response: " + outputArray, e);
         }
+        log.info("Lambda Data " + validationLambdaList.toString());
         return validationLambdaList;
     }
 
-
-    public List<ValidationOutputData> getUpsertAndInsertValidationOutputList(List<ValidationOutputData> validationLambdaList,
-                                                                                List<ValidationOutputData> validationDataList) {
+    public List<ValidationOutputData> getValidationOutputInsertList(List<ValidationOutputData> validationLambdaList,
+                                                                             List<ValidationOutputData> validationDataList) {
         List<ValidationOutputData> insertedList = validationLambdaList.stream().filter(lambdadata -> validationDataList.stream().noneMatch(validationdata ->
                 (validationdata.getValidationId().equals(lambdadata.getValidationId())))).collect(Collectors.toList());
+        log.info("Insert List :" + insertedList.toString());
+
+        return insertedList;
+    }
+
+    public List<ValidationOutputData> getValidationOutputModifiedList(List<ValidationOutputData> validationLambdaList,
+                                                                    List<ValidationOutputData> validationDataList) {
         List<ValidationOutputData> modifiedList = validationLambdaList.stream().filter(lambdadata -> validationDataList.stream().anyMatch(validationdata ->
                 (validationdata.getValidationId().equals(lambdadata.getValidationId()) && !(validationdata.getFormula().equals(lambdadata.getFormula()))))).collect(Collectors.toList());
+        log.info("Modified List :" + modifiedList.toString());
+        return modifiedList;
+
+    }
+
+    public List<ValidationOutputData> getValidationOutputUpsertList(List<ValidationOutputData> modifiedList,
+                                                                      List<ValidationOutputData> insertedList) {
         modifiedList.addAll(insertedList);
-        System.out.println("Final List containing both update and insert :" + modifiedList.toString());
+        log.info("Final List containing both update and insert :" + modifiedList.toString());
         return modifiedList;
     }
+
 
     public List<ValidationOutputData> getDeleteValidationOutputList(List<ValidationOutputData> validationLambdaList,
                                                                              List<ValidationOutputData> validationDataList) {
         List<ValidationOutputData> deletedList = validationDataList.stream().filter(validationdata -> validationLambdaList.stream().noneMatch(lambdadata ->
                 (lambdadata.getValidationId().equals(validationdata.getValidationId())))).collect(Collectors.toList());
-        System.out.println("Deleted List :" + deletedList.toString());
+        log.info("Deleted List :" + deletedList.toString());
         return deletedList;
     }
 
 
-
-
-    public List<ValidationOutputData> getConsolidatedUpsertValidationOutputList(List<ValidationOutputData> validationLambdaList,
-        List<ValidationOutputData> validationDataList) {
-
-        List<ValidationOutputData> finalValidationList = new ArrayList<ValidationOutputData>();
-
-        List<ValidationOutputData> insertedList = validationLambdaList.stream().filter(lambdadata -> validationDataList.stream().noneMatch(validationdata ->
-                (validationdata.getValidationId().equals(lambdadata.getValidationId())))).collect(Collectors.toList());
-        insertedList.forEach(insertBy -> insertBy.setCreatedBy("fisdba"));
-        insertedList.forEach(insertDate -> insertDate.setCreatedDate(time.toString()));
-
-
-        List<ValidationOutputData> matchedList = validationLambdaList.stream().filter(lambdadata -> validationDataList.stream().anyMatch(validationdata ->
-                (validationdata.getValidationId().equals(lambdadata.getValidationId())))).collect(Collectors.toList());
-
-        List<ValidationOutputData> formulaEqualList = matchedList.stream().filter(matcheddata -> validationDataList.stream().anyMatch(validationdata ->
-                (validationdata.getValidationId().equals(matcheddata.getValidationId())  && validationdata.getFormula().equals(matcheddata.getFormula())))).collect(Collectors.toList());
-
-        List<ValidationOutputData> comparisonList = matchedList.stream().filter(matcheddata -> formulaEqualList.stream().noneMatch(formulaequaldata ->
-                (formulaequaldata.getValidationId().equals(matcheddata.getValidationId())))).collect(Collectors.toList());
-
-        //Test
-        List<ValidationOutputData> modifiedList = validationLambdaList.stream().filter(lambdadata -> validationDataList.stream().anyMatch(validationdata ->
-                (validationdata.getValidationId().equals(lambdadata.getValidationId()) && !(validationdata.getFormula().equals(lambdadata.getFormula()))))).collect(Collectors.toList());
-        modifiedList.forEach(modifiedBy -> modifiedBy.setLastupdatedBy("fisdba"));
-        modifiedList.forEach(modifiedDate -> modifiedDate.setLastupdatedDate(time.toString()));
-        modifiedList.addAll(insertedList);
-        //End
-
-        System.out.println("Inserted List :" + insertedList.toString());
-        System.out.println("Matched List :" + matchedList.toString());
-
-        System.out.println("Formula Equal List :" + formulaEqualList.toString());
-
-        System.out.println("Updated List :" + comparisonList.toString());
-        System.out.println("Final List containing both update and insert :" + modifiedList.toString());
-
-        List<ValidationOutputData> deletedList = validationDataList.stream().filter(validationdata -> validationLambdaList.stream().noneMatch(lambdadata ->
-                (lambdadata.getValidationId().equals(validationdata.getValidationId())))).collect(Collectors.toList());
-
-        System.out.println("Deleted List :" + deletedList.toString());
-
-        return finalValidationList;
-    }
 
     private String getFirstRowAttribute(String attribute) throws InvalidJsonException {
         try {   
