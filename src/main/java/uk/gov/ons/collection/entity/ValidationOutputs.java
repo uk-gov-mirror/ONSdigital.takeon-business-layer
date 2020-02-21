@@ -19,8 +19,6 @@ public class ValidationOutputs {
 
     private JSONArray outputArray;
     private final Timestamp time = new Timestamp(new Date().getTime());
-    private final String qlDeleteQuery = "mutation deleteOutput($period: String!, $reference: String!, $survey: String!)" +
-                                         "{deleteoutput(input: {reference: $reference, period: $period, survey: $survey}){clientMutationId}}";
     
     public ValidationOutputs(String jsonString) throws InvalidJsonException {
         try {
@@ -40,8 +38,6 @@ public class ValidationOutputs {
         log.info("Validation Output query {}", referenceQuery.toString());
         return referenceQuery.toString();
     }
-
-
 
 
     public String buildUpsertByArrayQuery(List<ValidationOutputData> upsertData, List<ValidationOutputData> deleteData) throws InvalidJsonException {
@@ -179,7 +175,6 @@ public class ValidationOutputs {
         log.info("Deleted List :" + deletedList.toString());
         return deletedList;
     }
-
 
 
     private String getFirstRowAttribute(String attribute) throws InvalidJsonException {
