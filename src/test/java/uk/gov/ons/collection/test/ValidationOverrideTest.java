@@ -2,8 +2,6 @@ package uk.gov.ons.collection.test;
 
 import org.junit.jupiter.api.Test;
 import uk.gov.ons.collection.entity.ValidationData;
-import uk.gov.ons.collection.entity.ValidationOutputData;
-import uk.gov.ons.collection.entity.ValidationOutputs;
 import uk.gov.ons.collection.entity.ValidationOverride;
 import uk.gov.ons.collection.exception.InvalidJsonException;
 import uk.gov.ons.collection.service.GraphQlService;

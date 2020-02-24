@@ -14,6 +14,64 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ValidationOutputsTest {
 
+    String graphQLOutput = "{\n" +
+            "    \"data\": {\n" +
+            "      \"allValidationoutputs\": {\n" +
+            "        \"nodes\": [\n" +
+            "          {\n" +
+            "            \"reference\": \"12345678012\",\n" +
+            "            \"period\": \"201801\",\n" +
+            "            \"survey\": \"999A\",\n" +
+            "            \"validationoutputid\": 33,\n" +
+            "            \"triggered\": true,\n" +
+            "            \"instance\": 0,\n" +
+            "            \"formula\": \"abs(40000 - 10000) > 20000 AND 400000 > 0 AND 10000 > 0\",\n" +
+            "            \"validationid\": \"10\",\n" +
+            "            \"overridden\": false\n" +
+            "          },\n" +
+            "          {\n" +
+            "            \"reference\": \"12345678012\",\n" +
+            "            \"period\": \"201801\",\n" +
+            "            \"survey\": \"999A\",\n" +
+            "            \"validationoutputid\": 34,\n" +
+            "            \"triggered\": true,\n" +
+            "            \"instance\": 0,\n" +
+            "            \"formula\": \"2 = 2\",\n" +
+            "            \"validationid\": \"20\",\n" +
+            "            \"overridden\": false\n" +
+            "          },\n" +
+            "          {\n" +
+            "            \"reference\": \"12345678012\",\n" +
+            "            \"period\": \"201801\",\n" +
+            "            \"survey\": \"999A\",\n" +
+            "            \"validationoutputid\": 36,\n" +
+            "            \"triggered\": true,\n" +
+            "            \"instance\": 0,\n" +
+            "            \"formula\": \"'0' != ''\",\n" +
+            "            \"validationid\": \"30\",\n" +
+            "            \"overridden\": false\n" +
+            "          },\n" +
+            "          {\n" +
+            "            \"reference\": \"12345678012\",\n" +
+            "            \"period\": \"201801\",\n" +
+            "            \"survey\": \"999A\",\n" +
+            "            \"validationoutputid\": 39,\n" +
+            "            \"triggered\": true,\n" +
+            "            \"instance\": 0,\n" +
+            "            \"formula\": \"543 != 5143\",\n" +
+            "            \"validationid\": \"100\",\n" +
+            "            \"overridden\": false\n" +
+            "          }  \n" +
+            "        ]\n" +
+            "      }\n" +
+            "    }\n" +
+            "  }";
+
+    String lambdaoutput = "{\"validation_outputs\": [\n" +
+            "      {\"formula\": \"999999 = 2\", \"triggered\": false, \"validation\": \"CPBMI\", \"reference\": \"12345678012\", \"period\": \"201801\", \"survey\": \"999A\", \"validationid\": 70, \"bpmid\": \"0\", \"instance\": 0}, \n" +
+            "      {\"formula\": \"2 = 2\", \"triggered\": true, \"validation\": \"CPBMI\", \"reference\": \"12345678012\", \"period\": \"201801\", \"survey\": \"999A\", \"validationid\": 20, \"bpmid\": \"0\", \"instance\": 0},\n" +
+            "      {\"formula\": \"0 != 0\", \"triggered\": false, \"validation\": \"QVDQ\", \"reference\": \"12345678012\", \"period\": \"201801\", \"survey\": \"999A\", \"validationid\": 30, \"bpmid\": \"0\", \"instance\": 0}]}";
+
     @Test
     void class_invalidJson_throwsExeption() {
         assertThrows(InvalidJsonException.class, () -> new ValidationOutputs("Dummy"));
@@ -152,71 +210,7 @@ public class ValidationOutputsTest {
     void test_validationOutput() {
 
         try {
-            String graphQLOutput1 = "{\n" +
-                    "  \"data\": {\n" +
-                    "    \"allValidationoutputs\": {\n" +
-                    "      \"nodes\": []\n" +
-                    "    }\n" +
-                    "  }\n" +
-                    "}";
 
-
-            String graphQLOutput = "{\n" +
-                    "    \"data\": {\n" +
-                    "      \"allValidationoutputs\": {\n" +
-                    "        \"nodes\": [\n" +
-                    "          {\n" +
-                    "            \"reference\": \"12345678012\",\n" +
-                    "            \"period\": \"201801\",\n" +
-                    "            \"survey\": \"999A\",\n" +
-                    "            \"validationoutputid\": 33,\n" +
-                    "            \"triggered\": true,\n" +
-                    "            \"instance\": 0,\n" +
-                    "            \"formula\": \"abs(40000 - 10000) > 20000 AND 400000 > 0 AND 10000 > 0\",\n" +
-                    "            \"validationid\": \"10\",\n" +
-                    "            \"overridden\": false\n" +
-                    "          },\n" +
-                    "          {\n" +
-                    "            \"reference\": \"12345678012\",\n" +
-                    "            \"period\": \"201801\",\n" +
-                    "            \"survey\": \"999A\",\n" +
-                    "            \"validationoutputid\": 34,\n" +
-                    "            \"triggered\": true,\n" +
-                    "            \"instance\": 0,\n" +
-                    "            \"formula\": \"2 = 2\",\n" +
-                    "            \"validationid\": \"20\",\n" +
-                    "            \"overridden\": false\n" +
-                    "          },\n" +
-                    "          {\n" +
-                    "            \"reference\": \"12345678012\",\n" +
-                    "            \"period\": \"201801\",\n" +
-                    "            \"survey\": \"999A\",\n" +
-                    "            \"validationoutputid\": 36,\n" +
-                    "            \"triggered\": true,\n" +
-                    "            \"instance\": 0,\n" +
-                    "            \"formula\": \"'0' != ''\",\n" +
-                    "            \"validationid\": \"30\",\n" +
-                    "            \"overridden\": false\n" +
-                    "          },\n" +
-                    "          {\n" +
-                    "            \"reference\": \"12345678012\",\n" +
-                    "            \"period\": \"201801\",\n" +
-                    "            \"survey\": \"999A\",\n" +
-                    "            \"validationoutputid\": 39,\n" +
-                    "            \"triggered\": true,\n" +
-                    "            \"instance\": 0,\n" +
-                    "            \"formula\": \"543 != 5143\",\n" +
-                    "            \"validationid\": \"100\",\n" +
-                    "            \"overridden\": false\n" +
-                    "          }  \n" +
-                    "        ]\n" +
-                    "      }\n" +
-                    "    }\n" +
-                    "  }";
-            String lambdaoutput = "{\"validation_outputs\": [\n" +
-                    "      {\"formula\": \"999999 = 2\", \"triggered\": false, \"validation\": \"CPBMI\", \"reference\": \"12345678012\", \"period\": \"201801\", \"survey\": \"999A\", \"validationid\": 70, \"bpmid\": \"0\", \"instance\": 0}, \n" +
-                    "      {\"formula\": \"2 = 2\", \"triggered\": true, \"validation\": \"CPBMI\", \"reference\": \"12345678012\", \"period\": \"201801\", \"survey\": \"999A\", \"validationid\": 20, \"bpmid\": \"0\", \"instance\": 0},\n" +
-                    "      {\"formula\": \"0 != 0\", \"triggered\": false, \"validation\": \"QVDQ\", \"reference\": \"12345678012\", \"period\": \"201801\", \"survey\": \"999A\", \"validationid\": 30, \"bpmid\": \"0\", \"instance\": 0}]}";
             ValidationOutputs outputs = new  ValidationOutputs(lambdaoutput);
 
             List<ValidationOutputData> validationData = outputs.extractValidationDataFromDatabase(graphQLOutput);
@@ -241,6 +235,44 @@ public class ValidationOutputsTest {
             exp.printStackTrace();
             assertTrue(false);
         }
+    }
+
+    @Test
+    void test_validationOutput_validGraphQlMissingAttribute_throwsException() throws Exception {
+        String graphQLOutput1 = "{\n" +
+                "  \"data\": {\n" +
+                "    \"allValidationoutputs\": {\n" +
+                "      \"nodes\": [" +
+                "          {\n" +
+                "            \"reference\": \"12345678012\",\n" +
+                "            \"period\": \"201801\",\n" +
+                "            \"survey\": \"999A\",\n" +
+                "            \"validationoutputid\": 33,\n" +
+                "            \"instance\": 0,\n" +
+                "            \"formula\": \"abs(40000 - 10000) > 20000 AND 400000 > 0 AND 10000 > 0\",\n" +
+                "            \"validationid\": \"10\",\n" +
+                "            \"overridden\": false\n" +
+                "          },\n" +
+                "]\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
+
+
+        ValidationOutputs outputs = new  ValidationOutputs(lambdaoutput);
+
+        assertThrows(InvalidJsonException.class, () -> outputs.extractValidationDataFromDatabase(graphQLOutput1));
+
+    }
+
+    @Test
+    void test_validationOutput_lambdaOutputInvalidJson_throwsException()  {
+
+        String lambdaoutput1 = "{\"validation_outputs1\": [\n" +
+                "      {\"formula\": \"0 != 0\",  \"validation\": \"QVDQ\", \"reference\": \"12345678012\", \"period\": \"201801\", \"survey\": \"999A\", \"validationid\": 30, \"bpmid\": \"0\", \"instance\": 0}]}";
+
+        assertThrows(InvalidJsonException.class, () ->new  ValidationOutputs(lambdaoutput1));
+
     }
 
 }
