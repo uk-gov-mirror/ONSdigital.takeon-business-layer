@@ -6,8 +6,6 @@ import uk.gov.ons.collection.entity.ValidationOutputs;
 import uk.gov.ons.collection.exception.InvalidJsonException;
 import uk.gov.ons.collection.utilities.QlQueryResponse;
 
-import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
