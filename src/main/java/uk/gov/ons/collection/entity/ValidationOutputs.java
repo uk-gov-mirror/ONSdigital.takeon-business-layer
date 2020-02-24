@@ -39,6 +39,10 @@ public class ValidationOutputs {
         return referenceQuery.toString();
     }
 
+    public String getTime() {
+        return time.toString();
+    }
+
 
     public String buildUpsertByArrayQuery(List<ValidationOutputData> upsertData, List<ValidationOutputData> deleteData) throws InvalidJsonException {
         var queryJson = new StringBuilder();
@@ -150,7 +154,8 @@ public class ValidationOutputs {
     public List<ValidationOutputData> getValidationOutputModifiedList(List<ValidationOutputData> validationLambdaList,
                                                                     List<ValidationOutputData> validationDataList) {
         List<ValidationOutputData> modifiedList = validationLambdaList.stream().filter(lambdadata -> validationDataList.stream().anyMatch(validationdata ->
-                (validationdata.getValidationId().equals(lambdadata.getValidationId()) && !(validationdata.getFormula().equals(lambdadata.getFormula()))))).collect(Collectors.toList());
+                (validationdata.getValidationId().equals(lambdadata.getValidationId())
+                        && !(validationdata.getFormula().equals(lambdadata.getFormula()))))).collect(Collectors.toList());
         log.info("Modified List :" + modifiedList.toString());
         return modifiedList;
 

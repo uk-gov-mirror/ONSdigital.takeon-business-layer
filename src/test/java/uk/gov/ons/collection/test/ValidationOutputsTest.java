@@ -6,6 +6,8 @@ import uk.gov.ons.collection.entity.ValidationOutputs;
 import uk.gov.ons.collection.exception.InvalidJsonException;
 import uk.gov.ons.collection.utilities.QlQueryResponse;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -13,6 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ValidationOutputsTest {
+
+    private final Timestamp time = new Timestamp(new Date().getTime());
 
     String graphQLOutput = "{\n" +
             "    \"data\": {\n" +
@@ -207,7 +211,7 @@ public class ValidationOutputsTest {
     }
 
     @Test
-    void test_validationOutput() {
+    void test_validationOutput_verifyInsertUpdateDeleteElements() {
 
         try {
 
@@ -216,20 +220,39 @@ public class ValidationOutputsTest {
             List<ValidationOutputData> validationData = outputs.extractValidationDataFromDatabase(graphQLOutput);
             List<ValidationOutputData> lambdaData = outputs.extractValidationDataFromLambda();
 
-            System.out.println("Lambda Count " + lambdaData.size());
-            System.out.println("Graph QL Validation output record count " + validationData.size());
-
-            System.out.println("Validation Data" + validationData.toString());
-            System.out.println("Lambda Data" + lambdaData.toString());
-
-
             List<ValidationOutputData> insertList = outputs.getValidationOutputInsertList(lambdaData, validationData);
+            //check the element validationId=70 exists in Insert list or not. This ValidationId doesn't exists in ValidationOutput table and has to be inserted into database
+            String expectedInsertElement = "validationId=70";
+            assertTrue(insertList.toString().contains(expectedInsertElement));
+
+            //check the element validationId=30 exists in Modified list or not. The formula is changed for this id when sending data from Lambda and this should be in the list
             List<ValidationOutputData> modifiedList = outputs.getValidationOutputModifiedList(lambdaData, validationData);
+            System.out.println("Modified Data : "+modifiedList);
+            String expectedModifiedElement = "validationId=30";
+            assertTrue(modifiedList.toString().contains(expectedModifiedElement));
             List<ValidationOutputData> upsertList = outputs.getValidationOutputUpsertList(modifiedList, insertList);
+            //Upsert contains both insert and modified elements. Verifying below whether both elements exists or not
+            assertTrue(upsertList.toString().contains(expectedModifiedElement) && upsertList.toString().contains(expectedInsertElement));
+            //validationId=10 is deprecated and needs to be deleted from database. Check this element exists in deleted list or not.
             List<ValidationOutputData> deleteData = outputs.getDeleteValidationOutputList(lambdaData, validationData);
+            String expectedDeleteElement = "validationId=10";
+            assertTrue(deleteData.toString().contains(expectedDeleteElement));
+
 
             String graphQLQuery = outputs.buildUpsertByArrayQuery(upsertList, deleteData);
-            System.out.println(graphQLQuery);
+            String expectedGraphQlQuery = "{\"query\": \"mutation upsertOutputArray{upsertDeleteValidationoutput(input: {arg0:[{reference: \\\"12345678012\\\"," +
+                    "period: \\\"201801\\\",survey: \\\"999A\\\",formula: \\\"0 != 0\\\",validationid: \\\"30\\\"," +
+                    "instance: \\\"0\\\",triggered: false,overridden: false,createdby: \\\"fisdba\\\",createddate: \\\""+outputs.getTime()+"\\\","+
+                    "lastupdatedby: \\\"fisdba\\\",lastupdateddate: \\\"" +outputs.getTime()+"\\\"},{reference: \\\"12345678012\\\",period: \\\"201801\\\"," +
+                    "survey: \\\"999A\\\",formula: \\\"999999 = 2\\\",validationid: \\\"70\\\",instance: \\\"0\\\",triggered: false,overridden: false,createdby: \\\"fisdba\\\"," +
+                    "createddate: \\\"" +outputs.getTime()+"\\\",lastupdatedby: \\\"fisdba\\\",lastupdateddate: \\\""+outputs.getTime()+"\\\"}], " +
+                    "arg1:[{reference: \\\"12345678012\\\",period: \\\"201801\\\",survey: \\\"999A\\\",formula: \\\"abs(40000 - 10000) > 20000 AND 400000 > 0 AND 10000 > 0\\\"," +
+                    "validationid: \\\"10\\\",instance: \\\"0\\\",triggered: true,overridden: false,createdby: \\\"fisdba\\\",createddate: \\\""+outputs.getTime()+"\\\"," +
+                    "lastupdatedby: \\\"fisdba\\\",lastupdateddate: \\\"" +outputs.getTime()+"\\\"},{reference: \\\"12345678012\\\",period: \\\"201801\\\",survey: \\\"999A\\\"," +
+                    "formula: \\\"543 != 5143\\\",validationid: \\\"100\\\",instance: \\\"0\\\",triggered: true,overridden: false,createdby: \\\"fisdba\\\",createddate: \\\""+outputs.getTime()+"\\\",lastupdatedby: \\\"fisdba\\\"," +
+                    "lastupdateddate: \\\"" +outputs.getTime()+"\\\"}]}){clientMutationId}}\"}";
+
+            assertEquals(expectedGraphQlQuery, graphQLQuery);
 
         } catch (Exception exp) {
             exp.printStackTrace();
