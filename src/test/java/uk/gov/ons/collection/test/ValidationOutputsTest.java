@@ -16,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ValidationOutputsTest {
 
-    private final Timestamp time = new Timestamp(new Date().getTime());
 
     String graphQLOutput = "{\n" +
             "    \"data\": {\n" +
