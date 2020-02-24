@@ -79,8 +79,8 @@ public class ValidationOutputs {
             joiner.add("overridden: " + data.isOverridden());
             joiner.add("createdby: \\\"fisdba\\\"");
             joiner.add("createddate: \\\"" + time.toString() + "\\\"");
-            joiner.add("lastupdatedby: \\\"fisdba\\\"");
-            joiner.add("lastupdateddate: \\\"" + time.toString() + "\\\"");
+            joiner.add("lastupdatedby: \\\"" + data.getLastupdatedBy() + "\\\"");
+            joiner.add("lastupdateddate: \\\"" + (data.getLastupdatedDate() == null ? "01/01/1900" : data.getLastupdatedDate())  + "\\\"");
             return joiner.toString();
 
         } catch (Exception err) {
@@ -156,6 +156,10 @@ public class ValidationOutputs {
         List<ValidationOutputData> modifiedList = validationLambdaList.stream().filter(lambdadata -> validationDataList.stream().anyMatch(validationdata ->
                 (validationdata.getValidationId().equals(lambdadata.getValidationId())
                         && !(validationdata.getFormula().equals(lambdadata.getFormula()))))).collect(Collectors.toList());
+        for (ValidationOutputData data : modifiedList) {
+            data.setLastupdatedBy("fisdba");
+            data.setLastupdatedDate(time.toString());
+        }
         log.info("Modified List :" + modifiedList.toString());
         return modifiedList;
 

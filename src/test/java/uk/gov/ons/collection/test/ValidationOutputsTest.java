@@ -245,12 +245,12 @@ public class ValidationOutputsTest {
                     "instance: \\\"0\\\",triggered: false,overridden: false,createdby: \\\"fisdba\\\",createddate: \\\""+outputs.getTime()+"\\\","+
                     "lastupdatedby: \\\"fisdba\\\",lastupdateddate: \\\"" +outputs.getTime()+"\\\"},{reference: \\\"12345678012\\\",period: \\\"201801\\\"," +
                     "survey: \\\"999A\\\",formula: \\\"999999 = 2\\\",validationid: \\\"70\\\",instance: \\\"0\\\",triggered: false,overridden: false,createdby: \\\"fisdba\\\"," +
-                    "createddate: \\\"" +outputs.getTime()+"\\\",lastupdatedby: \\\"fisdba\\\",lastupdateddate: \\\""+outputs.getTime()+"\\\"}], " +
+                    "createddate: \\\"" +outputs.getTime()+"\\\",lastupdatedby: \\\"null\\\",lastupdateddate: \\\"01/01/1900\\\"}], " +
                     "arg1:[{reference: \\\"12345678012\\\",period: \\\"201801\\\",survey: \\\"999A\\\",formula: \\\"abs(40000 - 10000) > 20000 AND 400000 > 0 AND 10000 > 0\\\"," +
                     "validationid: \\\"10\\\",instance: \\\"0\\\",triggered: true,overridden: false,createdby: \\\"fisdba\\\",createddate: \\\""+outputs.getTime()+"\\\"," +
-                    "lastupdatedby: \\\"fisdba\\\",lastupdateddate: \\\"" +outputs.getTime()+"\\\"},{reference: \\\"12345678012\\\",period: \\\"201801\\\",survey: \\\"999A\\\"," +
-                    "formula: \\\"543 != 5143\\\",validationid: \\\"100\\\",instance: \\\"0\\\",triggered: true,overridden: false,createdby: \\\"fisdba\\\",createddate: \\\""+outputs.getTime()+"\\\",lastupdatedby: \\\"fisdba\\\"," +
-                    "lastupdateddate: \\\"" +outputs.getTime()+"\\\"}]}){clientMutationId}}\"}";
+                    "lastupdatedby: \\\"null\\\",lastupdateddate: \\\"01/01/1900\\\"},{reference: \\\"12345678012\\\",period: \\\"201801\\\",survey: \\\"999A\\\"," +
+                    "formula: \\\"543 != 5143\\\",validationid: \\\"100\\\",instance: \\\"0\\\",triggered: true,overridden: false,createdby: \\\"fisdba\\\",createddate: \\\""+outputs.getTime()+"\\\",lastupdatedby: \\\"null\\\"," +
+                    "lastupdateddate: \\\"01/01/1900\\\"}]}){clientMutationId}}\"}";
 
             assertEquals(expectedGraphQlQuery, graphQLQuery);
 
