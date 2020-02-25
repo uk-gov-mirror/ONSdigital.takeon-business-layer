@@ -79,8 +79,10 @@ public class ValidationOutputs {
             joiner.add("overridden: " + data.isOverridden());
             joiner.add("createdby: \\\"fisdba\\\"");
             joiner.add("createddate: \\\"" + time.toString() + "\\\"");
-            joiner.add("lastupdatedby: \\\"" + data.getLastupdatedBy() + "\\\"");
-            joiner.add("lastupdateddate: \\\"" + (data.getLastupdatedDate() == null ? "01/01/1900" : data.getLastupdatedDate())  + "\\\"");
+            joiner = (data.getLastupdatedBy() == null) ? (joiner.add("lastupdatedby: " + data.getLastupdatedBy()))
+                    : (joiner.add("lastupdatedby: \\\"" + data.getLastupdatedBy() + "\\\""));
+            joiner = (data.getLastupdatedDate() == null) ? (joiner.add("lastupdateddate: " + data.getLastupdatedDate()))
+                    : (joiner.add("lastupdateddate: \\\"" + data.getLastupdatedDate() + "\\\""));
             return joiner.toString();
 
         } catch (Exception err) {
