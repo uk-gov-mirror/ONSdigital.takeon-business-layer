@@ -30,7 +30,7 @@ public class QlQueryBuilder {
                             "enterprisereference, wowenterprisereference, cellnumber, currency, vatreference, payereference, " +
                             "companyregistrationnumber, numberlivelocalunits, numberlivevat, numberlivepaye, legalstatus, " +
                             "reportingunitmarker, region, birthdate, tradingstyle, contact, telephone, fax, selectiontype, " +
-                            "inclusionexclusion, createdby, createddate, surveyBySurvey { description } } " +
+                            "inclusionexclusion, createdby, createddate} " + 
                             "pageInfo { hasNextPage hasPreviousPage startCursor endCursor } totalCount " +
                             "}}\"," +
                             "\"variables\": {");
