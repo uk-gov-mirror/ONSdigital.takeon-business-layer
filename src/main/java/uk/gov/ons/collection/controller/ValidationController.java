@@ -22,13 +22,14 @@ import lombok.extern.log4j.Log4j2;
 
 import uk.gov.ons.collection.entity.ContributorStatus;
 import uk.gov.ons.collection.entity.DataPrepConfig;
+import uk.gov.ons.collection.entity.ValidationOutputData;
 import uk.gov.ons.collection.entity.ValidationOutputs;
 import uk.gov.ons.collection.exception.InvalidJsonException;
 import uk.gov.ons.collection.service.GraphQlService;
 import uk.gov.ons.collection.service.ValidationOverrideService;
-import uk.gov.ons.collection.utilities.RelativePeriod;
 import uk.gov.ons.collection.utilities.QlQueryBuilder;
 import uk.gov.ons.collection.utilities.QlQueryResponse;
+import java.util.List;
 
 
 @Log4j2
@@ -70,43 +71,29 @@ public class ValidationController {
         String reference;
         String survey;
         String statusText;
-        String deleteQuery;
-        String insertQuery;
+        String qlResponse;
 
-        // 1 - Convert params to JSON Object and extract Reference | Period | Survey
         try {
             outputs = new ValidationOutputs(validationOutputsJson);
             reference = outputs.getReference();
             period = outputs.getPeriod();
             survey = outputs.getSurvey();
             statusText = outputs.getStatusText();
-            deleteQuery = outputs.buildDeleteOutputQuery();
-            insertQuery = outputs.buildInsertByArrayQuery();
+            String validationOutputQuery = outputs.buildValidationOutputQuery();
+            qlResponse = qlService.qlSearch(validationOutputQuery);
+            log.info("Output from Validation Output table " + qlResponse);
+            List<ValidationOutputData> validationOutputData = outputs.extractValidationDataFromDatabase(qlResponse);
+            List<ValidationOutputData> lambdaValidationOutputData = outputs.extractValidationDataFromLambda();
+            List<ValidationOutputData> validationOutputInsertData = outputs.getValidationOutputInsertList(lambdaValidationOutputData, validationOutputData);
+            List<ValidationOutputData> validationOutputModifiedData = outputs.getValidationOutputModifiedList(lambdaValidationOutputData, validationOutputData);
+            List<ValidationOutputData> validationOutputUpsertData = outputs.getValidationOutputUpsertList(validationOutputModifiedData, validationOutputInsertData);
+            List<ValidationOutputData> validationOutputDeleteData = outputs.getDeleteValidationOutputList(lambdaValidationOutputData, validationOutputData);
+            String upsertAndDeleteQuery = outputs.buildUpsertByArrayQuery(validationOutputUpsertData, validationOutputDeleteData);
+            qlResponse = qlService.qlSearch(upsertAndDeleteQuery);
+            log.info("Upsert Query response " + qlResponse);
         } catch (Exception e) {
-            log.info("Exception caught: " + e);
-            return "{\"error\":\"Unable to resolve validation output JSON\"}";
-        }
-
-        String qlResponse = new String();
-
-        // 1: Delete outputs
-        try {
-            qlResponse = qlService.qlSearch(deleteQuery);
-        } catch (Exception e) {
-            log.info("Exception: " + e);
-            log.info("Delete: " + deleteQuery);
-            log.info("QL Response: " + qlResponse);
-            return "{\"error\":\"Error removing existing validation outputs\"}";
-        }
-
-        // 2: Insert outputs
-        try {
-            qlResponse = qlService.qlSearch(insertQuery);
-        } catch (Exception e) {
-            log.info("Exception: " + e);
-            log.info("Insert: " + insertQuery);
-            log.info("QL Response: " + qlResponse);
-            return "{\"error\":\"Error saving validation outputs\"}";
+            log.error("Exception caught: " + e.getMessage());
+            return "{\"error\":\"Unable to save ValidationOutputs\"}";
         }
 
         // 3: Update status
@@ -114,10 +101,9 @@ public class ValidationController {
         try {
             updateStatusQuery = new ContributorStatus(reference, period, survey, statusText).buildUpdateQuery();
             qlResponse = qlService.qlSearch(updateStatusQuery);
+            log.info("Update Status Query response " + qlResponse);
         } catch (Exception e) {
-            log.info("Exception: " + e);
-            log.info("Update: " + insertQuery);
-            log.info("QL Response: " + updateStatusQuery);
+            log.error("Exception: " + e.getMessage());
             return "{\"error\":\"Error updating contributor status\"}";
         }
 
@@ -128,7 +114,7 @@ public class ValidationController {
     @ApiOperation(value = "Validation output to UI", response = String.class)
     @GetMapping(value = "/validationoutput/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = String.class)})
+            @ApiResponse(code = 200, message = "Successful", response = String.class)})
     public String validationoutput(@MatrixVariable Map<String, String> searchParameters) {
         String validationOutputsQuery = "";
         JSONObject validationOutputs = new JSONObject();
