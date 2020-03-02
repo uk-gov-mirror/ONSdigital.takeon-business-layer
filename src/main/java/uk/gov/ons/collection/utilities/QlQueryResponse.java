@@ -58,6 +58,7 @@ public class QlQueryResponse {
             validationRule.put("rule", outputArray.getJSONObject(i).getJSONObject("validationformByValidationid").get("rule"));
             validationRule.put("primaryquestion", outputArray.getJSONObject(i).getJSONObject("validationformByValidationid").get("primaryquestion"));
             validationRule.put("name", outputArray.getJSONObject(i).getJSONObject("validationformByValidationid").getJSONObject("validationruleByRule").get("name"));
+            validationRule.put("validationmessage", outputArray.getJSONObject(i).getJSONObject("validationformByValidationid").getJSONObject("validationruleByRule").get("validationmessage"));
             valOutputArray.put(validationRule);
         }
         var validationOutputs = new JSONObject().put("validation_outputs", valOutputArray);
