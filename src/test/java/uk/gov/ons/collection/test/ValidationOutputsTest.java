@@ -588,7 +588,7 @@ public class ValidationOutputsTest {
     @Test
     void getStatusText_1triggered_Triggered() {
         var inputJson = "{\"validation_outputs\": [{\"triggered\": true}]}";
-        var expectedStatus = "Validations Triggered";
+        var expectedStatus = "Check needed";
         try {
             var status = new ValidationOutputs(inputJson).getStatusText();
             assertEquals(expectedStatus, status);
@@ -600,7 +600,7 @@ public class ValidationOutputsTest {
     @Test
     void getStatusText_1of3triggeredInJson_returnsTriggered() {
         var inputJson = "{\"validation_outputs\": [{\"triggered\": false},{\"triggered\": true},{\"triggered\": false}]}";
-        var expectedStatus = "Validations Triggered";
+        var expectedStatus = "Check needed";
         try {
             var status = new ValidationOutputs(inputJson).getStatusText();
             assertEquals(expectedStatus, status);
