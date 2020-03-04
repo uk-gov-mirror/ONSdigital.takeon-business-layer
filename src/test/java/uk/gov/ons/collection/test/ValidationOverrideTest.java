@@ -45,8 +45,8 @@ public class ValidationOverrideTest {
             "       {'validationoutputid': 40, 'override': true, 'user': 'fisdba'}]\n" +
             "    }";
 
-    private static final String STATUS_CLEAR_OVERRIDDEN = "Clear - Overridden";
-    private static final String STATUS_CHECK_NEEDED = "Check Needed";
+    private static final String STATUS_CLEAR_OVERRIDDEN = "Clear - overridden";
+    private static final String STATUS_CHECK_NEEDED = "Check needed";
 
     @Test
     void class_validation_override_invalidJson_throwsExeption() {

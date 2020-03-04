@@ -23,8 +23,8 @@ public class ValidationOverride {
     private int overrideCount;
     private final Timestamp time = new Timestamp(new Date().getTime());
 
-    private static final String STATUS_CLEAR_OVERRIDDEN = "Clear - Overridden";
-    private static final String STATUS_CHECK_NEEDED = "Check Needed";
+    private static final String STATUS_CLEAR_OVERRIDDEN = "Clear - overridden";
+    private static final String STATUS_CHECK_NEEDED = "Check needed";
 
 
     public ValidationOverride(String jsonString) throws InvalidJsonException {

@@ -74,7 +74,7 @@ public class UpsertResponse {
             String reference = (outputRow.getString("reference"));
             String period = (outputRow.getString("period"));
             String survey = (outputRow.getString("survey"));
-            String statusText = ("Form Saved");
+            String statusText = ("Form saved");
 
             ContributorStatus status = new ContributorStatus(reference,period,survey,statusText);
             return status.buildUpdateQuery();

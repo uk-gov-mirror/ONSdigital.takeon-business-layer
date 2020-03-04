@@ -29,7 +29,7 @@ class UpsertResponseTest {
                     "{updateContributorByReferenceAndPeriodAndSurvey(input: {reference: $reference, " +
                     "period: $period, survey: $survey, contributorPatch: {status: $status}}) {contributor " +
                     "{ reference period survey status }}}\",\"variables\": {\"reference\": \"12345678000\"" +
-                    ",\"period\": \"201801\",\"survey\": \"999A\",\"status\": \"Form Saved\"}}";
+                    ",\"period\": \"201801\",\"survey\": \"999A\",\"status\": \"Form saved\"}}";
             assertEquals(expectedQuery, query);
         } catch (Exception e) {
             assertTrue(false);
