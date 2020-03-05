@@ -206,7 +206,7 @@ public class ValidationOutputs {
 
     public String getStatusText() throws InvalidJsonException {
         if (isTriggeredFound()) {
-            return "Validations Triggered";
+            return "Check needed";
         }
         return "Clear";
     }

@@ -36,7 +36,7 @@ public class BatchDataIngest {
     private static final String DERIVED_FORMULA = "derivedformula";
     private static final String TAKEON_SUCCESSFUL = "TakeOn Successful";
     private static final String BATCH_DATA = "batch_data";
-    private static final String FORM_SENT_OUT = "Form Sent Out";
+    private static final String FORM_SENT_OUT = "Form sent out";
     private static final String DUPLICATE_RECORD_ERROR = "Duplicate Record";
     private static final String DUPLICATE_MESSAGE_INPUT_JSON = " is duplicated in Input Json Batch Response";
     private static final String QUESTION_CODE = "The Question Code ";

@@ -174,7 +174,7 @@ public class ValidationOverrideTest {
             String statusText = overrideObject.processStatusMessage(triggerCount);
             assertEquals(STATUS_CHECK_NEEDED, statusText);
             String contributorStatusQuery = overrideObject.buildContributorStatusQuery(statusText);
-            //check Form Status - Check needed
+            //check Form Status - n
             assertTrue(contributorStatusQuery.contains(STATUS_CHECK_NEEDED));
         } catch (Exception exp) {
             assertTrue(false);
