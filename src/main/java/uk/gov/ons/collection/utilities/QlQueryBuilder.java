@@ -68,7 +68,7 @@ public class QlQueryBuilder {
         validationOutputQuery.append("{\"query\": \"query allValidationOutputs($reference: String, $period: String, $survey: String) " +
                 "{ allValidationoutputs(condition: {reference: $reference, period: $period, survey: $survey}) {" +
                 "nodes {formula triggered lastupdatedby lastupdateddate instance validationoutputid overridden " +
-                "validationformByValidationid {severity validationid rule primaryquestion " +
+                "validationformByValidationid {severity validationid rule primaryquestion description " +
                 "validationruleByRule {name validationmessage}}}}}\"," +
                 "\"variables\": {");
         validationOutputQuery.append(buildVariables());
