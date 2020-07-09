@@ -62,6 +62,7 @@ public class ViewFormResponse {
             formObject.put("questioncode", formArray.getJSONObject(i).getString("questioncode"));
             formObject.put("displaytext", formArray.getJSONObject(i).getString("displaytext"));
             formObject.put("displayquestionnumber", formArray.getJSONObject(i).getString("displayquestionnumber"));
+            formObject.put("displayorder", formArray.getJSONObject(i).getString("displayorder"));
             formObject.put("type", formArray.getJSONObject(i).getString("type"));
             formObject.put("response", "");
             formObject.put("instance", "");
