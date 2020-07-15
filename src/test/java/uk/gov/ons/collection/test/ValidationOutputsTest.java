@@ -640,10 +640,10 @@ public class ValidationOutputsTest {
                 + "\"triggered\": true, \"lastupdatedby\": null, \"lastupdateddate\": null, \"instance\": 0,"
                 + "\"overridden\": true, \"validationoutputid\": 35,"
                 + "\"validationformByValidationid\": {\"severity\": \"W\", \"validationid\": 10, \"rule\": VP,"
-                + "\"primaryquestion\": \"3000\", \"validationruleByRule\": {\"name\": \"Value Present\", \"validationmessage\": \"Respondent entered a value\"}}}]}}}";
+                + "\"primaryquestion\": \"3000\", \"description\": \"Respondent entered a value\", \"validationruleByRule\": {\"name\": \"Value Present\", \"validationmessage\": \"Respondent entered a value\"}}}]}}}";
 
         String expectedOutput = "{\"validation_outputs\":[{\"severity\":\"W\",\"triggered\":true,\"instance\":0,\"validationid\":10,"
-                + "\"rule\":\"VP\",\"overridden\":true,\"primaryquestion\":\"3000\",\"validationoutputid\":35,\"lastupdateddate\":null,"
+                + "\"rule\":\"VP\",\"description\":\"Respondent entered a value\",\"overridden\":true,\"primaryquestion\":\"3000\",\"validationoutputid\":35,\"lastupdateddate\":null,"
                 + "\"lastupdatedby\":null,\"name\":\"Value Present\",\"formula\":\"1=1\",\"validationmessage\":\"Respondent entered a value\"}]}";
 
         QlQueryResponse response = new QlQueryResponse(inputString);
