@@ -1,25 +1,38 @@
 package uk.gov.ons.collection.entity;
 
-import lombok.*;
+import uk.gov.ons.collection.exception.InvalidJsonException;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-@Getter
-@Setter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
 public class Contributor {
-    private String reference;
-    private String period;
-    private String survey;
-    private int formid;
-    private String status;
-    private String receiptDate;
-    private String lockedBy;
-    private String lockedDate;
-    private IdbrSelection idbrSelection;
-    private String createdBy;
-    private String createdDate;
-    private String lastUpdatedBy;
-    private String lastUpdatedDate;
+
+    private JSONObject jsonResponse;
+
+    public Contributor(String queryResponse) throws InvalidJsonException {
+        try {
+            this.jsonResponse = new JSONObject(queryResponse);
+        } catch (JSONException err) {
+            throw new InvalidJsonException("Given string could not be converted to JSON: " + queryResponse, err);
+        } catch (NullPointerException err) {
+            throw new InvalidJsonException("NULL json passed through!", err);
+        }
+    }
+
+    public int getFormId() throws InvalidJsonException {
+        try {
+            return jsonResponse.getJSONObject("data").getJSONObject("contributorByReferenceAndPeriodAndSurvey").getInt("formid");
+        } catch (Exception err) {
+            throw new InvalidJsonException("Given JSON did not contain formID in the expected location: " + jsonResponse, err);
+        }
+    }
+
+    public String getSurveyPeriodicity() throws InvalidJsonException {
+        try {
+            return jsonResponse.getJSONObject("data").getJSONObject("contributorByReferenceAndPeriodAndSurvey")
+                .getJSONObject("surveyBySurvey").getString("periodicity");
+        } catch (Exception err) {
+            throw new InvalidJsonException("Given JSON did not contain formID in the expected location: " + jsonResponse, err);
+        }
+    }
+
 }

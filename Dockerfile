@@ -20,7 +20,7 @@ RUN mvn dependency:go-offline -B
 
 # Build our application
 COPY ./src ./src
-RUN mvn -Dmaven.test.skip=true clean package
+RUN mvn -Dmaven.test.skip=true -Dcheckstyle.skip clean package
 
 
 # our final base image
