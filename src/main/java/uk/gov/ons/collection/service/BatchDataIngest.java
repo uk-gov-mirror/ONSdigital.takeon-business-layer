@@ -6,6 +6,7 @@ import org.json.JSONObject;
 
 import lombok.extern.log4j.Log4j2;
 import uk.gov.ons.collection.entity.BatchDataQuery;
+import uk.gov.ons.collection.entity.SurveyTask;
 import uk.gov.ons.collection.exception.InvalidJsonException;
 import uk.gov.ons.collection.utilities.UpsertResponse;
 
@@ -68,6 +69,7 @@ public class BatchDataIngest {
 
         HashMap<String, String> variables = new HashMap<>();
         String referenceExistsResponse;
+
         // Extract each ref/period/survey and check if exists
         for (int i = 0; i < referenceArray.length(); i++) {
             var outcomeObject = new JSONObject();
@@ -87,7 +89,11 @@ public class BatchDataIngest {
                 outcomeObject.put(SURVEY, survey);
                 referenceExistsResponse = qlService
                             .qlSearch(new BatchDataQuery(variables).buildCheckReferenceExistsQuery());
+                String outputSurveyTask = qlService
+                        .qlSearch(new SurveyTask(survey, "Missing Questions Check").buildSurveyTaskQuery());
+                log.info("Outcome of Surveytask query " + outputSurveyTask);
                 buildOutcomeJson(referenceExistsResponse, outcomeObject, individualObject, errorArray);
+
 
             } catch (Exception e) {
                 log.error("Can't process Batch data responses: " + e);
