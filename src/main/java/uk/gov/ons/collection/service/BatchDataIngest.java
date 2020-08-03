@@ -89,9 +89,11 @@ public class BatchDataIngest {
                 outcomeObject.put(SURVEY, survey);
                 referenceExistsResponse = qlService
                             .qlSearch(new BatchDataQuery(variables).buildCheckReferenceExistsQuery());
+                SurveyTask surveyTask = new SurveyTask(survey, "Missing Questions Check");
                 String outputSurveyTask = qlService
-                        .qlSearch(new SurveyTask(survey, "Missing Questions Check").buildSurveyTaskQuery());
+                        .qlSearch(surveyTask.buildSurveyTaskQuery());
                 log.info("Outcome of Surveytask query " + outputSurveyTask);
+                surveyTask.processSurveyTaskInfo(outputSurveyTask);
                 buildOutcomeJson(referenceExistsResponse, outcomeObject, individualObject, errorArray);
 
 
