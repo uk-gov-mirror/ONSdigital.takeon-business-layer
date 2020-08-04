@@ -8,8 +8,6 @@ import org.json.JSONObject;
 import lombok.extern.log4j.Log4j2;
 import uk.gov.ons.collection.exception.InvalidJsonException;
 
-import java.util.ArrayList;
-import java.util.List;
 
 
 @Log4j2
@@ -19,8 +17,7 @@ public class SurveyTask {
 
     private String survey;
     private String taskName;
-    private boolean enabledByDefault;
-    private boolean taskEnabled;
+    private boolean performTask = true;
 
     public SurveyTask(String survey, String taskName)  {
        this.survey = survey;
@@ -51,18 +48,19 @@ public class SurveyTask {
 
 
         JSONObject referenceExistsObject;
+
         try {
             referenceExistsObject = new JSONObject(surveyTaskResponse);
-
             JSONArray taskArrayObject = referenceExistsObject.getJSONObject("data")
                     .getJSONObject("allTasks").getJSONArray("nodes");
             if(taskArrayObject.length() > 0) {
-                this.enabledByDefault = taskArrayObject.getJSONObject(0).getBoolean("enabledbydefault");
-                JSONArray taskSurveyArrayObject = referenceExistsObject.getJSONObject("data")
-                        .getJSONObject("allTasks").getJSONArray("nodes").getJSONObject(0)
+                boolean enabledByDefault = taskArrayObject.getJSONObject(0).getBoolean("enabledbydefault");
+                log.info("Task table enabledByDefault Flag {}", enabledByDefault);
+                JSONArray taskSurveyArrayObject = taskArrayObject.getJSONObject(0)
                         .getJSONObject("surveytasksByTaskname").getJSONArray("nodes");
-                if(this.enabledByDefault && taskSurveyArrayObject.length() > 0) {
-                    this.taskEnabled = taskSurveyArrayObject.getJSONObject(0).getBoolean("enabled");
+                if(enabledByDefault && taskSurveyArrayObject.length() > 0) {
+                    this.performTask = taskSurveyArrayObject.getJSONObject(0).getBoolean("enabled");
+                    log.info("Perform Task Flag {}", this.performTask);
                 }
             }
 
