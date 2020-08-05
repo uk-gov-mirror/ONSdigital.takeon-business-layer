@@ -47,11 +47,11 @@ public class SurveyTask {
     public void processSurveyTaskInfo(String surveyTaskResponse) throws InvalidJsonException {
 
 
-        JSONObject referenceExistsObject;
+        JSONObject surveyTaskResponseObject;
 
         try {
-            referenceExistsObject = new JSONObject(surveyTaskResponse);
-            JSONArray taskArrayObject = referenceExistsObject.getJSONObject("data")
+            surveyTaskResponseObject = new JSONObject(surveyTaskResponse);
+            JSONArray taskArrayObject = surveyTaskResponseObject.getJSONObject("data")
                     .getJSONObject("allTasks").getJSONArray("nodes");
             if(taskArrayObject.length() > 0) {
                 boolean enabledByDefault = taskArrayObject.getJSONObject(0).getBoolean("enabledbydefault");
@@ -65,8 +65,9 @@ public class SurveyTask {
             }
 
         } catch (JSONException e) {
-            log.error("Invalid JSON from Survey Task Output " + e);
-            throw new InvalidJsonException("Invalid JSON from Survey task response: " + surveyTaskResponse, e);
+            log.error("Either Survey Task not found or Invalid JSON from Survey Task Output " + e);
+            throw new InvalidJsonException("Either Survey Task not found or Invalid JSON from Survey Task Output: "
+                    + surveyTaskResponse, e);
         }
 
     }

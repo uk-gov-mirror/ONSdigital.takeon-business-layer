@@ -45,6 +45,7 @@ public class BatchDataIngest {
     private static final String INPUT_JSON = "Input Json";
     private static final String EXISTS_IN = " Exists in ";
     private static final String MISSING_FROM = " and Missing from ";
+    private static final String MISSING_QUESTIONS_CHECK = "Missing Questions Check";
 
 
     public BatchDataIngest() {
@@ -89,7 +90,7 @@ public class BatchDataIngest {
                 outcomeObject.put(SURVEY, survey);
                 referenceExistsResponse = qlService
                             .qlSearch(new BatchDataQuery(variables).buildCheckReferenceExistsQuery());
-                SurveyTask surveyTask = new SurveyTask(survey, "Missing Questions Check");
+                SurveyTask surveyTask = new SurveyTask(survey, MISSING_QUESTIONS_CHECK);
                 String outputSurveyTask = qlService
                         .qlSearch(surveyTask.buildSurveyTaskQuery());
                 log.info("Outcome of Surveytask query " + outputSurveyTask);
@@ -160,13 +161,13 @@ public class BatchDataIngest {
         //Comparison - FormDefinition as Master with Input Json
         List<String> formDefErrorList = getErrorList(questionCodeList, questionCodeJsonList, errorArray, false);
 
-        if(performMissingQuestionCheck){
+        if (performMissingQuestionCheck) {
             //Comparison - Input JSON as Master with FormDefinition
             inputJsonErrorList = getErrorList(questionCodeJsonList, questionCodeList, errorArray, true);
         }
 
-        allChecksPassed = performMissingQuestionCheck?(formDefErrorList.isEmpty() && inputJsonErrorList.isEmpty()
-                && duplicateErrorList.isEmpty()):(formDefErrorList.isEmpty() && duplicateErrorList.isEmpty());
+        allChecksPassed = performMissingQuestionCheck ? (formDefErrorList.isEmpty() && inputJsonErrorList.isEmpty()
+                && duplicateErrorList.isEmpty()) : (formDefErrorList.isEmpty() && duplicateErrorList.isEmpty());
 
         if (allChecksPassed) {
             //Call to Save Responses
