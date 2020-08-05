@@ -20,8 +20,8 @@ public class SurveyTask {
     private boolean performTask = true;
 
     public SurveyTask(String survey, String taskName)  {
-       this.survey = survey;
-       this.taskName = taskName;
+        this.survey = survey;
+        this.taskName = taskName;
     }
 
     public String buildSurveyTaskQuery()  {
@@ -53,12 +53,12 @@ public class SurveyTask {
             surveyTaskResponseObject = new JSONObject(surveyTaskResponse);
             JSONArray taskArrayObject = surveyTaskResponseObject.getJSONObject("data")
                     .getJSONObject("allTasks").getJSONArray("nodes");
-            if(taskArrayObject.length() > 0) {
+            if (taskArrayObject.length() > 0) {
                 boolean enabledByDefault = taskArrayObject.getJSONObject(0).getBoolean("enabledbydefault");
                 log.info("Task table enabledByDefault Flag {}", enabledByDefault);
                 JSONArray taskSurveyArrayObject = taskArrayObject.getJSONObject(0)
                         .getJSONObject("surveytasksByTaskname").getJSONArray("nodes");
-                if(enabledByDefault && taskSurveyArrayObject.length() > 0) {
+                if (enabledByDefault && taskSurveyArrayObject.length() > 0) {
                     this.performTask = taskSurveyArrayObject.getJSONObject(0).getBoolean("enabled");
                     log.info("Perform Task Flag {}", this.performTask);
                 }
