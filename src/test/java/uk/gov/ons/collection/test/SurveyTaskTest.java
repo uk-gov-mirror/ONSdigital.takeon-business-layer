@@ -11,7 +11,8 @@ public class SurveyTaskTest {
     @Test
     void verify_SurveyTask_inValidJson_throwsException() {
 
-        var contributorJson1 = "{\"data\":{\"allTasks\":{\"nods\":[]}}}";
-        assertThrows(InvalidJsonException.class, () -> new SurveyTask("023","Missing Questions Check").processSurveyTaskInfo(contributorJson1));
+        var surveyTaskJson = "{\"data\":{\"allTasks\":{\"nods\":[]}}}";
+        assertThrows(InvalidJsonException.class, () -> new SurveyTask("023",
+                "Missing Questions Check").processSurveyTaskInfo(surveyTaskJson));
     }
 }
