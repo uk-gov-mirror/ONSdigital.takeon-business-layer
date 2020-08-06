@@ -24,18 +24,14 @@ public class SurveyTaskTest {
     @Test
     void verify_SurveyTask_Missing_Question_Check_ForBMI() {
 
-        SurveyTask surveyTaskObject = new SurveyTask("023",MISSING_QUESTIONS_CHECK);
-        String graphQLQueryBMI1 = "{\"query\":\"query surveytaskdetails {allTasks(condition: {taskname: \\\"Missing Questions Check\\\"})" +
-                "{nodes {taskname taskdescription enabledbydefault surveytasksByTaskname(condition: " +
-                "{survey: \\\"066\\\", taskname: \\\"Missing Questions Check\\\"})" +
-                "{nodes {survey taskname enabled}}}}}\"}";
+        SurveyTask surveyTaskObject = new SurveyTask("066",MISSING_QUESTIONS_CHECK);
         surveyTaskObject.buildSurveyTaskQuery();
         String surveyTaskResponseBMI = "{\"data\":{\"allTasks\":{\"nodes\":[{\"taskname\":\"Missing Questions Check\",\"taskdescription\":\"Ingest Check\",\"enabledbydefault\":true,\"surveytasksByTaskname\":{\"nodes\":[]}}]}}}";
 
         try {
             surveyTaskObject.processSurveyTaskInfo(surveyTaskResponseBMI);
             assertTrue(surveyTaskObject.isPerformTask(), "Test");
-            System.out.println("Missing Question check to be performed"+surveyTaskObject.isPerformTask());
+            System.out.println("Missing Question check to be performed for BMI"+surveyTaskObject.isPerformTask());
         } catch(Exception e) {
             assertTrue(false);
         }
@@ -45,9 +41,6 @@ public class SurveyTaskTest {
     void verify_SurveyTask_Missing_Question_Check_ForRSI() {
 
         SurveyTask surveyTaskObject = new SurveyTask("023", MISSING_QUESTIONS_CHECK);
-        String graphQLQueryRSI1 = "{\"query\":\"query surveytaskdetails {allTasks(condition: {taskname:" +
-                " \\\"Missing Questions Check\\\"}){nodes {taskname taskdescription enabledbydefault surveytasksByTaskname" +
-                "(condition: {survey: \\\"023\\\", taskname: \\\"Missing Questions Check\\\"}){nodes {survey taskname enabled}}}}}\"}";
         String surveyTaskResponseRSI = "{\"data\":{\"allTasks\":{\"nodes\":[{\"taskname\":\"Missing Questions Check\",\"taskdescription\":\"Ingest Check\"," +
                 "\"enabledbydefault\":true,\"surveytasksByTaskname\":{\"nodes\":[{\"survey\":\"023\"," +
                 "\"taskname\":\"Missing Questions Check\",\"enabled\":false}]}}]}}}";
