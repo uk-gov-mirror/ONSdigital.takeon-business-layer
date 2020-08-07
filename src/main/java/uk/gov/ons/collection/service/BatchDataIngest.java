@@ -6,6 +6,7 @@ import org.json.JSONObject;
 
 import lombok.extern.log4j.Log4j2;
 import uk.gov.ons.collection.entity.BatchDataQuery;
+import uk.gov.ons.collection.entity.SurveyTask;
 import uk.gov.ons.collection.exception.InvalidJsonException;
 import uk.gov.ons.collection.utilities.UpsertResponse;
 
@@ -44,6 +45,7 @@ public class BatchDataIngest {
     private static final String INPUT_JSON = "Input Json";
     private static final String EXISTS_IN = " Exists in ";
     private static final String MISSING_FROM = " and Missing from ";
+    private static final String MISSING_QUESTIONS_CHECK = "Missing Questions Check";
 
 
     public BatchDataIngest() {
@@ -68,6 +70,7 @@ public class BatchDataIngest {
 
         HashMap<String, String> variables = new HashMap<>();
         String referenceExistsResponse;
+
         // Extract each ref/period/survey and check if exists
         for (int i = 0; i < referenceArray.length(); i++) {
             var outcomeObject = new JSONObject();
@@ -87,7 +90,13 @@ public class BatchDataIngest {
                 outcomeObject.put(SURVEY, survey);
                 referenceExistsResponse = qlService
                             .qlSearch(new BatchDataQuery(variables).buildCheckReferenceExistsQuery());
-                buildOutcomeJson(referenceExistsResponse, outcomeObject, individualObject, errorArray);
+                SurveyTask surveyTask = new SurveyTask(survey, MISSING_QUESTIONS_CHECK);
+                String outputSurveyTask = qlService
+                        .qlSearch(surveyTask.buildSurveyTaskQuery());
+                log.info("Outcome of Surveytask query " + outputSurveyTask);
+                surveyTask.processSurveyTaskInfo(outputSurveyTask);
+                buildOutcomeJson(referenceExistsResponse, outcomeObject, individualObject, errorArray, surveyTask);
+
 
             } catch (Exception e) {
                 log.error("Can't process Batch data responses: " + e);
@@ -106,7 +115,8 @@ public class BatchDataIngest {
     }
 
 
-    private void buildOutcomeJson(String referenceExistsResponse, JSONObject outcomeObject, JSONObject individualObject, JSONArray errorArray)
+    private void buildOutcomeJson(String referenceExistsResponse, JSONObject outcomeObject, JSONObject individualObject,
+                                  JSONArray errorArray, SurveyTask surveyTask)
             throws Exception {
         log.info("Reference exists response:" + referenceExistsResponse);
         JSONArray contributorArray = getContributorArray(referenceExistsResponse);
@@ -126,7 +136,7 @@ public class BatchDataIngest {
                 errorArray.put(errorJsonObject);
                 outcomeObject.put(ERRORS, errorArray);
             } else {
-                processSaveAndErrorResponses(referenceExistsResponse, individualObject, errorArray, outcomeObject);
+                processSaveAndErrorResponses(referenceExistsResponse, individualObject, errorArray, outcomeObject, surveyTask);
             }
 
         }
@@ -134,22 +144,32 @@ public class BatchDataIngest {
     }
 
     private void processSaveAndErrorResponses(String referenceExistsResponse, JSONObject individualObject,
-                                              JSONArray errorArray, JSONObject outcomeObject) throws Exception {
+                                              JSONArray errorArray, JSONObject outcomeObject, SurveyTask surveyTask) throws Exception {
 
+
+        boolean performMissingQuestionCheck = surveyTask.isPerformTask();
+        log.info("Perform Missing Question Check before saving {}", performMissingQuestionCheck);
+        List<String> inputJsonErrorList = null;
+        boolean allChecksPassed = false;
         //Perform Form Type Error Checks here
         List<String> questionCodeList = getQuestionListFromFormDefinitionArray(referenceExistsResponse);
         List<String> questionCodeJsonList = getQuestionListFromInputJsonArray(individualObject);
 
-        //Comparison - FormDefinition as Master with Input Json
-        List<String> formDefErrorList = getErrorList(questionCodeList, questionCodeJsonList, errorArray, false);
-
-        //Comparison - Input JSON as Master with FormDefinition
-        List<String> inputJsonErrorList = getErrorList(questionCodeJsonList, questionCodeList, errorArray, true);
-
         //Find Duplicate elements in Input JSON
         List<String> duplicateErrorList = getDuplicateErrorList(questionCodeJsonList, errorArray);
 
-        if (formDefErrorList.isEmpty() && inputJsonErrorList.isEmpty() && duplicateErrorList.isEmpty()) {
+        //Comparison - FormDefinition as Master with Input Json
+        List<String> formDefErrorList = getErrorList(questionCodeList, questionCodeJsonList, errorArray, false);
+
+        if (performMissingQuestionCheck) {
+            //Comparison - Input JSON as Master with FormDefinition
+            inputJsonErrorList = getErrorList(questionCodeJsonList, questionCodeList, errorArray, true);
+        }
+
+        allChecksPassed = performMissingQuestionCheck ? (formDefErrorList.isEmpty() && inputJsonErrorList.isEmpty()
+                && duplicateErrorList.isEmpty()) : (formDefErrorList.isEmpty() && duplicateErrorList.isEmpty());
+
+        if (allChecksPassed) {
             //Call to Save Responses
             invokeSaveResponsesRequest(individualObject);
             // Call to Update the Form Status
@@ -162,7 +182,6 @@ public class BatchDataIngest {
             //Process Errors JSON Array
             outcomeObject.put(OUTCOME, FAILURE);
             outcomeObject.put(ERRORS, errorArray);
-
         }
 
     }
