@@ -1,5 +1,7 @@
 package uk.gov.ons.collection.utilities;
 
+import static org.junit.Assume.assumeNoException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -74,5 +76,16 @@ public class QlQueryBuilder {
         validationOutputQuery.append(buildVariables());
         validationOutputQuery.append("}}");
         return validationOutputQuery.toString();
+    }
+
+    public String buildCheckIDBRTableQuery() {
+        StringBuilder checkIDBRTableQuery = new StringBuilder();
+        checkIDBRTableQuery.append("{\"query\": \"query allContributors($reference: String, $period: String, $survey: String)" +
+                "{ allContributors(condition: {reference: $reference, period: $period, survey: $survey}) {" +
+                "nodes { reference period survey formid checkIDBRByFormtype { formid }}}}\"," +
+                "\"variables\": {"); 
+        checkIDBRTableQuery.append(buildVariables());
+        checkIDBRTableQuery.append("}}");
+        return checkIDBRTableQuery.toString();
     }
 }
