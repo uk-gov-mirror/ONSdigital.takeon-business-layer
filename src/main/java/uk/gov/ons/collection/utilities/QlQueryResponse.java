@@ -65,24 +65,5 @@ public class QlQueryResponse {
         var validationOutputs = new JSONObject().put("validation_outputs", valOutputArray);
         return validationOutputs;
     }
-
-    public JSONObject buildCheckIDBRTableQuery() {
-        var outputArray = new JSONArray();
-        var checkIDBRArray = new JSONArray();
-        System.out.println("Output from checkIDBR Table: " + jsonQlResponse.toString());
-        if (jsonQlResponse.getJSONObject("data").getJSONObject("checkIDBR").getJSONArray("nodes").length() > 0) {
-            outputArray = jsonQlResponse.getJSONObject("data").getJSONObject("checkIDBR").getJSONArray("nodes");
-        }
-        for (int i = 0; i < outputArray.length(); i++) {
-            JSONObject checkIDBR = new JSONObject();
-            checkIDBR.put("survey", outputArray.getJSONObject(i).get("survey"));
-            checkIDBR.put("formid", outputArray.getJSONObject(i).get("formid"));
-            checkIDBR.put("idbrformtype", outputArray.getJSONObject(i).get("idbrformtype"));
-            checkIDBR.put("periodstart", outputArray.getJSONObject(i).get("periodstart"));
-            checkIDBRArray.put(checkIDBR);
-        }
-        var checkIDBR = new JSONObject().put("check_idbr", checkIDBRArray);
-        return checkIDBR;
-}
 }
 

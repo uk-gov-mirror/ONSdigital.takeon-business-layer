@@ -15,8 +15,11 @@ import uk.gov.ons.collection.entity.FullDataExport;
 import uk.gov.ons.collection.service.GraphQlService;
 import uk.gov.ons.collection.utilities.QlQueryBuilder;
 import uk.gov.ons.collection.utilities.QlQueryResponse;
+import uk.gov.ons.collection.utilities.SelectionFileQuery;
 
 import java.util.Map;
+
+import com.jayway.jsonpath.InvalidJsonException;
 
 @Log4j2
 @Api(value = "Contributor Controller", description = "End point for the repository data related to contributors")
@@ -57,5 +60,24 @@ public class ContributorController {
         }
         return response;
     }
+
+    @Autowired
+    @ApiOperation(value = "Check IDBR table and get existing FormID and Type", response = String.class)
+    @GetMapping(value = "/getExistingFormidType/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful retrieval of all details", response = String.class)})
+    public String selectionLoadController(@MatrixVariable Map<String, String> params) {
+
+        log.info("API CALL!! --> /contributor/selectionLoad/{vars} :: " + params);
+        String response;
+        try {
+            response = new SelectionFileQuery(params. get("reference"), params.get("period"), params.get("survey"));
+        } catch (InvalidJsonException err) {
+            log.info("Exception found: " + err);
+            response = "{\"error\":\"Unable to determine or construct configuration data\"}";
+        }
+        log.info("API Complete!! --> /validation/getAllConfiguration/{vars}");
+        return response;
+    }
+}
 
 }
