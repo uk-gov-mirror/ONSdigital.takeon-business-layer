@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.MatrixVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.ons.collection.entity.FullDataExport;
@@ -64,45 +65,44 @@ public class ContributorController {
         }
         return response;
     }
-
-    private String getSelectionLoad() throws InvalidJsonException {
-        StringJoiner joiner = new StringJoiner(",");
-        for (int i = 0; i < responseArray.length(); i++);
-        }
-        {
-        return joiner.toString();
     
 
     @Autowired
     @ApiOperation(value = "Check IDBR table and get existing FormID and Type", response = String.class)
-    @GetMapping(value = "/getExistingFormid/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful retrieval of all details", response = String.class)})
+    @GetMapping(value = "/getFormid/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful retrieval of form id from IDBR form mapping table", response = String.class)})
     public String getFormid(@MatrixVariable Map<String, String> params) {
 
-        log.info("API CALL!! --> /contributor/getExistingFormid/{vars} :: " + params);
-        String SelectionFileQuery = "";
-        Integer Formid;
+        log.info("API CALL!! --> /contributor/getFormid/{vars} :: " + params);
+        String formIdQuery = "";
+        Integer formId;
         try {
-            SelectionFileQuery = new SelectionFileQuery(params).buildCheckIDBRFormidQuery();
-            SelectionFileResponse response = new SelectionFileResponse(qlService.qlSearch(SelectionFileQuery));
-            Formid = response.parseFormidResponse();
+            formIdQuery = new SelectionFileQuery(params).buildCheckIDBRFormidQuery();
+            SelectionFileResponse response = new SelectionFileResponse(qlService.qlSearch(formIdQuery));
+            formId = response.parseFormidResponse();
         } catch (InvalidJsonException err) {
             log.info("Exception found: " + err);
             return "{\"error\":\"Unable to determine selection data\"}";
         }
         log.info("API Complete --> /contributor/getExistingFormid/{vars}");
-        return Formid.toString();
+        return formId.toString();
     }
 
     @Autowired
     @ApiOperation(value = "Check IDBR table and get existing FormID and Type", response = String.class)
-    @GetMapping(value = "/loadSelectionFile/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/loadSelectionFile", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful retrieval of all details", response = String.class)})
-    public Integer loadSelectionFile(@MatrixVariable Map<String, String> params) {
-            var jsonQlResponse = new StringBuilder();
-            jsonQlResponse.append("{\"query\" : \"mutation loadResponse {LoadIDBRForm(input: {arg0: ");
-            jsonQlResponse.append("[" + getSelectionLoad() + "]");
-            jsonQlResponse.append("}){clientMutationId}}\"}");
-            return jsonQlResponse.toString(Formid);
+    public String loadSelectionFile(@RequestBody String selectionData) {
+        log.info("API CALL!! --> /contributor/loadSelectionFile:: ");
+        try {
+            var loadQuery = new SelectionFileQuery(selectionData).buildSaveSelectionFileQuery();
+            qlService.qlSearch(loadQuery);
+
+        } catch (Exception e) {
+            log.info("Can't build Batch Selection Load Query / Invalid Response from GraphQL: " + e);
+            return "{\"error\":\"Failed to load Selection File\"}";
+        }
+
+        return "{\"Success\":\"Successfully loaded Selection File\"}";
         }
 }

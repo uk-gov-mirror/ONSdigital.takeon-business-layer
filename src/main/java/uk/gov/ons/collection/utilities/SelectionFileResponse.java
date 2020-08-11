@@ -18,12 +18,13 @@ public class SelectionFileResponse {
     }
     public int parseFormidResponse() {
         var outputArray = new JSONArray();
-        int Formid;
+        int formId;
         System.out.println("Output from checkIDBR Table: " + jsonQlResponse.toString());
         if (jsonQlResponse.getJSONObject("data").getJSONObject("checkIDBRFormid").getJSONArray("nodes").length() > 0) {
             outputArray = jsonQlResponse.getJSONObject("data").getJSONObject("checkIDBRFormid").getJSONArray("nodes");
         }
-        Formid = outputArray.getJSONObject(0).getInt("formid");
-        return Formid;
+        formId = outputArray.getJSONObject(0).getInt("formid");
+        return formId;
     }
+
 }
