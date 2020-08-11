@@ -68,7 +68,7 @@ public class ContributorController {
     
 
     @Autowired
-    @ApiOperation(value = "Check IDBR table and get existing FormID and Type", response = String.class)
+    @ApiOperation(value = "Check IDBR table and get existing FormID from IDBR form Type", response = String.class)
     @GetMapping(value = "/getFormid/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful retrieval of form id from IDBR form mapping table", response = String.class)})
     public String getFormid(@MatrixVariable Map<String, String> params) {
@@ -89,9 +89,9 @@ public class ContributorController {
     }
 
     @Autowired
-    @ApiOperation(value = "Check IDBR table and get existing FormID and Type", response = String.class)
+    @ApiOperation(value = "Load Selection File for a Survey/Period", response = String.class)
     @GetMapping(value = "/loadSelectionFile", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful retrieval of all details", response = String.class)})
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful load of Selection file", response = String.class)})
     public String loadSelectionFile(@RequestBody String selectionData) {
         log.info("API CALL!! --> /contributor/loadSelectionFile:: ");
         try {
