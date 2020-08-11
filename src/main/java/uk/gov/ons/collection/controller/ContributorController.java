@@ -5,6 +5,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.log4j.Log4j2;
+
+import org.apache.commons.configuration.interpol.ExprLookup.Variables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,8 +18,10 @@ import uk.gov.ons.collection.service.GraphQlService;
 import uk.gov.ons.collection.utilities.QlQueryBuilder;
 import uk.gov.ons.collection.utilities.QlQueryResponse;
 import uk.gov.ons.collection.utilities.SelectionFileQuery;
+import uk.gov.ons.collection.utilities.SelectionFileResponse;
 
 import java.util.Map;
+import java.util.StringJoiner;
 
 import com.jayway.jsonpath.InvalidJsonException;
 
@@ -61,23 +65,44 @@ public class ContributorController {
         return response;
     }
 
+    private String getSelectionLoad() throws InvalidJsonException {
+        StringJoiner joiner = new StringJoiner(",");
+        for (int i = 0; i < responseArray.length(); i++);
+        }
+        {
+        return joiner.toString();
+    
+
     @Autowired
     @ApiOperation(value = "Check IDBR table and get existing FormID and Type", response = String.class)
-    @GetMapping(value = "/getExistingFormidType/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/getExistingFormid/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful retrieval of all details", response = String.class)})
-    public String selectionLoadController(@MatrixVariable Map<String, String> params) {
+    public String getFormid(@MatrixVariable Map<String, String> params) {
 
-        log.info("API CALL!! --> /contributor/selectionLoad/{vars} :: " + params);
-        String response;
+        log.info("API CALL!! --> /contributor/getExistingFormid/{vars} :: " + params);
+        String SelectionFileQuery = "";
+        Integer Formid;
         try {
-            response = new SelectionFileQuery(params. get("reference"), params.get("period"), params.get("survey"));
+            SelectionFileQuery = new SelectionFileQuery(params).buildCheckIDBRFormidQuery();
+            SelectionFileResponse response = new SelectionFileResponse(qlService.qlSearch(SelectionFileQuery));
+            Formid = response.parseFormidResponse();
         } catch (InvalidJsonException err) {
             log.info("Exception found: " + err);
-            response = "{\"error\":\"Unable to determine or construct configuration data\"}";
+            return "{\"error\":\"Unable to determine selection data\"}";
         }
-        log.info("API Complete!! --> /validation/getAllConfiguration/{vars}");
-        return response;
+        log.info("API Complete --> /contributor/getExistingFormid/{vars}");
+        return Formid.toString();
     }
-}
 
+    @Autowired
+    @ApiOperation(value = "Check IDBR table and get existing FormID and Type", response = String.class)
+    @GetMapping(value = "/loadSelectionFile/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful retrieval of all details", response = String.class)})
+    public Integer loadSelectionFile(@MatrixVariable Map<String, String> params) {
+            var jsonQlResponse = new StringBuilder();
+            jsonQlResponse.append("{\"query\" : \"mutation loadResponse {LoadIDBRForm(input: {arg0: ");
+            jsonQlResponse.append("[" + getSelectionLoad() + "]");
+            jsonQlResponse.append("}){clientMutationId}}\"}");
+            return jsonQlResponse.toString(Formid);
+        }
 }
