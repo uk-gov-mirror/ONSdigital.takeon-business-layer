@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.MatrixVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.ons.collection.entity.FullDataExport;
@@ -90,7 +91,7 @@ public class ContributorController {
     // }
 
     @ApiOperation(value = "Load Selection File for a Survey/Period", response = String.class)
-    @GetMapping(value = "/loadSelectionFile", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/loadSelectionFile", produces = MediaType.APPLICATION_JSON_VALUE, method = { RequestMethod.POST, RequestMethod.PUT })
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful load of Selection file", response = String.class) })
     @ResponseBody
