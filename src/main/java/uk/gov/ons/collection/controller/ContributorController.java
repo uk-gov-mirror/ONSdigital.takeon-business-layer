@@ -89,7 +89,6 @@ public class ContributorController {
     // return formId.toString();
     // }
 
-    @Autowired
     @ApiOperation(value = "Load Selection File for a Survey/Period", response = String.class)
     @GetMapping(value = "/loadSelectionFile", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
