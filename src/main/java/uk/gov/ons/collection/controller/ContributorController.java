@@ -67,26 +67,26 @@ public class ContributorController {
     }
     
 
-    @Autowired
-    @ApiOperation(value = "Check IDBR table and get existing FormID from IDBR form Type", response = String.class)
-    @GetMapping(value = "/getFormid/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful retrieval of form id from IDBR form mapping table", response = String.class)})
-    public String getFormid(@MatrixVariable Map<String, String> params) {
+    // @Autowired
+    // @ApiOperation(value = "Check IDBR table and get existing FormID from IDBR form Type", response = String.class)
+    // @GetMapping(value = "/getFormid/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
+    // @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful retrieval of form id from IDBR form mapping table", response = String.class)})
+    // public String getFormid(@MatrixVariable Map<String, String> params) {
 
-        log.info("API CALL!! --> /contributor/getFormid/{vars} :: " + params);
-        String formIdQuery = "";
-        Integer formId;
-        try {
-            formIdQuery = new SelectionFileQuery(params).buildCheckIDBRFormidQuery();
-            SelectionFileResponse response = new SelectionFileResponse(qlService.qlSearch(formIdQuery));
-            formId = response.parseFormidResponse();
-        } catch (InvalidJsonException err) {
-            log.info("Exception found: " + err);
-            return "{\"error\":\"Unable to determine selection data\"}";
-        }
-        log.info("API Complete --> /contributor/getExistingFormid/{vars}");
-        return formId.toString();
-    }
+    //     log.info("API CALL!! --> /contributor/getFormid/{vars} :: " + params);
+    //     String formIdQuery = "";
+    //     Integer formId;
+    //     try {
+    //         formIdQuery = new SelectionFileQuery(params).buildCheckIDBRFormidQuery();
+    //         SelectionFileResponse response = new SelectionFileResponse(qlService.qlSearch(formIdQuery));
+    //         formId = response.parseFormidResponse();
+    //     } catch (InvalidJsonException err) {
+    //         log.info("Exception found: " + err);
+    //         return "{\"error\":\"Unable to determine selection data\"}";
+    //     }
+    //     log.info("API Complete --> /contributor/getExistingFormid/{vars}");
+    //     return formId.toString();
+    // }
 
     @Autowired
     @ApiOperation(value = "Load Selection File for a Survey/Period", response = String.class)
