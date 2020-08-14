@@ -91,7 +91,7 @@ public class SelectionFileQuery {
             joiner.add("reference: \\\"" + outputRow.getString("ruref") + "\\\"");
             joiner.add("formid: " + outputRow.getInt("formtype")); // Call a method here to get the form id or pass it through into API for this call?
             joiner.add("status: \\\"Form sent out\\\"");
-            joiner.add("receiptdate: \\\" \\\"");
+            joiner.add("receiptdate: null");
             joiner.add("lockedby: \\\" \\\"");
             joiner.add("lockeddate: null");
             joiner.add("formtype: \\\"" + outputRow.getString("formtype") + "\\\"");
