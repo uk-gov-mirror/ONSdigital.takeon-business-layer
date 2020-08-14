@@ -99,6 +99,7 @@ public class ContributorController {
         log.info("API CALL!! --> /contributor/loadSelectionFile:: ");
         try {
             var loadQuery = new SelectionFileQuery(selectionData).buildSaveSelectionFileQuery();
+            log.info("Load Selection Query: " + loadQuery);
             qlService.qlSearch(loadQuery);
 
         } catch (final Exception e) {
