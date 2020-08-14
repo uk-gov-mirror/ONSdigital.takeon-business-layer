@@ -103,9 +103,10 @@ public class ContributorController {
         Integer formId;
         try {
             Map<String, String> vars = new HashMap<String, String>();
-            vars.put("formid", "0018");
+            vars.put("formtype", "0018");
             formIdQuery = new SelectionFileQuery(vars).buildCheckIDBRFormidQuery();
             SelectionFileResponse formResponse = new SelectionFileResponse(qlService.qlSearch(formIdQuery));
+            log.info("Form id response " + formResponse.toString());
             formId = formResponse.parseFormidResponse();
             log.info("Form ID Output: " + formId);
             var loadQuery = new SelectionFileQuery(selectionData).buildSaveSelectionFileQuery();

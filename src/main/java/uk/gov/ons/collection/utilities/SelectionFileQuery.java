@@ -73,7 +73,7 @@ public class SelectionFileQuery {
     private String getSelectionLoadData() throws InvalidJsonException {
         StringJoiner joiner = new StringJoiner(",");
         for (int i = 0; i < contributorValuesArray.length(); i++) {
-            joiner.add("{" + extractValidationOutputRow(i) + "}");
+            joiner.add("{" + extractContributorRow(i) + "}");
         }
         return joiner.toString();
     }
@@ -83,7 +83,7 @@ public class SelectionFileQuery {
     }
 
     // Convert a row for the given index and provide it in graphQL desired format
-    private String extractValidationOutputRow(int index) throws InvalidJsonException {
+    private String extractContributorRow(int index) throws InvalidJsonException {
         StringJoiner joiner = new StringJoiner(",");
         try {
             var outputRow = contributorValuesArray.getJSONObject(index);
