@@ -110,7 +110,7 @@ public class SelectionFileQuery {
             joiner.add("turnover: \\\"" + outputRow.getString("turnover") + "\\\"");
             joiner.add("enterprisereference: \\\"" + outputRow.getString("entref") + "\\\"");
             joiner.add("wowenterprisereference: \\\"" + outputRow.getString("wowentref") + "\\\"");
-            joiner.add("cellnumber: \\\"" + outputRow.getString("cell_no") + "\\\"");
+            joiner.add("cellnumber: \\\"" + outputRow.getInt("cell_no") + "\\\"");
             joiner.add("currency: \\\"" + outputRow.getString("currency") + "\\\"");
             joiner.add("vatreference: \\\"" + outputRow.getString("vatref") + "\\\"");
             joiner.add("payereference: \\\"" + outputRow.getString("payeref") + "\\\"");
