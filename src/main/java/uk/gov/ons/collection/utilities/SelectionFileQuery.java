@@ -115,9 +115,9 @@ public class SelectionFileQuery {
             joiner.add("vatreference: \\\"" + outputRow.getString("vatref") + "\\\"");
             joiner.add("payereference: \\\"" + outputRow.getString("payeref") + "\\\"");
             joiner.add("companyregistrationnumber: \\\"" + outputRow.getString("crn") + "\\\"");
-            joiner.add("numberlivelocalunits: \\\"" + outputRow.getString("live_lu") + "\\\"");
-            joiner.add("numberlivevat: \\\"" + outputRow.getString("live_vat") + "\\\"");
-            joiner.add("numberlivepaye: \\\"" + outputRow.getString("live_paye") + "\\\"");
+            joiner.add("numberlivelocalunits: \\\"" + outputRow.getFloat("live_lu") + "\\\"");
+            joiner.add("numberlivevat: \\\"" + outputRow.getFloat("live_vat") + "\\\"");
+            joiner.add("numberlivepaye: \\\"" + outputRow.getFloat("live_paye") + "\\\"");
             joiner.add("legalstatus: \\\"" + outputRow.getString("legalstatus") + "\\\"");
             joiner.add("reportingunitmarker: \\\"" + outputRow.getString("entrepmkr") + "\\\"");
             joiner.add("region: \\\"" + outputRow.getString("region") + "\\\"");
