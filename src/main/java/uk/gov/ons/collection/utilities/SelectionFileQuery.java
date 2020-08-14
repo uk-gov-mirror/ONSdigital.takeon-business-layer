@@ -93,7 +93,7 @@ public class SelectionFileQuery {
             joiner.add("status: \\\"Form sent out\\\"");
             joiner.add("receiptdate: \\\" \\\"");
             joiner.add("lockedby: \\\" \\\"");
-            joiner.add("lockeddate: \\\" \\\"");
+            joiner.add("lockeddate: null");
             joiner.add("formtype: \\\"" + outputRow.getString("formtype") + "\\\"");
             joiner.add("checkletter: \\\"" + outputRow.getString("checkletter") + "\\\"");
             joiner.add("frozensicoutdated: \\\"" + outputRow.getString("frosic92") + "\\\"");
@@ -136,7 +136,7 @@ public class SelectionFileQuery {
             joiner.add("createdby: \\\"fisdba\\\"");
             joiner.add("createddate: \\\"" + time.toString() + "\\\"");
             joiner.add("lastupdatedby: \\\" \\\"");
-            joiner.add("lastupdateddate: \\\" \\\"");
+            joiner.add("lastupdateddate: null");
             return joiner.toString();
         } catch (Exception err) {
             throw new InvalidJsonException("Error processing response json structure: " + contributorValuesArray, err);
