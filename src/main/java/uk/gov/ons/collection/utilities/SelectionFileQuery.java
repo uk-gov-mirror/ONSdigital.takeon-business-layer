@@ -61,7 +61,7 @@ public class SelectionFileQuery {
 
     public String buildSaveSelectionFileQuery() throws InvalidJsonException {
         var jsonQlResponse = new StringBuilder();
-        jsonQlResponse.append("{\"query\" : \"mutation loadContributors {LoadIDBRForm(input: {arg0: ");
+        jsonQlResponse.append("{\"query\" : \"mutation loadContributors {loadidbrform(input: {arg0: ");
         jsonQlResponse.append("[" + getSelectionLoadData() + "]");
         jsonQlResponse.append("}){clientMutationId}}\"}");
         return jsonQlResponse.toString();
