@@ -29,7 +29,7 @@ public class SelectionFileQuery {
     public SelectionFileQuery(String jsonString) throws InvalidJsonException {
         try {
             contributorObject = new JSONObject(jsonString);
-            contributorValuesArray = contributorObject.getJSONArray("Values");
+            contributorValuesArray = contributorObject.getJSONArray("attributes");
 
         } catch (JSONException err) {
             throw new InvalidJsonException("Given string could not be converted/processed: " + jsonString, err);
@@ -86,9 +86,9 @@ public class SelectionFileQuery {
         try {
             var outputRow = contributorValuesArray.getJSONObject(index);
             var periodSurvey = contributorObject;
-            joiner.add("Period: \\\"" + periodSurvey.getString("Period") + "\\\"");
-            joiner.add("Survey: \\\"" + periodSurvey.getString("Survey_Code") + "\\\"");
-            joiner.add("reference: \\\"" + outputRow.getString("ruref") + "\\\"");
+            joiner.add("Period: \\\"" + periodSurvey.getString("period") + "\\\"");
+            joiner.add("Survey: \\\"" + periodSurvey.getString("survey") + "\\\"");
+            joiner.add("Reference: \\\"" + outputRow.getString("ruref") + "\\\"");
             joiner.add("FormID: " + outputRow.getInt("formtype")); // Call a method here to get the form id or pass it through into API for this call?
             joiner.add("Status: \\\" \\\"");
             joiner.add("ReceiptDate: \\\" \\\"");
