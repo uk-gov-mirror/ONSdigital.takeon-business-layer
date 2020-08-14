@@ -122,8 +122,8 @@ public class SelectionFileQuery {
             joiner.add("ReportingUnitMarker: \\\"" + outputRow.getString("entrepmkr") + "\\\"");
             joiner.add("Region: \\\"" + outputRow.getString("region") + "\\\"");
             joiner.add("BirthDate: \\\"" + outputRow.getString("birthdate") + "\\\"");
-            joiner.add("EnterpriseName: \\\"" + outputRow.getString("entname1") + outputRow.getString("entname2") + outputRow.getString("entname3"));
-            joiner.add("ReferenceName: \\\"" + outputRow.getString("runame1") + outputRow.getString("runame2") + outputRow.getString("runame3"));
+            joiner.add("EnterpriseName: \\\"" + outputRow.getString("entname1") + outputRow.getString("entname2") + outputRow.getString("entname3") + "\\\"");
+            joiner.add("ReferenceName: \\\"" + outputRow.getString("runame1") + outputRow.getString("runame2") + outputRow.getString("runame3") + "\\\"");
             joiner.add("ReferenceAddress: \\\"" + outputRow.getString("ruaddr1") + outputRow.getString("ruaddr2") + outputRow.getString("ruaddr3") + 
                                                 outputRow.getString("ruaddr4") + outputRow.getString("ruaddr5") + "\\\"");
             joiner.add("ReferencePostcode: \\\"" + outputRow.getString("rupostcode") + "\\\"");
