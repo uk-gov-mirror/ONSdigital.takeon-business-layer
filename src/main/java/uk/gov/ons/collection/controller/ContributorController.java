@@ -22,6 +22,7 @@ import uk.gov.ons.collection.utilities.QlQueryResponse;
 import uk.gov.ons.collection.utilities.SelectionFileQuery;
 import uk.gov.ons.collection.utilities.SelectionFileResponse;
 
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -101,7 +102,9 @@ public class ContributorController {
         String formIdQuery = "";
         Integer formId;
         try {
-            formIdQuery = new SelectionFileQuery("formid=0018").buildCheckIDBRFormidQuery();
+            Map<String, String> vars = new HashMap<String, String>();
+            vars.put("formid", "0018");
+            formIdQuery = new SelectionFileQuery(vars).buildCheckIDBRFormidQuery();
             SelectionFileResponse formResponse = new SelectionFileResponse(qlService.qlSearch(formIdQuery));
             formId = formResponse.parseFormidResponse();
             log.info("Form ID Output: " + formId);
