@@ -20,6 +20,7 @@ import uk.gov.ons.collection.service.GraphQlService;
 import uk.gov.ons.collection.utilities.QlQueryBuilder;
 import uk.gov.ons.collection.utilities.QlQueryResponse;
 import uk.gov.ons.collection.utilities.SelectionFileQuery;
+import uk.gov.ons.collection.utilities.SelectionFileResponse;
 
 import java.util.Map;
 
@@ -77,7 +78,7 @@ public class ContributorController {
     // log.info("API CALL!! --> /contributor/getFormid/{vars} :: " + params);
     // String formIdQuery = "";
     // Integer formId;
-    // try {
+    // // try {
     // formIdQuery = new SelectionFileQuery(params).buildCheckIDBRFormidQuery();
     // SelectionFileResponse response = new
     // SelectionFileResponse(qlService.qlSearch(formIdQuery));
@@ -97,7 +98,13 @@ public class ContributorController {
     @ResponseBody
     public String loadSelectionFile(@RequestBody String selectionData) {
         log.info("API CALL!! --> /contributor/loadSelectionFile:: ");
+        String formIdQuery = "";
+        Integer formId;
         try {
+            formIdQuery = new SelectionFileQuery("formid=0018").buildCheckIDBRFormidQuery();
+            SelectionFileResponse formResponse = new SelectionFileResponse(qlService.qlSearch(formIdQuery));
+            formId = formResponse.parseFormidResponse();
+            log.info("Form ID Output: " + formId);
             var loadQuery = new SelectionFileQuery(selectionData).buildSaveSelectionFileQuery();
             log.info("Load Selection Query: " + loadQuery);
             var response = qlService.qlSearch(loadQuery);

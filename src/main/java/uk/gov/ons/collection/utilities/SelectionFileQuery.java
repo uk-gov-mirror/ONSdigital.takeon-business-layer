@@ -22,6 +22,8 @@ public class SelectionFileQuery {
     private JSONObject contributorObject;
     private final Timestamp time = new Timestamp(new Date().getTime());
 
+    public SelectionFileQuery(){}
+
     public SelectionFileQuery(Map<String, String> variables){
         this.variables = (variables == null) ? new HashMap<>() : new HashMap<>(variables);
     }
