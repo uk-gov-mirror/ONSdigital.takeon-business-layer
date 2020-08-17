@@ -20,8 +20,8 @@ public class SelectionFileResponse {
         var outputArray = new JSONArray();
         int formId;
         System.out.println("Output from checkIDBR Table: " + jsonQlResponse.toString());
-        if (jsonQlResponse.getJSONObject("data").getJSONObject("checkIDBRFormid").getJSONArray("nodes").length() > 0) {
-            outputArray = jsonQlResponse.getJSONObject("data").getJSONObject("checkIDBRFormid").getJSONArray("nodes");
+        if (jsonQlResponse.getJSONObject("data").getJSONObject("allCheckidbrs").getJSONArray("nodes").length() > 0) {
+            outputArray = jsonQlResponse.getJSONObject("data").getJSONObject("allCheckidbrs").getJSONArray("nodes");
         }
         formId = outputArray.getJSONObject(0).getInt("formid");
         return formId;

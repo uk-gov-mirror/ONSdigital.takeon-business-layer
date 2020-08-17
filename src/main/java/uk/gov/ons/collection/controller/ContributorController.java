@@ -105,8 +105,9 @@ public class ContributorController {
             Map<String, String> vars = new HashMap<String, String>();
             vars.put("formtype", "0018");
             formIdQuery = new SelectionFileQuery(vars).buildCheckIDBRFormidQuery();
+            log.info("CheckIDBR Form ID Query: " + formIdQuery);
             SelectionFileResponse formResponse = new SelectionFileResponse(qlService.qlSearch(formIdQuery));
-            log.info("Form id response " + formResponse.toString());
+            log.info("Form id response after executing GraphQL Query" + formResponse.toString());
             formId = formResponse.parseFormidResponse();
             log.info("Form ID Output: " + formId);
             var loadQuery = new SelectionFileQuery(selectionData).buildSaveSelectionFileQuery();
