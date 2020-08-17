@@ -97,7 +97,6 @@ public class SelectionFileQuery {
             joiner.add("period: \\\"" + periodSurvey.getString("period") + "\\\"");
             joiner.add("survey: \\\"" + periodSurvey.getString("survey") + "\\\"");
             joiner.add("reference: \\\"" + outputRow.getString("ruref") + "\\\"");
-            //Adding
             Map<String, String> vars = new HashMap<String, String>();
             vars.put("formtype", outputRow.getString("formtype"));
             String formIdQuery = new SelectionFileQuery(vars).buildCheckIDBRFormidQuery();
@@ -106,8 +105,6 @@ public class SelectionFileQuery {
             log.info("Form id response after executing GraphQL Query in Selection File Query:" + formResponse.toString());
             Integer formId = formResponse.parseFormidResponse();
             log.info("Form ID Output in Selection File Query:: " + formId);
-            //End of Adding
-            //joiner.add("formid: " + outputRow.getInt("formtype")); // Call a method here to get the form id or pass it through into API for this call?
             joiner.add("formid: " + formId);
             joiner.add("status: \\\"Form sent out\\\"");
             joiner.add("receiptdate: null");

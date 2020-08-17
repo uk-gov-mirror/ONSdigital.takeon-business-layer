@@ -66,31 +66,6 @@ public class ContributorController {
         return response;
     }
 
-    // @Autowired
-    // @ApiOperation(value = "Check IDBR table and get existing FormID from IDBR
-    // form Type", response = String.class)
-    // @GetMapping(value = "/getFormid/{vars}", produces =
-    // MediaType.APPLICATION_JSON_VALUE)
-    // @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful
-    // retrieval of form id from IDBR form mapping table", response =
-    // String.class)})
-    // public String getFormid(@MatrixVariable Map<String, String> params) {
-
-    // log.info("API CALL!! --> /contributor/getFormid/{vars} :: " + params);
-    // String formIdQuery = "";
-    // Integer formId;
-    // // try {
-    // formIdQuery = new SelectionFileQuery(params).buildCheckIDBRFormidQuery();
-    // SelectionFileResponse response = new
-    // SelectionFileResponse(qlService.qlSearch(formIdQuery));
-    // formId = response.parseFormidResponse();
-    // } catch (InvalidJsonException err) {
-    // log.info("Exception found: " + err);
-    // return "{\"error\":\"Unable to determine selection data\"}";
-    // }
-    // log.info("API Complete --> /contributor/getExistingFormid/{vars}");
-    // return formId.toString();
-    // }
 
     @ApiOperation(value = "Load Selection File for a Survey/Period", response = String.class)
     @RequestMapping(value = "/loadSelectionFile", produces = MediaType.APPLICATION_JSON_VALUE, method = { RequestMethod.POST, RequestMethod.PUT })
@@ -99,17 +74,7 @@ public class ContributorController {
     @ResponseBody
     public String loadSelectionFile(@RequestBody String selectionData) {
         log.info("API CALL!! --> /contributor/loadSelectionFile:: "+selectionData);
-        String formIdQuery = "";
-        Integer formId;
         try {
-            Map<String, String> vars = new HashMap<String, String>();
-            vars.put("formtype", "0018");
-            formIdQuery = new SelectionFileQuery(vars).buildCheckIDBRFormidQuery();
-            log.info("CheckIDBR Form ID Query: " + formIdQuery);
-            SelectionFileResponse formResponse = new SelectionFileResponse(qlService.qlSearch(formIdQuery));
-            log.info("Form id response after executing GraphQL Query" + formResponse.toString());
-            formId = formResponse.parseFormidResponse();
-            log.info("Form ID Output: " + formId);
             var loadQuery = new SelectionFileQuery(selectionData, qlService).buildSaveSelectionFileQuery();
             log.info("Load Selection Query: " + loadQuery);
             var response = qlService.qlSearch(loadQuery);
