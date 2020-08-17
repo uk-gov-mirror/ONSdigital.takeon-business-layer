@@ -9,13 +9,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
+import lombok.extern.log4j.Log4j2;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import uk.gov.ons.collection.exception.InvalidJsonException;
+import uk.gov.ons.collection.service.GraphQlService;
 
+@Log4j2
 public class SelectionFileQuery {
+    private GraphQlService qlService;
     private HashMap<String, String> variables;
     private List<String> intVariables = new ArrayList<>(Arrays.asList("first", "last", "formid"));
     private JSONArray contributorValuesArray;
@@ -28,7 +32,8 @@ public class SelectionFileQuery {
         this.variables = (variables == null) ? new HashMap<>() : new HashMap<>(variables);
     }
 
-    public SelectionFileQuery(String jsonString) throws InvalidJsonException {
+    public SelectionFileQuery(String jsonString, GraphQlService qlGraphService) throws InvalidJsonException {
+        qlService = qlGraphService;
         try {
             contributorObject = new JSONObject(jsonString);
             contributorValuesArray = contributorObject.getJSONArray("attributes");
@@ -92,8 +97,18 @@ public class SelectionFileQuery {
             joiner.add("period: \\\"" + periodSurvey.getString("period") + "\\\"");
             joiner.add("survey: \\\"" + periodSurvey.getString("survey") + "\\\"");
             joiner.add("reference: \\\"" + outputRow.getString("ruref") + "\\\"");
+            //Adding
+            Map<String, String> vars = new HashMap<String, String>();
+            vars.put("formtype", outputRow.getString("formtype"));
+            String formIdQuery = new SelectionFileQuery(vars).buildCheckIDBRFormidQuery();
+            log.info("CheckIDBR Form ID Query in Selection File Query: " + formIdQuery);
+            SelectionFileResponse formResponse = new SelectionFileResponse(qlService.qlSearch(formIdQuery));
+            log.info("Form id response after executing GraphQL Query in Selection File Query:" + formResponse.toString());
+            Integer formId = formResponse.parseFormidResponse();
+            log.info("Form ID Output in Selection File Query:: " + formId);
+            //End of Adding
             //joiner.add("formid: " + outputRow.getInt("formtype")); // Call a method here to get the form id or pass it through into API for this call?
-            joiner.add("formid: " + 5);
+            joiner.add("formid: " + formId);
             joiner.add("status: \\\"Form sent out\\\"");
             joiner.add("receiptdate: null");
             joiner.add("lockedby: \\\" \\\"");

@@ -110,7 +110,7 @@ public class ContributorController {
             log.info("Form id response after executing GraphQL Query" + formResponse.toString());
             formId = formResponse.parseFormidResponse();
             log.info("Form ID Output: " + formId);
-            var loadQuery = new SelectionFileQuery(selectionData).buildSaveSelectionFileQuery();
+            var loadQuery = new SelectionFileQuery(selectionData, qlService).buildSaveSelectionFileQuery();
             log.info("Load Selection Query: " + loadQuery);
             var response = qlService.qlSearch(loadQuery);
             log.info("Load Selection File response: " + response.toString());
