@@ -54,7 +54,7 @@ public class SelectionFileQuery {
         StringBuilder checkIDBRFormidQuery = new StringBuilder();
         checkIDBRFormidQuery.append("{\"query\": \"query checkidbrformid($formtype: String) " +
                 "{ allCheckidbrs (condition: {formtype: $formtype}) {" +
-                "nodes { formid survey formtype periodstart periodend }}}}\"," +
+                "nodes { formid survey formtype periodstart periodend }}}\"," +
                 "\"variables\": {"); 
         checkIDBRFormidQuery.append(buildVariables());
         checkIDBRFormidQuery.append("}}");
