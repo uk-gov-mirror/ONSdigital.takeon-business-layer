@@ -98,7 +98,7 @@ public class ContributorController {
             @ApiResponse(code = 200, message = "Successful load of Selection file", response = String.class) })
     @ResponseBody
     public String loadSelectionFile(@RequestBody String selectionData) {
-        log.info("API CALL!! --> /contributor/loadSelectionFile:: ");
+        log.info("API CALL!! --> /contributor/loadSelectionFile:: "+selectionData);
         String formIdQuery = "";
         Integer formId;
         try {
@@ -116,6 +116,7 @@ public class ContributorController {
 
         } catch (final Exception e) {
             log.info("Can't build Batch Selection Load Query / Invalid Response from GraphQL: " + e);
+            e.printStackTrace();
             return "{\"error\":\"Failed to load Selection File\"}";
         }
 

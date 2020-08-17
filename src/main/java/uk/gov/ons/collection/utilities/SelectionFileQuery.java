@@ -91,7 +91,8 @@ public class SelectionFileQuery {
             joiner.add("period: \\\"" + periodSurvey.getString("period") + "\\\"");
             joiner.add("survey: \\\"" + periodSurvey.getString("survey") + "\\\"");
             joiner.add("reference: \\\"" + outputRow.getString("ruref") + "\\\"");
-            joiner.add("formid: " + outputRow.getInt("formtype")); // Call a method here to get the form id or pass it through into API for this call?
+            //joiner.add("formid: " + outputRow.getInt("formtype")); // Call a method here to get the form id or pass it through into API for this call?
+            joiner.add("formid: " + 5);
             joiner.add("status: \\\"Form sent out\\\"");
             joiner.add("receiptdate: null");
             joiner.add("lockedby: \\\" \\\"");
