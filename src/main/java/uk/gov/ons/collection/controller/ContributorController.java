@@ -73,7 +73,7 @@ public class ContributorController {
             @ApiResponse(code = 200, message = "Successful load of Selection file", response = String.class) })
     @ResponseBody
     public String loadSelectionFile(@RequestBody String selectionData) {
-        log.info("API CALL!! --> /contributor/loadSelectionFile:: "+selectionData);
+        log.info("API CALL!! --> /contributor/loadSelectionFile:: " + selectionData);
         try {
             var loadQuery = new SelectionFileQuery(selectionData, qlService).buildSaveSelectionFileQuery();
             log.info("Load Selection Query: " + loadQuery);

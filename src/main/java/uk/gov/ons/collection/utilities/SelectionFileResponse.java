@@ -18,6 +18,7 @@ public class SelectionFileResponse {
             jsonQlResponse = new JSONObject(jsonString);
         }
     }
+
     public int parseFormidResponse() throws InvalidJsonException {
         var outputArray = new JSONArray();
         int formId;
