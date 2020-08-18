@@ -20,9 +20,7 @@ import uk.gov.ons.collection.service.GraphQlService;
 import uk.gov.ons.collection.utilities.QlQueryBuilder;
 import uk.gov.ons.collection.utilities.QlQueryResponse;
 import uk.gov.ons.collection.utilities.SelectionFileQuery;
-import uk.gov.ons.collection.utilities.SelectionFileResponse;
 
-import java.util.HashMap;
 import java.util.Map;
 
 
@@ -87,5 +85,5 @@ public class ContributorController {
         }
 
         return "{\"Success\":\"Successfully loaded Selection File\"}";
-        }
+    }
 }
