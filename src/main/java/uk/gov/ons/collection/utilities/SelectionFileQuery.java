@@ -79,7 +79,11 @@ public class SelectionFileQuery {
     private String getSelectionLoadData() throws InvalidJsonException {
         StringJoiner joiner = new StringJoiner(",");
         for (int i = 0; i < contributorValuesArray.length(); i++) {
-            joiner.add("{" + extractContributorRow(i) + "}");
+            try {
+                joiner.add("{" + extractContributorRow(i) + "}");
+            } catch (Exception err) {
+                log.error("Error in extracting contributor row " + err.getMessage());
+            }
         }
         return joiner.toString();
     }
@@ -102,7 +106,6 @@ public class SelectionFileQuery {
             String formIdQuery = new SelectionFileQuery(vars).buildCheckIDBRFormidQuery();
             log.info("CheckIDBR Form ID Query in Selection File Query: " + formIdQuery);
             SelectionFileResponse formResponse = new SelectionFileResponse(qlService.qlSearch(formIdQuery));
-            log.info("Form id response after executing GraphQL Query in Selection File Query:" + formResponse.toString());
             Integer formId = formResponse.parseFormidResponse();
             log.info("Form ID Output in Selection File Query:: " + formId);
             joiner.add("formid: " + formId);
