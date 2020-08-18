@@ -104,10 +104,10 @@ public class SelectionFileQuery {
             Map<String, String> vars = new HashMap<String, String>();
             vars.put("formtype", outputRow.getString("formtype"));
             String formIdQuery = new SelectionFileQuery(vars).buildCheckIdbrFormidQuery();
-            log.info("CheckIDBR Form ID Query in Selection File Query: " + formIdQuery);
+            log.info("CheckIDBR Form ID Query : " + formIdQuery);
             SelectionFileResponse formResponse = new SelectionFileResponse(qlService.qlSearch(formIdQuery));
             Integer formId = formResponse.parseFormidResponse();
-            log.info("Form ID Output in Selection File Query:: " + formId);
+            log.info("Form ID Output :: " + formId);
             joiner.add("formid: " + formId);
             joiner.add("status: \\\"Form sent out\\\"");
             joiner.add("receiptdate: null");
