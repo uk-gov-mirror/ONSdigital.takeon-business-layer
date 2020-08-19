@@ -167,6 +167,17 @@ public class ValidationOutputs {
 
     }
 
+    public int getOverriddenTrueCount(List<ValidationOutputData> validationLambdaList,
+                                                                            List<ValidationOutputData> validationDataList) {
+        List<ValidationOutputData> noModificationList = validationDataList.stream().filter(validationdata -> validationLambdaList.stream().anyMatch(lambdadata ->
+                (lambdadata.getValidationId().equals(validationdata.getValidationId())
+                        && (lambdadata.getFormula().equals(validationdata.getFormula())) && (validationdata.isOverridden())))).collect(Collectors.toList());
+
+        log.info("No Modification List :" + noModificationList.toString());
+        return noModificationList.size();
+
+    }
+
     public List<ValidationOutputData> getValidationOutputUpsertList(List<ValidationOutputData> modifiedList,
                                                                     List<ValidationOutputData> insertedList) {
         modifiedList.addAll(insertedList);
@@ -204,24 +215,25 @@ public class ValidationOutputs {
         return getFirstRowAttribute("survey");
     }
 
-    public String getStatusText() throws InvalidJsonException {
-        if (isTriggeredFound()) {
-            return "Check needed";
-        }
-        return "Clear";
+    public String getStatusText(int triggeredTrueCount, int overriddenTrueCount) throws InvalidJsonException {
+        String statusText = (triggeredTrueCount == 0) ? "Clear" : ((triggeredTrueCount == overriddenTrueCount)?"Clear - overridden":"Check needed");
+        return statusText;
     }
 
-    private boolean isTriggeredFound() throws InvalidJsonException {
+
+
+    public int getTriggerTrueCount() throws InvalidJsonException {
+        int triggerTrueCount = 0;
         try {
             for (int i = 0; i < outputArray.length(); i++) {
                 if (outputArray.getJSONObject(i).getBoolean("triggered")) {
-                    return true;
+                    triggerTrueCount++;
                 }
             }
         } catch (Exception err) {
             throw new InvalidJsonException("Given JSON did not contain triggered in the expected location(s): " + outputArray, err);
         }
-        return false;
+        return triggerTrueCount;
     }
 
     private String getReferencePeriodSurvey() throws InvalidJsonException {

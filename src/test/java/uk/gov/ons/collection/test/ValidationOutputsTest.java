@@ -43,7 +43,7 @@ public class ValidationOutputsTest {
             "            \"instance\": 0,\n" +
             "            \"formula\": \"2 = 2\",\n" +
             "            \"validationid\": \"20\",\n" +
-            "            \"overridden\": false\n" +
+            "            \"overridden\": true\n" +
             "          },\n" +
             "          {\n" +
             "            \"reference\": \"12345678012\",\n" +
@@ -579,60 +579,7 @@ public class ValidationOutputsTest {
         }
     }
 
-    @Test
-    void getStatusText_missingTriggeredAttribute_throwsException() {
-        assertThrows(InvalidJsonException.class,
-                () -> new ValidationOutputs("{\"validation_outputs\": [{\"a\":\"b\"}]}").getStatusText());
-    }
 
-    @Test
-    void getStatusText_1triggered_Triggered() {
-        var inputJson = "{\"validation_outputs\": [{\"triggered\": true}]}";
-        var expectedStatus = "Check needed";
-        try {
-            var status = new ValidationOutputs(inputJson).getStatusText();
-            assertEquals(expectedStatus, status);
-        } catch (Exception e) {
-            assertTrue(false);
-        }
-    }
-
-    @Test
-    void getStatusText_1of3triggeredInJson_returnsTriggered() {
-        var inputJson = "{\"validation_outputs\": [{\"triggered\": false},{\"triggered\": true},{\"triggered\": false}]}";
-        var expectedStatus = "Check needed";
-        try {
-            var status = new ValidationOutputs(inputJson).getStatusText();
-            assertEquals(expectedStatus, status);
-        } catch (Exception e) {
-            assertTrue(false);
-        }
-    }
-
-    @Test
-    void getStatusText_0triggeredInJson_returnsClear() {
-        var inputJson = "{\"validation_outputs\": [{\"triggered\": false}]}";
-        var expectedStatus = "Clear";
-        try {
-            var status = new ValidationOutputs(inputJson).getStatusText();
-            assertEquals(expectedStatus, status);
-        } catch (Exception e) {
-            assertTrue(false);
-        }
-    }
-
-    @Test
-    void getStatusText_0of5triggeredInJson_returnsClear() {
-        var inputJson = "{\"validation_outputs\": [{\"triggered\": false},{\"triggered\": false},"
-                + "{\"triggered\": false},{\"triggered\": false},{\"triggered\": false}]}";
-        var expectedStatus = "Clear";
-        try {
-            var status = new ValidationOutputs(inputJson).getStatusText();
-            assertEquals(expectedStatus, status);
-        } catch (Exception e) {
-            assertTrue(false);
-        }
-    }
 
     @Test
     void testParseValidationOutputs_returnsExpectedFormat() {
@@ -711,6 +658,11 @@ public class ValidationOutputsTest {
             System.out.println("Modified Data : "+modifiedList);
             String expectedModifiedElement = "validationId=30";
             assertTrue(modifiedList.toString().contains(expectedModifiedElement));
+
+            //No modified data
+           int OverriddenTrueCount  = outputs.getOverriddenTrueCount(lambdaData, validationData);
+           System.out.println("Overridden True : "+OverriddenTrueCount);
+
             List<ValidationOutputData> upsertList = outputs.getValidationOutputUpsertList(modifiedList, insertList);
             //Upsert contains both insert and modified elements. Verifying below whether both elements exists or not
             assertTrue(upsertList.toString().contains(expectedModifiedElement) && upsertList.toString().contains(expectedInsertElement));

@@ -78,7 +78,6 @@ public class ValidationController {
             reference = outputs.getReference();
             period = outputs.getPeriod();
             survey = outputs.getSurvey();
-            statusText = outputs.getStatusText();
             String validationOutputQuery = outputs.buildValidationOutputQuery();
             qlResponse = qlService.qlSearch(validationOutputQuery);
             log.info("Output from Validation Output table " + qlResponse);
@@ -87,6 +86,10 @@ public class ValidationController {
             List<ValidationOutputData> validationOutputInsertData = outputs.getValidationOutputInsertList(lambdaValidationOutputData, validationOutputData);
             List<ValidationOutputData> validationOutputModifiedData = outputs.getValidationOutputModifiedList(lambdaValidationOutputData, validationOutputData);
             List<ValidationOutputData> validationOutputUpsertData = outputs.getValidationOutputUpsertList(validationOutputModifiedData, validationOutputInsertData);
+            int overriddenTrueCount = outputs.getOverriddenTrueCount(lambdaValidationOutputData, validationOutputData);
+            int triggeredTrueCount = outputs.getTriggerTrueCount();
+            statusText = outputs.getStatusText(triggeredTrueCount, overriddenTrueCount);
+
             List<ValidationOutputData> validationOutputDeleteData = outputs.getDeleteValidationOutputList(lambdaValidationOutputData, validationOutputData);
             String upsertAndDeleteQuery = outputs.buildUpsertByArrayQuery(validationOutputUpsertData, validationOutputDeleteData);
             qlResponse = qlService.qlSearch(upsertAndDeleteQuery);
