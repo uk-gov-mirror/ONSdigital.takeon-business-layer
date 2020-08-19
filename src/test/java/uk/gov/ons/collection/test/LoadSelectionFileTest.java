@@ -12,11 +12,8 @@ import uk.gov.ons.collection.exception.InvalidJsonException;
 public class LoadSelectionFileTest {
     @Test
     void loadSelectionFile_validJson_validQuery(){
-        var selectionData = "{ " +
-            "\"period\": \"201906\"," +
-            "\"survey\": \"023\"," +
-            "\"attributes\": [ " +
-                "{" +
+        var selectionData = "{\"period\": \"201906\",\"survey\": \"023\"" +
+            "\"attributes\": [{ " +
                     "\"ruref\": \"49907542264\"," +
                     "\"checkletter\": \"A\"," +
                     "\"frosic92\": \"50500\"," +
@@ -74,8 +71,7 @@ public class LoadSelectionFileTest {
         {
         GraphQlService qlService = new GraphQlService();
         var loadQuery = new SelectionFileQuery(selectionData, qlService).buildSaveSelectionFileQuery();
-        var expectedQuery = "{\"query\" : \"mutation loadContributors" +
-        "{loadidbrform(input: " +
+        var expectedQuery = "{\"query\" : \"mutation loadContributors {loadidbrform(input: " +
             "{arg0: [{period: \"201906\",survey: \"023\",reference: \"49907542264\"," +
             "formid: 5,status: \"Form sent out\",receiptdate: null,lockedby: \" " +
             "\",lockeddate: null,formtype: \"0018\",checkletter: \"A\",frozensicoutdated: \"50500\"," +
