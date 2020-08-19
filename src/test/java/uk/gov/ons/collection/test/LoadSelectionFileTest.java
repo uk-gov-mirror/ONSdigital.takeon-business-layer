@@ -144,6 +144,4 @@ void loadSelectionFile_blankJson_throwsError(){
     GraphQlService qlService = new GraphQlService();        
     assertThrows(InvalidJsonException.class, () -> new SelectionFileQuery(selectionData, qlService).buildSaveSelectionFileQuery());
 }
-
-
 }
