@@ -36,14 +36,14 @@ public class ContributorController {
     @GetMapping(value = "/qlSearch/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful retrieval of Contributor details")})
-    public String searchContributor(@MatrixVariable final Map<String, String> searchParameters) {
+    public String searchContributor(@MatrixVariable Map<String, String> searchParameters) {
         final String qlQuery = new QlQueryBuilder(searchParameters).buildContributorSearchQuery();
         String responseText;
         log.info("Query sent to service: " + qlQuery);
         try {
             final QlQueryResponse response = new QlQueryResponse(qlService.qlSearch(qlQuery));
             responseText = response.parse();
-        } catch (final Exception e) {
+        } catch (Exception e) {
             responseText = "{\"error\":\"Invalid response from graphQL\"}";
         }
         log.info("Query sent to service: " + qlQuery);
@@ -56,7 +56,7 @@ public class ContributorController {
         var response = "";
         try {
             response = qlService.qlSearch(new FullDataExport().buildQuery());
-        } catch (final Exception e) {
+        } catch (Exception e) {
             log.info("Exception: " + e);
             log.info("QL Response: " + response);
             return "{\"error\":\"Error loading data for db Export\"}";
@@ -78,7 +78,7 @@ public class ContributorController {
             var response = qlService.qlSearch(loadQuery);
             log.info("Load Selection File response: " + response.toString());
 
-        } catch (final Exception e) {
+        } catch (Exception e) {
             log.info("Can't build Batch Selection Load Query / Invalid Response from GraphQL: " + e);
             e.printStackTrace();
             return "{\"error\":\"Failed to load Selection File\"}";

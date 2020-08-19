@@ -1,7 +1,5 @@
 package uk.gov.ons.collection.utilities;
 
-import static org.junit.Assume.assumeNoException;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
