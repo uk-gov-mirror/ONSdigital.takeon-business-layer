@@ -99,8 +99,7 @@ public class LoadSelectionFileTest {
 }
 @Test
 void loadSelectionFileResponse_validQuery_validResponse(){
-    var inputQuery = "{\"query\" : \"mutation loadContributors" +
-    "{loadidbrform(input: " +
+    var inputQuery = "{\"query\" : \"mutation loadContributors{loadidbrform(input: " +
         "{arg0: [{period: \"201906\",survey: \"023\",reference: \"49907542264\"," +
         "formid: 5,status: \"Form sent out\",receiptdate: null,lockedby: \" " +
         "\",lockeddate: null,formtype: \"0018\",checkletter: \"A\",frozensicoutdated: \"50500\"," +
