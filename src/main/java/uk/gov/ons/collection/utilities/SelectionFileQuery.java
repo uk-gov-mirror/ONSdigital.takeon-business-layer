@@ -26,9 +26,9 @@ public class SelectionFileQuery {
     private JSONObject contributorObject;
     private final Timestamp time = new Timestamp(new Date().getTime());
 
-    public SelectionFileQuery(){}
 
-    public SelectionFileQuery(Map<String, String> variables){
+
+    public SelectionFileQuery(Map<String, String> variables) {
         this.variables = (variables == null) ? new HashMap<>() : new HashMap<>(variables);
     }
 
@@ -55,16 +55,16 @@ public class SelectionFileQuery {
         return joiner.toString();
     }
     
-    public String buildCheckIDBRFormidQuery() {
-        StringBuilder checkIDBRFormidQuery = new StringBuilder();
-        checkIDBRFormidQuery.append("{\"query\": \"query checkidbrformid($formtype: String) " +
+    public String buildCheckIdbrFormidQuery() {
+        StringBuilder checkIdbrFormidQuery = new StringBuilder();
+        checkIdbrFormidQuery.append("{\"query\": \"query checkidbrformid($formtype: String) " +
                 "{ allCheckidbrs (condition: {formtype: $formtype}) {" +
                 "nodes { formid survey formtype periodstart periodend }}}\"," +
-                "\"variables\": {"); 
-        checkIDBRFormidQuery.append(buildVariables());
-        checkIDBRFormidQuery.append("}}");
+                "\"variables\": {");
+        checkIdbrFormidQuery.append(buildVariables());
+        checkIdbrFormidQuery.append("}}");
 
-        return checkIDBRFormidQuery.toString();
+        return checkIdbrFormidQuery.toString();
     }
 
     public String buildSaveSelectionFileQuery() throws InvalidJsonException {
@@ -79,7 +79,11 @@ public class SelectionFileQuery {
     private String getSelectionLoadData() throws InvalidJsonException {
         StringJoiner joiner = new StringJoiner(",");
         for (int i = 0; i < contributorValuesArray.length(); i++) {
-            joiner.add("{" + extractContributorRow(i) + "}");
+            try {
+                joiner.add("{" + extractContributorRow(i) + "}");
+            } catch (Exception err) {
+                log.error("Error in extracting contributor row " + err.getMessage());
+            }
         }
         return joiner.toString();
     }
@@ -99,12 +103,11 @@ public class SelectionFileQuery {
             joiner.add("reference: \\\"" + outputRow.getString("ruref") + "\\\"");
             Map<String, String> vars = new HashMap<String, String>();
             vars.put("formtype", outputRow.getString("formtype"));
-            String formIdQuery = new SelectionFileQuery(vars).buildCheckIDBRFormidQuery();
-            log.info("CheckIDBR Form ID Query in Selection File Query: " + formIdQuery);
+            String formIdQuery = new SelectionFileQuery(vars).buildCheckIdbrFormidQuery();
+            log.info("CheckIDBR Form ID Query : " + formIdQuery);
             SelectionFileResponse formResponse = new SelectionFileResponse(qlService.qlSearch(formIdQuery));
-            log.info("Form id response after executing GraphQL Query in Selection File Query:" + formResponse.toString());
             Integer formId = formResponse.parseFormidResponse();
-            log.info("Form ID Output in Selection File Query:: " + formId);
+            log.info("Form ID Output :: " + formId);
             joiner.add("formid: " + formId);
             joiner.add("status: \\\"Form sent out\\\"");
             joiner.add("receiptdate: null");
@@ -138,12 +141,16 @@ public class SelectionFileQuery {
             joiner.add("reportingunitmarker: \\\"" + outputRow.getString("entrepmkr") + "\\\"");
             joiner.add("region: \\\"" + outputRow.getString("region") + "\\\"");
             joiner.add("birthdate: \\\"" + outputRow.getString("birthdate") + "\\\"");
-            joiner.add("enterprisename: \\\"" + outputRow.getString("entname1") + outputRow.getString("entname2") + outputRow.getString("entname3") + "\\\"");
-            joiner.add("referencename: \\\"" + outputRow.getString("runame1") + outputRow.getString("runame2") + outputRow.getString("runame3") + "\\\"");
-            joiner.add("referenceaddress: \\\"" + outputRow.getString("ruaddr1") + outputRow.getString("ruaddr2") + outputRow.getString("ruaddr3") + 
-                                                outputRow.getString("ruaddr4") + outputRow.getString("ruaddr5") + "\\\"");
+            joiner.add("enterprisename: \\\"" + outputRow.getString("entname1")
+                    + outputRow.getString("entname2") + outputRow.getString("entname3") + "\\\"");
+            joiner.add("referencename: \\\"" + outputRow.getString("runame1")
+                    + outputRow.getString("runame2") + outputRow.getString("runame3") + "\\\"");
+            joiner.add("referenceaddress: \\\"" + outputRow.getString("ruaddr1")
+                    + outputRow.getString("ruaddr2") + outputRow.getString("ruaddr3")
+                    + outputRow.getString("ruaddr4") + outputRow.getString("ruaddr5") + "\\\"");
             joiner.add("referencepostcode: \\\"" + outputRow.getString("rupostcode") + "\\\"");
-            joiner.add("tradingstyle: \\\"" + outputRow.getString("tradstyle1") + outputRow.getString("tradstyle2") + outputRow.getString("tradstyle3") + "\\\"");
+            joiner.add("tradingstyle: \\\"" + outputRow.getString("tradstyle1")
+                    + outputRow.getString("tradstyle2") + outputRow.getString("tradstyle3") + "\\\"");
             joiner.add("contact: \\\"" + outputRow.getString("contact") + "\\\"");
             joiner.add("telephone: \\\"" + outputRow.getString("telephone") + "\\\"");
             joiner.add("fax: \\\"" + outputRow.getString("fax") + "\\\"");
@@ -155,7 +162,7 @@ public class SelectionFileQuery {
             joiner.add("lastupdateddate: null");
             return joiner.toString();
         } catch (Exception err) {
-            throw new InvalidJsonException("Error processing response json structure: " + contributorValuesArray, err);
+            throw new InvalidJsonException("Error processing response json structure: " + err.getMessage() + contributorValuesArray, err);
         }
     }
 

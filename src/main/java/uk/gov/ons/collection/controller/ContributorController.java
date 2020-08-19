@@ -20,9 +20,7 @@ import uk.gov.ons.collection.service.GraphQlService;
 import uk.gov.ons.collection.utilities.QlQueryBuilder;
 import uk.gov.ons.collection.utilities.QlQueryResponse;
 import uk.gov.ons.collection.utilities.SelectionFileQuery;
-import uk.gov.ons.collection.utilities.SelectionFileResponse;
 
-import java.util.HashMap;
 import java.util.Map;
 
 
@@ -73,7 +71,7 @@ public class ContributorController {
             @ApiResponse(code = 200, message = "Successful load of Selection file", response = String.class) })
     @ResponseBody
     public String loadSelectionFile(@RequestBody String selectionData) {
-        log.info("API CALL!! --> /contributor/loadSelectionFile:: "+selectionData);
+        log.info("API CALL!! --> /contributor/loadSelectionFile:: " + selectionData);
         try {
             var loadQuery = new SelectionFileQuery(selectionData, qlService).buildSaveSelectionFileQuery();
             log.info("Load Selection Query: " + loadQuery);
@@ -87,5 +85,5 @@ public class ContributorController {
         }
 
         return "{\"Success\":\"Successfully loaded Selection File\"}";
-        }
+    }
 }
