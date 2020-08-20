@@ -169,12 +169,12 @@ public class ValidationOutputs {
 
     public int getOverriddenTrueCount(List<ValidationOutputData> validationLambdaList,
                                                                             List<ValidationOutputData> validationDataList) {
-        List<ValidationOutputData> noModificationList = validationDataList.stream().filter(validationdata -> validationLambdaList.stream().anyMatch(lambdadata ->
+        List<ValidationOutputData> overriddenTrueCountList = validationDataList.stream().filter(validationdata -> validationLambdaList.stream().anyMatch(lambdadata ->
                 (lambdadata.getValidationId().equals(validationdata.getValidationId())
                         && (lambdadata.getFormula().equals(validationdata.getFormula())) && (validationdata.isOverridden())))).collect(Collectors.toList());
 
-        log.info("No Modification List :" + noModificationList.toString());
-        return noModificationList.size();
+        log.info("No Modification List :" + overriddenTrueCountList.toString());
+        return overriddenTrueCountList.size();
 
     }
 
@@ -215,7 +215,7 @@ public class ValidationOutputs {
         return getFirstRowAttribute("survey");
     }
 
-    public String getStatusText(int triggeredTrueCount, int overriddenTrueCount) throws InvalidJsonException {
+    public String getStatusText(int triggeredTrueCount, int overriddenTrueCount)  {
         String statusText = (triggeredTrueCount == 0) ? "Clear" : ((triggeredTrueCount == overriddenTrueCount)?"Clear - overridden":"Check needed");
         return statusText;
     }

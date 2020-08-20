@@ -87,7 +87,9 @@ public class ValidationController {
             List<ValidationOutputData> validationOutputModifiedData = outputs.getValidationOutputModifiedList(lambdaValidationOutputData, validationOutputData);
             List<ValidationOutputData> validationOutputUpsertData = outputs.getValidationOutputUpsertList(validationOutputModifiedData, validationOutputInsertData);
             int overriddenTrueCount = outputs.getOverriddenTrueCount(lambdaValidationOutputData, validationOutputData);
+            log.info("Override True Count " + overriddenTrueCount);
             int triggeredTrueCount = outputs.getTriggerTrueCount();
+            log.info("Triggered True Count " + triggeredTrueCount);
             statusText = outputs.getStatusText(triggeredTrueCount, overriddenTrueCount);
 
             List<ValidationOutputData> validationOutputDeleteData = outputs.getDeleteValidationOutputList(lambdaValidationOutputData, validationOutputData);
