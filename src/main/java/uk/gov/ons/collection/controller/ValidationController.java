@@ -91,6 +91,7 @@ public class ValidationController {
             int triggeredTrueCount = outputs.getTriggerTrueCount();
             log.info("Triggered True Count " + triggeredTrueCount);
             statusText = outputs.getStatusText(triggeredTrueCount, overriddenTrueCount);
+            log.info("Status Text after evaluation of trigger count and overridden count" + statusText);
 
             List<ValidationOutputData> validationOutputDeleteData = outputs.getDeleteValidationOutputList(lambdaValidationOutputData, validationOutputData);
             String upsertAndDeleteQuery = outputs.buildUpsertByArrayQuery(validationOutputUpsertData, validationOutputDeleteData);

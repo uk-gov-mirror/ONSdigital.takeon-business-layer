@@ -659,9 +659,11 @@ public class ValidationOutputsTest {
             String expectedModifiedElement = "validationId=30";
             assertTrue(modifiedList.toString().contains(expectedModifiedElement));
 
-            //No modified data
-           int OverriddenTrueCount  = outputs.getOverriddenTrueCount(lambdaData, validationData);
-           System.out.println("Overridden True : "+OverriddenTrueCount);
+            //Verify Override Triggered Count
+            int OverriddenTrueCount  = outputs.getOverriddenTrueCount(lambdaData, validationData);
+            log.info("Overridden True Count: "+OverriddenTrueCount);
+            //Expected Overridden count is 1 as th database Graph QL contains only one element which is Overridden
+            assertEquals(1, OverriddenTrueCount);
 
             List<ValidationOutputData> upsertList = outputs.getValidationOutputUpsertList(modifiedList, insertList);
             //Upsert contains both insert and modified elements. Verifying below whether both elements exists or not
@@ -720,6 +722,127 @@ public class ValidationOutputsTest {
         assertThrows(InvalidJsonException.class, () -> outputs.extractValidationDataFromDatabase(graphQLOutput1));
 
     }
+
+    @Test
+    void getStatusText_allTriggeredFalseInJson_returnsClear() {
+        var inputJson = "{\"validation_outputs\": [{\"triggered\": false},{\"triggered\": false},"
+                + "{\"triggered\": false},{\"triggered\": false},{\"triggered\": false}]}";
+        String expectedStatus = "Clear";
+        try {
+            ValidationOutputs validationOutputs = new ValidationOutputs(inputJson);
+            int triggeredTrueCount = validationOutputs.getTriggerTrueCount();
+            //If no validations are triggered (all triggered = false) then overridden is not a criteria and by default it is zero
+            String actualStatus = validationOutputs.getStatusText(triggeredTrueCount,0);
+            assertEquals(expectedStatus, actualStatus);
+        } catch (Exception e) {
+            assertTrue(false);
+        }
+    }
+
+    @Test
+    void getStatusText_allTriggeredTrueAndAllOverriddenTrue_returnsClearOverridden() {
+
+        String expectedStatus = "Clear - overridden";
+        try {
+            ValidationOutputs outputs = new  ValidationOutputs(lambdaoutput);
+
+            List<ValidationOutputData> validationData = outputs.extractValidationDataFromDatabase(graphQLOutput);
+            List<ValidationOutputData> lambdaData = outputs.extractValidationDataFromLambda();
+
+            int overriddenTrueCount = outputs.getOverriddenTrueCount(lambdaData, validationData);
+            log.info("Overridden True Count "+overriddenTrueCount);
+            int triggeredTrueCount = outputs.getTriggerTrueCount();
+            log.info("Triggered True Count "+triggeredTrueCount);
+            String actualStatus = outputs.getStatusText(triggeredTrueCount, overriddenTrueCount);
+            log.info("Status text "+actualStatus);
+            assertEquals(expectedStatus, actualStatus);
+
+        } catch (Exception e) {
+            assertTrue(false);
+        }
+    }
+
+    @Test
+    void getStatusText_atleastOneTriggeredTrue_NotOverridden_returnsCheckNeeded() {
+        String expectedStatus = "Check needed";
+        String graphQLOutputFromDatabase = "{\n" +
+                "    \"data\": {\n" +
+                "      \"allValidationoutputs\": {\n" +
+                "        \"nodes\": [\n" +
+                "          {\n" +
+                "            \"reference\": \"12345678012\",\n" +
+                "            \"period\": \"201801\",\n" +
+                "            \"survey\": \"999A\",\n" +
+                "            \"validationoutputid\": 33,\n" +
+                "            \"triggered\": true,\n" +
+                "            \"instance\": 0,\n" +
+                "            \"formula\": \"abs(40000 - 10000) > 20000 AND 400000 > 0 AND 10000 > 0\",\n" +
+                "            \"validationid\": \"10\",\n" +
+                "            \"overridden\": false\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"reference\": \"12345678012\",\n" +
+                "            \"period\": \"201801\",\n" +
+                "            \"survey\": \"999A\",\n" +
+                "            \"validationoutputid\": 34,\n" +
+                "            \"triggered\": true,\n" +
+                "            \"instance\": 0,\n" +
+                "            \"formula\": \"2 = 2\",\n" +
+                "            \"validationid\": \"20\",\n" +
+                "            \"overridden\": false\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"reference\": \"12345678012\",\n" +
+                "            \"period\": \"201801\",\n" +
+                "            \"survey\": \"999A\",\n" +
+                "            \"validationoutputid\": 36,\n" +
+                "            \"triggered\": true,\n" +
+                "            \"instance\": 0,\n" +
+                "            \"formula\": \"'0' != ''\",\n" +
+                "            \"validationid\": \"30\",\n" +
+                "            \"overridden\": false\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"reference\": \"12345678012\",\n" +
+                "            \"period\": \"201801\",\n" +
+                "            \"survey\": \"999A\",\n" +
+                "            \"validationoutputid\": 39,\n" +
+                "            \"triggered\": true,\n" +
+                "            \"instance\": 0,\n" +
+                "            \"formula\": \"543 != 5143\",\n" +
+                "            \"validationid\": \"100\",\n" +
+                "            \"overridden\": false\n" +
+                "          }  \n" +
+                "        ]\n" +
+                "      }\n" +
+                "    }\n" +
+                "  }";
+
+        try {
+            ValidationOutputs outputs = new  ValidationOutputs(lambdaoutput);
+
+            List<ValidationOutputData> validationData = outputs.extractValidationDataFromDatabase(graphQLOutputFromDatabase);
+            List<ValidationOutputData> lambdaData = outputs.extractValidationDataFromLambda();
+
+            int overriddenTrueCount = outputs.getOverriddenTrueCount(lambdaData, validationData);
+            log.info("Overridden True Count "+overriddenTrueCount);
+            int triggeredTrueCount = outputs.getTriggerTrueCount();
+            log.info("Triggered True Count "+triggeredTrueCount);
+            String actualStatus = outputs.getStatusText(triggeredTrueCount, overriddenTrueCount);
+            log.info("Status text "+actualStatus);
+            assertEquals(expectedStatus, actualStatus);
+
+        } catch (Exception e) {
+            assertTrue(false);
+        }
+    }
+
+    @Test
+    void getStatusText_missingTriggeredAttribute_throwsException() {
+        assertThrows(InvalidJsonException.class,
+                () -> new ValidationOutputs("{\"validation_outputs\": [{\"a\":\"b\"}]}").getTriggerTrueCount());
+    }
+
 
     @Test
     void test_validationOutput_lambdaOutputInvalidJson_throwsException()  {

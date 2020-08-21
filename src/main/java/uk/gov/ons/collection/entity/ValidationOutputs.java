@@ -19,6 +19,10 @@ public class ValidationOutputs {
 
     private JSONArray outputArray;
     private final Timestamp time = new Timestamp(new Date().getTime());
+    private static final String STATUS_CLEAR = "Clear";
+    private static final String STATUS_CHECK_NEEDED = "Check needed";
+    private static final String STATUS_CLEAR_OVERRIDDEN = "Clear - overridden";
+
 
     public ValidationOutputs(String jsonString) throws InvalidJsonException {
         try {
@@ -216,7 +220,8 @@ public class ValidationOutputs {
     }
 
     public String getStatusText(int triggeredTrueCount, int overriddenTrueCount)  {
-        String statusText = (triggeredTrueCount == 0) ? "Clear" : ((triggeredTrueCount == overriddenTrueCount)?"Clear - overridden":"Check needed");
+        String statusText = (triggeredTrueCount == 0) ? STATUS_CLEAR :
+                ((triggeredTrueCount == overriddenTrueCount) ? STATUS_CLEAR_OVERRIDDEN : STATUS_CHECK_NEEDED);
         return statusText;
     }
 
