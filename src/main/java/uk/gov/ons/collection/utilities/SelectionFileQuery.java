@@ -79,11 +79,7 @@ public class SelectionFileQuery {
     private String getSelectionLoadData() throws InvalidJsonException {
         StringJoiner joiner = new StringJoiner(",");
         for (int i = 0; i < contributorValuesArray.length(); i++) {
-            try {
-                joiner.add("{" + extractContributorRow(i) + "}");
-            } catch (Exception err) {
-                log.error("Error in extracting contributor row " + err.getMessage());
-            }
+            joiner.add("{" + extractContributorRow(i) + "}");
         }
         return joiner.toString();
     }
