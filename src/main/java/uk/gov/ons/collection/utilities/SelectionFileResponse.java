@@ -23,8 +23,8 @@ public class SelectionFileResponse {
         var outputArray = new JSONArray();
         int formId;
         log.info("Output from checkIDBR Table: " + jsonQlResponse.toString());
-        if (jsonQlResponse.getJSONObject("data").getJSONObject("allCheckidbrs").getJSONArray("nodes").length() > 0) {
-            outputArray = jsonQlResponse.getJSONObject("data").getJSONObject("allCheckidbrs").getJSONArray("nodes");
+        if (jsonQlResponse.getJSONObject("data").getJSONObject("allIdbrformtypes").getJSONArray("nodes").length() > 0) {
+            outputArray = jsonQlResponse.getJSONObject("data").getJSONObject("allIdbrformtypes").getJSONArray("nodes");
             formId = outputArray.getJSONObject(0).getInt("formid");
         } else {
             throw new InvalidJsonException("There is no mapping between IDBR form type (on selection file) and the form ID held in database ");
