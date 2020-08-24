@@ -19,6 +19,10 @@ public class ValidationOutputs {
 
     private JSONArray outputArray;
     private final Timestamp time = new Timestamp(new Date().getTime());
+    private static final String STATUS_CLEAR = "Clear";
+    private static final String STATUS_CHECK_NEEDED = "Check needed";
+    private static final String STATUS_CLEAR_OVERRIDDEN = "Clear - overridden";
+
 
     public ValidationOutputs(String jsonString) throws InvalidJsonException {
         try {
@@ -167,6 +171,17 @@ public class ValidationOutputs {
 
     }
 
+    public int getOverriddenTrueCount(List<ValidationOutputData> validationLambdaList,
+                                                                            List<ValidationOutputData> validationDataList) {
+        List<ValidationOutputData> overriddenTrueCountList = validationDataList.stream().filter(validationdata -> validationLambdaList.stream().anyMatch(lambdadata ->
+                (lambdadata.getValidationId().equals(validationdata.getValidationId())
+                        && (lambdadata.getFormula().equals(validationdata.getFormula())) && (validationdata.isOverridden())))).collect(Collectors.toList());
+
+        log.info("No Modification List :" + overriddenTrueCountList.toString());
+        return overriddenTrueCountList.size();
+
+    }
+
     public List<ValidationOutputData> getValidationOutputUpsertList(List<ValidationOutputData> modifiedList,
                                                                     List<ValidationOutputData> insertedList) {
         modifiedList.addAll(insertedList);
@@ -204,24 +219,26 @@ public class ValidationOutputs {
         return getFirstRowAttribute("survey");
     }
 
-    public String getStatusText() throws InvalidJsonException {
-        if (isTriggeredFound()) {
-            return "Check needed";
-        }
-        return "Clear";
+    public String getStatusText(int triggeredTrueCount, int overriddenTrueCount)  {
+        String statusText = (triggeredTrueCount == 0) ? STATUS_CLEAR :
+                ((triggeredTrueCount == overriddenTrueCount) ? STATUS_CLEAR_OVERRIDDEN : STATUS_CHECK_NEEDED);
+        return statusText;
     }
 
-    private boolean isTriggeredFound() throws InvalidJsonException {
+
+
+    public int getTriggerTrueCount() throws InvalidJsonException {
+        int triggerTrueCount = 0;
         try {
             for (int i = 0; i < outputArray.length(); i++) {
                 if (outputArray.getJSONObject(i).getBoolean("triggered")) {
-                    return true;
+                    triggerTrueCount++;
                 }
             }
         } catch (Exception err) {
             throw new InvalidJsonException("Given JSON did not contain triggered in the expected location(s): " + outputArray, err);
         }
-        return false;
+        return triggerTrueCount;
     }
 
     private String getReferencePeriodSurvey() throws InvalidJsonException {
