@@ -57,8 +57,8 @@ public class SelectionFileQuery {
     
     public String buildCheckIdbrFormidQuery() {
         StringBuilder checkIdbrFormidQuery = new StringBuilder();
-        checkIdbrFormidQuery.append("{\"query\": \"query checkidbrformid($formtype: String) " +
-                "{ allIdbrformtypes (condition: {formtype: $formtype}) {" +
+        checkIdbrFormidQuery.append("{\"query\": \"query checkidbrformid($formtype: String, survey: $survey) " +
+                "{ allIdbrformtypes (condition: {formtype: $formtype, survey: $survey}) {" +
                 "nodes { formid survey formtype periodstart periodend }}}\"," +
                 "\"variables\": {");
         checkIdbrFormidQuery.append(buildVariables());
@@ -99,10 +99,12 @@ public class SelectionFileQuery {
             joiner.add("reference: \\\"" + outputRow.getString("ruref") + "\\\"");
             Map<String, String> vars = new HashMap<String, String>();
             vars.put("formtype", outputRow.getString("formtype"));
+            vars.put("survey", periodSurvey.getString("survey"));
             String formIdQuery = new SelectionFileQuery(vars).buildCheckIdbrFormidQuery();
             log.info("CheckIDBR Form ID Query : " + formIdQuery);
             SelectionFileResponse formResponse = new SelectionFileResponse(qlService.qlSearch(formIdQuery));
-            Integer formId = formResponse.parseFormidResponse();
+            int period = Integer.parseInt(periodSurvey.getString("period"));
+            Integer formId = formResponse.parseFormidResponse(period);
             log.info("Form ID Output :: " + formId);
             joiner.add("formid: " + formId);
             joiner.add("status: \\\"Form sent out\\\"");
