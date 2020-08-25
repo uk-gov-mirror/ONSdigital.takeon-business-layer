@@ -66,3 +66,4 @@ public class QlQueryResponse {
         return validationOutputs;
     }
 }
+
