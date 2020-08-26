@@ -78,6 +78,8 @@ public class ContributorController {
             var response = qlService.qlSearch(loadQuery);
             log.info("Load Selection File response: " + response.toString());
 
+
+
         } catch (Exception e) {
             log.info("Can't build Batch Selection Load Query / Invalid Response from GraphQL: " + e);
             e.printStackTrace();
