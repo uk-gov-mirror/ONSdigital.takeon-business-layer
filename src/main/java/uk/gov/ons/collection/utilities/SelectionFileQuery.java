@@ -91,12 +91,20 @@ public class SelectionFileQuery {
     // Convert a row for the given index and provide it in graphQL desired format
     private String extractContributorRow(int index) throws InvalidJsonException {
         StringJoiner joiner = new StringJoiner(",");
+        var outputRow = contributorValuesArray.getJSONObject(index);
+        String reference = "";
+        String periodStr = "";
+        String survey = "";
+
         try {
-            var outputRow = contributorValuesArray.getJSONObject(index);
+
             var periodSurvey = contributorObject;
-            joiner.add("period: \\\"" + periodSurvey.getString("period") + "\\\"");
-            joiner.add("survey: \\\"" + periodSurvey.getString("survey") + "\\\"");
-            joiner.add("reference: \\\"" + outputRow.getString("ruref") + "\\\"");
+            reference = outputRow.getString("ruref");
+            periodStr = periodSurvey.getString("period");
+            survey = periodSurvey.getString("survey");
+            joiner.add("period: \\\"" + periodStr + "\\\"");
+            joiner.add("survey: \\\"" + survey + "\\\"");
+            joiner.add("reference: \\\"" + reference + "\\\"");
             Map<String, String> vars = new HashMap<String, String>();
             vars.put("formtype", outputRow.getString("formtype"));
             vars.put("survey", periodSurvey.getString("survey"));
@@ -160,8 +168,40 @@ public class SelectionFileQuery {
             joiner.add("lastupdateddate: null");
             return joiner.toString();
         } catch (Exception err) {
-            throw new InvalidJsonException("Error processing response json structure: " + err.getMessage() + contributorValuesArray, err);
+            StringBuilder sbErrorMessage = new StringBuilder();
+            sbErrorMessage.append("Error in processing selection file for Reference: ").append(reference).append(" Period: ");
+            sbErrorMessage.append(periodStr);
+            sbErrorMessage.append(" Survey: ").append(survey);
+            sbErrorMessage.append(err.getMessage());
+            sbErrorMessage.append( " The contributor row: ");
+            sbErrorMessage.append(outputRow);
+
+            throw new InvalidJsonException(sbErrorMessage.toString(), err);
         }
     }
+
+
+    public String processGraphQlErrorMessage(String graphQlResponse) throws InvalidJsonException {
+        StringBuilder sbErrorMessage = new StringBuilder();
+        JSONObject graphQlObject = new JSONObject(graphQlResponse);
+        if (graphQlObject.has("errors") ) {
+            System.out.println("Errors exists");
+            JSONArray errorArray = graphQlObject.getJSONArray("errors");
+            System.out.println(errorArray.toString());
+            for(int i=0; i< errorArray.length(); i++) {
+                String message = errorArray.getJSONObject(i).getString("message");
+                if (message.contains("duplicate key value violates unique constraint")) {
+                    sbErrorMessage.append("Contributor already exists in the database");
+                }
+                System.out.println("Message: "+message);
+            }
+
+        }
+
+        log.info("GraphQL error message if any : " + sbErrorMessage.toString());
+        return sbErrorMessage.toString();
+    }
+
+
 
 }

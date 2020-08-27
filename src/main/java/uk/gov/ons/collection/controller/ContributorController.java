@@ -73,17 +73,22 @@ public class ContributorController {
     public String loadSelectionFile(@RequestBody String selectionData) {
         log.info("API CALL!! --> /contributor/loadSelectionFile:: " + selectionData);
         try {
-            var loadQuery = new SelectionFileQuery(selectionData, qlService).buildSaveSelectionFileQuery();
+            SelectionFileQuery fileQuery =  new SelectionFileQuery(selectionData, qlService);
+            String loadQuery = fileQuery.buildSaveSelectionFileQuery();
             log.info("Load Selection Query: " + loadQuery);
-            var response = qlService.qlSearch(loadQuery);
-            log.info("Load Selection File response: " + response.toString());
-
-
+            String  response = qlService.qlSearch(loadQuery);
+            log.info("Load Selection File response: " + response);
+            //Process if any GraphQL exception
+            String message = fileQuery.processGraphQlErrorMessage(response);
+            log.info("GraphQL response message: " + response);
+            if(message != null && message.length() > 0) {
+                return "{\"error\":\"Failed to load Selection File" + message + " \"}";
+            }
 
         } catch (Exception e) {
-            log.info("Can't build Batch Selection Load Query / Invalid Response from GraphQL: " + e);
+            log.info("Can't build Batch Selection Load Query / Invalid Response from GraphQL: " + e.getMessage());
             e.printStackTrace();
-            return "{\"error\":\"Failed to load Selection File\"}";
+            return "{\"error\":\"Failed to load Selection File" + e.getMessage() + " \"}";
         }
 
         return "{\"Success\":\"Successfully loaded Selection File\"}";
