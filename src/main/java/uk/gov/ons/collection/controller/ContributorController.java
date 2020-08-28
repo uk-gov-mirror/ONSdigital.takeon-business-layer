@@ -82,13 +82,12 @@ public class ContributorController {
             String message = fileQuery.processGraphQlErrorMessage(response);
             log.info("GraphQL response message: " + response);
             if(message != null && message.length() > 0) {
-                return "{\"error\":\"Failed to load Selection File" + message + " \"}";
+                return "{\"error\":\"Failed to load Selection File " + message + " \"}";
             }
 
         } catch (Exception e) {
-            log.info("Can't build Batch Selection Load Query / Invalid Response from GraphQL: " + e.getMessage());
-            e.printStackTrace();
-            return "{\"error\":\"Failed to load Selection File" + e.getMessage() + " \"}";
+            log.error("Can't build Batch Selection Load Query / Invalid Response from GraphQL: " + e.getMessage());
+            return "{\"error\":\"Failed to load Selection File " + e.getMessage() + " \"}";
         }
 
         return "{\"Success\":\"Successfully loaded Selection File\"}";

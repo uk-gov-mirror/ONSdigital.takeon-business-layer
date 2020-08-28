@@ -185,20 +185,20 @@ public class SelectionFileQuery {
         StringBuilder sbErrorMessage = new StringBuilder();
         JSONObject graphQlObject = new JSONObject(graphQlResponse);
         if (graphQlObject.has("errors") ) {
-            System.out.println("Errors exists");
+            log.info("Errors exists");
             JSONArray errorArray = graphQlObject.getJSONArray("errors");
-            System.out.println(errorArray.toString());
+            log.info("Complete GraphQL error message: "+errorArray.toString());
             for(int i=0; i< errorArray.length(); i++) {
                 String message = errorArray.getJSONObject(i).getString("message");
                 if (message.contains("duplicate key value violates unique constraint")) {
                     sbErrorMessage.append("Contributor already exists in the database");
                 }
-                System.out.println("Message: "+message);
+                log.info("Graph QL Error Message after parsing: "+message);
             }
 
         }
 
-        log.info("GraphQL error message if any : " + sbErrorMessage.toString());
+        log.info("GraphQL error message if any after processing : " + sbErrorMessage.toString());
         return sbErrorMessage.toString();
     }
 
