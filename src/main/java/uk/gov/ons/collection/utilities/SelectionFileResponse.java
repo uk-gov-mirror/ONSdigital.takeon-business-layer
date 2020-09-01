@@ -40,14 +40,14 @@ public class SelectionFileResponse {
             log.info("No of Matching Records: " + countNumberOfMatchingRecords);
             //Exception handling when more than 1 match and this is an error
             if (countNumberOfMatchingRecords > 1) {
-                throw new InvalidJsonException("There is more than one mapping between IDBR form type (on selection file) and the form ID held in database ");
+                throw new InvalidJsonException(" There is more than one mapping between IDBR form type (on selection file) and the form ID held in database ");
             } else if (countNumberOfMatchingRecords == 0) {//if no matches then also an error
-                throw new InvalidJsonException("There is no mapping between IDBR form type (on selection file) and the form ID held in database ");
+                throw new InvalidJsonException(" There is no mapping between IDBR form type (on selection file) and the form ID held in database ");
             }
 
         } else {
             //This is when no records in the configuration table
-            throw new InvalidJsonException("There is no mapping between IDBR form type (on selection file) and the form ID held in database ");
+            throw new InvalidJsonException(" There is no mapping between IDBR form type (on selection file) and the form ID held in database ");
         }
 
         return formId;
