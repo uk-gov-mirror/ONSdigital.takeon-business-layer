@@ -88,4 +88,20 @@ public class QlQueryResponseTest {
         assertEquals(expectedPeriods, outputPeriods);
     }
 
+    @Test
+    void delayResponse_oneResponse() {
+        String input = "{\"data\": {\"allContributors\": {\"nodes\": [{\"survey\":\"023\", \"period\": \"201903\"}]}}}";
+        String expectedOutput = "{\"response_outputs\":[{\"period\":\"201903\",\"survey\":\"023\"}]}";
+        String actualOutput = new QlQueryResponse().buildDelayResponseOutput(input).toString();
+        assertEquals(expectedOutput, actualOutput);
+    }
+
+    @Test
+    void delayResponse_multipleResponses() {
+        String input = "{\"data\": {\"allContributors\": {\"nodes\": [{\"survey\":\"023\", \"period\": \"201903\"}, {\"survey\":\"023\", \"period\": \"201903\"}]}}}";
+        String expectedOutput = "{\"response_outputs\":[{\"period\":\"201903\",\"survey\":\"023\"},{\"period\":\"201903\",\"survey\":\"023\"}]}";
+        String actualOutput = new QlQueryResponse().buildDelayResponseOutput(input).toString();
+        assertEquals(expectedOutput, actualOutput);
+    }
+
 }

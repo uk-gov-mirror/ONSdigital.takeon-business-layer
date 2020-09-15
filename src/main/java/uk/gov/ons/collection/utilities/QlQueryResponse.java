@@ -18,6 +18,9 @@ public class QlQueryResponse {
         }
     }
 
+    public QlQueryResponse() {
+    }
+
     public String toString() {
         return jsonQlResponse.toString();
     }
@@ -66,19 +69,22 @@ public class QlQueryResponse {
         return validationOutputs;
     }
 
-    public JSONObject buildDelayResponseDict(response) {
+    public JSONObject buildDelayResponseOutput(String response) {
+        JSONObject responseObject = new JSONObject(response);
         var outputArray = new JSONArray();
         var delayResponseArray = new JSONArray();
-        if (response.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").length() > 0) {
-            outputArray = response.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes");
+        if (responseObject.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").length() > 0) {
+            outputArray = responseObject.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes");
         }
         for (int i = 0; i < outputArray.length(); i++) {
             JSONObject delayResponseElement = new JSONObject();
-            delayResponseElement.put("survey", outputArray.getJSONObject(i).get("survey"));
             delayResponseElement.put("period", outputArray.getJSONObject(i).get("period"));
+            delayResponseElement.put("survey", outputArray.getJSONObject(i).get("survey"));
             delayResponseArray.put(delayResponseElement);
         }
-        return delayResponseArray;
+        var delayResponseOutputs = new JSONObject().put("response_outputs", delayResponseArray);
+
+        return delayResponseOutputs;
     }
 }
 

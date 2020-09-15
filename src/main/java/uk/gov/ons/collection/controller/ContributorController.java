@@ -22,6 +22,7 @@ import uk.gov.ons.collection.utilities.QlQueryResponse;
 import uk.gov.ons.collection.utilities.SelectionFileQuery;
 
 import java.util.Map;
+import org.json.JSONObject;
 
 
 @Log4j2
@@ -97,16 +98,19 @@ public class ContributorController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful retrieval of Survey/Period details")})
         public String delayResponse() {
-        String delayResponseQuery = new QlQueryBuilder(searchParameters).buildDelayResponseQuery();
-        String responseText;
+        String delayResponseQuery = new QlQueryBuilder().buildDelayResponseQuery();
+        JSONObject responseText;
+        String response;
+        String output;
         log.info("Query sent to service: " + delayResponseQuery);
         try {
             response = qlService.qlSearch(delayResponseQuery);
-            responseText = QlQueryResponse.buildDelayResponseDict(response);
+            responseText = new QlQueryResponse().buildDelayResponseOutput(response);
+            output = responseText.toString();
         } catch (Exception e) {
-            responseText = "{\"error\":\"Invalid response from graphQL\"}";
+            output = "{\"error\":\"Invalid response from graphQL\"}";
         }
         log.info("Query sent to service: " + delayResponseQuery);
-        return responseText;
+        return output;
     }
 }
