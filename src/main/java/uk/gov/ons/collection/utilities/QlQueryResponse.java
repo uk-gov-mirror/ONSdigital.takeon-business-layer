@@ -65,5 +65,20 @@ public class QlQueryResponse {
         var validationOutputs = new JSONObject().put("validation_outputs", valOutputArray);
         return validationOutputs;
     }
+
+    public JSONObject buildDelayResponseDict(response) {
+        var outputArray = new JSONArray();
+        var delayResponseArray = new JSONArray();
+        if (response.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").length() > 0) {
+            outputArray = response.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes");
+        }
+        for (int i = 0; i < outputArray.length(); i++) {
+            JSONObject delayResponseElement = new JSONObject();
+            delayResponseElement.put("survey", outputArray.getJSONObject(i).get("survey"));
+            delayResponseElement.put("period", outputArray.getJSONObject(i).get("period"));
+            delayResponseArray.put(delayResponseElement);
+        }
+        return delayResponseArray;
+    }
 }
 

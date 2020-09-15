@@ -92,4 +92,21 @@ public class ContributorController {
 
         return "{\"Success\":\"Successfully loaded Selection File\"}";
     }
+
+    @GetMapping(value = "/delayResponse", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of Survey/Period details")})
+        public String delayResponse() {
+        String delayResponseQuery = new QlQueryBuilder(searchParameters).buildDelayResponseQuery();
+        String responseText;
+        log.info("Query sent to service: " + delayResponseQuery);
+        try {
+            response = qlService.qlSearch(delayResponseQuery);
+            responseText = QlQueryResponse.buildDelayResponseDict(response);
+        } catch (Exception e) {
+            responseText = "{\"error\":\"Invalid response from graphQL\"}";
+        }
+        log.info("Query sent to service: " + delayResponseQuery);
+        return responseText;
+    }
 }

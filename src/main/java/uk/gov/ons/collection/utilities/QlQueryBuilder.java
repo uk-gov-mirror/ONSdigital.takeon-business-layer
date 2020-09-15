@@ -75,4 +75,13 @@ public class QlQueryBuilder {
         validationOutputQuery.append("}}");
         return validationOutputQuery.toString();
     }
+
+    public String buildDelayResponseQuery() {
+        StringBuilder query = new StringBuilder();
+        query.append("{\"query\": \"query contributorSearch " +
+                "{ allContributors " +
+                "{ nodes { period, survey " +
+                "}}}\"}");
+        return query.toString();
+    }
 }
