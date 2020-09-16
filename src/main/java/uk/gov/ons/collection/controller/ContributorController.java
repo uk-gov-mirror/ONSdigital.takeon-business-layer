@@ -99,18 +99,19 @@ public class ContributorController {
             @ApiResponse(code = 200, message = "Successful retrieval of Survey/Period details")})
         public String delayResponse() {
         String delayResponseQuery = new QlQueryBuilder().buildDelayResponseQuery();
+        log.info("GraphQL Query sent to service: " + delayResponseQuery);
         JSONObject responseText;
         String response;
         String output;
-        log.info("Query sent to service: " + delayResponseQuery);
         try {
             response = qlService.qlSearch(delayResponseQuery);
+            log.info("Response from GraphQL Query: " + response);
             responseText = new QlQueryResponse().buildDelayResponseOutput(response);
             output = responseText.toString();
         } catch (Exception e) {
             output = "{\"error\":\"Invalid response from graphQL\"}";
         }
-        log.info("Query sent to service: " + delayResponseQuery);
+        log.info("Response output before sending to Lambda: " + output);
         return output;
     }
 }
