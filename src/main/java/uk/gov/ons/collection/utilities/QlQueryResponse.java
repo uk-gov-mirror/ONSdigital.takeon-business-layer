@@ -18,6 +18,9 @@ public class QlQueryResponse {
         }
     }
 
+    public QlQueryResponse() {
+    }
+
     public String toString() {
         return jsonQlResponse.toString();
     }
@@ -64,6 +67,24 @@ public class QlQueryResponse {
         }
         var validationOutputs = new JSONObject().put("validation_outputs", valOutputArray);
         return validationOutputs;
+    }
+
+    public JSONObject buildDelayResponseOutput(String response) {
+        JSONObject responseObject = new JSONObject(response);
+        var outputArray = new JSONArray();
+        var delayResponseArray = new JSONArray();
+        if (responseObject.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").length() > 0) {
+            outputArray = responseObject.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes");
+        }
+        for (int i = 0; i < outputArray.length(); i++) {
+            JSONObject delayResponseElement = new JSONObject();
+            delayResponseElement.put("period", outputArray.getJSONObject(i).get("period"));
+            delayResponseElement.put("survey", outputArray.getJSONObject(i).get("survey"));
+            delayResponseArray.put(delayResponseElement);
+        }
+        var delayResponseOutputs = new JSONObject().put("response_outputs", delayResponseArray);
+
+        return delayResponseOutputs;
     }
 }
 

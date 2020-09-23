@@ -22,6 +22,7 @@ import uk.gov.ons.collection.utilities.QlQueryResponse;
 import uk.gov.ons.collection.utilities.SelectionFileQuery;
 
 import java.util.Map;
+import org.json.JSONObject;
 
 
 @Log4j2
@@ -91,5 +92,26 @@ public class ContributorController {
         }
 
         return "{\"Success\":\"Successfully loaded Selection File\"}";
+    }
+
+    @GetMapping(value = "/delayResponse", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of Survey/Period details")})
+        public String delayResponse() {
+        String delayResponseQuery = new QlQueryBuilder().buildDelayResponseQuery();
+        log.info("GraphQL Query sent to service: " + delayResponseQuery);
+        JSONObject responseText;
+        String response;
+        String output;
+        try {
+            response = qlService.qlSearch(delayResponseQuery);
+            log.info("Response from GraphQL Query: " + response);
+            responseText = new QlQueryResponse().buildDelayResponseOutput(response);
+            output = responseText.toString();
+        } catch (Exception e) {
+            output = "{\"error\":\"Invalid response from graphQL\"}";
+        }
+        log.info("Response output before sending to Lambda: " + output);
+        return output;
     }
 }

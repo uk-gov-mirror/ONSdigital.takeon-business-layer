@@ -37,5 +37,15 @@ public class QlQueryBuilderTest {
         assertEquals(expectedCondition, new QlQueryBuilder(twoParameters).buildVariables());
     }
 
+    @Test
+    void buildDelayResponseQuery() {
+        String expectedQuery = "{\"query\": \"query contributorSearch " +
+        "{ allContributors " +
+        "{ nodes { period, survey " +
+        "}}}\"}";
+        String actualQuery = new QlQueryBuilder().buildDelayResponseQuery();
+        assertEquals(expectedQuery, actualQuery);
+    }
+
 }
 

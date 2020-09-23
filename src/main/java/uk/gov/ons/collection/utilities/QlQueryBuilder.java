@@ -17,6 +17,9 @@ public class QlQueryBuilder {
         this.variables = (variables == null) ? new HashMap<>() : new HashMap<>(variables);
     }
 
+    public QlQueryBuilder() {
+    }
+
     public String buildContributorSearchQuery() {
         StringBuilder query = new StringBuilder();
         query.append("{\"query\": \"query contributorSearch($startCursor: Cursor, $first: Int, $endCursor: Cursor, $last: Int," +
@@ -74,5 +77,14 @@ public class QlQueryBuilder {
         validationOutputQuery.append(buildVariables());
         validationOutputQuery.append("}}");
         return validationOutputQuery.toString();
+    }
+
+    public String buildDelayResponseQuery() {
+        StringBuilder query = new StringBuilder();
+        query.append("{\"query\": \"query contributorSearch " +
+                "{ allContributors " +
+                "{ nodes { period, survey " +
+                "}}}\"}");
+        return query.toString();
     }
 }
