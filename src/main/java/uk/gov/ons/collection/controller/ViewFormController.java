@@ -61,6 +61,8 @@ GraphQlService qlService;
             periodicityStr = responsePeriodicity.parsePeriodicityFromSurvey();
             log.info(" Periodicity from Survey table: "+periodicityStr);
             String currentPeriod = detailsQuery.retrieveCurrentPeriod();
+            log.info ("Current Period from UI: " + currentPeriod);
+
             List<String> historyPeriodList = responsePeriodicity.getHistoryPeriods(currentPeriod, periodicityStr);
             log.info ("Final History Periods: " + historyPeriodList.toString());
         } catch (Exception e) {

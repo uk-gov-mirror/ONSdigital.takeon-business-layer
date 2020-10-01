@@ -55,8 +55,8 @@ public class HistoryDetailsResponse {
         try {
             RelativePeriod rp = new RelativePeriod(periodicity);
             List<String> periods = rp.getIdbrPeriods(offsetList, currentPeriod);
+            log.info("IDBR previous periods: " +periods.toString());
             historyPeriodList.addAll(periods);
-            System.out.println(historyPeriodList.toString());
         } catch (Exception e) {
 
         }
