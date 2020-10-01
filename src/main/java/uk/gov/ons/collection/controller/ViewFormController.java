@@ -10,9 +10,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.MatrixVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import uk.gov.ons.collection.entity.HistoryDetailsQuery;
+import uk.gov.ons.collection.entity.HistoryDetailsResponse;
 import uk.gov.ons.collection.entity.ViewFormQuery;
 import uk.gov.ons.collection.entity.ViewFormResponse;
 import uk.gov.ons.collection.service.GraphQlService;
+
+import java.util.List;
 import java.util.Map;
 
 @Log4j2
@@ -40,6 +44,34 @@ GraphQlService qlService;
     log.info("Query sent to service: " + qlQuery);     
     return responseText;
     }
+
+    @GetMapping(value = "/historydata/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of History details", response = String.class)})
+    public String viewHistoryDetails(@MatrixVariable Map<String, String> searchParameters) {
+        HistoryDetailsQuery  detailsQuery = new HistoryDetailsQuery(searchParameters);
+        String qlPeriodicityQuery = detailsQuery.buildSurveyPeriodicityQuery();
+        String periodicityStr;
+        String responseText = "";
+        log.info("Survey Periodicity Query: " + qlPeriodicityQuery);
+        try {
+            String qlResponsePeriodicity = qlService.qlSearch(qlPeriodicityQuery);
+            log.info ("Graph QL Response for periodicity: " +qlResponsePeriodicity);
+            HistoryDetailsResponse responsePeriodicity = new HistoryDetailsResponse(qlResponsePeriodicity);
+            periodicityStr = responsePeriodicity.parsePeriodicityFromSurvey();
+            log.info(" Periodicity from Survey table: "+periodicityStr);
+            String currentPeriod = detailsQuery.retrieveCurrentPeriod();
+            List<String> historyPeriodList = responsePeriodicity.getHistoryPeriods(currentPeriod, periodicityStr);
+            log.info ("Final History Periods: " + historyPeriodList.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseText = "{\"error\":\"Invalid response from graphQL\"}";
+        }
+        log.info("History data before sending to UI: " + responseText);
+        return responseText;
+    }
+
+
 }
 
 
