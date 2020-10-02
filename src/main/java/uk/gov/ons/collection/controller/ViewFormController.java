@@ -65,6 +65,7 @@ GraphQlService qlService;
 
             List<String> historyPeriodList = responsePeriodicity.getHistoryPeriods(currentPeriod, periodicityStr);
             log.info ("Final History Periods: " + historyPeriodList.toString());
+            String historyQuery = detailsQuery.buildHistoryDetailsQuery(historyPeriodList);
         } catch (Exception e) {
             e.printStackTrace();
             responseText = "{\"error\":\"Invalid response from graphQL\"}";

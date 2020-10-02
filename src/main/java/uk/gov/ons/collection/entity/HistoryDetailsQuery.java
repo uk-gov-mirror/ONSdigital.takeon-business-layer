@@ -7,6 +7,7 @@ public class HistoryDetailsQuery {
     private HashMap<String, String> variables;
     private static final String SURVEY = "survey";
     private static final String PERIOD = "period";
+    private static final String REFERENCE = "reference";
 
 
     public HistoryDetailsQuery(Map<String, String> variables) {
@@ -17,17 +18,17 @@ public class HistoryDetailsQuery {
 
     }
 
-    public String buildHistoryDetailsQuery() {
+    public String buildHistoryDetailsQuery(List<String> historyPeriodList ) {
 
         StringBuilder historyDetailsQuery = new StringBuilder();
-        historyDetailsQuery.append("{\"query\": \"query historyresponse($period: String, $reference: String, $survey: String) " +
-                "{ allContributors(condition: {reference: $reference, period: $period, survey: $survey}) {" +
-                "nodes {formByFormid {formdefinitionsByFormid {nodes {questioncode type derivedformula displaytext displayquestionnumber displayorder}}}" +
+        historyDetailsQuery.append("{\"query\": \"query historydetails " +
+                "{ allContributors(filter: {").append(historyDetailsQuery.append(buildFilterCondition(historyPeriodList)).append(
+                "}) {" +
+                "nodes {survey period reference formByFormid {formdefinitionsByFormid {nodes {questioncode type derivedformula displaytext displayquestionnumber displayorder}}}" +
                 "responsesByReferenceAndPeriodAndSurvey {nodes {instance questioncode response}}}}}\"," +
-                "\"variables\": {");
+                "\"variables\": {"));
 
-        historyDetailsQuery.append(buildVariables());
-        historyDetailsQuery.append("}}");
+        historyDetailsQuery.append("}");
         return historyDetailsQuery.toString();
     }
 
@@ -61,6 +62,29 @@ public class HistoryDetailsQuery {
 
     public String retrieveCurrentPeriod() {
         return variables.get(PERIOD);
+    }
+
+    public String retrieveCurrentReference() {
+        return variables.get(REFERENCE);
+    }
+
+    public String buildFilterCondition(List<String> historyPeriodList) {
+        StringBuilder sbFilter = new StringBuilder();
+        sbFilter.append("reference: {equalTo:");
+        sbFilter.append("\": \"").append(variables.get(REFERENCE));
+        sbFilter.append("\"}, survey: {equalTo:");
+        sbFilter.append("\": \"").append(variables.get(SURVEY));
+        sbFilter.append("\"}, period: {in: [");
+
+        StringJoiner joiner = new StringJoiner(",");
+        for (int i=0; i< historyPeriodList.size(); i++) {
+            joiner.add ("\": \"" + historyPeriodList.get(i) + "\"");
+        }
+        sbFilter.append(joiner.toString());
+        sbFilter.append("]}");
+
+
+        return sbFilter.toString();
     }
 
 }
