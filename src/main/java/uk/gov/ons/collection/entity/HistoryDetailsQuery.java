@@ -24,7 +24,7 @@ public class HistoryDetailsQuery {
         historyDetailsQuery.append("{\"query\": \"query historydetails ");
         historyDetailsQuery.append("{ allContributors(filter: ");
         historyDetailsQuery.append(historyDetailsQuery.append(buildFilterCondition(historyPeriodList)));
-        historyDetailsQuery.append("}) {");
+        historyDetailsQuery.append("} orderBy:PERIOD_DESC) {");
         historyDetailsQuery.append("nodes { survey period reference formByFormid {formdefinitionsByFormid ");
         historyDetailsQuery.append("{ nodes { questioncode type derivedformula displaytext displayquestionnumber displayorder}}}");
         historyDetailsQuery.append(" responsesByReferenceAndPeriodAndSurvey {nodes {instance questioncode response}}}}}\"");
