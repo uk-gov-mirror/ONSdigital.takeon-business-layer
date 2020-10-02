@@ -18,16 +18,16 @@ public class HistoryDetailsQuery {
 
     }
 
-    public String buildHistoryDetailsQuery(List<String> historyPeriodList ) {
+    public String buildHistoryDetailsQuery(List<String> historyPeriodList) {
 
         StringBuilder historyDetailsQuery = new StringBuilder();
-        historyDetailsQuery.append("{\"query\": \"query historydetails " +
-                "{ allContributors(filter: {").append(historyDetailsQuery.append(buildFilterCondition(historyPeriodList)).append(
-                "}) {" +
-                "nodes {survey period reference formByFormid {formdefinitionsByFormid {nodes {questioncode type derivedformula displaytext displayquestionnumber displayorder}}}" +
-                "responsesByReferenceAndPeriodAndSurvey {nodes {instance questioncode response}}}}}\"," +
-                "\"variables\": {"));
-
+        historyDetailsQuery.append("{\"query\": \"query historydetails ");
+        historyDetailsQuery.append("{ allContributors(filter: ");
+        historyDetailsQuery.append(historyDetailsQuery.append(buildFilterCondition(historyPeriodList)));
+        historyDetailsQuery.append("}) {");
+        historyDetailsQuery.append("nodes { survey period reference formByFormid {formdefinitionsByFormid ");
+        historyDetailsQuery.append("{ nodes { questioncode type derivedformula displaytext displayquestionnumber displayorder}}}");
+        historyDetailsQuery.append(" responsesByReferenceAndPeriodAndSurvey {nodes {instance questioncode response}}}}}\"");
         historyDetailsQuery.append("}");
         return historyDetailsQuery.toString();
     }
@@ -45,10 +45,9 @@ public class HistoryDetailsQuery {
     }
 
 
-
     public String buildVariables() {
         StringJoiner joiner = new StringJoiner(",");
-        variables.forEach((key,value) -> {
+        variables.forEach((key, value) -> {
             joiner.add("\"" + key + "\": \"" + value + "\"");
         });
         return joiner.toString();
@@ -68,22 +67,25 @@ public class HistoryDetailsQuery {
         return variables.get(REFERENCE);
     }
 
+    public String retrieveSurvey() {
+        return variables.get(SURVEY);
+    }
+
     public String buildFilterCondition(List<String> historyPeriodList) {
         StringBuilder sbFilter = new StringBuilder();
+        sbFilter.append("{");
         sbFilter.append("reference: {equalTo:");
-        sbFilter.append("\": \"").append(variables.get(REFERENCE));
+        sbFilter.append("\": \"").append(retrieveCurrentReference());
         sbFilter.append("\"}, survey: {equalTo:");
-        sbFilter.append("\": \"").append(variables.get(SURVEY));
+        sbFilter.append("\": \"").append(retrieveSurvey());
         sbFilter.append("\"}, period: {in: [");
 
         StringJoiner joiner = new StringJoiner(",");
-        for (int i=0; i< historyPeriodList.size(); i++) {
-            joiner.add ("\": \"" + historyPeriodList.get(i) + "\"");
+        for (String eachPeriod : historyPeriodList) {
+            joiner.add("\"" + eachPeriod + "\"");
         }
         sbFilter.append(joiner.toString());
         sbFilter.append("]}");
-
-
         return sbFilter.toString();
     }
 
