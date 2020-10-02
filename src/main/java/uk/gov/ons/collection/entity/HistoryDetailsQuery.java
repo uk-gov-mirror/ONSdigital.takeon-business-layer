@@ -23,7 +23,7 @@ public class HistoryDetailsQuery {
         StringBuilder historyDetailsQuery = new StringBuilder();
         historyDetailsQuery.append("{\"query\": \"query historydetails ");
         historyDetailsQuery.append("{ allContributors(filter: ");
-        historyDetailsQuery.append(historyDetailsQuery.append(buildFilterCondition(historyPeriodList)));
+        historyDetailsQuery.append(buildFilterCondition(historyPeriodList));
         historyDetailsQuery.append("} orderBy:PERIOD_DESC) {");
         historyDetailsQuery.append("nodes { survey period reference formByFormid {formdefinitionsByFormid ");
         historyDetailsQuery.append("{ nodes { questioncode type derivedformula displaytext displayquestionnumber displayorder}}}");
@@ -75,9 +75,9 @@ public class HistoryDetailsQuery {
         StringBuilder sbFilter = new StringBuilder();
         sbFilter.append("{");
         sbFilter.append("reference: {equalTo:");
-        sbFilter.append("\": \"").append(retrieveCurrentReference());
+        sbFilter.append(" \"").append(retrieveCurrentReference());
         sbFilter.append("\"}, survey: {equalTo:");
-        sbFilter.append("\": \"").append(retrieveSurvey());
+        sbFilter.append(" \"").append(retrieveSurvey());
         sbFilter.append("\"}, period: {in: [");
 
         StringJoiner joiner = new StringJoiner(",");

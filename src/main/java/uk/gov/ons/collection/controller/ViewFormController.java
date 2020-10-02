@@ -65,10 +65,12 @@ GraphQlService qlService;
 
             List<String> historyPeriodList = responsePeriodicity.getHistoryPeriods(currentPeriod, periodicityStr);
             log.info ("Final History Periods: " + historyPeriodList.toString());
-            String historyQuery = detailsQuery.buildHistoryDetailsQuery(historyPeriodList);
-            log.info("History Details Query: "+historyQuery);
-            String historyDetailsResponse = qlService.qlSearch(historyQuery);
-            log.info("History Details Response: "+historyQuery);
+            if (historyPeriodList.size() > 0) {
+                String historyQuery = detailsQuery.buildHistoryDetailsQuery(historyPeriodList);
+                log.info("History Details Query: "+historyQuery);
+                String historyDetailsResponse = qlService.qlSearch(historyQuery);
+                log.info("History Details Response: "+historyQuery);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
