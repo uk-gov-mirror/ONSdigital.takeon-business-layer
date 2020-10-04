@@ -42,7 +42,7 @@ public class HistoryDetailsResponse {
             }
 
         } else {
-            //This is no survey table
+            //When there is no survey table
             throw new InvalidJsonException(" There is no configuration Survey table which provides periodicity");
         }
 
