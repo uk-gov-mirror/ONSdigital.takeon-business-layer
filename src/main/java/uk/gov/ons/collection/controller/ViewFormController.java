@@ -71,6 +71,7 @@ GraphQlService qlService;
                 log.info("History Details Query: "+historyQuery);
                 String historyDetailsResponse = qlService.qlSearch(historyQuery);
                 log.info("History Details Response: "+historyDetailsResponse);
+                responseText = responsePeriodicity.parseHistoryDataResponses(historyDetailsResponse);
             }
 
         } catch (Exception e) {

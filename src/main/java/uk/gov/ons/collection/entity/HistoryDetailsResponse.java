@@ -15,6 +15,9 @@ import uk.gov.ons.collection.utilities.RelativePeriod;
 public class HistoryDetailsResponse {
     private JSONObject jsonPeriodicityResponse;
     private static final int NUMBER_HISTORY_PERIODS = 12;
+    private static final String REFERENCE = "reference";
+    private static final String PERIOD = "period";
+    private static final String SURVEY = "survey";
 
     public HistoryDetailsResponse(String jsonString) {
         try {
@@ -62,6 +65,60 @@ public class HistoryDetailsResponse {
             throw new InvalidIdbrPeriodException("Problem in getting IDBR periods");
         }
         return historyPeriodList;
+    }
+
+    public String parseHistoryDataResponses(String responseJSON) throws InvalidIdbrPeriodException {
+        JSONObject queryOutput = new JSONObject(responseJSON);
+        JSONArray contribArray = new JSONArray();
+        var historyDataObj = new JSONObject();
+        var historyDataArr = new JSONArray();
+        try {
+            if (queryOutput.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").length() > 0){
+                contribArray = queryOutput.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes");
+                for (int i = 0; i < contribArray.length(); i++) {
+                    JSONObject eachContributorObj = queryOutput.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").getJSONObject(i);
+                    var historyDetailsObject = new JSONObject();
+                    historyDetailsObject.put(REFERENCE, eachContributorObj.get(REFERENCE));
+                    historyDetailsObject.put(PERIOD, eachContributorObj.get(PERIOD));
+                    historyDetailsObject.put(SURVEY,eachContributorObj.get(SURVEY));
+                    JSONArray formDefinitionArray = eachContributorObj .getJSONObject("formByFormid").getJSONObject("formdefinitionsByFormid").getJSONArray("nodes");
+                    if (formDefinitionArray.length() > 0) {
+                        var viewFormResponsesArray = new JSONArray();
+                        for(int j = 0; j < formDefinitionArray.length(); j++) {
+                            var eachFormObject = new JSONObject();
+                            eachFormObject.put("questioncode", formDefinitionArray.getJSONObject(j).getString("questioncode"));
+                            eachFormObject.put("displaytext", formDefinitionArray.getJSONObject(j).getString("displaytext"));
+                            eachFormObject.put("displayquestionnumber", formDefinitionArray.getJSONObject(j).getString("displayquestionnumber"));
+                            eachFormObject.put("displayorder", formDefinitionArray.getJSONObject(j).getInt("displayorder"));
+                            eachFormObject.put("type", formDefinitionArray.getJSONObject(j).getString("type"));
+                            eachFormObject.put("response", "");
+                            eachFormObject.put("instance", "");
+                            viewFormResponsesArray.put(eachFormObject);
+                        }
+                        var responseArray = new JSONArray();
+                        responseArray = queryOutput.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").getJSONObject(i)
+                                .getJSONObject("responsesByReferenceAndPeriodAndSurvey").getJSONArray("nodes");
+                        for(int k = 0; k < viewFormResponsesArray.length(); k++){
+                            for(int l = 0; l < responseArray.length(); l++){
+                                if(viewFormResponsesArray.getJSONObject(k).getString("questioncode").equals(responseArray.getJSONObject(l).getString("questioncode"))) {
+                                    viewFormResponsesArray.getJSONObject(k).put("response", responseArray.getJSONObject(l).getString("response"));
+                                    viewFormResponsesArray.getJSONObject(k).put("instance", responseArray.getJSONObject(l).getInt("instance"));
+                                }
+                            }
+                        }
+                        historyDetailsObject.put("view_form_responses", viewFormResponsesArray);
+                    }
+
+                    historyDataArr.put(historyDetailsObject);
+                }
+                historyDataObj.put("history_data", historyDataArr);
+            }
+            System.out.println(" Final data " +historyDataObj.toString());
+
+        } catch (Exception e) {
+            throw new InvalidIdbrPeriodException("Problem in parsing History Detail GraphQL responses" + e.getMessage(), e);
+        }
+        return historyDataObj.toString();
     }
 
 }
