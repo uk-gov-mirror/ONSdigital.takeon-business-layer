@@ -36,13 +36,14 @@ public class HistoryDetailsResponse {
             for (int i = 0; i < outputArray.length(); i++) {
                 periodStr = outputArray.getJSONObject(i).getString("periodicity");
             }
+            //This is when no no periodicity is associated to a given survey
             if (periodStr.isEmpty()) {
                 throw new InvalidJsonException(" There is no periodicity for the given survey ");
             }
 
         } else {
-            //This is when no no periodicity is associated to a given survey
-            throw new InvalidJsonException(" There is no configured Survey table which provided periodicity");
+            //This is no survey table
+            throw new InvalidJsonException(" There is no configuration Survey table which provides periodicity");
         }
 
         return periodStr;
@@ -62,7 +63,7 @@ public class HistoryDetailsResponse {
             log.info("IDBR previous periods: " +periods.toString());
             historyPeriodList.addAll(periods);
         } catch (Exception e) {
-            throw new InvalidIdbrPeriodException("Problem in getting IDBR periods");
+            throw new InvalidIdbrPeriodException("Problem in getting IDBR periods"+e.getMessage(), e);
         }
         return historyPeriodList;
     }
