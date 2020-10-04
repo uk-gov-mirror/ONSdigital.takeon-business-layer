@@ -1,7 +1,10 @@
 package uk.gov.ons.collection.entity;
 
+import lombok.extern.log4j.Log4j2;
+
 import java.util.*;
 
+@Log4j2
 public class HistoryDetailsQuery {
 
     private HashMap<String, String> variables;
@@ -21,14 +24,12 @@ public class HistoryDetailsQuery {
     public String buildHistoryDetailsQuery(List<String> historyPeriodList) {
 
         StringBuilder historyDetailsQuery = new StringBuilder();
-        historyDetailsQuery.append("{\"query\": \"query historydetails ");
-        historyDetailsQuery.append("{ allContributors(filter: ");
+        historyDetailsQuery.append("{\"query\": \"query historydetails { allContributors(filter: ");
         historyDetailsQuery.append(buildFilterCondition(historyPeriodList));
-        historyDetailsQuery.append("} orderBy:PERIOD_DESC) {");
+        historyDetailsQuery.append("}, orderBy:PERIOD_DESC) {");
         historyDetailsQuery.append("nodes { survey period reference formByFormid {formdefinitionsByFormid ");
         historyDetailsQuery.append("{ nodes { questioncode type derivedformula displaytext displayquestionnumber displayorder}}}");
-        historyDetailsQuery.append(" responsesByReferenceAndPeriodAndSurvey {nodes {instance questioncode response}}}}}\"");
-        historyDetailsQuery.append("}");
+        historyDetailsQuery.append(" responsesByReferenceAndPeriodAndSurvey {nodes {instance questioncode response}}}}}\"}");
         return historyDetailsQuery.toString();
     }
 
@@ -72,17 +73,19 @@ public class HistoryDetailsQuery {
     }
 
     public String buildFilterCondition(List<String> historyPeriodList) {
+        log.info("Reference : "+retrieveCurrentReference());
+        log.info("Survey : "+retrieveSurvey());
         StringBuilder sbFilter = new StringBuilder();
         sbFilter.append("{");
-        sbFilter.append("reference: {equalTo:");
-        sbFilter.append(" \"").append(retrieveCurrentReference());
-        sbFilter.append("\"}, survey: {equalTo:");
-        sbFilter.append(" \"").append(retrieveSurvey());
-        sbFilter.append("\"}, period: {in: [");
+        sbFilter.append("reference: {equalTo: ");
+        sbFilter.append("\\\"").append(retrieveCurrentReference());
+        sbFilter.append("\\\"}, survey: {equalTo: ");
+        sbFilter.append("\\\"").append(retrieveSurvey());
+        sbFilter.append("\\\"}, period: {in: [");
 
         StringJoiner joiner = new StringJoiner(",");
         for (String eachPeriod : historyPeriodList) {
-            joiner.add("\"" + eachPeriod + "\"");
+            joiner.add("\\\"" + eachPeriod + "\\\"");
         }
         sbFilter.append(joiner.toString());
         sbFilter.append("]}");

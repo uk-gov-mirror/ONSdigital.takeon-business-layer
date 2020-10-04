@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.gov.ons.collection.exception.InvalidIdbrPeriodException;
 import uk.gov.ons.collection.exception.InvalidJsonException;
 import uk.gov.ons.collection.utilities.RelativePeriod;
 
@@ -38,13 +39,13 @@ public class HistoryDetailsResponse {
 
         } else {
             //This is when no no periodicity is associated to a given survey
-            throw new InvalidJsonException(" There is no periodicity for the given survey ");
+            throw new InvalidJsonException(" There is no configured Survey table which provided periodicity");
         }
 
         return periodStr;
     }
 
-    public List<String> getHistoryPeriods(String currentPeriod, String periodicity) {
+    public List<String> getHistoryPeriods(String currentPeriod, String periodicity) throws InvalidIdbrPeriodException {
         List<String> historyPeriodList = new ArrayList<String>();
         List<Integer> offsetList = new ArrayList<Integer>();
 
@@ -58,7 +59,7 @@ public class HistoryDetailsResponse {
             log.info("IDBR previous periods: " +periods.toString());
             historyPeriodList.addAll(periods);
         } catch (Exception e) {
-
+            throw new InvalidIdbrPeriodException("Problem in getting IDBR periods");
         }
         return historyPeriodList;
     }

@@ -49,6 +49,7 @@ GraphQlService qlService;
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful retrieval of History details", response = String.class)})
     public String viewHistoryDetails(@MatrixVariable Map<String, String> searchParameters) {
+        log.info("Calling History details API: "+searchParameters);
         HistoryDetailsQuery  detailsQuery = new HistoryDetailsQuery(searchParameters);
         String qlPeriodicityQuery = detailsQuery.buildSurveyPeriodicityQuery();
         String periodicityStr;
@@ -69,7 +70,7 @@ GraphQlService qlService;
                 String historyQuery = detailsQuery.buildHistoryDetailsQuery(historyPeriodList);
                 log.info("History Details Query: "+historyQuery);
                 String historyDetailsResponse = qlService.qlSearch(historyQuery);
-                log.info("History Details Response: "+historyQuery);
+                log.info("History Details Response: "+historyDetailsResponse);
             }
 
         } catch (Exception e) {
