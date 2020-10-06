@@ -17,10 +17,6 @@ public class HistoryDetailsQuery {
         this.variables = (variables == null) ? new HashMap<>() : new HashMap<>(variables);
     }
 
-    public HistoryDetailsQuery() {
-
-    }
-
     public String buildHistoryDetailsQuery(List<String> historyPeriodList) {
 
         StringBuilder historyDetailsQuery = new StringBuilder();
@@ -45,14 +41,6 @@ public class HistoryDetailsQuery {
 
     }
 
-
-    public String buildVariables() {
-        StringJoiner joiner = new StringJoiner(",");
-        variables.forEach((key, value) -> {
-            joiner.add("\"" + key + "\": \"" + value + "\"");
-        });
-        return joiner.toString();
-    }
 
     public String buildVariableForPeriodicity() {
         StringBuilder sb = new StringBuilder();
