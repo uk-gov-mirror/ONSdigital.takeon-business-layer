@@ -3,14 +3,10 @@ package uk.gov.ons.collection.test;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import uk.gov.ons.collection.entity.HistoryDetailsResponse;
-import uk.gov.ons.collection.utilities.QlQueryResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -91,8 +87,7 @@ public class HistoryDetailsResponseTest {
         String expectedExceptionMessage = " There is no configuration Survey table which provides periodicity";
         HistoryDetailsResponse response = new HistoryDetailsResponse(inputString);
         try {
-            String responsePeriodicity = response.parsePeriodicityFromSurvey();
-            System.out.println(" Output "+ responsePeriodicity);
+            response.parsePeriodicityFromSurvey();
         } catch (Exception e) {
             assertTrue(true);
             assertEquals(expectedExceptionMessage, e.getMessage());
