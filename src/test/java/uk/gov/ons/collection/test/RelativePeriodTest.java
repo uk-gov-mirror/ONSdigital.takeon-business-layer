@@ -187,11 +187,10 @@ public class RelativePeriodTest {
             offsetList.add(1);
             offsetList.add(2);
             offsetList.add(3);
-            offsetList.add(4);
-            offsetList.add(5);
+            String expectedIDBRPeriods = "[201902, 201901, 201812]";
 
             List<String> periods = rp.getIdbrPeriods(offsetList, "201903");
-            System.out.println(periods.toString());
+            assertEquals(expectedIDBRPeriods, periods.toString());
         } catch (Exception e) {
             assertTrue(false);
         }

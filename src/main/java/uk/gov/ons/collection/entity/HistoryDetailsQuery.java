@@ -48,16 +48,28 @@ public class HistoryDetailsQuery {
         return sb.toString();
     }
 
-    public String retrieveCurrentPeriod() {
-        return variables.get(PERIOD);
+    public String retrieveCurrentPeriod() throws NullPointerException {
+        String period = variables.get(PERIOD);
+        if (period == null) {
+            throw new NullPointerException("There is a problem and UI is not sending Current Period");
+        }
+        return period;
     }
 
-    public String retrieveCurrentReference() {
-        return variables.get(REFERENCE);
+    public String retrieveCurrentReference() throws NullPointerException {
+        String reference = variables.get(REFERENCE);
+        if (reference == null) {
+            throw new NullPointerException("There is a problem and UI is not sending Reference");
+        }
+        return reference;
     }
 
-    public String retrieveSurvey() {
-        return variables.get(SURVEY);
+    public String retrieveSurvey() throws NullPointerException {
+        String survey = variables.get(SURVEY);
+        if (survey == null) {
+            throw new NullPointerException("There is a problem and UI is not sending Survey");
+        }
+        return survey;
     }
 
     public String buildFilterCondition(List<String> historyPeriodList) {

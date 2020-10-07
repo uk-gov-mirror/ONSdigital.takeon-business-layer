@@ -2,6 +2,8 @@ package uk.gov.ons.collection.test;
 
 import org.junit.jupiter.api.Test;
 import uk.gov.ons.collection.entity.HistoryDetailsQuery;
+import uk.gov.ons.collection.exception.InvalidJsonException;
+import uk.gov.ons.collection.service.BatchDataIngest;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class HistoryDetailsQueryTest {
 
@@ -30,6 +33,15 @@ public class HistoryDetailsQueryTest {
         assertEquals(expectedPeriod, historyQuery.retrieveCurrentPeriod());
         assertEquals(expectedSurvey, historyQuery.retrieveSurvey());
         assertEquals(expected, historyQuery.buildVariableForPeriodicity());
+    }
+
+    @Test
+    void verify_null_input_parameters_history_data_ThrowsAnException() {
+        Map<String,String> parameters = null;
+        HistoryDetailsQuery historyQuery = new HistoryDetailsQuery(parameters);
+        assertThrows(NullPointerException.class, () -> historyQuery.retrieveCurrentReference());
+        assertThrows(NullPointerException.class, () -> historyQuery.retrieveSurvey());
+        assertThrows(NullPointerException.class, () -> historyQuery.retrieveCurrentPeriod());
     }
 
     @Test

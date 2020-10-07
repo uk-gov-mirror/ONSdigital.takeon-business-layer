@@ -28,6 +28,10 @@ public class HistoryDetailsResponse {
         }
     }
 
+    public HistoryDetailsResponse() {
+
+    }
+
     public String parsePeriodicityFromSurvey() throws InvalidJsonException {
         var outputArray = new JSONArray();
         String periodStr = "";
@@ -114,10 +118,9 @@ public class HistoryDetailsResponse {
                 }
                 historyDataObj.put("history_data", historyDataArr);
             }
-            System.out.println(" Final data " +historyDataObj.toString());
 
         } catch (Exception e) {
-            throw new InvalidIdbrPeriodException("Problem in parsing History Detail GraphQL responses" + e.getMessage(), e);
+            throw new InvalidIdbrPeriodException("Problem in parsing History Detail GraphQL responses " + e.getMessage(), e);
         }
         return historyDataObj.toString();
     }
