@@ -114,6 +114,4 @@ public class ContributorController {
         log.info("Response output before sending to Lambda: " + output);
         return output;
     }
-
-    //New API for history tab to show all back periods
 }
