@@ -9,6 +9,11 @@ import org.junit.jupiter.api.Test;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import uk.gov.ons.collection.entity.HistoryDetailsResponse;
+import uk.gov.ons.collection.utilities.QlQueryResponse;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Log4j2
 public class HistoryDetailsResponseTest {
@@ -67,6 +72,31 @@ public class HistoryDetailsResponseTest {
         }
         System.out.println(" Final data " +historyDataObj.toString());
 
+    }
+
+    @Test
+    void parse_periodicity_nullInputJson_returnException() {
+        HistoryDetailsResponse response = new HistoryDetailsResponse(null);
+        try {
+            response.parsePeriodicityFromSurvey();
+        } catch (Exception e) {
+            assertTrue(true);
+            System.out.println("Exception here");
+        }
+    }
+
+    @Test
+    void parse_validButNoPeriodicityData_givesValidException() {
+        String inputString = "{\"data\":{\"allSurveys\":{\"nodes\":[]}}}";
+        String expectedExceptionMessage = " There is no configuration Survey table which provides periodicity";
+        HistoryDetailsResponse response = new HistoryDetailsResponse(inputString);
+        try {
+            String responsePeriodicity = response.parsePeriodicityFromSurvey();
+            System.out.println(" Output "+ responsePeriodicity);
+        } catch (Exception e) {
+            assertTrue(true);
+            assertEquals(expectedExceptionMessage, e.getMessage());
+        }
     }
 
 }
