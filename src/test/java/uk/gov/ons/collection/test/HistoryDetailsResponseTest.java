@@ -59,7 +59,6 @@ public class HistoryDetailsResponseTest {
         try {
             String actualJSONOutput = response.parseHistoryDataResponses(responseJSON);
             assertEquals(expectedOutput, actualJSONOutput);
-            System.out.println(actualJSONOutput);
         } catch (Exception e) {
             assertTrue(false);
         }
@@ -114,7 +113,6 @@ public class HistoryDetailsResponseTest {
             response.parsePeriodicityFromSurvey();
         } catch (Exception e) {
             assertTrue(true);
-            System.out.println("Exception here");
         }
     }
 

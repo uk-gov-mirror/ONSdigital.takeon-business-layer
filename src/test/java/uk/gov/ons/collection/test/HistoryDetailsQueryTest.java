@@ -36,7 +36,7 @@ public class HistoryDetailsQueryTest {
     }
 
     @Test
-    void verify_null_input_parameters_history_data_ThrowsAnException() {
+    void verify_null_input_parameters_history_input_data_ThrowsAnException() {
         Map<String,String> parameters = null;
         HistoryDetailsQuery historyQuery = new HistoryDetailsQuery(parameters);
         assertThrows(NullPointerException.class, () -> historyQuery.retrieveCurrentReference());

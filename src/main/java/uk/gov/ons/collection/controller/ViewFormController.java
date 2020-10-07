@@ -49,7 +49,7 @@ GraphQlService qlService;
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful retrieval of History details", response = String.class)})
     public String viewHistoryDetails(@MatrixVariable Map<String, String> searchParameters) {
-        log.info("Calling History details API: "+searchParameters);
+        log.info("Calling History details API: " + searchParameters);
         HistoryDetailsQuery  detailsQuery = new HistoryDetailsQuery(searchParameters);
         String qlPeriodicityQuery = detailsQuery.buildSurveyPeriodicityQuery();
         String periodicityStr;
@@ -57,20 +57,20 @@ GraphQlService qlService;
         log.info("Survey Periodicity Query: " + qlPeriodicityQuery);
         try {
             String qlResponsePeriodicity = qlService.qlSearch(qlPeriodicityQuery);
-            log.info ("Graph QL Response for periodicity: " +qlResponsePeriodicity);
+            log.info("Graph QL Response for periodicity: " + qlResponsePeriodicity);
             HistoryDetailsResponse responsePeriodicity = new HistoryDetailsResponse(qlResponsePeriodicity);
             periodicityStr = responsePeriodicity.parsePeriodicityFromSurvey();
-            log.info(" Periodicity from Survey table: "+periodicityStr);
+            log.info(" Periodicity from Survey table: " + periodicityStr);
             String currentPeriod = detailsQuery.retrieveCurrentPeriod();
-            log.info ("Current Period from UI: " + currentPeriod);
+            log.info("Current Period from UI: " + currentPeriod);
 
             List<String> historyPeriodList = responsePeriodicity.getHistoryPeriods(currentPeriod, periodicityStr);
-            log.info ("Final History Periods: " + historyPeriodList.toString());
+            log.info("Final History Periods: " + historyPeriodList.toString());
             if (historyPeriodList.size() > 0) {
                 String historyQuery = detailsQuery.buildHistoryDetailsQuery(historyPeriodList);
-                log.info("History Details Query: "+historyQuery);
+                log.info("History Details Query: " + historyQuery);
                 String historyDetailsResponse = qlService.qlSearch(historyQuery);
-                log.info("History Details Response: "+historyDetailsResponse);
+                log.info("History Details Response: " + historyDetailsResponse);
                 responseText = responsePeriodicity.parseHistoryDataResponses(historyDetailsResponse);
             }
 

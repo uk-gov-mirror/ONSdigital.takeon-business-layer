@@ -2,7 +2,10 @@ package uk.gov.ons.collection.entity;
 
 import lombok.extern.log4j.Log4j2;
 
-import java.util.*;
+import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.StringJoiner;
 
 @Log4j2
 public class HistoryDetailsQuery {
@@ -73,8 +76,8 @@ public class HistoryDetailsQuery {
     }
 
     public String buildFilterCondition(List<String> historyPeriodList) {
-        log.info("Reference : "+retrieveCurrentReference());
-        log.info("Survey : "+retrieveSurvey());
+        log.info("Reference : " + retrieveCurrentReference());
+        log.info("Survey : " + retrieveSurvey());
         StringBuilder sbFilter = new StringBuilder();
         sbFilter.append("{");
         sbFilter.append("reference: {equalTo: ");

@@ -58,27 +58,27 @@ public class HistoryDetailsResponse {
         List<Integer> offsetList = new ArrayList<Integer>();
 
         historyPeriodList.add(currentPeriod);
-        for(int i=1; i <= NUMBER_HISTORY_PERIODS; i++) {
+        for (int i = 1; i <= NUMBER_HISTORY_PERIODS; i++) {
             offsetList.add(i);
         }
         try {
             RelativePeriod rp = new RelativePeriod(periodicity);
             List<String> periods = rp.getIdbrPeriods(offsetList, currentPeriod);
-            log.info("IDBR previous periods: " +periods.toString());
+            log.info("IDBR previous periods: " + periods.toString());
             historyPeriodList.addAll(periods);
         } catch (Exception e) {
-            throw new InvalidIdbrPeriodException("Problem in getting IDBR periods"+e.getMessage(), e);
+            throw new InvalidIdbrPeriodException("Problem in getting IDBR periods" + e.getMessage(), e);
         }
         return historyPeriodList;
     }
 
-    public String parseHistoryDataResponses(String responseJSON) throws InvalidIdbrPeriodException {
-        JSONObject queryOutput = new JSONObject(responseJSON);
+    public String parseHistoryDataResponses(String responseJson) throws InvalidIdbrPeriodException {
+        JSONObject queryOutput = new JSONObject(responseJson);
         JSONArray contribArray = new JSONArray();
         var historyDataObj = new JSONObject();
         var historyDataArr = new JSONArray();
         try {
-            if (queryOutput.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").length() > 0){
+            if (queryOutput.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").length() > 0) {
                 contribArray = queryOutput.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes");
                 for (int i = 0; i < contribArray.length(); i++) {
                     JSONObject eachContributorObj = queryOutput.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").getJSONObject(i);
@@ -86,10 +86,11 @@ public class HistoryDetailsResponse {
                     historyDetailsObject.put(REFERENCE, eachContributorObj.get(REFERENCE));
                     historyDetailsObject.put(PERIOD, eachContributorObj.get(PERIOD));
                     historyDetailsObject.put(SURVEY,eachContributorObj.get(SURVEY));
-                    JSONArray formDefinitionArray = eachContributorObj .getJSONObject("formByFormid").getJSONObject("formdefinitionsByFormid").getJSONArray("nodes");
+                    JSONArray formDefinitionArray = eachContributorObj .getJSONObject("formByFormid")
+                            .getJSONObject("formdefinitionsByFormid").getJSONArray("nodes");
                     if (formDefinitionArray.length() > 0) {
                         var viewFormResponsesArray = new JSONArray();
-                        for(int j = 0; j < formDefinitionArray.length(); j++) {
+                        for (int j = 0; j < formDefinitionArray.length(); j++) {
                             var eachFormObject = new JSONObject();
                             eachFormObject.put("questioncode", formDefinitionArray.getJSONObject(j).getString("questioncode"));
                             eachFormObject.put("displaytext", formDefinitionArray.getJSONObject(j).getString("displaytext"));
@@ -103,9 +104,10 @@ public class HistoryDetailsResponse {
                         var responseArray = new JSONArray();
                         responseArray = queryOutput.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").getJSONObject(i)
                                 .getJSONObject("responsesByReferenceAndPeriodAndSurvey").getJSONArray("nodes");
-                        for(int k = 0; k < viewFormResponsesArray.length(); k++){
-                            for(int l = 0; l < responseArray.length(); l++){
-                                if(viewFormResponsesArray.getJSONObject(k).getString("questioncode").equals(responseArray.getJSONObject(l).getString("questioncode"))) {
+                        for (int k = 0; k < viewFormResponsesArray.length(); k++) {
+                            for (int l = 0; l < responseArray.length(); l++) {
+                                if (viewFormResponsesArray.getJSONObject(k).getString("questioncode").equals(responseArray.getJSONObject(l)
+                                        .getString("questioncode"))) {
                                     viewFormResponsesArray.getJSONObject(k).put("response", responseArray.getJSONObject(l).getString("response"));
                                     viewFormResponsesArray.getJSONObject(k).put("instance", responseArray.getJSONObject(l).getInt("instance"));
                                 }
