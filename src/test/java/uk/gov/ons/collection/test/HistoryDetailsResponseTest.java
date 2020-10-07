@@ -94,4 +94,44 @@ public class HistoryDetailsResponseTest {
         }
     }
 
+
+    @Test
+    void parse_validPeriodicityData_givesPeriodicity() {
+        String inputString = "{\"data\":{\"allSurveys\":{\"nodes\":[{\"periodicity\":\"Monthly\"}]}}}";
+        String expectedPeriodicityOutput = "Monthly";
+        HistoryDetailsResponse response = new HistoryDetailsResponse(inputString);
+        try {
+            String actualPeriodicityResponse=  response.parsePeriodicityFromSurvey();
+            assertEquals(expectedPeriodicityOutput, actualPeriodicityResponse);
+        } catch (Exception e) {
+            assertTrue(false);
+        }
+    }
+
+    @Test
+    void columnChangeInSurveyTable_givesPeriodicityException() {
+        String inputString = "{\"data\":{\"allSurveys\":{\"nodes\":[{\"period\":\"Monthly\"}]}}}";
+        String expectedExceptionMessage = "JSONObject[\"periodicity\"] not found.";
+        HistoryDetailsResponse response = new HistoryDetailsResponse(inputString);
+        try {
+            response.parsePeriodicityFromSurvey();
+        } catch (Exception e) {
+            assertTrue(true);
+            assertEquals(expectedExceptionMessage, e.getMessage());
+        }
+    }
+
+    @Test
+    void emptyPeriodicityInSurveyTable_givesPeriodicityException() {
+        String inputString = "{\"data\":{\"allSurveys\":{\"nodes\":[{\"periodicity\":\"\"}]}}}";
+        String expectedExceptionMessage = " There is no periodicity for the given survey ";
+        HistoryDetailsResponse response = new HistoryDetailsResponse(inputString);
+        try {
+            response.parsePeriodicityFromSurvey();
+        } catch (Exception e) {
+            assertTrue(true);
+            assertEquals(expectedExceptionMessage, e.getMessage());
+        }
+    }
+
 }
