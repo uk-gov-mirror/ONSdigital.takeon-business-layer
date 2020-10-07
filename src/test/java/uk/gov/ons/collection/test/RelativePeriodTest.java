@@ -180,7 +180,7 @@ public class RelativePeriodTest {
     }
 
     @Test
-    void getPreviousPeriodValues() {
+    void verify_PreviousIDBRPeriods_BasedOn_offset_and_current_period() {
         try {
             RelativePeriod rp = new RelativePeriod("Monthly");
             List<Integer> offsetList = new ArrayList<Integer>();
