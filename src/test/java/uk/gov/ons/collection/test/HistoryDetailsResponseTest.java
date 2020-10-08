@@ -88,7 +88,7 @@ public class HistoryDetailsResponseTest {
             historyDetails.getHistoryPeriods(currentPeriod, periodicity);
         } catch (Exception e) {
             assertTrue(true);
-            assertEquals(expectedHistoryPeriods, expectedHistoryPeriods);
+            assertEquals(expectedHistoryPeriods, e.getMessage());
         }
     }
 
@@ -105,6 +105,61 @@ public class HistoryDetailsResponseTest {
             assertTrue(actualMessage.startsWith(expectedExceptionMessage));
         }
     }
+
+    @Test
+    void verify_empty_contributor_throwsAnException() {
+        String responseJSON = "{\n" +
+                "  \"data\": {\n" +
+                "    \"allContributors\": {\n" +
+                "      \"nodes\": []\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
+        HistoryDetailsResponse response = new HistoryDetailsResponse(responseJSON);
+        String expectedExceptionMessage = "There are no contributors for a given survey, reference and periods. Please verify";
+        try {
+            response.parseHistoryDataResponses(responseJSON);
+        } catch (Exception e) {
+            String actualMessage = e.getMessage();
+            assertTrue(true);
+            assertTrue(actualMessage.contains(expectedExceptionMessage));
+        }
+    }
+
+    @Test
+    void verify_empty_form_definition_throwsAnException() {
+        String responseJSON = "{\n" +
+                "  \"data\": {\n" +
+                "    \"allContributors\": {\n" +
+                "      \"nodes\": [\n" +
+                "        {\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"period\": \"201904\",\n" +
+                "          \"reference\": \"49900534932\",\n" +
+                "          \"status\": \"Form saved\",\n" +
+                "          \"formid\": 5,\n" +
+                "          \"formByFormid\": {\n" +
+                "            \"formdefinitionsByFormid\": {\n" +
+                "              \"nodes\": []\n" +
+                "            }\n" +
+                "          }\n" +
+                "        }\n" +
+                "      ]\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
+        HistoryDetailsResponse response = new HistoryDetailsResponse(responseJSON);
+        String expectedExceptionMessage = "There is no form definition associated to a given Contributor. Please verify";
+        try {
+            response.parseHistoryDataResponses(responseJSON);
+        } catch (Exception e) {
+            String actualMessage = e.getMessage();
+            System.out.println(actualMessage);
+            assertTrue(true);
+            assertTrue(actualMessage.contains(expectedExceptionMessage));
+        }
+    }
+
 
     @Test
     void parse_periodicity_nullInputJson_returnException() {

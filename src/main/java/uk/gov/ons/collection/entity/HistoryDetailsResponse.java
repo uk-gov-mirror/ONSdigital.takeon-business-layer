@@ -87,7 +87,7 @@ public class HistoryDetailsResponse {
                     historyDetailsObject.put(REFERENCE, eachContributorObj.get(REFERENCE));
                     historyDetailsObject.put(PERIOD, eachContributorObj.get(PERIOD));
                     historyDetailsObject.put(SURVEY,eachContributorObj.get(SURVEY));
-                    JSONArray formDefinitionArray = eachContributorObj .getJSONObject("formByFormid")
+                    JSONArray formDefinitionArray = eachContributorObj.getJSONObject("formByFormid")
                             .getJSONObject("formdefinitionsByFormid").getJSONArray("nodes");
                     if (formDefinitionArray.length() > 0) {
                         var viewFormResponsesArray = buildFormDefinitionJsonWithEmptyResponses(formDefinitionArray);

@@ -64,11 +64,11 @@ GraphQlService qlService;
             responsePeriodicity = new HistoryDetailsResponse(qlResponsePeriodicity);
             periodicityStr = responsePeriodicity.parsePeriodicityFromSurvey();
             log.info(" Periodicity from Survey table: " + periodicityStr);
-           currentPeriod = detailsQuery.retrieveCurrentPeriod();
+            currentPeriod = detailsQuery.retrieveCurrentPeriod();
             log.info("Current Period from UI: " + currentPeriod);
         } catch (Exception e) {
             e.printStackTrace();
-            responseText = "{\"error\":\"Problem in getting Periodicity "+e.getMessage()+ "\"}";
+            responseText = "{\"error\":\"Problem in getting Periodicity " + e.getMessage() + "\"}";
         }
         try {
             List<String> historyPeriodList = responsePeriodicity.getHistoryPeriods(currentPeriod, periodicityStr);
@@ -83,7 +83,7 @@ GraphQlService qlService;
 
         } catch (Exception e) {
             e.printStackTrace();
-            responseText = "{\"error\":\"Problem in getting History data "+e.getMessage()+ "\"}";
+            responseText = "{\"error\":\"Problem in getting History data " + e.getMessage() + "\"}";
         }
         log.info("History data before sending to UI: " + responseText);
         return responseText;
