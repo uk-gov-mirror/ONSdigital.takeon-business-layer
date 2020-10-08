@@ -50,20 +50,27 @@ GraphQlService qlService;
             @ApiResponse(code = 200, message = "Successful retrieval of History details", response = String.class)})
     public String viewHistoryDetails(@MatrixVariable Map<String, String> searchParameters) {
         log.info("Calling History details API: " + searchParameters);
-        HistoryDetailsQuery  detailsQuery = new HistoryDetailsQuery(searchParameters);
-        String qlPeriodicityQuery = detailsQuery.buildSurveyPeriodicityQuery();
-        String periodicityStr;
+        String periodicityStr = "";
         String responseText = "";
-        log.info("Survey Periodicity Query: " + qlPeriodicityQuery);
+        HistoryDetailsResponse responsePeriodicity = null;
+        HistoryDetailsQuery  detailsQuery = null;
+        String currentPeriod = "";
         try {
+            detailsQuery = new HistoryDetailsQuery(searchParameters);
+            String qlPeriodicityQuery = detailsQuery.buildSurveyPeriodicityQuery();
+            log.info("Survey Periodicity Query: " + qlPeriodicityQuery);
             String qlResponsePeriodicity = qlService.qlSearch(qlPeriodicityQuery);
             log.info("Graph QL Response for periodicity: " + qlResponsePeriodicity);
-            HistoryDetailsResponse responsePeriodicity = new HistoryDetailsResponse(qlResponsePeriodicity);
+            responsePeriodicity = new HistoryDetailsResponse(qlResponsePeriodicity);
             periodicityStr = responsePeriodicity.parsePeriodicityFromSurvey();
             log.info(" Periodicity from Survey table: " + periodicityStr);
-            String currentPeriod = detailsQuery.retrieveCurrentPeriod();
+           currentPeriod = detailsQuery.retrieveCurrentPeriod();
             log.info("Current Period from UI: " + currentPeriod);
-
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseText = "{\"error\":\"Problem in getting Periodicity "+e.getMessage()+ "\"}";
+        }
+        try {
             List<String> historyPeriodList = responsePeriodicity.getHistoryPeriods(currentPeriod, periodicityStr);
             log.info("Final History Periods: " + historyPeriodList.toString());
             if (historyPeriodList.size() > 0) {
@@ -76,7 +83,7 @@ GraphQlService qlService;
 
         } catch (Exception e) {
             e.printStackTrace();
-            responseText = "{\"error\":\"Invalid response from graphQL\"}";
+            responseText = "{\"error\":\"Problem in getting History data "+e.getMessage()+ "\"}";
         }
         log.info("History data before sending to UI: " + responseText);
         return responseText;
