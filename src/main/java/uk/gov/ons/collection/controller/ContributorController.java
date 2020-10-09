@@ -51,9 +51,13 @@ public class ContributorController {
         return responseText;
     }
 
+
     @ApiOperation(value = "Initial export of all database contents for results consumption", response = String.class)
-    @GetMapping(value = "/dbExport", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String fullDataExport() {
+    @RequestMapping(value = "/dbExport", produces = MediaType.APPLICATION_JSON_VALUE, method = { RequestMethod.GET})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful export of database contents", response = String.class) })
+    @ResponseBody
+    public String fullDataExport(@RequestBody String snapshotInputJson) {
         var response = "";
         try {
             response = qlService.qlSearch(new FullDataExport().buildQuery());
