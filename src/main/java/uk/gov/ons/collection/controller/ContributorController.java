@@ -60,12 +60,14 @@ public class ContributorController {
     @ResponseBody
     public String fullDataExport(@RequestBody String snapshotInputJson) {
         var response = "";
+        log.info("API CALL!! --> /contributor/dbExport:: " + snapshotInputJson);
         try {
             FullDataExport dataExport = new FullDataExport(snapshotInputJson);
             List<String> periodList = dataExport.retrievePeriodFromSnapshotInput();
             String queryStr = dataExport.buildSnapshotSurveyPeriodQuery(periodList);
             log.info("GraphQL Query: " + queryStr);
             response = qlService.qlSearch(queryStr);
+            log.info("GraphQL Query Response: " + response);
         } catch (Exception e) {
             log.info("Exception: " + e);
             log.info("QL Response: " + response);

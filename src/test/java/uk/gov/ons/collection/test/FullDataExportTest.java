@@ -50,11 +50,11 @@ public class FullDataExportTest {
                 "  \"surveyperiods\": [\n" +
                 "    {\n" +
                 "      \"survey\": \"023\",\n" +
-                "      \"period\": \"201311\"\n" +
+                "      \"period\": \"201904\"\n" +
                 "    },\n" +
                 "    {\n" +
                 "      \"survey\": \"023\",\n" +
-                "      \"period\": \"201312\"\n" +
+                "      \"period\": \"201903\"\n" +
                 "    }\n" +
                 "  ]\n" +
                 "}";

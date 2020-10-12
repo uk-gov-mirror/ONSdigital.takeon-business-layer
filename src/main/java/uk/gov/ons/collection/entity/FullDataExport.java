@@ -45,6 +45,7 @@ public class FullDataExport {
 
     public String buildSnapshotSurveyPeriodQuery(List<String> periodList) {
         StringBuilder snapshotQuery = new StringBuilder();
+        snapshotQuery.append("{\"query\": \"");
         snapshotQuery.append("query dbExport {  allSurveys");
         snapshotQuery.append(buildSurveyFilterCondition());
         snapshotQuery.append("{nodes {survey description periodicity createdby createddate lastupdatedby lastupdateddate ");
@@ -79,6 +80,7 @@ public class FullDataExport {
         snapshotQuery.append("{nodes {");
         snapshotQuery.append("validationoutputid reference period survey validationid instance triggered formula ");
         snapshotQuery.append("createdby createddate lastupdatedby lastupdateddate}}}}}");
+        snapshotQuery.append("\"}");
 
         return snapshotQuery.toString();
     }
