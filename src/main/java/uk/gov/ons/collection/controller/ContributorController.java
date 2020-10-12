@@ -21,6 +21,7 @@ import uk.gov.ons.collection.utilities.QlQueryBuilder;
 import uk.gov.ons.collection.utilities.QlQueryResponse;
 import uk.gov.ons.collection.utilities.SelectionFileQuery;
 
+import java.util.List;
 import java.util.Map;
 import org.json.JSONObject;
 
@@ -60,7 +61,11 @@ public class ContributorController {
     public String fullDataExport(@RequestBody String snapshotInputJson) {
         var response = "";
         try {
-            response = qlService.qlSearch(new FullDataExport().buildQuery());
+            FullDataExport dataExport = new FullDataExport(snapshotInputJson);
+            List<String> periodList = dataExport.retrievePeriodFromSnapshotInput();
+            String queryStr = dataExport.buildSnapshotSurveyPeriodQuery(periodList);
+            log.info("GraphQL Query: " + queryStr);
+            response = qlService.qlSearch(queryStr);
         } catch (Exception e) {
             log.info("Exception: " + e);
             log.info("QL Response: " + response);

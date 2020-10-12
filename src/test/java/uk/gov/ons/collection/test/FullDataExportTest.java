@@ -3,6 +3,8 @@ package uk.gov.ons.collection.test;
 import org.junit.jupiter.api.Test;
 import uk.gov.ons.collection.entity.FullDataExport;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FullDataExportTest {
@@ -38,6 +40,37 @@ public class FullDataExportTest {
                         "createdby createddate lastupdatedby lastupdateddate}}}}}\"}";
         var query = new FullDataExport().buildQuery();
         assertEquals(expectedQuery,query);
+    }
+
+    @Test
+    void verify_input_snapshot_data() {
+
+        String snapshotInput = "{\n" +
+                "  \"snapshot_id\": \"14e0fb27-d450-44d4-8452-9f6996b00e27\",\n" +
+                "  \"surveyperiods\": [\n" +
+                "    {\n" +
+                "      \"survey\": \"023\",\n" +
+                "      \"period\": \"201311\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"survey\": \"023\",\n" +
+                "      \"period\": \"201312\"\n" +
+                "    }\n" +
+                "  ]\n" +
+                "}";
+        try {
+            FullDataExport dataExportObj = new FullDataExport(snapshotInput);
+            List<String> listPeriods = dataExportObj.retrievePeriodFromSnapshotInput();
+            System.out.println("Survey: " + dataExportObj.getSurvey());
+            System.out.println("Period List: " + listPeriods.toString());
+            System.out.println("Period Survey Filter Condition: " + dataExportObj.buildSurveyAndPeriodsFilterCondition(listPeriods));
+            System.out.println("Survey Filter Condition: " + dataExportObj.buildSurveyFilterCondition());
+            String queryStr = dataExportObj.buildSnapshotSurveyPeriodQuery(listPeriods);
+            System.out.println("Query String :"+queryStr);
+        } catch(Exception e) {
+
+        }
+
     }
 }
 
