@@ -36,8 +36,7 @@ public class FullDataExport {
                 listPeriods.add(surveyPeriodObj.getString("period"));
             }
         } else {
-            System.out.println ("No Snapshots");
-            throw new InvalidJsonException("There are no snapshot periods. Please verify");
+            throw new InvalidJsonException("There are no snapshot survey periods. Please verify");
         }
 
         return listPeriods;
