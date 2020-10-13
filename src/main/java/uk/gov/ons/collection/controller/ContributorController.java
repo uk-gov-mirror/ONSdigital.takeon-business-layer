@@ -54,7 +54,7 @@ public class ContributorController {
 
 
     @ApiOperation(value = "Initial export of all database contents for results consumption", response = String.class)
-    @RequestMapping(value = "/dbExport", produces = MediaType.APPLICATION_JSON_VALUE, method = { RequestMethod.GET})
+    @RequestMapping(value = "/dbExport", produces = MediaType.APPLICATION_JSON_VALUE, method = { RequestMethod.POST, RequestMethod.PUT })
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful export of database contents", response = String.class) })
     @ResponseBody
