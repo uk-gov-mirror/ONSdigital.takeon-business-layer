@@ -18,7 +18,7 @@ public class FullDataExport {
         try {
             jsonSurveySnapshotInput = new  JSONObject(inputJsonString);
         } catch (Exception e) {
-            throw new InvalidJsonException("The Survey snapshot input is invalid. Please verify "+e.getMessage());
+            throw new InvalidJsonException("The Survey snapshot input is invalid. Please verify " + e.getMessage());
         }
     }
 

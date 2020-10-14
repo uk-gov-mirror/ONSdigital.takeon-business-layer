@@ -69,7 +69,7 @@ public class ContributorController {
             response = qlService.qlSearch(queryStr);
             log.info("GraphQL Query Response: " + response);
         } catch (Exception e) {
-            log.error("Exception in loading data for db Export "+e.getMessage());
+            log.error("Exception in loading data for db Export " + e.getMessage());
             return "{\"error\":\"Error loading data for db Export " + e.getMessage() + "\"}";
         }
         return response;
