@@ -43,6 +43,23 @@ public class FullDataExportTest {
     }
 
     @Test
+    void verify_input_snapshot_data_periods() {
+
+    }
+
+    @Test
+    void verify_invalid_input_snapshot_data_throwsAnException() {
+
+    }
+
+    @Test
+    void verify_snapshot_data_output() {
+
+    }
+
+
+
+    @Test
     void verify_input_snapshot_data() {
 
         String snapshotInput = "{\n" +
