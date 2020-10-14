@@ -5,6 +5,9 @@ import uk.gov.ons.collection.exception.InvalidIdbrPeriodException;
 import uk.gov.ons.collection.exception.InvalidPeriodicityException;
 import uk.gov.ons.collection.utilities.RelativePeriod;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -174,6 +177,24 @@ public class RelativePeriodTest {
         } catch (Exception e) { 
             assertTrue(false);
         }
+    }
+
+    @Test
+    void verify_PreviousIDBRPeriods_BasedOn_offset_and_current_period() {
+        try {
+            RelativePeriod rp = new RelativePeriod("Monthly");
+            List<Integer> offsetList = new ArrayList<Integer>();
+            offsetList.add(1);
+            offsetList.add(2);
+            offsetList.add(3);
+            String expectedIDBRPeriods = "[201902, 201901, 201812]";
+
+            List<String> periods = rp.getIdbrPeriods(offsetList, "201903");
+            assertEquals(expectedIDBRPeriods, periods.toString());
+        } catch (Exception e) {
+            assertTrue(false);
+        }
+
     }
 
 }
