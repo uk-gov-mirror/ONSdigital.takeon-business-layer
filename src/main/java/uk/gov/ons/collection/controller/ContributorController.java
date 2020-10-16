@@ -67,12 +67,14 @@ public class ContributorController {
             String queryStr = dataExport.buildSnapshotSurveyPeriodQuery(periodList);
             log.info("GraphQL Query: " + queryStr);
             response = qlService.qlSearch(queryStr);
-            log.info("GraphQL Query Response: " + response);
+
         } catch (Exception e) {
             log.error("Exception in loading data for db Export " + e.getMessage());
             String message = e.getMessage() != null ? e.getMessage().replace("\"","'") : "";
-            return "{\"error\":\"Error loading data for db Export " + message + "\"}";
+            log.info("Error message after parsing:" + message);
+            response =  "{\"error\":\"Error loading data for db Export " + message + "\"}";
         }
+        log.info("Response before sending to GO Lambda: " + response);
         return response;
     }
 
