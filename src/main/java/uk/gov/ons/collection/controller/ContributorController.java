@@ -21,6 +21,7 @@ import uk.gov.ons.collection.utilities.QlQueryBuilder;
 import uk.gov.ons.collection.utilities.QlQueryResponse;
 import uk.gov.ons.collection.utilities.SelectionFileQuery;
 
+import java.util.List;
 import java.util.Map;
 import org.json.JSONObject;
 
@@ -51,17 +52,29 @@ public class ContributorController {
         return responseText;
     }
 
+
     @ApiOperation(value = "Initial export of all database contents for results consumption", response = String.class)
-    @GetMapping(value = "/dbExport", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String fullDataExport() {
+    @RequestMapping(value = "/dbExport", produces = MediaType.APPLICATION_JSON_VALUE, method = { RequestMethod.POST, RequestMethod.PUT })
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful export of database contents", response = String.class) })
+    @ResponseBody
+    public String fullDataExport(@RequestBody String snapshotInputJson) {
         var response = "";
+        log.info("API CALL!! --> /contributor/dbExport:: " + snapshotInputJson);
         try {
-            response = qlService.qlSearch(new FullDataExport().buildQuery());
+            FullDataExport dataExport = new FullDataExport(snapshotInputJson);
+            List<String> periodList = dataExport.retrievePeriodFromSnapshotInput();
+            String queryStr = dataExport.buildSnapshotSurveyPeriodQuery(periodList);
+            log.info("GraphQL Query: " + queryStr);
+            response = qlService.qlSearch(queryStr);
+
         } catch (Exception e) {
-            log.info("Exception: " + e);
-            log.info("QL Response: " + response);
-            return "{\"error\":\"Error loading data for db Export\"}";
+            log.error("Exception in loading data for db Export " + e.getMessage());
+            String message = e.getMessage() != null ? e.getMessage().replace("\"","'") : "";
+            log.info("Error message after parsing:" + message);
+            response =  "{\"error\":\"Error loading data for db Export " + message + "\"}";
         }
+        log.info("Response before sending to GO Lambda: " + response);
         return response;
     }
 
