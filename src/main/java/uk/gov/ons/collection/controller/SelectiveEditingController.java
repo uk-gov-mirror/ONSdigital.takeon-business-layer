@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.MatrixVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import uk.gov.ons.collection.entity.SelectiveEditingQuery;
+import uk.gov.ons.collection.entity.SelectiveEditingResponse;
 import uk.gov.ons.collection.service.GraphQlService;
 
 import java.util.Map;
@@ -24,13 +26,20 @@ public class SelectiveEditingController {
     GraphQlService qlService;
 
     @ApiOperation(value = "Get all selective editing data", response = String.class)
-    @GetMapping(value = "/loadData/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/loadconfigdata/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful retrieval of selective editing data", response = String.class)})
     public String loadSelectiveEditingData(@MatrixVariable Map<String, String> params) {
 
         log.info("API CALL!! --> /selectiveediting/loadData/{vars} :: " + params);
         String response = "";
+        SelectiveEditingQuery selectiveEditingQuery = null;
+
         try {
+            selectiveEditingQuery = new SelectiveEditingQuery(params);
+            String queryStr = selectiveEditingQuery.buildViewFormQuery();
+            String selectiveEditingQueryOutput = qlService.qlSearch(queryStr);
+            SelectiveEditingResponse selectiveEditingResponse = new SelectiveEditingResponse(selectiveEditingQueryOutput);
+            log.info("Selective Editing Query Output: "+selectiveEditingQueryOutput);
 
         } catch (Exception err) {
             log.error("Exception found in Selective Editing: " + err);
