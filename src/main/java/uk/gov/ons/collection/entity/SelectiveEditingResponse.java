@@ -40,49 +40,47 @@ public class SelectiveEditingResponse {
         String domain = "";
         String cellNumber = "";
         try {
-            if (jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").length() > 0) {
-                contribArray = jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes");
+            contribArray = jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes");
+            if (contribArray.length() > 0) {
                 JSONObject contributorObject = contribArray.getJSONObject(0);
-
                 selectiveEditingResultObj.put(REFERENCE, contributorObject.getString(REFERENCE));
                 selectiveEditingResultObj.put(PERIOD, contributorObject.getString(PERIOD));
                 selectiveEditingResultObj.put(SURVEY, contributorObject.getString(SURVEY));
-                domain = contributorObject.getString(DOMAIN);
-                cellNumber = contributorObject.getString(RESULTS_CELL_NUMBER);
+                domain = contributorObject.get(DOMAIN).toString();
+                cellNumber = contributorObject.get(RESULTS_CELL_NUMBER).toString();
                 selectiveEditingResultObj.put(RESULTS_CELL_NUMBER, cellNumber);
                 selectiveEditingResultObj.put(DOMAIN, domain);
-                JSONArray domainConfigArr = new JSONArray();
+                JSONArray domainConfigResultArr = new JSONArray();
 
-                if (jsonQlResponse.getJSONObject("data").getJSONObject("allSelectiveeditingconfigs").getJSONArray("nodes").length() > 0) {
-                    JSONArray domainConfigArray = jsonQlResponse.getJSONObject("data").getJSONObject("allSelectiveeditingconfigs").getJSONArray("nodes");
+                JSONArray domainConfigArray = jsonQlResponse.getJSONObject("data").getJSONObject("allSelectiveeditingconfigs").getJSONArray("nodes");
+                if (domainConfigArray.length() > 0) {
                     for (int i=0; i < domainConfigArray.length(); i++) {
                         JSONObject eachDomainConfigObject = domainConfigArray.getJSONObject(i);
                         if(eachDomainConfigObject.getString(DOMAIN).equals(domain)) {
                             //Match Found
                             var eachResultDomainObject = new JSONObject();
                             eachResultDomainObject.put(QUESTION_CODE, eachDomainConfigObject.getString(QUESTION_CODE));
-                            eachResultDomainObject.put(THRESHOLD, eachDomainConfigObject.getString(THRESHOLD));
-                            eachResultDomainObject.put(ESTIMATE, eachDomainConfigObject.getString(ESTIMATE));
-                            domainConfigArr.put(eachResultDomainObject);
+                            eachResultDomainObject.put(THRESHOLD, eachDomainConfigObject.get(THRESHOLD).toString());
+                            eachResultDomainObject.put(ESTIMATE, eachDomainConfigObject.get(ESTIMATE).toString());
+                            domainConfigResultArr.put(eachResultDomainObject);
                         }
                     }
-                    if (domainConfigArr.length() > 0) {
-                        selectiveEditingResultObj.put(DOMAIN_CONFIG, domainConfigArr);
+                    if (domainConfigResultArr.length() > 0) {
+                        selectiveEditingResultObj.put(DOMAIN_CONFIG, domainConfigResultArr);
                     } else {
                         throw new InvalidJsonException("There are no thresholds for a given domain in the contributor. Please verify");
                     }
                 } else {
                     throw new InvalidJsonException("There is no domain config. Please verify");
                 }
-                if (jsonQlResponse.getJSONObject("data").getJSONObject("allCelldetails").getJSONArray("nodes").length() > 0) {
-                    JSONArray cellDetailConfigArray = jsonQlResponse.getJSONObject("data").getJSONObject("allCelldetails").getJSONArray("nodes");
-
+                JSONArray cellDetailConfigArray = jsonQlResponse.getJSONObject("data").getJSONObject("allCelldetails").getJSONArray("nodes");
+                if (cellDetailConfigArray.length() > 0) {
                     boolean isCellNumberFound = false;
                     for (int i=0; i < cellDetailConfigArray.length(); i++) {
                         JSONObject eachDomainConfigObject = cellDetailConfigArray.getJSONObject(i);
-                        if(eachDomainConfigObject.getString(CELL_NUMBER).equals(cellNumber)) {
+                        if(eachDomainConfigObject.get(CELL_NUMBER).toString().equals(cellNumber)) {
                             //Match Found
-                            selectiveEditingResultObj.put(DESIGN_WEIGHT, eachDomainConfigObject.getString(DESIGN_WEIGHT));
+                            selectiveEditingResultObj.put(DESIGN_WEIGHT, eachDomainConfigObject.get(DESIGN_WEIGHT).toString());
                             isCellNumberFound = true;
                             break;
                         }

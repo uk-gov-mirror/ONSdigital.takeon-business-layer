@@ -38,11 +38,12 @@ public class SelectiveEditingController {
             selectiveEditingQuery = new SelectiveEditingQuery(params);
             String queryStr = selectiveEditingQuery.buildViewFormQuery();
             String selectiveEditingQueryOutput = qlService.qlSearch(queryStr);
-            SelectiveEditingResponse selectiveEditingResponse = new SelectiveEditingResponse(selectiveEditingQueryOutput);
             log.info("Selective Editing Query Output: "+selectiveEditingQueryOutput);
-
+            SelectiveEditingResponse selectiveEditingResponse = new SelectiveEditingResponse(selectiveEditingQueryOutput);
+            response = selectiveEditingResponse.parseSelectiveEditingQueryResponse();
+            log.info("Selective Editing Response before sending to lambda: "+response);
         } catch (Exception err) {
-            log.error("Exception found in Selective Editing: " + err);
+            log.error("Exception found in Selective Editing: " + err.getMessage());
             response = "{\"error\":\"Unable to load selective editing data\"}";
         }
         log.info("API Complete!! --> /selectiveediting/loadData/{vars}");
