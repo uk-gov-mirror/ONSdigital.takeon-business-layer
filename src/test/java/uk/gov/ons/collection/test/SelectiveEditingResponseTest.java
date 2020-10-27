@@ -1,7 +1,6 @@
 package uk.gov.ons.collection.test;
 
 import org.junit.jupiter.api.Test;
-import uk.gov.ons.collection.entity.HistoryDetailsResponse;
 import uk.gov.ons.collection.entity.SelectiveEditingResponse;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
