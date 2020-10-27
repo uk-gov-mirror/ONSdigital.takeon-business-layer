@@ -37,8 +37,8 @@ public class SelectiveEditingResponse {
     public String parseSelectiveEditingQueryResponse() throws InvalidJsonException {
         JSONArray contribArray;
         JSONObject selectiveEditingResultObj = new JSONObject();
-        String domain = "";
-        String cellNumber = "";
+        int domain = 0;
+        int cellNumber = 0;
         try {
             contribArray = jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes");
             if (contribArray.length() > 0) {
@@ -46,8 +46,8 @@ public class SelectiveEditingResponse {
                 selectiveEditingResultObj.put(REFERENCE, contributorObject.getString(REFERENCE));
                 selectiveEditingResultObj.put(PERIOD, contributorObject.getString(PERIOD));
                 selectiveEditingResultObj.put(SURVEY, contributorObject.getString(SURVEY));
-                domain = contributorObject.get(DOMAIN).toString();
-                cellNumber = contributorObject.get(RESULTS_CELL_NUMBER).toString();
+                domain = contributorObject.getInt(DOMAIN);
+                cellNumber = contributorObject.getInt(RESULTS_CELL_NUMBER);
                 selectiveEditingResultObj.put(RESULTS_CELL_NUMBER, cellNumber);
                 selectiveEditingResultObj.put(DOMAIN, domain);
                 JSONArray domainConfigResultArr = new JSONArray();
@@ -56,12 +56,12 @@ public class SelectiveEditingResponse {
                 if (domainConfigArray.length() > 0) {
                     for (int i=0; i < domainConfigArray.length(); i++) {
                         JSONObject eachDomainConfigObject = domainConfigArray.getJSONObject(i);
-                        if(eachDomainConfigObject.getString(DOMAIN).equals(domain)) {
+                        if(eachDomainConfigObject.getInt(DOMAIN) == domain) {
                             //Match Found
                             var eachResultDomainObject = new JSONObject();
                             eachResultDomainObject.put(QUESTION_CODE, eachDomainConfigObject.getString(QUESTION_CODE));
-                            eachResultDomainObject.put(THRESHOLD, eachDomainConfigObject.get(THRESHOLD).toString());
-                            eachResultDomainObject.put(ESTIMATE, eachDomainConfigObject.get(ESTIMATE).toString());
+                            eachResultDomainObject.put(THRESHOLD, eachDomainConfigObject.getFloat(THRESHOLD));
+                            eachResultDomainObject.put(ESTIMATE, eachDomainConfigObject.getInt(ESTIMATE));
                             domainConfigResultArr.put(eachResultDomainObject);
                         }
                     }
@@ -78,9 +78,9 @@ public class SelectiveEditingResponse {
                     boolean isCellNumberFound = false;
                     for (int i=0; i < cellDetailConfigArray.length(); i++) {
                         JSONObject eachDomainConfigObject = cellDetailConfigArray.getJSONObject(i);
-                        if(eachDomainConfigObject.get(CELL_NUMBER).toString().equals(cellNumber)) {
+                        if(eachDomainConfigObject.getInt(CELL_NUMBER) == cellNumber) {
                             //Match Found
-                            selectiveEditingResultObj.put(DESIGN_WEIGHT, eachDomainConfigObject.get(DESIGN_WEIGHT).toString());
+                            selectiveEditingResultObj.put(DESIGN_WEIGHT, eachDomainConfigObject.getInt(DESIGN_WEIGHT));
                             isCellNumberFound = true;
                             break;
                         }
