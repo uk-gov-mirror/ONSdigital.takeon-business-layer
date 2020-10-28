@@ -30,7 +30,7 @@ public class SelectiveEditingController {
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful retrieval of selective editing data", response = String.class)})
     public String loadSelectiveEditingData(@MatrixVariable Map<String, String> params) {
 
-        log.info("API CALL!! --> /selectiveediting/loadData/{vars} :: " + params);
+        log.info("API CALL!! --> /selectiveediting/loadconfigdata/{vars} :: " + params);
         String response = "";
         SelectiveEditingQuery selectiveEditingQuery = null;
 
@@ -44,9 +44,10 @@ public class SelectiveEditingController {
             log.info("Selective Editing Response before sending to lambda: "+response);
         } catch (Exception err) {
             log.error("Exception found in Selective Editing: " + err.getMessage());
-            response = "{\"error\":\"Unable to load selective editing data\"}";
+            String message = err.getMessage() != null ? err.getMessage().replace("\"","'") : "";
+            response = "{\"error\":\"Unable to load selective editing data" + message + "\"}";
         }
-        log.info("API Complete!! --> /selectiveediting/loadData/{vars}");
+        log.info("API Complete!! --> /selectiveediting/loadconfigdata");
         return response;
     }
 }
