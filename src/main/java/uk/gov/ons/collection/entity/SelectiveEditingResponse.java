@@ -21,6 +21,10 @@ public class SelectiveEditingResponse {
     private static final String ESTIMATE = "estimate";
     private static final String DESIGN_WEIGHT = "designweight";
     private static final String DOMAIN_CONFIG = "domainconfig";
+    private static final String CURRENT_RESPONSE = "currentresponse";
+    private static final String PREVIOUS_RESPONSE = "previousresponse";
+
+    private static final String EMPTY_RESPONSE = "";
 
 
 
@@ -59,9 +63,21 @@ public class SelectiveEditingResponse {
                         if(eachDomainConfigObject.getInt(DOMAIN) == domain) {
                             //Match Found
                             var eachResultDomainObject = new JSONObject();
-                            eachResultDomainObject.put(QUESTION_CODE, eachDomainConfigObject.getString(QUESTION_CODE));
+                            String questionCode = eachDomainConfigObject.getString(QUESTION_CODE);
+                            eachResultDomainObject.put(QUESTION_CODE, questionCode);
                             eachResultDomainObject.put(THRESHOLD, eachDomainConfigObject.getFloat(THRESHOLD));
                             eachResultDomainObject.put(ESTIMATE, eachDomainConfigObject.getInt(ESTIMATE));
+                            eachResultDomainObject.put(CURRENT_RESPONSE, EMPTY_RESPONSE);
+                            eachResultDomainObject.put(PREVIOUS_RESPONSE, EMPTY_RESPONSE);
+                            //Logic for currentresponse
+                            buildCurrentAndPreviousResponsesForDomainConfig(eachResultDomainObject,CURRENT_RESPONSE,
+                                    questionCode, contributorObject);
+                            //Logic for previous response
+                            if (contribArray.length() == 2) {
+                                JSONObject previousContributorObject = contribArray.getJSONObject(1);
+                                buildCurrentAndPreviousResponsesForDomainConfig(eachResultDomainObject,PREVIOUS_RESPONSE,
+                                        questionCode, previousContributorObject);
+                            }
                             domainConfigResultArr.put(eachResultDomainObject);
                         }
                     }
@@ -100,6 +116,18 @@ public class SelectiveEditingResponse {
         return selectiveEditingResultObj.toString();
     }
 
+    private void buildCurrentAndPreviousResponsesForDomainConfig(JSONObject eachResultDomainObject, String key,
+                                                                 String domainQuestionCode, JSONObject contributorObject) throws JSONException {
+        //Logic for current and previous response
+        JSONArray responseArray = contributorObject.getJSONObject("responsesByReferenceAndPeriodAndSurvey").getJSONArray("nodes");
 
+        for (int l = 0; l < responseArray.length(); l++) {
+            if (domainQuestionCode.equals(responseArray.getJSONObject(l)
+                    .getString("questioncode"))) {
+                eachResultDomainObject.put(key, responseArray.getJSONObject(l).getString("response"));
+                break;
+            }
+        }
+    }
 
 }

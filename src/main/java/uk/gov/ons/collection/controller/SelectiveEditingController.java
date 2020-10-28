@@ -35,17 +35,20 @@ public class SelectiveEditingController {
         SelectiveEditingQuery selectiveEditingQuery = null;
 
         try {
-            selectiveEditingQuery = new SelectiveEditingQuery(params);
+            /*selectiveEditingQuery = new SelectiveEditingQuery(params);
             String queryStr = selectiveEditingQuery.buildViewFormQuery();
             String selectiveEditingQueryOutput = qlService.qlSearch(queryStr);
             log.info("Selective Editing Query Output: "+selectiveEditingQueryOutput);
             SelectiveEditingResponse selectiveEditingResponse = new SelectiveEditingResponse(selectiveEditingQueryOutput);
             response = selectiveEditingResponse.parseSelectiveEditingQueryResponse();
+            */
+            response = "{\"reference\":\"49900534932\",\"designweight\":2,\"resultscellnumber\":1,\"period\":\"201904\",\"domain\":1,\"survey\":\"023\",\"domainconfig\":[{\"currentresponse\":\"1\",\"questioncode\":\"20\",\"estimate\":100000000,\"threshold\":0.001,\"previousresponse\":\"3\"}]}";
             log.info("Selective Editing Response before sending to lambda: "+response);
+
         } catch (Exception err) {
             log.error("Exception found in Selective Editing: " + err.getMessage());
             String message = err.getMessage() != null ? err.getMessage().replace("\"","'") : "";
-            response = "{\"error\":\"Unable to load selective editing data" + message + "\"}";
+            response = "{\"error\":\"Unable to load selective editing config data " + message + "\"}";
         }
         log.info("API Complete!! --> /selectiveediting/loadconfigdata");
         return response;

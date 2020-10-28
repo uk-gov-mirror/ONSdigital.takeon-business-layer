@@ -10,7 +10,88 @@ public class SelectiveEditingResponseTest {
 
     @Test
     void selectiveEditingConfigDetailsDetails_validJSONDataT(){
-        String responseJSON = "{\"data\":{\"allContributors\":{\"nodes\":[{\"reference\":\"49900534932\",\"period\":\"201904\",\"survey\":\"023\",\"resultscellnumber\":1,\"domain\":1}]},\"allSelectiveeditingconfigs\":{\"nodes\":[{\"survey\":\"023\",\"period\":\"201904\",\"domain\":\"1\",\"questioncode\":\"20\",\"threshold\":0.001,\"estimate\":100000000},{\"survey\":\"023\",\"period\":\"201904\",\"domain\":\"1\",\"questioncode\":\"21\",\"threshold\":0.002,\"estimate\":100000000}]},\"allCelldetails\":{\"nodes\":[{\"survey\":\"023\",\"period\":\"201904\",\"cellnumber\":1,\"designweight\":2}]}}}";
+
+
+        String responseJSON = "{\n" +
+                "  \"data\": {\n" +
+                "    \"allContributors\": {\n" +
+                "      \"nodes\": [\n" +
+                "        {\n" +
+                "          \"reference\": \"49900534932\",\n" +
+                "          \"period\": \"201904\",\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"resultscellnumber\": 1,\n" +
+                "          \"domain\": 1,\n" +
+                "          \"responsesByReferenceAndPeriodAndSurvey\": {\n" +
+                "            \"nodes\": [\n" +
+                "              {\n" +
+                "                \"questioncode\": \"20\",\n" +
+                "                \"period\": \"201904\",\n" +
+                "                \"response\": \"1\"\n" +
+                "              },\n" +
+                "              {\n" +
+                "                \"questioncode\": \"21\",\n" +
+                "                \"period\": \"201904\",\n" +
+                "                \"response\": \"2\"\n" +
+                "              }\n" +
+                "            ]\n" +
+                "          }\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"reference\": \"49900534932\",\n" +
+                "          \"period\": \"201903\",\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"resultscellnumber\": null,\n" +
+                "          \"domain\": null,\n" +
+                "          \"responsesByReferenceAndPeriodAndSurvey\": {\n" +
+                "            \"nodes\": [\n" +
+                "              {\n" +
+                "                \"questioncode\": \"20\",\n" +
+                "                \"period\": \"201903\",\n" +
+                "                \"response\": \"3\"\n" +
+                "              },\n" +
+                "              {\n" +
+                "                \"questioncode\": \"21\",\n" +
+                "                \"period\": \"201903\",\n" +
+                "                \"response\": \"4\"\n" +
+                "              }\n" +
+                "            ]\n" +
+                "          }\n" +
+                "        }\n" +
+                "      ]\n" +
+                "    },\n" +
+                "    \"allSelectiveeditingconfigs\": {\n" +
+                "      \"nodes\": [\n" +
+                "        {\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"period\": \"201904\",\n" +
+                "          \"domain\": \"1\",\n" +
+                "          \"questioncode\": \"20\",\n" +
+                "          \"threshold\": 0.001,\n" +
+                "          \"estimate\": 100000000\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"period\": \"201904\",\n" +
+                "          \"domain\": \"1\",\n" +
+                "          \"questioncode\": \"21\",\n" +
+                "          \"threshold\": 0.002,\n" +
+                "          \"estimate\": 100000000\n" +
+                "        }\n" +
+                "      ]\n" +
+                "    },\n" +
+                "    \"allCelldetails\": {\n" +
+                "      \"nodes\": [\n" +
+                "        {\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"period\": \"201904\",\n" +
+                "          \"cellnumber\": 1,\n" +
+                "          \"designweight\": 2\n" +
+                "        }\n" +
+                "      ]\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
 
 
         try {
