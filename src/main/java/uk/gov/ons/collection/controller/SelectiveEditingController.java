@@ -11,10 +11,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.MatrixVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import uk.gov.ons.collection.entity.HistoryDetailsQuery;
+import uk.gov.ons.collection.entity.HistoryDetailsResponse;
 import uk.gov.ons.collection.entity.SelectiveEditingQuery;
 import uk.gov.ons.collection.entity.SelectiveEditingResponse;
 import uk.gov.ons.collection.service.GraphQlService;
 
+import java.util.List;
 import java.util.Map;
 
 @Log4j2
@@ -33,17 +36,35 @@ public class SelectiveEditingController {
         log.info("API CALL!! --> /selectiveediting/loadconfigdata/{vars} :: " + params);
         String response = "";
         SelectiveEditingQuery selectiveEditingQuery = null;
+        HistoryDetailsQuery historyDetailsQuery = null;
+        String periodicityStr = "";
+        String currentPeriod = "";
 
         try {
-            /*selectiveEditingQuery = new SelectiveEditingQuery(params);
-            String queryStr = selectiveEditingQuery.buildViewFormQuery();
-            String selectiveEditingQueryOutput = qlService.qlSearch(queryStr);
-            log.info("Selective Editing Query Output: "+selectiveEditingQueryOutput);
-            SelectiveEditingResponse selectiveEditingResponse = new SelectiveEditingResponse(selectiveEditingQueryOutput);
-            response = selectiveEditingResponse.parseSelectiveEditingQueryResponse();
-            */
-            response = "{\"reference\":\"49900534932\",\"designweight\":2,\"resultscellnumber\":1,\"period\":\"201904\",\"domain\":1,\"survey\":\"023\",\"domainconfig\":[{\"currentresponse\":\"1\",\"questioncode\":\"20\",\"estimate\":100000000,\"threshold\":0.001,\"previousresponse\":\"3\"}]}";
-            log.info("Selective Editing Response before sending to lambda: "+response);
+            historyDetailsQuery = new HistoryDetailsQuery(params);
+            //periodicity
+            String periodicityQuery = historyDetailsQuery.buildSurveyPeriodicityQuery();
+            log.info(" Periodicity GraphQL Query: " + periodicityQuery);
+            String periodicityQueryOutput = qlService.qlSearch(periodicityQuery);
+            log.info(" GraphQL Output for Periodicity: " + periodicityQueryOutput);
+            HistoryDetailsResponse responsePeriodicity = new HistoryDetailsResponse(periodicityQueryOutput);
+            periodicityStr = responsePeriodicity.parsePeriodicityFromSurvey();
+            log.info(" Periodicity from Survey table: " + periodicityStr);
+            currentPeriod = historyDetailsQuery.retrieveCurrentPeriod();
+            log.info("Current Period from UI: " + currentPeriod);
+
+            List<String> historyPeriodList = responsePeriodicity.getCurrentAndPreviousHistoryPeriod(currentPeriod, periodicityStr);
+            log.info("Final History Periods: " + historyPeriodList.toString());
+            if (historyPeriodList.size() > 0) {
+                selectiveEditingQuery = new SelectiveEditingQuery(params);
+                String queryStr = selectiveEditingQuery.buildSelectiveEditingLoadConfigQuery(historyPeriodList);
+
+                String selectiveEditingQueryOutput = qlService.qlSearch(queryStr);
+                log.info("Selective Editing Query Output: "+selectiveEditingQueryOutput);
+                SelectiveEditingResponse selectiveEditingResponse = new SelectiveEditingResponse(selectiveEditingQueryOutput);
+                response = selectiveEditingResponse.parseSelectiveEditingQueryResponse();
+                log.info("Selective Editing Response before sending to lambda: "+response);
+            }
 
         } catch (Exception err) {
             log.error("Exception found in Selective Editing: " + err.getMessage());

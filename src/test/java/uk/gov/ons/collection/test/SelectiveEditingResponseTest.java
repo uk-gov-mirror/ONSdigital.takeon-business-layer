@@ -1,7 +1,13 @@
 package uk.gov.ons.collection.test;
 
 import org.junit.jupiter.api.Test;
+import uk.gov.ons.collection.entity.SelectiveEditingQuery;
 import uk.gov.ons.collection.entity.SelectiveEditingResponse;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -98,6 +104,16 @@ public class SelectiveEditingResponseTest {
             SelectiveEditingResponse response = new SelectiveEditingResponse(responseJSON);
             String output = response.parseSelectiveEditingQueryResponse();
             System.out.println("Output to be sent to Lambda: " + output);
+            Map<String, String> variables = new HashMap<String, String>();
+            variables.put("reference", "49900534932");
+            variables.put("period", "201904");
+            variables.put("survey", "023");
+            List<String> historyPeriodList = new ArrayList<String>();
+            historyPeriodList.add("201904");
+            historyPeriodList.add("201903");
+            SelectiveEditingQuery selectiveEditingQuery = new SelectiveEditingQuery(variables);
+            String queryStr = selectiveEditingQuery.buildSelectiveEditingLoadConfigQuery(historyPeriodList);
+            System.out.println(queryStr);
 
 
         } catch (Exception e) {

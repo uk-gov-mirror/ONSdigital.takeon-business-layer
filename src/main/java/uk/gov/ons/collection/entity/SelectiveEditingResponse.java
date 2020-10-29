@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import uk.gov.ons.collection.exception.InvalidJsonException;
 
 @Log4j2
-public class SelectiveEditingResponse {
+public class SelectiveEditingResponse  {
 
     private JSONObject jsonQlResponse;
     private static final String REFERENCE = "reference";
@@ -118,7 +118,7 @@ public class SelectiveEditingResponse {
 
     private void buildCurrentAndPreviousResponsesForDomainConfig(JSONObject eachResultDomainObject, String key,
                                                                  String domainQuestionCode, JSONObject contributorObject) throws JSONException {
-        //Logic for current and previous response
+        //Logic for current and previous responses
         JSONArray responseArray = contributorObject.getJSONObject("responsesByReferenceAndPeriodAndSurvey").getJSONArray("nodes");
 
         for (int l = 0; l < responseArray.length(); l++) {
