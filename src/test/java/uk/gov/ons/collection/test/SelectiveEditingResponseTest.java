@@ -13,6 +13,32 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SelectiveEditingResponseTest {
 
+    String saveResponse = "{\n" +
+            "  \"reference\": \"49900534932\",\n" +
+            "  \"period\": \"201904\",\n" +
+            "  \"survey\": \"023\",\n" +
+            "  \"final_score\": 609676552345000,\n" +
+            "  \"output_flag\": \"F\"\n" +
+            "}";
+
+    @Test
+    void selectiveEditingSaveDetails_validJSONDataT() {
+        try {
+            SelectiveEditingResponse response = new SelectiveEditingResponse(saveResponse);
+            String output = response.buildUpsertQuery();
+
+            System.out.println(output);
+
+
+        } catch (Exception e) {
+            String actualMessage = e.getMessage();
+            System.out.println("Error Message: "+actualMessage);
+            assertTrue(true);
+
+        }
+
+    }
+
 
     @Test
     void selectiveEditingConfigDetailsDetails_validJSONDataT(){

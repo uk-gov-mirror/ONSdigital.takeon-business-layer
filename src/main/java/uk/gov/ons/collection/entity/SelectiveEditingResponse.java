@@ -6,6 +6,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import uk.gov.ons.collection.exception.InvalidJsonException;
 
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.StringJoiner;
+
 @Log4j2
 public class SelectiveEditingResponse  {
 
@@ -25,6 +29,7 @@ public class SelectiveEditingResponse  {
     private static final String PREVIOUS_RESPONSE = "previousresponse";
 
     private static final String EMPTY_RESPONSE = "";
+    private final Timestamp time = new Timestamp(new Date().getTime());
 
 
 
@@ -114,6 +119,35 @@ public class SelectiveEditingResponse  {
             throw new InvalidJsonException("Problem in parsing Selective Editing GraphQL responses " + e.getMessage(), e);
         }
         return selectiveEditingResultObj.toString();
+    }
+
+    // Builds Upsert query
+    public String buildUpsertQuery() throws InvalidJsonException {
+        var queryJson = new StringBuilder();
+        queryJson.append("{\"query\" : \"mutation saveSelectiveEditingDetails {saveselectiveeditingdetails(input: {arg0: ");
+        queryJson.append("[{" + extractSelectiveEditingScoreInfo() + "}]");
+        queryJson.append("}){clientMutationId}}\"}");
+        return queryJson.toString();
+    }
+
+    // Convert it in graphQL desired format
+    private String extractSelectiveEditingScoreInfo() throws InvalidJsonException {
+        StringJoiner joiner = new StringJoiner(",");
+        try {
+
+            joiner.add("reference: \\\"" + jsonQlResponse.getString("reference") + "\\\"");
+            joiner.add("period: \\\"" + jsonQlResponse.getString("period") + "\\\"");
+            joiner.add("survey: \\\"" + jsonQlResponse.getString("survey") + "\\\"");
+            joiner.add("score: " + jsonQlResponse.getFloat("final_score"));
+            joiner.add("flag: \\\"" + jsonQlResponse.getString("output_flag") + "\\\"");
+            joiner.add("createdby: \\\"fisdba\\\"");
+            joiner.add("createddate: \\\"" + time.toString() + "\\\"");
+            joiner.add("lastupdatedby: \\\"fisdba\\\"");
+            joiner.add("lastupdateddate: \\\"" + time.toString() + "\\\"");
+            return joiner.toString();
+        } catch (Exception err) {
+            throw new InvalidJsonException("Error in processing save selective editing json structure: " + jsonQlResponse, err);
+        }
     }
 
     private void buildCurrentAndPreviousResponsesForDomainConfig(JSONObject eachResultDomainObject, String key,

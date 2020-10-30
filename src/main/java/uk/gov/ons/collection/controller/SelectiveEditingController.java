@@ -7,15 +7,14 @@ import io.swagger.annotations.ApiResponses;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.MatrixVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import uk.gov.ons.collection.entity.HistoryDetailsQuery;
 import uk.gov.ons.collection.entity.HistoryDetailsResponse;
 import uk.gov.ons.collection.entity.SelectiveEditingQuery;
 import uk.gov.ons.collection.entity.SelectiveEditingResponse;
+import uk.gov.ons.collection.exception.ResponsesNotSavedException;
 import uk.gov.ons.collection.service.GraphQlService;
+import uk.gov.ons.collection.utilities.UpsertResponse;
 
 import java.util.List;
 import java.util.Map;
@@ -73,5 +72,25 @@ public class SelectiveEditingController {
         }
         log.info("API Complete!! --> /selectiveediting/loadconfigdata");
         return response;
+    }
+
+    @ApiOperation(value = "Save selective editing calculation outputs", response = String.class)
+    @RequestMapping(value = "/saveOutput", method = { RequestMethod.POST, RequestMethod.PUT })
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful save of selective editing calculation outputs", response = String.class) })
+    @ResponseBody
+    public String saveSelectiveEditingOutput(@RequestBody String jsonString)  {
+        try {
+            SelectiveEditingResponse selectiveEditingResponse = new SelectiveEditingResponse(jsonString);
+            String saveQuery = selectiveEditingResponse.buildUpsertQuery();
+            log.info("GraphQL query for selective editing save {}", saveQuery);
+            String saveResponseOutput = qlService.qlSearch(saveQuery);
+            log.info("Output after saving the selective editing outputs {}", saveResponseOutput);
+        } catch (Exception err) {
+            log.error("Exception found in Selective Editing: " + err.getMessage());
+            String message = err.getMessage() != null ? err.getMessage().replace("\"","'") : "";
+             return "{\"error\":\"Unable to save or update selective editing data " + message + "\"}";
+        }
+        return "{\"Success\":\"Selective editing outputs saved successfully\"}";
     }
 }
