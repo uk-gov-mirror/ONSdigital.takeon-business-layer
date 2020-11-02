@@ -81,10 +81,12 @@ public class SelectiveEditingController {
     @ResponseBody
     public String saveSelectiveEditingOutput(@RequestBody String jsonString)  {
         try {
+            log.info("API CALL!! --> /selectiveediting/saveOutput :: " + jsonString);
             SelectiveEditingResponse selectiveEditingResponse = new SelectiveEditingResponse(jsonString);
             String saveQuery = selectiveEditingResponse.buildUpsertQuery();
             log.info("GraphQL query for selective editing save {}", saveQuery);
             String saveResponseOutput = qlService.qlSearch(saveQuery);
+            log.info("API Complete!! --> /selectiveediting/saveOutput");
             log.info("Output after saving the selective editing outputs {}", saveResponseOutput);
         } catch (Exception err) {
             log.error("Exception found in Selective Editing: " + err.getMessage());
