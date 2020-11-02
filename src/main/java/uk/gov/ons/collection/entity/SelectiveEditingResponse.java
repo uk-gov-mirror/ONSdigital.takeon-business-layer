@@ -61,7 +61,7 @@ public class SelectiveEditingResponse  {
                 log.info("Results Cell Number Object for a given contributor: "+ contributorObject.get(RESULTS_CELL_NUMBER));
 
                 if (contributorObject.get(DOMAIN) == null || contributorObject.get(RESULTS_CELL_NUMBER) == null) {
-                    log
+                    log.info("Into domain null");
                     throw new InvalidJsonException("Either Domain or Results Cell Number is null in Contributor table. Please verify");
                 }
                 domain = contributorObject.getInt(DOMAIN);
