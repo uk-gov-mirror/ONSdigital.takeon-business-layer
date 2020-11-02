@@ -57,10 +57,10 @@ public class SelectiveEditingResponse  {
                 selectiveEditingResultObj.put(REFERENCE, contributorObject.getString(REFERENCE));
                 selectiveEditingResultObj.put(PERIOD, contributorObject.getString(PERIOD));
                 selectiveEditingResultObj.put(SURVEY, contributorObject.getString(SURVEY));
-                log.info("Domain Object for a given contributor: " + contributorObject.get(DOMAIN));
+                log.info("Domain Object for a given contributor : " + contributorObject.get(DOMAIN));
                 log.info("Results Cell Number Object for a given contributor: "+ contributorObject.get(RESULTS_CELL_NUMBER));
 
-                if (contributorObject.get(DOMAIN) == null || contributorObject.get(RESULTS_CELL_NUMBER) == null) {
+                if (contributorObject.get(DOMAIN).toString().equals("null") || contributorObject.get(RESULTS_CELL_NUMBER).toString().equals("null")) {
                     log.info("Into domain null");
                     throw new InvalidJsonException("Either Domain or Results Cell Number is null in Contributor table. Please verify");
                 }
