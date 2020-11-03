@@ -144,6 +144,8 @@ public class SelectiveEditingResponse  {
             if (!isCellNumberFound ) {
                 throw new InvalidJsonException("There are no design weight for a given cell number . Please verify");
             }
+        } else {
+            throw new InvalidJsonException("There is no celldetail configuration. Please verify");
         }
     }
 
@@ -180,7 +182,7 @@ public class SelectiveEditingResponse  {
                 throw new InvalidJsonException("There are no thresholds for a given domain in the contributor. Please verify");
             }
         } else {
-            throw new InvalidJsonException("There is no domain config. Please verify");
+            throw new InvalidJsonException("There is no domain configuration. Please verify");
         }
 
     }

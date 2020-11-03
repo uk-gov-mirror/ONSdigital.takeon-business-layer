@@ -12,9 +12,7 @@ import uk.gov.ons.collection.entity.HistoryDetailsQuery;
 import uk.gov.ons.collection.entity.HistoryDetailsResponse;
 import uk.gov.ons.collection.entity.SelectiveEditingQuery;
 import uk.gov.ons.collection.entity.SelectiveEditingResponse;
-import uk.gov.ons.collection.exception.ResponsesNotSavedException;
 import uk.gov.ons.collection.service.GraphQlService;
-import uk.gov.ons.collection.utilities.UpsertResponse;
 
 import java.util.List;
 import java.util.Map;
