@@ -36,6 +36,7 @@ public class SelectiveEditingController {
         HistoryDetailsQuery historyDetailsQuery = null;
         String periodicityStr = "";
         String currentPeriod = "";
+        HistoryDetailsResponse responsePeriodicity = null;
 
         try {
             historyDetailsQuery = new HistoryDetailsQuery(params);
@@ -44,11 +45,18 @@ public class SelectiveEditingController {
             log.info(" Periodicity GraphQL Query: " + periodicityQuery);
             String periodicityQueryOutput = qlService.qlSearch(periodicityQuery);
             log.info(" GraphQL Output for Periodicity: " + periodicityQueryOutput);
-            HistoryDetailsResponse responsePeriodicity = new HistoryDetailsResponse(periodicityQueryOutput);
+            responsePeriodicity = new HistoryDetailsResponse(periodicityQueryOutput);
             periodicityStr = responsePeriodicity.parsePeriodicityFromSurvey();
             log.info(" Periodicity from Survey table: " + periodicityStr);
             currentPeriod = historyDetailsQuery.retrieveCurrentPeriod();
             log.info("Current Period from UI: " + currentPeriod);
+        } catch (Exception err) {
+            log.error("Exception found in loading Periodicity: " + err.getMessage());
+            String message = processJSONErrorMessage(err);
+            response = "{\"error\":\"Unable to load Periodicity data from database " + message + "\"}";
+        }
+
+        try {
 
             List<String> historyPeriodList = responsePeriodicity.getCurrentAndPreviousHistoryPeriod(currentPeriod, periodicityStr);
             log.info("Final History Periods: " + historyPeriodList.toString());
@@ -65,7 +73,7 @@ public class SelectiveEditingController {
 
         } catch (Exception err) {
             log.error("Exception found in Selective Editing: " + err.getMessage());
-            String message = err.getMessage() != null ? err.getMessage().replace("\"","'") : "";
+            String message = processJSONErrorMessage(err);
             response = "{\"error\":\"Unable to load selective editing config data " + message + "\"}";
         }
         log.info("API Complete!! --> /selectiveediting/loadconfigdata");
@@ -88,9 +96,15 @@ public class SelectiveEditingController {
             log.info("Output after saving the selective editing outputs {}", saveResponseOutput);
         } catch (Exception err) {
             log.error("Exception found in Selective Editing: " + err.getMessage());
-            String message = err.getMessage() != null ? err.getMessage().replace("\"","'") : "";
+            String message = processJSONErrorMessage(err);
              return "{\"error\":\"Unable to save or update selective editing data " + message + "\"}";
         }
         return "{\"Success\":\"Selective editing outputs saved successfully\"}";
+    }
+
+    private String processJSONErrorMessage(Exception err) {
+
+        String message = err.getMessage() != null ? err.getMessage().replace("\"","'") : "";
+        return message;
     }
 }
