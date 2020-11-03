@@ -33,9 +33,6 @@ public class SelectiveEditingResponse  {
     private static final String EMPTY_RESPONSE = "";
     private final Timestamp time = new Timestamp(new Date().getTime());
 
-
-
-
     public SelectiveEditingResponse(String inputJSON) throws InvalidJsonException {
         try {
             jsonQlResponse = new JSONObject(inputJSON);
