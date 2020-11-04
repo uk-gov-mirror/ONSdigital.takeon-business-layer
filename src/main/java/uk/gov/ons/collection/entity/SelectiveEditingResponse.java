@@ -133,7 +133,7 @@ public class SelectiveEditingResponse  {
                 JSONObject eachDomainConfigObject = cellDetailConfigArray.getJSONObject(i);
                 if(eachDomainConfigObject.getInt(CELL_NUMBER) == cellNumber) {
                     //Match Found
-                    selectiveEditingResultObj.put(DESIGN_WEIGHT, eachDomainConfigObject.getInt(DESIGN_WEIGHT));
+                    selectiveEditingResultObj.put(DESIGN_WEIGHT, eachDomainConfigObject.get(DESIGN_WEIGHT));
                     isCellNumberFound = true;
                     break;
                 }
@@ -157,8 +157,8 @@ public class SelectiveEditingResponse  {
                     var eachResultDomainObject = new JSONObject();
                     String questionCode = eachDomainConfigObject.getString(QUESTION_CODE);
                     eachResultDomainObject.put(QUESTION_CODE, questionCode);
-                    eachResultDomainObject.put(THRESHOLD, eachDomainConfigObject.getFloat(THRESHOLD));
-                    eachResultDomainObject.put(ESTIMATE, eachDomainConfigObject.getInt(ESTIMATE));
+                    eachResultDomainObject.put(THRESHOLD, eachDomainConfigObject.get(THRESHOLD));
+                    eachResultDomainObject.put(ESTIMATE, eachDomainConfigObject.get(ESTIMATE));
                     eachResultDomainObject.put(CURRENT_RESPONSE, EMPTY_RESPONSE);
                     eachResultDomainObject.put(PREVIOUS_RESPONSE, EMPTY_RESPONSE);
                     //Logic for currentresponse
