@@ -97,7 +97,7 @@ public class SelectiveEditingResponse  {
             joiner.add("reference: \\\"" + jsonQlResponse.getString("reference") + "\\\"");
             joiner.add("period: \\\"" + jsonQlResponse.getString("period") + "\\\"");
             joiner.add("survey: \\\"" + jsonQlResponse.getString("survey") + "\\\"");
-            joiner.add("score: " + jsonQlResponse.getFloat("final_score"));
+            joiner.add("score: " + jsonQlResponse.get("final_score"));
             joiner.add("flag: \\\"" + jsonQlResponse.getString("output_flag") + "\\\"");
             joiner.add("createdby: \\\"fisdba\\\"");
             joiner.add("createddate: \\\"" + time.toString() + "\\\"");
