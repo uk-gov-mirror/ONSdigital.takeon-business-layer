@@ -102,8 +102,7 @@ public class SelectiveEditingResponse  {
             joiner.add("createdby: \\\"fisdba\\\"");
             joiner.add("createddate: \\\"" + time.toString() + "\\\"");
             joiner.add("lastupdatedby: \\\"fisdba\\\"");
-            joiner.add("lastupdateddate: \\\"" +   new Timestamp(new Date().getTime()).toString() + "\\\"");
-
+            joiner.add("lastupdateddate: \\\"" +   time.toString() + "\\\"");
             log.info("Data before executing GraphQL " + joiner.toString());
             return joiner.toString();
         } catch (Exception err) {
