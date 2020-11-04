@@ -63,7 +63,7 @@ public class SelectiveEditingController {
             if (historyPeriodList.size() > 0) {
                 selectiveEditingQuery = new SelectiveEditingQuery(params);
                 String queryStr = selectiveEditingQuery.buildSelectiveEditingLoadConfigQuery(historyPeriodList);
-
+                log.info("Selective Editing configuration GraphQL query: " + queryStr);
                 String selectiveEditingQueryOutput = qlService.qlSearch(queryStr);
                 log.info("Selective Editing Query Output: "+selectiveEditingQueryOutput);
                 SelectiveEditingResponse selectiveEditingResponse = new SelectiveEditingResponse(selectiveEditingQueryOutput);
