@@ -7,7 +7,13 @@ import io.swagger.annotations.ApiResponses;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.MatrixVariable;
 import uk.gov.ons.collection.entity.HistoryDetailsQuery;
 import uk.gov.ons.collection.entity.HistoryDetailsResponse;
 import uk.gov.ons.collection.entity.SelectiveEditingQuery;
@@ -52,7 +58,7 @@ public class SelectiveEditingController {
             log.info("Current Period from UI: " + currentPeriod);
         } catch (Exception err) {
             log.error("Exception found in loading Periodicity: " + err.getMessage());
-            String message = processJSONErrorMessage(err);
+            String message = processJsonErrorMessage(err);
             response = "{\"error\":\"Unable to load Periodicity data from database " + message + "\"}";
         }
 
@@ -65,15 +71,15 @@ public class SelectiveEditingController {
                 String queryStr = selectiveEditingQuery.buildSelectiveEditingLoadConfigQuery(historyPeriodList);
                 log.info("Selective Editing configuration GraphQL query: " + queryStr);
                 String selectiveEditingQueryOutput = qlService.qlSearch(queryStr);
-                log.info("Selective Editing Query Output: "+selectiveEditingQueryOutput);
+                log.info("Selective Editing Query Output: " + selectiveEditingQueryOutput);
                 SelectiveEditingResponse selectiveEditingResponse = new SelectiveEditingResponse(selectiveEditingQueryOutput);
                 response = selectiveEditingResponse.parseSelectiveEditingQueryResponse();
-                log.info("Selective Editing Response before sending to lambda: "+response);
+                log.info("Selective Editing Response before sending to lambda: " + response);
             }
 
         } catch (Exception err) {
             log.error("Exception found in Selective Editing: " + err.getMessage());
-            String message = processJSONErrorMessage(err);
+            String message = processJsonErrorMessage(err);
             response = "{\"error\":\"Unable to load selective editing config data " + message + "\"}";
         }
         log.info("API Complete!! --> /selectiveediting/loadconfigdata");
@@ -86,6 +92,8 @@ public class SelectiveEditingController {
             @ApiResponse(code = 200, message = "Successful save of selective editing calculation outputs", response = String.class) })
     @ResponseBody
     public String saveSelectiveEditingOutput(@RequestBody String jsonString)  {
+
+
         try {
             log.info("API CALL!! --> /selectiveediting/saveOutput :: " + jsonString);
             SelectiveEditingResponse selectiveEditingResponse = new SelectiveEditingResponse(jsonString);
@@ -96,13 +104,13 @@ public class SelectiveEditingController {
             log.info("Output after saving the selective editing outputs {}", saveResponseOutput);
         } catch (Exception err) {
             log.error("Exception found in Selective Editing: " + err.getMessage());
-            String message = processJSONErrorMessage(err);
+            String message = processJsonErrorMessage(err);
              return "{\"error\":\"Unable to save or update selective editing data " + message + "\"}";
         }
         return "{\"Success\":\"Selective editing outputs saved successfully\"}";
     }
 
-    private String processJSONErrorMessage(Exception err) {
+    private String processJsonErrorMessage(Exception err) {
 
         String message = err.getMessage() != null ? err.getMessage().replace("\"","'") : "";
         return message;
