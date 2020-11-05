@@ -22,6 +22,22 @@ public class SelectiveEditingResponseTest {
             "  \"output_flag\": \"F\"\n" +
             "}";
 
+    String invalidJsonResponse = "{\n" +
+            "  \"reference\": \"49900534932\",\n" +
+            "  \"period\": \"201904\",\n" +
+            "  \"survey\": \"023\",\n" +
+            "  \"final_score\": 609676552345000,\n" +
+            "  \"output_flag\": \"F\"\n" +
+            "";
+    String saveInvalidResponse = "{\n" +
+            "  \"reerence\": \"49900534932\",\n" +
+            "  \"period\": \"201904\",\n" +
+            "  \"survey\": \"023\",\n" +
+            "  \"final_score\": 609676552345000,\n" +
+            "  \"output_flag\": \"F\"\n" +
+            "}";
+
+
     @Test
     void verify_selectiveEditingSaveDetails_Query() {
         try {
@@ -36,21 +52,23 @@ public class SelectiveEditingResponseTest {
 
 
     @Test
-    void selectiveEditingConfigDetailsDetails_validJSONDataT(){
+    void selectiveEditingConfigDetailsDetails_validJSONData(){
 
-        String responseJSON = "{\"data\":{\"allContributors\":{\"nodes\":[{\"survey\":\"023\",\"period\":\"201904\",\"reference\":\"49900534932\",\"resultscellnumber\":1,\"domain\":1,\"responsesByReferenceAndPeriodAndSurvey\":{\"nodes\":[]}},{\"survey\":\"023\",\"period\":\"201903\",\"reference\":\"49900534932\",\"resultscellnumber\":null,\"domain\":null,\"responsesByReferenceAndPeriodAndSurvey\":{\"nodes\":[]}}]},\"allSelectiveeditingconfigs\":{\"nodes\":[{\"survey\":\"023\",\"period\":\"201904\",\"domain\":\"1\",\"questioncode\":\"20\",\"threshold\":0.002,\"estimate\":100000000},{\"survey\":\"023\",\"period\":\"201904\",\"domain\":\"1\",\"questioncode\":\"21\",\"threshold\":0.002,\"estimate\":100000000}]},\"allCelldetails\":{\"nodes\":[{\"survey\":\"023\",\"period\":\"201904\",\"cellnumber\":1,\"designweight\":2}]}}}";
-        String expectedOutput = "{\"reference\":\"49900534932\",\"designweight\":2,\"resultscellnumber\":1,\"period\":\"201904\",\"domain\":1,\"survey\":\"023\",\"domainconfig\":[{\"currentresponse\":\"\",\"questioncode\":\"20\",\"estimate\":100000000,\"threshold\":0.002,\"previousresponse\":\"\"},{\"currentresponse\":\"\",\"questioncode\":\"21\",\"estimate\":100000000,\"threshold\":0.002,\"previousresponse\":\"\"}]}";
+        String responseJSON = "{\"data\":{\"allContributors\":{\"nodes\":[{\"survey\":\"023\",\"period\":\"201904\",\"reference\":\"49900534932\",\"resultscellnumber\":1,\"domain\":1,\"responsesByReferenceAndPeriodAndSurvey\":{\"nodes\":[{\"questioncode\":\"20\",\"period\":\"201904\",\"response\":\"400\"}]}},{\"survey\":\"023\",\"period\":\"201903\",\"reference\":\"49900534932\",\"resultscellnumber\":1,\"domain\":1,\"responsesByReferenceAndPeriodAndSurvey\":{\"nodes\":[{\"questioncode\":\"20\",\"period\":\"201903\",\"response\":\"200\"}]}}]},\"allSelectiveeditingconfigs\":{\"nodes\":[{\"survey\":\"023\",\"period\":\"201904\",\"domain\":1,\"questioncode\":\"20\",\"threshold\":2,\"estimate\":5}]},\"allCelldetails\":{\"nodes\":[{\"survey\":\"023\",\"period\":\"201904\",\"cellnumber\":1,\"designweight\":5}]}}}";
+        String expectedOutput = "{\"reference\":\"49900534932\",\"designweight\":5,\"resultscellnumber\":1,\"period\":\"201904\",\"domain\":1,\"survey\":\"023\",\"domainconfig\":[{\"currentresponse\":\"400\",\"questioncode\":\"20\",\"estimate\":5,\"threshold\":2,\"previousresponse\":\"200\"}]}";
 
         try {
             SelectiveEditingResponse response = new SelectiveEditingResponse(responseJSON);
             String actualOutput = response.parseSelectiveEditingQueryResponse();
-            System.out.println("Output to be sent to Lambda: " + actualOutput);
+            System.out.println("Actual output: "+actualOutput);
             assertEquals(expectedOutput, actualOutput);
 
         } catch (Exception e) {
             assertTrue(false);
         }
     }
+
+
 
     @Test
     void selectiveEditingConfigDetails_ThrowsAnException_when_domain_is_null(){
@@ -70,6 +88,33 @@ public class SelectiveEditingResponseTest {
         }
     }
 
+    @Test
+    void selectiveEditingResponses_Invalid_Json_ThrowsAnException(){
+        String expectedErrorMessage = "Given string could not be converted/processed:";
+        try {
+            SelectiveEditingResponse response = new SelectiveEditingResponse(invalidJsonResponse);
+            response.parseSelectiveEditingQueryResponse();
+        } catch (Exception e) {
+            String actualMessage = e.getMessage();
+            System.out.println("Error Message: "+actualMessage);
+            assertTrue(actualMessage.contains(expectedErrorMessage));
+            assertTrue(true);
+        }
+    }
+
+    @Test
+    void selectiveEditingResponses_Invalid_Key_Json_ThrowsAnException(){
+        String expectedErrorMessage = "Error in processing save selective editing json structure:";
+        try {
+            SelectiveEditingResponse response = new SelectiveEditingResponse(saveInvalidResponse);
+            response.buildUpsertQuery();
+        } catch (Exception e) {
+            String actualMessage = e.getMessage();
+            System.out.println("Error Message: "+actualMessage);
+            assertTrue(actualMessage.contains(expectedErrorMessage));
+            assertTrue(true);
+        }
+    }
 
 
     @Test
@@ -101,7 +146,23 @@ public class SelectiveEditingResponseTest {
             response.parseSelectiveEditingQueryResponse();
         } catch (Exception e) {
             String actualMessage = e.getMessage();
-            System.out.println("Error Message: "+actualMessage);
+            assertEquals(expectedErrorMessage, actualMessage);
+            assertTrue(true);
+
+        }
+    }
+
+    @Test
+    void selectiveEditingDetails_ThrowsAnException_when_no_contributor(){
+
+        String responseJSON = "{\"data\":{\"allContributors\":{\"nodes\":[]},\"allSelectiveeditingconfigs\":{\"nodes\":[{\"survey\":\"023\",\"period\":\"201904\",\"domain\":\"1\",\"questioncode\":\"20\",\"threshold\":0.002,\"estimate\":100000000},{\"survey\":\"023\",\"period\":\"201904\",\"domain\":\"1\",\"questioncode\":\"21\",\"threshold\":0.002,\"estimate\":100000000}]},\"allCelldetails\":{\"nodes\":[]}}}";
+        String expectedErrorMessage = "Problem in parsing Selective Editing GraphQL responses There is no contributor for a given survey, reference and periods. Please verify";
+
+        try {
+            SelectiveEditingResponse response = new SelectiveEditingResponse(responseJSON);
+            response.parseSelectiveEditingQueryResponse();
+        } catch (Exception e) {
+            String actualMessage = e.getMessage();
             assertEquals(expectedErrorMessage, actualMessage);
             assertTrue(true);
 
