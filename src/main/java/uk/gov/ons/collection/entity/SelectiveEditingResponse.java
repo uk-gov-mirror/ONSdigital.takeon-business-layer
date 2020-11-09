@@ -33,9 +33,9 @@ public class SelectiveEditingResponse  {
     private static final String EMPTY_RESPONSE = "";
     private final Timestamp time = new Timestamp(new Date().getTime());
 
-    public SelectiveEditingResponse(String inputJSON) throws InvalidJsonException {
+    public SelectiveEditingResponse(String inputJson) throws InvalidJsonException {
         try {
-            jsonQlResponse = new JSONObject(inputJSON);
+            jsonQlResponse = new JSONObject(inputJson);
         } catch (JSONException e) {
             log.error("Error in processing Selective Editing Response: " + e.getMessage());
             throw new InvalidJsonException("Given string could not be converted/processed: " + e);
@@ -55,7 +55,7 @@ public class SelectiveEditingResponse  {
                 selectiveEditingResultObj.put(PERIOD, contributorObject.getString(PERIOD));
                 selectiveEditingResultObj.put(SURVEY, contributorObject.getString(SURVEY));
                 log.info("Domain Object for a given contributor : " + contributorObject.get(DOMAIN));
-                log.info("Results Cell Number Object for a given contributor: "+ contributorObject.get(RESULTS_CELL_NUMBER));
+                log.info("Results Cell Number Object for a given contributor: " + contributorObject.get(RESULTS_CELL_NUMBER));
 
                 if (contributorObject.get(DOMAIN).toString().equals("null") || contributorObject.get(RESULTS_CELL_NUMBER).toString().equals("null")) {
                     log.info("Into domain null");
@@ -63,8 +63,8 @@ public class SelectiveEditingResponse  {
                 }
                 domain = contributorObject.getInt(DOMAIN);
                 cellNumber = contributorObject.getInt(RESULTS_CELL_NUMBER);
-                log.info("Domain for a given contributor: "+ domain);
-                log.info("Results Cell Number for a given contributor: "+ cellNumber);
+                log.info("Domain for a given contributor: " + domain);
+                log.info("Results Cell Number for a given contributor: " + cellNumber);
                 selectiveEditingResultObj.put(RESULTS_CELL_NUMBER, cellNumber);
                 selectiveEditingResultObj.put(DOMAIN, domain);
                 processDomainConfiguration(domain, contributorObject, contribArray, selectiveEditingResultObj);
@@ -73,7 +73,7 @@ public class SelectiveEditingResponse  {
                 throw new InvalidJsonException("There is no contributor for a given survey, reference and periods. Please verify");
             }
 
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new InvalidJsonException("Problem in parsing Selective Editing GraphQL responses " + e.getMessage(), e);
         }
         return selectiveEditingResultObj.toString();
@@ -128,16 +128,16 @@ public class SelectiveEditingResponse  {
         JSONArray cellDetailConfigArray = jsonQlResponse.getJSONObject("data").getJSONObject("allCelldetails").getJSONArray("nodes");
         if (cellDetailConfigArray.length() > 0) {
             boolean isCellNumberFound = false;
-            for (int i=0; i < cellDetailConfigArray.length(); i++) {
+            for (int i = 0; i < cellDetailConfigArray.length(); i++) {
                 JSONObject eachDomainConfigObject = cellDetailConfigArray.getJSONObject(i);
-                if(eachDomainConfigObject.getInt(CELL_NUMBER) == cellNumber) {
+                if (eachDomainConfigObject.getInt(CELL_NUMBER) == cellNumber) {
                     //Match Found
                     selectiveEditingResultObj.put(DESIGN_WEIGHT, eachDomainConfigObject.get(DESIGN_WEIGHT));
                     isCellNumberFound = true;
                     break;
                 }
             }
-            if (!isCellNumberFound ) {
+            if (!isCellNumberFound) {
                 throw new InvalidJsonException("There are no design weight for a given cell number . Please verify");
             }
         } else {
@@ -145,13 +145,14 @@ public class SelectiveEditingResponse  {
         }
     }
 
-    private void processDomainConfiguration(int domain, JSONObject contributorObject, JSONArray contribArray, JSONObject selectiveEditingResultObj) throws InvalidJsonException {
+    private void processDomainConfiguration(int domain, JSONObject contributorObject, JSONArray contribArray,
+                                            JSONObject selectiveEditingResultObj) throws InvalidJsonException {
         JSONArray domainConfigResultArr = new JSONArray();
         JSONArray domainConfigArray = jsonQlResponse.getJSONObject("data").getJSONObject("allSelectiveeditingconfigs").getJSONArray("nodes");
         if (domainConfigArray.length() > 0) {
-            for (int i=0; i < domainConfigArray.length(); i++) {
+            for (int i = 0; i < domainConfigArray.length(); i++) {
                 JSONObject eachDomainConfigObject = domainConfigArray.getJSONObject(i);
-                if(eachDomainConfigObject.getInt(DOMAIN) == domain) {
+                if (eachDomainConfigObject.getInt(DOMAIN) == domain) {
                     //Match Found
                     var eachResultDomainObject = new JSONObject();
                     String questionCode = eachDomainConfigObject.getString(QUESTION_CODE);

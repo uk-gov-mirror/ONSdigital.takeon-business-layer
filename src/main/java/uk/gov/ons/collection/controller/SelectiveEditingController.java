@@ -105,7 +105,7 @@ public class SelectiveEditingController {
         } catch (Exception err) {
             log.error("Exception found in Selective Editing: " + err.getMessage());
             String message = processJsonErrorMessage(err);
-             return "{\"error\":\"Unable to save or update selective editing data " + message + "\"}";
+            return "{\"error\":\"Unable to save or update selective editing data " + message + "\"}";
         }
         return "{\"Success\":\"Selective editing outputs saved successfully\"}";
     }
