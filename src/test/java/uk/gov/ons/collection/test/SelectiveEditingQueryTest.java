@@ -53,7 +53,7 @@ public class SelectiveEditingQueryTest {
         historyPeriodList.add("201903");
         String expectedQuery = "{\"query\": \"query loadselectiveeditingconfig { allContributors(filter: " +
                 "{reference: {equalTo: \\\"49900534932\\\"}, survey: {equalTo: \\\"023\\\"}, period: " +
-                "{in: [\\\"201904\\\",\\\"201903\\\"]}}, orderBy:PERIOD_DESC) {nodes { survey period reference resultscellnumber domain responsesByReferenceAndPeriodAndSurvey " +
+                "{in: [\\\"201904\\\",\\\"201903\\\"]}}, orderBy:PERIOD_DESC) {nodes { survey period reference frozenturnover resultscellnumber domain responsesByReferenceAndPeriodAndSurvey " +
                 "{ nodes { questioncode period response }}}} allSelectiveeditingconfigs(filter: " +
                 "{survey: {equalTo: \\\"023\\\"}, period: {equalTo: \\\"201904\\\"}}) " +
                 "{ nodes { survey period domain questioncode threshold estimate }} allCelldetails(filter: {survey: {equalTo: \\\"023\\\"}, period: {equalTo: \\\"201904\\\"}}) " +

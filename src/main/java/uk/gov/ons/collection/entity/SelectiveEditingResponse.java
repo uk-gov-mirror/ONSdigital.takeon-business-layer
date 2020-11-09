@@ -27,6 +27,7 @@ public class SelectiveEditingResponse  {
     private static final String DOMAIN_CONFIG = "domainconfig";
     private static final String CURRENT_RESPONSE = "currentresponse";
     private static final String PREVIOUS_RESPONSE = "previousresponse";
+    private static final String FROZEN_TURNOVER = "frozenturnover";
     private static final int INDEX_ONE = 1;
     private static final int INDEX_TWO = 2;
 
@@ -54,6 +55,7 @@ public class SelectiveEditingResponse  {
                 selectiveEditingResultObj.put(REFERENCE, contributorObject.getString(REFERENCE));
                 selectiveEditingResultObj.put(PERIOD, contributorObject.getString(PERIOD));
                 selectiveEditingResultObj.put(SURVEY, contributorObject.getString(SURVEY));
+                selectiveEditingResultObj.put(FROZEN_TURNOVER, contributorObject.get(FROZEN_TURNOVER));
                 log.info("Domain Object for a given contributor : " + contributorObject.get(DOMAIN));
                 log.info("Results Cell Number Object for a given contributor: " + contributorObject.get(RESULTS_CELL_NUMBER));
 

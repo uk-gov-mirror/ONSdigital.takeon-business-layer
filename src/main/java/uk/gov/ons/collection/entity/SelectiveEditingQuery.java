@@ -25,7 +25,7 @@ public class SelectiveEditingQuery  {
         selectiveEditingQuery.append("{\"query\": \"query loadselectiveeditingconfig { allContributors(filter: ");
         selectiveEditingQuery.append(buildFilterCondition(historyPeriodList));
         selectiveEditingQuery.append("}, orderBy:PERIOD_DESC) {");
-        selectiveEditingQuery.append("nodes { survey period reference resultscellnumber domain responsesByReferenceAndPeriodAndSurvey ");
+        selectiveEditingQuery.append("nodes { survey period reference frozenturnover resultscellnumber domain responsesByReferenceAndPeriodAndSurvey ");
         selectiveEditingQuery.append("{ nodes { questioncode period response }}}} ");
         selectiveEditingQuery.append("allSelectiveeditingconfigs(filter: ");
         selectiveEditingQuery.append(buildFilerConditionForSurveyAndPeriod());
