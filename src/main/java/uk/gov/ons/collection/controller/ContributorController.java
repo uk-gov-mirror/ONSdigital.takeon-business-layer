@@ -63,6 +63,7 @@ public class ContributorController {
         log.info("API CALL!! --> /contributor/dbExport:: " + snapshotInputJson);
         try {
             FullDataExport dataExport = new FullDataExport(snapshotInputJson);
+            //Add logic to parse different survey and periods - unique combinations
             List<String> periodList = dataExport.retrievePeriodFromSnapshotInput();
             String queryStr = dataExport.buildSnapshotSurveyPeriodQuery(periodList);
             log.info("GraphQL Query: " + queryStr);
