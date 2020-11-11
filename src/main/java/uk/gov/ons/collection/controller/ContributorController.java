@@ -21,6 +21,7 @@ import uk.gov.ons.collection.utilities.QlQueryBuilder;
 import uk.gov.ons.collection.utilities.QlQueryResponse;
 import uk.gov.ons.collection.utilities.SelectionFileQuery;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.json.JSONObject;
@@ -59,15 +60,22 @@ public class ContributorController {
             @ApiResponse(code = 200, message = "Successful export of database contents", response = String.class) })
     @ResponseBody
     public String fullDataExport(@RequestBody String snapshotInputJson) {
-        var response = "";
+        String response = "";
         log.info("API CALL!! --> /contributor/dbExport:: " + snapshotInputJson);
         try {
             FullDataExport dataExport = new FullDataExport(snapshotInputJson);
-            //Add logic to parse different survey and periods - unique combinations
-            List<String> periodList = dataExport.retrievePeriodFromSnapshotInput();
-            String queryStr = dataExport.buildSnapshotSurveyPeriodQuery(periodList);
-            log.info("GraphQL Query: " + queryStr);
-            response = qlService.qlSearch(queryStr);
+            Map<String, List<String>> snapshotMap = dataExport.retrieveSurveyAndPeriodListFromSnapshotInput();
+            List<String> jsonDataList = new ArrayList<String>();
+            //Adding
+            snapshotMap.forEach((k, v) -> {
+                System.out.println("Survey:"+k+ " Periods:"+v.toString());
+                String queryStr = dataExport.buildSnapshotSurveyPeriodQuery(k,v);
+                log.info("GraphQL Query: " + queryStr);
+                jsonDataList.add(qlService.qlSearch(queryStr));
+            });
+            response = jsonDataList.toString();
+            //End of Adding
+
 
         } catch (Exception e) {
             log.error("Exception in loading data for db Export " + e.getMessage());

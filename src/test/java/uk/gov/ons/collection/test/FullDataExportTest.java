@@ -1,11 +1,13 @@
 package uk.gov.ons.collection.test;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import uk.gov.ons.collection.entity.FullDataExport;
 import uk.gov.ons.collection.exception.InvalidJsonException;
 
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,17 +27,96 @@ public class FullDataExportTest {
             "  ]\n" +
             "}";
 
+    String snapshotMultipleSurveys = "{\n" +
+            "  \"snapshot_id\": \"14e0fb27-d450-44d4-8452-9f6996b00e27\",\n" +
+            "  \"surveyperiods\": [\n" +
+            "    {\n" +
+            "      \"survey\": \"066\",\n" +
+            "      \"period\": \"202003\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "      \"survey\": \"023\",\n" +
+            "      \"period\": \"202006\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "      \"survey\": \"023\",\n" +
+            "      \"period\": \"202007\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "      \"survey\": \"073\",\n" +
+            "      \"period\": \"202006\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "      \"survey\": \"076\",\n" +
+            "      \"period\": \"202003\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "      \"survey\": \"076\",\n" +
+            "      \"period\": \"202005\"\n" +
+            "    }\n" +
+            "  ]\n" +
+            "}";
+
+
+    @Test
+    void verify_input_snapshot_Survey_periods() {
+        try {
+            FullDataExport dataExport = new FullDataExport(snapshotMultipleSurveys);
+            Map<String, List<String>> snapshotMap = dataExport.retrieveSurveyAndPeriodListFromSnapshotInput();
+            snapshotMap.forEach((k, v) -> {
+                System.out.println("Survey:"+k+ " Periods:"+v.toString());
+                String query = dataExport.buildSnapshotSurveyPeriodQuery(k, v);
+                System.out.println("Output : "+query);
+            });
+
+
+            JSONObject jsonSurveySnapshotInput = new JSONObject(snapshotMultipleSurveys);
+            JSONArray snapshotArray = jsonSurveySnapshotInput.getJSONArray("surveyperiods");
+            Set<String> uniqueSurveyList = new HashSet<String>();
+            if (snapshotArray != null && snapshotArray.length() > 0) {
+                for (int i = 0; i < snapshotArray.length(); i++) {
+                    JSONObject surveyPeriodObj = snapshotArray.getJSONObject(i);
+                    uniqueSurveyList.add(surveyPeriodObj.getString("survey"));
+                }
+                Map<String, List<String>> map = new HashMap<>();
+                for(String survey : uniqueSurveyList){
+                    List<String> periodList = new ArrayList<String>();
+                    for (int i = 0; i < snapshotArray.length(); i++) {
+                        JSONObject surveyPeriodObj = snapshotArray.getJSONObject(i);
+                        if(survey.equals(surveyPeriodObj.getString("survey"))) {
+                            periodList.add(surveyPeriodObj.getString("period"));
+                        }
+                    }
+                    map.put(survey, periodList);
+                }
+                System.out.println(map.toString());
+                //Traversing through Map
+                map.forEach((k, v) -> {
+                    System.out.println("Survey:"+k+ " Periods:"+v.toString());
+                });
+            }
+        } catch(Exception e) {
+            assertTrue(false);
+        }
+    }
+
 
 
     @Test
     void verify_input_snapshot_data_periods() {
         try {
-            FullDataExport dataExport = new FullDataExport(snapshotInput);
+            /*FullDataExport dataExport = new FullDataExport(snapshotInput);
             List<String> periodList = dataExport.retrievePeriodFromSnapshotInput();
             String actualPeriods = periodList.toString();
             String expectedPeriods = "[201904, 201903]";
             assertEquals(expectedPeriods, actualPeriods);
-            System.out.println(periodList);
+            System.out.println(periodList);*/
+            FullDataExport dataExport = new FullDataExport(snapshotMultipleSurveys);
+            Map<String, List<String>> snapshotMap = dataExport.retrieveSurveyAndPeriodListFromSnapshotInput();
+            snapshotMap.forEach((k, v) -> {
+                System.out.println("Survey:"+k+ " Periods:"+v.toString());
+            });
+
         } catch(Exception e) {
             assertTrue(false);
         }
@@ -74,7 +155,7 @@ public class FullDataExportTest {
                 "    }\n" +
                 "  ]\n" +
                 "}";
-        assertThrows(JSONException.class, () -> new FullDataExport(snapshotInvalidInput).retrievePeriodFromSnapshotInput());
+        assertThrows(JSONException.class, () -> new FullDataExport(snapshotInvalidInput).retrieveSurveyAndPeriodListFromSnapshotInput());
     }
 
     @Test
@@ -84,11 +165,11 @@ public class FullDataExportTest {
                 "  \"surveyperiods\": [\n" +
                 "  ]\n" +
                 "}";
-        assertThrows(InvalidJsonException.class, () -> new FullDataExport(snapshotInput).retrievePeriodFromSnapshotInput());
+        //assertThrows(InvalidJsonException.class, () -> new FullDataExport(snapshotInput).retrieveSurveyAndPeriodListFromSnapshotInput());
 
     }
 
-    @Test
+    /*@Test
     void verify_survey_period_query_output() {
         try {
             FullDataExport dataExportObj = new FullDataExport(snapshotInput);
@@ -101,6 +182,6 @@ public class FullDataExportTest {
             assertTrue(false);
         }
 
-    }
+    }*/
 }
 

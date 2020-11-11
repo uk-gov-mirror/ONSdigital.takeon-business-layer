@@ -1,18 +1,16 @@
 package uk.gov.ons.collection.entity;
 
 import lombok.extern.log4j.Log4j2;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import uk.gov.ons.collection.exception.InvalidJsonException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringJoiner;
+import java.util.*;
 
 @Log4j2
 public class FullDataExport {
 
     private JSONObject jsonSurveySnapshotInput;
-    private String survey;
 
     public FullDataExport(String inputJsonString) throws InvalidJsonException {
         try {
@@ -23,27 +21,39 @@ public class FullDataExport {
     }
 
 
-    public List<String> retrievePeriodFromSnapshotInput() throws InvalidJsonException {
-        List<String> listPeriods = new ArrayList<String>();
-        var snapshotArray = jsonSurveySnapshotInput.getJSONArray("surveyperiods");
+
+    public Map<String, List<String>> retrieveSurveyAndPeriodListFromSnapshotInput() throws InvalidJsonException {
+
+        JSONArray snapshotArray = jsonSurveySnapshotInput.getJSONArray("surveyperiods");
+        Set<String> uniqueSurveyList = new HashSet<String>();
+        Map<String, List<String>> snapshotMap = new HashMap<>();
         if (snapshotArray != null && snapshotArray.length() > 0) {
             for (int i = 0; i < snapshotArray.length(); i++) {
                 JSONObject surveyPeriodObj = snapshotArray.getJSONObject(i);
-                this.survey = surveyPeriodObj.getString("survey");
-                listPeriods.add(surveyPeriodObj.getString("period"));
+                uniqueSurveyList.add(surveyPeriodObj.getString("survey"));
             }
+            for (String survey : uniqueSurveyList) {
+                List<String> periodList = new ArrayList<String>();
+                for (int i = 0; i < snapshotArray.length(); i++) {
+                    JSONObject surveyPeriodObj = snapshotArray.getJSONObject(i);
+                    if (survey.equals(surveyPeriodObj.getString("survey"))) {
+                        periodList.add(surveyPeriodObj.getString("period"));
+                    }
+                }
+                snapshotMap.put(survey, periodList);
+            }
+            System.out.println(snapshotMap.toString());
         } else {
             throw new InvalidJsonException("There are no snapshot survey periods. Please verify");
         }
-
-        return listPeriods;
+        return snapshotMap;
     }
 
-    public String buildSnapshotSurveyPeriodQuery(List<String> periodList) {
+    public String buildSnapshotSurveyPeriodQuery(String surveyStr, List<String> periodList) {
         StringBuilder snapshotQuery = new StringBuilder();
         snapshotQuery.append("{\"query\": \"");
         snapshotQuery.append("query dbExport {  allSurveys");
-        snapshotQuery.append(buildSurveyFilterCondition());
+        snapshotQuery.append(buildSurveyFilterCondition(surveyStr));
         snapshotQuery.append("{nodes {survey description periodicity createdby createddate lastupdatedby lastupdateddate ");
         snapshotQuery.append("formsBySurvey {nodes { formid survey description periodstart periodend createdby createddate ");
         snapshotQuery.append("lastupdatedby lastupdateddate ");
@@ -58,10 +68,10 @@ public class FullDataExport {
         snapshotQuery.append("rule name baseformula createdby createddate lastupdatedby lastupdateddate ");
         snapshotQuery.append("validationperiodsByRule {nodes {rule periodoffset createdby createddate lastupdatedby lastupdateddate}}}}}}}");
         snapshotQuery.append("questionsBySurvey");
-        snapshotQuery.append(buildSurveyFilterCondition());
+        snapshotQuery.append(buildSurveyFilterCondition(surveyStr));
         snapshotQuery.append("{ nodes {survey questioncode createdby createddate lastupdatedby lastupdateddate}}");
         snapshotQuery.append("contributorsBySurvey");
-        snapshotQuery.append(buildSurveyAndPeriodsFilterCondition(periodList));
+        snapshotQuery.append(buildSurveyAndPeriodsFilterCondition(surveyStr, periodList));
         snapshotQuery.append("{ nodes {");
         snapshotQuery.append("reference  period survey  formid  status  receiptdate  lockedby  lockeddate  formtype  checkletter  frozensicoutdated ");
         snapshotQuery.append("rusicoutdated frozensic rusic frozenemployees employees frozenemployment employment frozenfteemployment ");
@@ -72,7 +82,7 @@ public class FullDataExport {
         snapshotQuery.append("responsesByReferenceAndPeriodAndSurvey {nodes {");
         snapshotQuery.append("reference period survey questioncode instance response createdby createddate lastupdatedby lastupdateddate}}}}");
         snapshotQuery.append("validationoutputsBySurvey");
-        snapshotQuery.append(buildSurveyAndPeriodsFilterCondition(periodList));
+        snapshotQuery.append(buildSurveyAndPeriodsFilterCondition(surveyStr, periodList));
         snapshotQuery.append("{nodes {");
         snapshotQuery.append("validationoutputid reference period survey validationid instance triggered formula ");
         snapshotQuery.append("createdby createddate lastupdatedby lastupdateddate}}}}}");
@@ -81,18 +91,13 @@ public class FullDataExport {
         return snapshotQuery.toString();
     }
 
-    public String getSurvey() {
-        return survey;
-    }
 
-    public String buildSurveyAndPeriodsFilterCondition(List<String> periodList) {
+    public String buildSurveyAndPeriodsFilterCondition(String surveyStr, List<String> periodList) {
 
-        log.info("Survey : " + getSurvey());
-        log.info("PeriodList : " + periodList.toString());
         StringBuilder sbFilter = new StringBuilder();
         sbFilter.append("(filter: {");
         sbFilter.append("survey: {equalTo: ");
-        sbFilter.append("\\\"").append(this.survey);
+        sbFilter.append("\\\"").append(surveyStr);
         sbFilter.append("\\\"}, period: {in: [");
 
         StringJoiner joiner = new StringJoiner(",");
@@ -105,12 +110,11 @@ public class FullDataExport {
 
     }
 
-    public String buildSurveyFilterCondition() {
-        log.info("Survey : " + getSurvey());
+    public String buildSurveyFilterCondition(String surveyStr) {
         StringBuilder sbFilter = new StringBuilder();
         sbFilter.append("(filter: {");
         sbFilter.append("survey: {equalTo: ");
-        sbFilter.append("\\\"").append(this.survey);
+        sbFilter.append("\\\"").append(surveyStr);
         sbFilter.append("\\\"}})");
         return sbFilter.toString();
 
