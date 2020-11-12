@@ -2,8 +2,11 @@ package uk.gov.ons.collection.entity;
 
 import lombok.extern.log4j.Log4j2;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import uk.gov.ons.collection.exception.InvalidJsonException;
+
+
 
 import java.util.*;
 
@@ -18,6 +21,10 @@ public class FullDataExport {
         } catch (Exception e) {
             throw new InvalidJsonException("The Survey snapshot input is invalid. Please verify " + e.getMessage());
         }
+    }
+
+    public FullDataExport() {
+
     }
 
 
@@ -117,6 +124,33 @@ public class FullDataExport {
         sbFilter.append("\\\"").append(surveyStr);
         sbFilter.append("\\\"}})");
         return sbFilter.toString();
+
+    }
+
+    public String mergeAllSurveyDatasets(List<String> allSurveyData) throws JSONException {
+
+        JSONObject masterSurveyObject = null;
+        JSONArray masterSurveyArray = null;
+        if (allSurveyData.size() > 0) {
+            masterSurveyObject = new JSONObject(allSurveyData.get(0));
+            masterSurveyArray = masterSurveyObject.getJSONObject("data").getJSONObject("allSurveys").getJSONArray("nodes");
+        }
+        for (int i = 1; i < allSurveyData.size(); i++) {
+            if (masterSurveyObject.getJSONObject("data").getJSONObject("allSurveys").getJSONArray("nodes").length() > 0) {
+                JSONObject anotherSurveyObject = new JSONObject(allSurveyData.get(i));
+                if (anotherSurveyObject.getJSONObject("data").getJSONObject("allSurveys").getJSONArray("nodes").length() > 0) {
+                    JSONObject secondSurveyObj = anotherSurveyObject.getJSONObject("data").getJSONObject("allSurveys").getJSONArray("nodes").getJSONObject(0);
+                    masterSurveyArray.put(secondSurveyObj);
+                }
+            }
+        }
+
+        if(masterSurveyObject == null) {
+            throw new JSONException("There are no snapshots exists for a given survey periods. Please verify");
+        }
+
+        return masterSurveyObject.toString();
+
 
     }
 

@@ -67,13 +67,18 @@ public class ContributorController {
             Map<String, List<String>> snapshotMap = dataExport.retrieveSurveyAndPeriodListFromSnapshotInput();
             List<String> jsonDataList = new ArrayList<String>();
             //Adding
+            String firstSurveyJSONData = "";
+            int index = 0;
             snapshotMap.forEach((k, v) -> {
                 System.out.println("Survey:"+k+ " Periods:"+v.toString());
                 String queryStr = dataExport.buildSnapshotSurveyPeriodQuery(k,v);
                 log.info("GraphQL Query: " + queryStr);
-                jsonDataList.add(qlService.qlSearch(queryStr));
+                String output = qlService.qlSearch(queryStr);
+                log.info("Snapshot output of each Survey: " + output);
+                jsonDataList.add(output);
             });
-            response = jsonDataList.toString();
+            response = dataExport.mergeAllSurveyDatasets(jsonDataList);
+            log.info("Final Snapshot output before sending to Lambda: " + response);
             //End of Adding
 
 
