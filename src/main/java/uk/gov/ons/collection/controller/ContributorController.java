@@ -66,8 +66,9 @@ public class ContributorController {
         log.info("API CALL!! --> /contributor/dbExport:: " + snapshotInputJson);
         try {
             FullDataExport dataExport = new FullDataExport(snapshotInputJson);
-            Map<String, List<String>> snapshotMap = dataExport.retrieveSurveyAndPeriodListFromSnapshotInput();
             Set<String> uniqueSurveyList = dataExport.getUniqueSurveyList();
+            Map<String, List<String>> snapshotMap = dataExport.retrieveSurveyAndPeriodListFromSnapshotInput(uniqueSurveyList);
+
             String snapshotQuery = dataExport.buildMultipleSurveyPeriodSnapshotQuery(uniqueSurveyList, snapshotMap);
             log.info("Final Snapshot Query for all surveys and periods: " + snapshotQuery);
             response = qlService.qlSearch(snapshotQuery);

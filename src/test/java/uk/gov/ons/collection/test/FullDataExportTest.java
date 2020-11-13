@@ -61,22 +61,15 @@ public class FullDataExportTest {
     void verify_input_snapshot_Survey_periods() {
         try {
             FullDataExport dataExport = new FullDataExport(snapshotMultipleSurveys);
-            Map<String, List<String>> snapshotMap = dataExport.retrieveSurveyAndPeriodListFromSnapshotInput();
-            snapshotMap.forEach((k, v) -> {
-                System.out.println("Survey:"+k+ " Periods:"+v.toString());
-                String query = dataExport.buildSnapshotSurveyPeriodQuery(k, v);
-                System.out.println("Output : "+query);
-            });
+            Set<String> uniqueSurveyList = dataExport.getUniqueSurveyList();
+            Map<String, List<String>> snapshotMap = dataExport.retrieveSurveyAndPeriodListFromSnapshotInput(uniqueSurveyList);
+
 
 
             JSONObject jsonSurveySnapshotInput = new JSONObject(snapshotMultipleSurveys);
             JSONArray snapshotArray = jsonSurveySnapshotInput.getJSONArray("surveyperiods");
-            Set<String> uniqueSurveyList = new HashSet<String>();
+
             if (snapshotArray != null && snapshotArray.length() > 0) {
-                for (int i = 0; i < snapshotArray.length(); i++) {
-                    JSONObject surveyPeriodObj = snapshotArray.getJSONObject(i);
-                    uniqueSurveyList.add(surveyPeriodObj.getString("survey"));
-                }
                 Map<String, List<String>> map = new HashMap<>();
                 for(String survey : uniqueSurveyList){
                     List<String> periodList = new ArrayList<String>();
@@ -111,13 +104,14 @@ public class FullDataExportTest {
             assertEquals(expectedPeriods, actualPeriods);
             System.out.println(periodList);*/
             FullDataExport dataExport = new FullDataExport(snapshotMultipleSurveys);
-            Map<String, List<String>> snapshotMap = dataExport.retrieveSurveyAndPeriodListFromSnapshotInput();
+            Set<String> surveyList = dataExport.getUniqueSurveyList();
+            Map<String, List<String>> snapshotMap = dataExport.retrieveSurveyAndPeriodListFromSnapshotInput(surveyList);
             snapshotMap.forEach((k, v) -> {
                 System.out.println("Survey:"+k+ " Periods:"+v.toString());
             });
             String surveyPeriodFilter = dataExport.buildMultipleSurveyAndPeriodFilterCondition(snapshotMap);
             System.out.println(surveyPeriodFilter);
-            Set<String> surveyList = dataExport.getUniqueSurveyList();
+
             String surveyFilter = dataExport.buildMultipleSurveysFilterCondition(surveyList);
             System.out.println(surveyFilter);
             String query = dataExport.buildMultipleSurveyPeriodSnapshotQuery(surveyList, snapshotMap);
@@ -160,7 +154,7 @@ public class FullDataExportTest {
                 "    }" +
                 "  ]" +
                 "}";
-        assertThrows(JSONException.class, () -> new FullDataExport(snapshotInvalidInput).retrieveSurveyAndPeriodListFromSnapshotInput());
+        //assertThrows(JSONException.class, () -> new FullDataExport(snapshotInvalidInput).retrieveSurveyAndPeriodListFromSnapshotInput());
     }
 
     @Test
