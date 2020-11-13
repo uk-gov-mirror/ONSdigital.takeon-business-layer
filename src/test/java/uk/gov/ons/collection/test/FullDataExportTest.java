@@ -34,27 +34,19 @@ public class FullDataExportTest {
             "  \"surveyperiods\": [" +
             "    {" +
             "      \"survey\": \"066\"," +
-            "      \"period\": \"202003\"" +
+            "      \"period\": \"201903\"" +
+            "    }," +
+            "    {" +
+            "      \"survey\": \"066\"," +
+            "      \"period\": \"201906\"" +
             "    }," +
             "    {" +
             "      \"survey\": \"023\"," +
-            "      \"period\": \"202006\"" +
+            "      \"period\": \"201903\"" +
             "    }," +
             "    {" +
             "      \"survey\": \"023\"," +
-            "      \"period\": \"202007\"" +
-            "    }," +
-            "    {" +
-            "      \"survey\": \"073\"," +
-            "      \"period\": \"202006\"" +
-            "    }," +
-            "    {" +
-            "      \"survey\": \"076\"," +
-            "      \"period\": \"202003\"" +
-            "    }," +
-            "    {" +
-            "      \"survey\": \"076\"," +
-            "      \"period\": \"202005\"" +
+            "      \"period\": \"201904\"" +
             "    }" +
             "  ]" +
             "}";
@@ -123,7 +115,13 @@ public class FullDataExportTest {
             snapshotMap.forEach((k, v) -> {
                 System.out.println("Survey:"+k+ " Periods:"+v.toString());
             });
-
+            String surveyPeriodFilter = dataExport.buildMultipleSurveyAndPeriodFilterCondition(snapshotMap);
+            System.out.println(surveyPeriodFilter);
+            Set<String> surveyList = dataExport.getUniqueSurveyList();
+            String surveyFilter = dataExport.buildMultipleSurveysFilterCondition(surveyList);
+            System.out.println(surveyFilter);
+            String query = dataExport.buildMultipleSurveyPeriodSnapshotQuery(surveyList, snapshotMap);
+            System.out.println(query);
         } catch(Exception e) {
             assertTrue(false);
         }

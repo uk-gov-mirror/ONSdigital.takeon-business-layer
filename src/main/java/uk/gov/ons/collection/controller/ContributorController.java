@@ -24,6 +24,8 @@ import uk.gov.ons.collection.utilities.SelectionFileQuery;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import org.json.JSONObject;
 
 
@@ -65,22 +67,11 @@ public class ContributorController {
         try {
             FullDataExport dataExport = new FullDataExport(snapshotInputJson);
             Map<String, List<String>> snapshotMap = dataExport.retrieveSurveyAndPeriodListFromSnapshotInput();
-            List<String> jsonDataList = new ArrayList<String>();
-            //Adding
-            String firstSurveyJSONData = "";
-            int index = 0;
-            snapshotMap.forEach((k, v) -> {
-                System.out.println("Survey:"+k+ " Periods:"+v.toString());
-                String queryStr = dataExport.buildSnapshotSurveyPeriodQuery(k,v);
-                log.info("GraphQL Query: " + queryStr);
-                String output = qlService.qlSearch(queryStr);
-                log.info("Snapshot output of each Survey: " + output);
-                jsonDataList.add(output);
-            });
-            response = dataExport.mergeAllSurveyDatasets(jsonDataList);
-            log.info("Final Snapshot output before sending to Lambda: " + response);
-            //End of Adding
-
+            Set<String> uniqueSurveyList = dataExport.getUniqueSurveyList();
+            String snapshotQuery = dataExport.buildMultipleSurveyPeriodSnapshotQuery(uniqueSurveyList, snapshotMap);
+            log.info("Final Snapshot Query for all surveys and periods: " + snapshotQuery);
+            response = qlService.qlSearch(snapshotQuery);
+            log.info("Final Snapshot output for all surveys and periods: " + response);
 
         } catch (Exception e) {
             log.error("Exception in loading data for db Export " + e.getMessage());
@@ -88,7 +79,6 @@ public class ContributorController {
             log.info("Error message after parsing:" + message);
             response =  "{\"error\":\"Error loading data for db Export " + message + "\"}";
         }
-        log.info("Response before sending to GO Lambda: " + response);
         return response;
     }
 

@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import uk.gov.ons.collection.exception.InvalidJsonException;
 
 
-
+import java.lang.reflect.Field;
 import java.util.*;
 
 @Log4j2
@@ -27,7 +27,15 @@ public class FullDataExport {
 
     }
 
-
+    public Set<String> getUniqueSurveyList() throws JSONException  {
+        JSONArray snapshotArray = jsonSurveySnapshotInput.getJSONArray("surveyperiods");
+        Set<String> uniqueSurveyList = new HashSet<String>();
+        for (int i = 0; i < snapshotArray.length(); i++) {
+            JSONObject surveyPeriodObj = snapshotArray.getJSONObject(i);
+            uniqueSurveyList.add(surveyPeriodObj.getString("survey"));
+        }
+        return uniqueSurveyList;
+    }
 
     public Map<String, List<String>> retrieveSurveyAndPeriodListFromSnapshotInput() throws InvalidJsonException {
 
@@ -98,6 +106,48 @@ public class FullDataExport {
         return snapshotQuery.toString();
     }
 
+    public String buildMultipleSurveyPeriodSnapshotQuery(Set<String> surveyList, Map<String, List<String>> surveyPeriodsMap) {
+        StringBuilder snapshotQuery = new StringBuilder();
+        snapshotQuery.append("{\"query\": \"");
+        snapshotQuery.append("query dbExport {  allSurveys");
+        snapshotQuery.append(buildMultipleSurveysFilterCondition(surveyList));
+        snapshotQuery.append("{nodes {survey description periodicity createdby createddate lastupdatedby lastupdateddate ");
+        snapshotQuery.append("formsBySurvey {nodes { formid survey description periodstart periodend createdby createddate ");
+        snapshotQuery.append("lastupdatedby lastupdateddate ");
+        snapshotQuery.append("formdefinitionsByFormid {nodes {");
+        snapshotQuery.append("formid questioncode displayquestionnumber displaytext displayorder ");
+        snapshotQuery.append("type derivedformula createdby createddate lastupdatedby lastupdateddate}}");
+        snapshotQuery.append("validationformsByFormid {nodes {");
+        snapshotQuery.append("validationid formid rule primaryquestion defaultvalue severity createdby createddate lastupdatedby lastupdateddate ");
+        snapshotQuery.append("validationparametersByValidationid {nodes {");
+        snapshotQuery.append("validationid attributename attributevalue parameter value createdby createddate lastupdatedby lastupdateddate}}");
+        snapshotQuery.append("validationruleByRule {");
+        snapshotQuery.append("rule name baseformula createdby createddate lastupdatedby lastupdateddate ");
+        snapshotQuery.append("validationperiodsByRule {nodes {rule periodoffset createdby createddate lastupdatedby lastupdateddate}}}}}}}");
+        snapshotQuery.append("questionsBySurvey");
+        snapshotQuery.append(buildMultipleSurveysFilterCondition(surveyList));
+        snapshotQuery.append("{ nodes {survey questioncode createdby createddate lastupdatedby lastupdateddate}}");
+        snapshotQuery.append("contributorsBySurvey");
+        snapshotQuery.append(buildMultipleSurveyAndPeriodFilterCondition(surveyPeriodsMap));
+        snapshotQuery.append("{ nodes {");
+        snapshotQuery.append("reference  period survey  formid  status  receiptdate  lockedby  lockeddate  formtype  checkletter  frozensicoutdated ");
+        snapshotQuery.append("rusicoutdated frozensic rusic frozenemployees employees frozenemployment employment frozenfteemployment ");
+        snapshotQuery.append("fteemployment frozenturnover turnover enterprisereference wowenterprisereference cellnumber currency vatreference ");
+        snapshotQuery.append("payereference companyregistrationnumber numberlivelocalunits numberlivevat numberlivepaye legalstatus ");
+        snapshotQuery.append("reportingunitmarker region birthdate enterprisename referencename referenceaddress referencepostcode tradingstyle ");
+        snapshotQuery.append("contact telephone fax selectiontype inclusionexclusion createdby createddate lastupdatedby lastupdateddate ");
+        snapshotQuery.append("responsesByReferenceAndPeriodAndSurvey {nodes {");
+        snapshotQuery.append("reference period survey questioncode instance response createdby createddate lastupdatedby lastupdateddate}}}}");
+        snapshotQuery.append("validationoutputsBySurvey");
+        snapshotQuery.append(buildMultipleSurveyAndPeriodFilterCondition(surveyPeriodsMap));
+        snapshotQuery.append("{nodes {");
+        snapshotQuery.append("validationoutputid reference period survey validationid instance triggered formula ");
+        snapshotQuery.append("createdby createddate lastupdatedby lastupdateddate}}}}}");
+        snapshotQuery.append("\"}");
+
+        return snapshotQuery.toString();
+    }
+
 
     public String buildSurveyAndPeriodsFilterCondition(String surveyStr, List<String> periodList) {
 
@@ -117,6 +167,42 @@ public class FullDataExport {
 
     }
 
+    public String buildMultipleSurveysFilterCondition(Set<String> surveyList) {
+        StringBuilder sbFilter = new StringBuilder();
+        sbFilter.append("(filter: {survey: {in: [");
+        StringJoiner joiner = new StringJoiner(",");
+        for (String eachSurvey : surveyList) {
+            joiner.add("\\\"" + eachSurvey + "\\\"");
+        }
+        sbFilter.append(joiner.toString());
+        sbFilter.append("]}}, orderBy: SURVEY_ASC)");
+        return sbFilter.toString();
+    }
+
+    public String buildMultipleSurveyAndPeriodFilterCondition(Map<String, List<String>> snapshotMap) {
+
+        StringBuilder sbFilter = new StringBuilder();
+        sbFilter.append("(filter: {or: [");
+        StringJoiner joiner = new StringJoiner(",");
+        snapshotMap.forEach((survey, periodList) -> {
+            StringBuilder eachFilter = new StringBuilder();
+            eachFilter.append("{and: [{survey: {equalTo: ");
+            eachFilter.append("\\\"").append(survey);
+            eachFilter.append("\\\"");
+            eachFilter.append("}}, {period: {in: [");
+            StringJoiner periodJoiner = new StringJoiner(",");
+            for (String eachPeriod : periodList) {
+                periodJoiner.add("\\\"" + eachPeriod + "\\\"");
+            }
+            eachFilter.append(periodJoiner.toString());
+            eachFilter.append("]}}]}");
+            joiner.add(eachFilter.toString());
+        });
+        sbFilter.append(joiner.toString());
+        sbFilter.append("]}, orderBy: PERIOD_ASC)");
+        return sbFilter.toString();
+    }
+
     public String buildSurveyFilterCondition(String surveyStr) {
         StringBuilder sbFilter = new StringBuilder();
         sbFilter.append("(filter: {");
@@ -127,6 +213,7 @@ public class FullDataExport {
 
     }
 
+
     public String mergeAllSurveyDatasets(List<String> allSurveyData) throws JSONException {
 
         JSONObject masterSurveyObject = null;
@@ -136,22 +223,32 @@ public class FullDataExport {
             masterSurveyArray = masterSurveyObject.getJSONObject("data").getJSONObject("allSurveys").getJSONArray("nodes");
         }
         for (int i = 1; i < allSurveyData.size(); i++) {
-            if (masterSurveyObject.getJSONObject("data").getJSONObject("allSurveys").getJSONArray("nodes").length() > 0) {
-                JSONObject anotherSurveyObject = new JSONObject(allSurveyData.get(i));
-                if (anotherSurveyObject.getJSONObject("data").getJSONObject("allSurveys").getJSONArray("nodes").length() > 0) {
-                    JSONObject secondSurveyObj = anotherSurveyObject.getJSONObject("data").getJSONObject("allSurveys").getJSONArray("nodes").getJSONObject(0);
-                    masterSurveyArray.put(secondSurveyObj);
-                }
+            JSONObject anotherSurveyObject = new JSONObject(allSurveyData.get(i));
+            if (anotherSurveyObject.getJSONObject("data").getJSONObject("allSurveys").getJSONArray("nodes").length() > 0) {
+                JSONObject secondSurveyObj = anotherSurveyObject.getJSONObject("data").getJSONObject("allSurveys").getJSONArray("nodes").getJSONObject(0);
+                masterSurveyArray.put(secondSurveyObj);
             }
         }
 
-        if(masterSurveyObject == null) {
+        if(masterSurveyObject == null || masterSurveyArray == null || masterSurveyArray.length() == 0) {
             throw new JSONException("There are no snapshots exists for a given survey periods. Please verify");
         }
 
         return masterSurveyObject.toString();
+    }
 
+    public JSONObject printJSONObject() {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            Field changeMap = jsonObject.getClass().getDeclaredField("map");
+            changeMap.setAccessible(true);
+            changeMap.set(jsonObject, new LinkedHashMap<>());
+            changeMap.setAccessible(false);
 
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            log.info(e.getMessage());
+        }
+        return jsonObject;
     }
 
 }
