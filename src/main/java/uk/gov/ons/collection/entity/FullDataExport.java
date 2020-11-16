@@ -6,8 +6,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import uk.gov.ons.collection.exception.InvalidJsonException;
 
-
-import java.lang.reflect.Field;
 import java.util.*;
 
 @Log4j2
@@ -137,6 +135,15 @@ public class FullDataExport {
         sbFilter.append(joiner.toString());
         sbFilter.append("]}, orderBy: PERIOD_ASC)");
         return sbFilter.toString();
+    }
+
+    public void verifyEmptySnapshot(String response) throws JSONException {
+        JSONObject finalSnapshotObject = new JSONObject(response);
+        JSONArray masterSurveySnapshotArray = finalSnapshotObject.getJSONObject("data")
+                .getJSONObject("allSurveys").getJSONArray("nodes");
+        if(masterSurveySnapshotArray.length() == 0){
+            throw new JSONException("There is no snapshot available for a given survey period combinations");
+        }
     }
 
 

@@ -21,7 +21,6 @@ import uk.gov.ons.collection.utilities.QlQueryBuilder;
 import uk.gov.ons.collection.utilities.QlQueryResponse;
 import uk.gov.ons.collection.utilities.SelectionFileQuery;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -73,6 +72,7 @@ public class ContributorController {
             log.info("Final Snapshot Query for all surveys and periods: " + snapshotQuery);
             response = qlService.qlSearch(snapshotQuery);
             log.info("Final Snapshot output for all surveys and periods: " + response);
+            dataExport.verifyEmptySnapshot(response);
 
         } catch (Exception e) {
             log.error("Exception in loading data for db Export " + e.getMessage());
