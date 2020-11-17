@@ -21,6 +21,10 @@ public class FullDataExport {
         }
     }
 
+    public FullDataExport() {
+
+    }
+
 
     public Set<String> getUniqueSurveyList() throws JSONException  {
         JSONArray snapshotArray = jsonSurveySnapshotInput.getJSONArray("surveyperiods");
