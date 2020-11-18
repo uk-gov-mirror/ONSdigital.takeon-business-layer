@@ -6,7 +6,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import uk.gov.ons.collection.exception.InvalidJsonException;
 
-import java.util.*;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.StringJoiner;
+
 
 @Log4j2
 public class FullDataExport {
@@ -51,7 +58,6 @@ public class FullDataExport {
                 }
                 snapshotMap.put(survey, periodList);
             }
-            System.out.println(snapshotMap.toString());
         } else {
             throw new InvalidJsonException("There are no snapshot survey periods. Please verify");
         }
@@ -145,7 +151,7 @@ public class FullDataExport {
         JSONObject finalSnapshotObject = new JSONObject(response);
         JSONArray masterSurveySnapshotArray = finalSnapshotObject.getJSONObject("data")
                 .getJSONObject("allSurveys").getJSONArray("nodes");
-        if(masterSurveySnapshotArray.length() == 0){
+        if (masterSurveySnapshotArray.length() == 0) {
             throw new JSONException("There is no snapshot available for a given survey period combinations");
         }
     }

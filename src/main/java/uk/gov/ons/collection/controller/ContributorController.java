@@ -101,7 +101,7 @@ public class ContributorController {
             //Process if any GraphQL exception
             String message = fileQuery.processGraphQlErrorMessage(response);
             log.info("GraphQL response message: " + response);
-            if(message != null && message.length() > 0) {
+            if (message != null && message.length() > 0) {
                 return "{\"error\":\"Failed to load Selection File " + message + " \"}";
             }
 
