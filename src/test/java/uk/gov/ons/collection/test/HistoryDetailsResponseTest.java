@@ -79,6 +79,34 @@ public class HistoryDetailsResponseTest {
     }
 
     @Test
+    void historyDetails_VerifyCurrentAndPreviousHistoryDataPeriod(){
+        HistoryDetailsResponse historyDetails = new HistoryDetailsResponse();
+        String currentPeriod = "201904";
+        String periodicity = "Monthly";
+        String expectedHistoryPeriods = "[201904, 201903]";
+        try {
+            List<String> actualHistoryPeriods = historyDetails.getCurrentAndPreviousHistoryPeriod(currentPeriod, periodicity);
+            assertEquals(expectedHistoryPeriods, actualHistoryPeriods.toString());
+        } catch (Exception e) {
+            assertTrue(false);
+        }
+    }
+
+    @Test
+    void historyDetails_NotValidPeriodicity_ThrowsAnException(){
+        HistoryDetailsResponse historyDetails = new HistoryDetailsResponse();
+        String currentPeriod = "201904";
+        String periodicity = "weekly";
+        String expectedHistoryPeriods = "Problem in getting IDBR periodsInvalid periodicity given: weekly";
+        try {
+            historyDetails.getCurrentAndPreviousHistoryPeriod(currentPeriod, periodicity);
+        } catch (Exception e) {
+            assertTrue(true);
+            assertEquals(expectedHistoryPeriods, e.getMessage());
+        }
+    }
+
+    @Test
     void historyDetails_InvalidPeriodicity_ThrowsAnException(){
         HistoryDetailsResponse historyDetails = new HistoryDetailsResponse();
         String currentPeriod = "201904";

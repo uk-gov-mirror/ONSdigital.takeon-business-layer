@@ -73,6 +73,20 @@ public class HistoryDetailsResponse {
         return historyPeriodList;
     }
 
+    public List<String> getCurrentAndPreviousHistoryPeriod(String currentPeriod, String periodicity) throws InvalidIdbrPeriodException {
+        List<String> historyPeriodList = new ArrayList<String>();
+        historyPeriodList.add(currentPeriod);
+        try {
+            RelativePeriod rp = new RelativePeriod(periodicity);
+            String previousPeriod = rp.getPreviousPeriod(currentPeriod);
+            historyPeriodList.add(previousPeriod);
+            log.info("IDBR current and Previous periods: " + historyPeriodList.toString());
+        } catch (Exception e) {
+            throw new InvalidIdbrPeriodException("Problem in getting IDBR periods" + e.getMessage(), e);
+        }
+        return historyPeriodList;
+    }
+
     public String parseHistoryDataResponses(String responseJson) throws InvalidJsonException {
         JSONObject queryOutput = new JSONObject(responseJson);
         JSONArray contribArray = new JSONArray();
