@@ -1,18 +1,24 @@
 package uk.gov.ons.collection.entity;
 
 import lombok.extern.log4j.Log4j2;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import uk.gov.ons.collection.exception.InvalidJsonException;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.StringJoiner;
+
 
 @Log4j2
 public class FullDataExport {
 
     private JSONObject jsonSurveySnapshotInput;
-    private String survey;
 
     public FullDataExport(String inputJsonString) throws InvalidJsonException {
         try {
@@ -22,28 +28,49 @@ public class FullDataExport {
         }
     }
 
+    public FullDataExport() {
 
-    public List<String> retrievePeriodFromSnapshotInput() throws InvalidJsonException {
-        List<String> listPeriods = new ArrayList<String>();
-        var snapshotArray = jsonSurveySnapshotInput.getJSONArray("surveyperiods");
+    }
+
+
+    public Set<String> getUniqueSurveyList() throws JSONException  {
+        JSONArray snapshotArray = jsonSurveySnapshotInput.getJSONArray("surveyperiods");
+        Set<String> uniqueSurveyList = new HashSet<String>();
+        for (int i = 0; i < snapshotArray.length(); i++) {
+            JSONObject surveyPeriodObj = snapshotArray.getJSONObject(i);
+            uniqueSurveyList.add(surveyPeriodObj.getString("survey"));
+        }
+        return uniqueSurveyList;
+    }
+
+    public Map<String, List<String>> retrieveSurveyAndPeriodListFromSnapshotInput(Set<String> uniqueSurveyList) throws InvalidJsonException {
+
+        JSONArray snapshotArray = jsonSurveySnapshotInput.getJSONArray("surveyperiods");
+        Map<String, List<String>> snapshotMap = new HashMap<>();
         if (snapshotArray != null && snapshotArray.length() > 0) {
-            for (int i = 0; i < snapshotArray.length(); i++) {
-                JSONObject surveyPeriodObj = snapshotArray.getJSONObject(i);
-                this.survey = surveyPeriodObj.getString("survey");
-                listPeriods.add(surveyPeriodObj.getString("period"));
+            for (String survey : uniqueSurveyList) {
+                List<String> periodList = new ArrayList<String>();
+                for (int i = 0; i < snapshotArray.length(); i++) {
+                    JSONObject surveyPeriodObj = snapshotArray.getJSONObject(i);
+                    if (survey.equals(surveyPeriodObj.getString("survey"))) {
+                        periodList.add(surveyPeriodObj.getString("period"));
+                    }
+                }
+                snapshotMap.put(survey, periodList);
             }
         } else {
             throw new InvalidJsonException("There are no snapshot survey periods. Please verify");
         }
-
-        return listPeriods;
+        return snapshotMap;
     }
 
-    public String buildSnapshotSurveyPeriodQuery(List<String> periodList) {
+
+
+    public String buildMultipleSurveyPeriodSnapshotQuery(Set<String> surveyList, Map<String, List<String>> surveyPeriodsMap) {
         StringBuilder snapshotQuery = new StringBuilder();
         snapshotQuery.append("{\"query\": \"");
         snapshotQuery.append("query dbExport {  allSurveys");
-        snapshotQuery.append(buildSurveyFilterCondition());
+        snapshotQuery.append(buildMultipleSurveysFilterCondition(surveyList));
         snapshotQuery.append("{nodes {survey description periodicity createdby createddate lastupdatedby lastupdateddate ");
         snapshotQuery.append("formsBySurvey {nodes { formid survey description periodstart periodend createdby createddate ");
         snapshotQuery.append("lastupdatedby lastupdateddate ");
@@ -58,10 +85,10 @@ public class FullDataExport {
         snapshotQuery.append("rule name baseformula createdby createddate lastupdatedby lastupdateddate ");
         snapshotQuery.append("validationperiodsByRule {nodes {rule periodoffset createdby createddate lastupdatedby lastupdateddate}}}}}}}");
         snapshotQuery.append("questionsBySurvey");
-        snapshotQuery.append(buildSurveyFilterCondition());
+        snapshotQuery.append(buildMultipleSurveysFilterCondition(surveyList));
         snapshotQuery.append("{ nodes {survey questioncode createdby createddate lastupdatedby lastupdateddate}}");
         snapshotQuery.append("contributorsBySurvey");
-        snapshotQuery.append(buildSurveyAndPeriodsFilterCondition(periodList));
+        snapshotQuery.append(buildMultipleSurveyAndPeriodFilterCondition(surveyPeriodsMap));
         snapshotQuery.append("{ nodes {");
         snapshotQuery.append("reference  period survey  formid  status  receiptdate  lockedby  lockeddate  formtype  checkletter  frozensicoutdated ");
         snapshotQuery.append("rusicoutdated frozensic rusic frozenemployees employees frozenemployment employment frozenfteemployment ");
@@ -72,7 +99,7 @@ public class FullDataExport {
         snapshotQuery.append("responsesByReferenceAndPeriodAndSurvey {nodes {");
         snapshotQuery.append("reference period survey questioncode instance response createdby createddate lastupdatedby lastupdateddate}}}}");
         snapshotQuery.append("validationoutputsBySurvey");
-        snapshotQuery.append(buildSurveyAndPeriodsFilterCondition(periodList));
+        snapshotQuery.append(buildMultipleSurveyAndPeriodFilterCondition(surveyPeriodsMap));
         snapshotQuery.append("{nodes {");
         snapshotQuery.append("validationoutputid reference period survey validationid instance triggered formula ");
         snapshotQuery.append("createdby createddate lastupdatedby lastupdateddate}}}}}");
@@ -81,39 +108,54 @@ public class FullDataExport {
         return snapshotQuery.toString();
     }
 
-    public String getSurvey() {
-        return survey;
-    }
 
-    public String buildSurveyAndPeriodsFilterCondition(List<String> periodList) {
 
-        log.info("Survey : " + getSurvey());
-        log.info("PeriodList : " + periodList.toString());
+
+    public String buildMultipleSurveysFilterCondition(Set<String> surveyList) {
         StringBuilder sbFilter = new StringBuilder();
-        sbFilter.append("(filter: {");
-        sbFilter.append("survey: {equalTo: ");
-        sbFilter.append("\\\"").append(this.survey);
-        sbFilter.append("\\\"}, period: {in: [");
-
+        sbFilter.append("(filter: {survey: {in: [");
         StringJoiner joiner = new StringJoiner(",");
-        for (String eachPeriod : periodList) {
-            joiner.add("\\\"" + eachPeriod + "\\\"");
+        for (String eachSurvey : surveyList) {
+            joiner.add("\\\"" + eachSurvey + "\\\"");
         }
         sbFilter.append(joiner.toString());
-        sbFilter.append("]}}, orderBy: PERIOD_ASC)");
+        sbFilter.append("]}}, orderBy: SURVEY_ASC)");
         return sbFilter.toString();
-
     }
 
-    public String buildSurveyFilterCondition() {
-        log.info("Survey : " + getSurvey());
+    public String buildMultipleSurveyAndPeriodFilterCondition(Map<String, List<String>> snapshotMap) {
+
         StringBuilder sbFilter = new StringBuilder();
-        sbFilter.append("(filter: {");
-        sbFilter.append("survey: {equalTo: ");
-        sbFilter.append("\\\"").append(this.survey);
-        sbFilter.append("\\\"}})");
+        sbFilter.append("(filter: {or: [");
+        StringJoiner joiner = new StringJoiner(",");
+        snapshotMap.forEach((survey, periodList) -> {
+            StringBuilder eachFilter = new StringBuilder();
+            eachFilter.append("{and: [{survey: {equalTo: ");
+            eachFilter.append("\\\"").append(survey);
+            eachFilter.append("\\\"");
+            eachFilter.append("}}, {period: {in: [");
+            StringJoiner periodJoiner = new StringJoiner(",");
+            for (String eachPeriod : periodList) {
+                periodJoiner.add("\\\"" + eachPeriod + "\\\"");
+            }
+            eachFilter.append(periodJoiner.toString());
+            eachFilter.append("]}}]}");
+            joiner.add(eachFilter.toString());
+        });
+        sbFilter.append(joiner.toString());
+        sbFilter.append("]}, orderBy: PERIOD_ASC)");
         return sbFilter.toString();
-
     }
+
+    public void verifyEmptySnapshot(String response) throws JSONException {
+        JSONObject finalSnapshotObject = new JSONObject(response);
+        JSONArray masterSurveySnapshotArray = finalSnapshotObject.getJSONObject("data")
+                .getJSONObject("allSurveys").getJSONArray("nodes");
+        if (masterSurveySnapshotArray.length() == 0) {
+            throw new JSONException("There is no snapshot available for a given survey period combinations");
+        }
+    }
+
+
 
 }
