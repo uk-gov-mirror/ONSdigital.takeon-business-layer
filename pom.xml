@@ -37,6 +37,7 @@
         <spring-boot.version>2.1.3.RELEASE</spring-boot.version>
         <checkstyle.plugin.version>3.0.0</checkstyle.plugin.version>
         <checkstyle.version>8.20</checkstyle.version>
+        <aws-java-sdk.version>1.11.911</aws-java-sdk.version>
     </properties>
 
     <dependencies>
@@ -150,7 +151,7 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk</artifactId>
-            <version>1.11.584</version>
+            <version>${aws-java-sdk.version}</version>
         </dependency>
 
         <dependency>
