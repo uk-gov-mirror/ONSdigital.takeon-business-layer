@@ -65,6 +65,7 @@ public class ViewFormResponse {
             formObject.put("displayorder", formArray.getJSONObject(i).getInt("displayorder"));
             formObject.put("type", formArray.getJSONObject(i).getString("type"));
             formObject.put("response", "");
+            formObject.put("adjustedresponse", "");
             formObject.put("instance", "");
 
             outputFormArray.put(formObject);
@@ -89,6 +90,7 @@ public class ViewFormResponse {
             for(int j = 0; j < responseArray.length(); j++){
                 if(outputFormArray.getJSONObject(i).getString("questioncode").equals(responseArray.getJSONObject(j).getString("questioncode"))) {
                     outputFormArray.getJSONObject(i).put("response", responseArray.getJSONObject(j).getString("response"));
+                    outputFormArray.getJSONObject(i).put("adjustedresponse", responseArray.getJSONObject(j).getString("adjustedresponse"));
                     outputFormArray.getJSONObject(i).put("instance", responseArray.getJSONObject(j).getInt("instance"));
                 }
             }
