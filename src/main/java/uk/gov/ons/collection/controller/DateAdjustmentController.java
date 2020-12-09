@@ -32,7 +32,62 @@ public class DateAdjustmentController {
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful retrieval of selective editing data", response = String.class)})
     public String loadDateAdjustmentData(@MatrixVariable Map<String, String> params) {
         log.info("API CALL!! --> /dateadjustment/loadconfigdata/{vars} :: " + params);
-        String response = "";
+        String response = "{\n" +
+                "  \"reference\": \"49900613746\",\n" +
+                "  \"period\": \"201904\",\n" +
+                "  \"survey\": \"023\",\n" +
+                "  \"formid\": \"6\",\n" +
+                "  \"periodstart\": \"20190401\",\n" +
+                "  \"periodend\": \"20190430\",\n" +
+                "  \"frozensic\": \"41100\",\n" +
+                "  \"domain\": 1,\n" +
+                "  \"cellnumber\": 1,\n" +
+                "  \"returnedstartdate\": \"20190401\",\n" +
+                "  \"returnedenddate\": \"20190430\",\n" +
+                "  \"longperiodparameter\": 35,\n" +
+                "  \"shortperiodparameter\": 27,\n" +
+                "  \"averagewweekly\": true,\n" +
+                "  \"settomidpoint\": false,\n" +
+                "  \"settoequalweighted\": false,\n" +
+                "  \"usecalendardays\": false,\n" +
+                "  \"responses\": [\n" +
+                "    {\n" +
+                "      \"questioncode\": \"20\",\n" +
+                "      \"response\": \"10000\",\n" +
+                "      \"instance\": \"0\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"questioncode\": \"21\",\n" +
+                "      \"response\": \"500\",\n" +
+                "      \"instance\": \"0\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"questioncode\": \"22\",\n" +
+                "      \"response\": \"1000\",\n" +
+                "      \"instance\": \"0\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"questioncode\": \"23\",\n" +
+                "      \"response\": \"300\",\n" +
+                "      \"instance\": \"0\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"questioncode\": \"24\",\n" +
+                "      \"response\": \"900\",\n" +
+                "      \"instance\": \"0\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"questioncode\": \"25\",\n" +
+                "      \"response\": \"800\",\n" +
+                "      \"instance\": \"0\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"questioncode\": \"26\",\n" +
+                "      \"response\": \"200\",\n" +
+                "      \"instance\": \"0\"\n" +
+                "    }\n" +
+                "  ]\n" +
+                "}";
 
         log.info("API Complete!! --> /dateadjustment/loadconfigdata");
 
