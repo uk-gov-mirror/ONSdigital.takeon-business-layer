@@ -34,7 +34,7 @@ public class DateAdjustmentController {
         log.info("API CALL!! --> /dateadjustment/loadconfigdata/{vars} :: " + params);
         String response = "{\n" +
                 "  \"reference\": \"49900613746\",\n" +
-                "  \"period\": \"201904\",\n" +
+                "  \"period\": \"201903\",\n" +
                 "  \"survey\": \"023\",\n" +
                 "  \"formid\": \"6\",\n" +
                 "  \"periodstart\": \"20190304\",\n" +
@@ -90,7 +90,7 @@ public class DateAdjustmentController {
                 "  \"weights\": [\n" +
                 "        {\n" +
                 "          \"survey\": \"023\",\n" +
-                "          \"perioddate\": \"20190304\",\n" +
+                "          \"tradingdate\": \"20190304\",\n" +
                 "          \"domain\": 1,\n" +
                 "          \"weight\": 0.1,\n" +
                 "          \"period\": \"201903\",\n" +
@@ -99,7 +99,7 @@ public class DateAdjustmentController {
                 "        },\n" +
                 "        {\n" +
                 "          \"survey\": \"023\",\n" +
-                "          \"perioddate\": \"20190305\",\n" +
+                "          \"tradingdate\": \"20190305\",\n" +
                 "          \"domain\": 1,\n" +
                 "          \"weight\": 0.15,\n" +
                 "          \"period\": \"201903\",\n" +
@@ -108,7 +108,7 @@ public class DateAdjustmentController {
                 "        },\n" +
                 "        {\n" +
                 "          \"survey\": \"023\",\n" +
-                "          \"perioddate\": \"20190306\",\n" +
+                "          \"tradingdate\": \"20190306\",\n" +
                 "          \"domain\": 1,\n" +
                 "          \"weight\": 0.12,\n" +
                 "          \"period\": \"201903\",\n" +
@@ -117,7 +117,7 @@ public class DateAdjustmentController {
                 "        },\n" +
                 "        {\n" +
                 "          \"survey\": \"023\",\n" +
-                "          \"perioddate\": \"20190307\",\n" +
+                "          \"tradingdate\": \"20190307\",\n" +
                 "          \"domain\": 1,\n" +
                 "          \"weight\": 0.17,\n" +
                 "          \"period\": \"201903\",\n" +
@@ -126,7 +126,7 @@ public class DateAdjustmentController {
                 "        },\n" +
                 "        {\n" +
                 "          \"survey\": \"023\",\n" +
-                "          \"perioddate\": \"20190308\",\n" +
+                "          \"tradingdate\": \"20190308\",\n" +
                 "          \"domain\": 1,\n" +
                 "          \"weight\": 0.23,\n" +
                 "          \"period\": \"201903\",\n" +
@@ -135,7 +135,7 @@ public class DateAdjustmentController {
                 "        },\n" +
                 "        {\n" +
                 "          \"survey\": \"023\",\n" +
-                "          \"perioddate\": \"20190309\",\n" +
+                "          \"tradingdate\": \"20190309\",\n" +
                 "          \"domain\": 1,\n" +
                 "          \"weight\": 0.1,\n" +
                 "          \"period\": \"201903\",\n" +
@@ -144,7 +144,7 @@ public class DateAdjustmentController {
                 "        },\n" +
                 "        {\n" +
                 "          \"survey\": \"023\",\n" +
-                "          \"perioddate\": \"20190310\",\n" +
+                "          \"tradingdate\": \"20190310\",\n" +
                 "          \"domain\": 1,\n" +
                 "          \"weight\": 0.13,\n" +
                 "          \"period\": \"201903\",\n" +
@@ -153,7 +153,7 @@ public class DateAdjustmentController {
                 "        },\n" +
                 "        {\n" +
                 "          \"survey\": \"023\",\n" +
-                "          \"perioddate\": \"20190311\",\n" +
+                "          \"tradingdate\": \"20190311\",\n" +
                 "          \"domain\": 1,\n" +
                 "          \"weight\": 0.145,\n" +
                 "          \"period\": \"201903\",\n" +
@@ -162,7 +162,7 @@ public class DateAdjustmentController {
                 "        },\n" +
                 "        {\n" +
                 "          \"survey\": \"023\",\n" +
-                "          \"perioddate\": \"20190312\",\n" +
+                "          \"tradingdate\": \"20190312\",\n" +
                 "          \"domain\": 1,\n" +
                 "          \"weight\": 0.105,\n" +
                 "          \"period\": \"201903\",\n" +
@@ -171,7 +171,7 @@ public class DateAdjustmentController {
                 "        },\n" +
                 "        {\n" +
                 "          \"survey\": \"023\",\n" +
-                "          \"perioddate\": \"20190313\",\n" +
+                "          \"tradingdate\": \"20190313\",\n" +
                 "          \"domain\": 1,\n" +
                 "          \"weight\": 0.15,\n" +
                 "          \"period\": \"201903\",\n" +
@@ -180,7 +180,7 @@ public class DateAdjustmentController {
                 "        },\n" +
                 "        {\n" +
                 "          \"survey\": \"023\",\n" +
-                "          \"perioddate\": \"20190314\",\n" +
+                "          \"tradingdate\": \"20190314\",\n" +
                 "          \"domain\": 1,\n" +
                 "          \"weight\": 0.17,\n" +
                 "          \"period\": \"201903\",\n" +
@@ -189,7 +189,7 @@ public class DateAdjustmentController {
                 "        },\n" +
                 "        {\n" +
                 "          \"survey\": \"023\",\n" +
-                "          \"perioddate\": \"20190315\",\n" +
+                "          \"tradingdate\": \"20190315\",\n" +
                 "          \"domain\": 1,\n" +
                 "          \"weight\": 0.18,\n" +
                 "          \"period\": \"201903\",\n" +
@@ -198,7 +198,7 @@ public class DateAdjustmentController {
                 "        },\n" +
                 "        {\n" +
                 "          \"survey\": \"023\",\n" +
-                "          \"perioddate\": \"20190316\",\n" +
+                "          \"tradingdate\": \"20190316\",\n" +
                 "          \"domain\": 1,\n" +
                 "          \"weight\": 0.17,\n" +
                 "          \"period\": \"201903\",\n" +
@@ -207,7 +207,7 @@ public class DateAdjustmentController {
                 "        },\n" +
                 "        {\n" +
                 "          \"survey\": \"023\",\n" +
-                "          \"perioddate\": \"20190317\",\n" +
+                "          \"tradingdate\": \"20190317\",\n" +
                 "          \"domain\": 1,\n" +
                 "          \"weight\": 0.08,\n" +
                 "          \"period\": \"201903\",\n" +
@@ -216,7 +216,7 @@ public class DateAdjustmentController {
                 "        },\n" +
                 "        {\n" +
                 "          \"survey\": \"023\",\n" +
-                "          \"perioddate\": \"20190318\",\n" +
+                "          \"tradingdate\": \"20190318\",\n" +
                 "          \"domain\": 1,\n" +
                 "          \"weight\": 0.14,\n" +
                 "          \"period\": \"201903\",\n" +
@@ -225,7 +225,7 @@ public class DateAdjustmentController {
                 "        },\n" +
                 "        {\n" +
                 "          \"survey\": \"023\",\n" +
-                "          \"perioddate\": \"20190319\",\n" +
+                "          \"tradingdate\": \"20190319\",\n" +
                 "          \"domain\": 1,\n" +
                 "          \"weight\": 0.14,\n" +
                 "          \"period\": \"201903\",\n" +
@@ -234,7 +234,7 @@ public class DateAdjustmentController {
                 "        },\n" +
                 "        {\n" +
                 "          \"survey\": \"023\",\n" +
-                "          \"perioddate\": \"20190320\",\n" +
+                "          \"tradingdate\": \"20190320\",\n" +
                 "          \"domain\": 1,\n" +
                 "          \"weight\": 0.14,\n" +
                 "          \"period\": \"201903\",\n" +
@@ -243,7 +243,7 @@ public class DateAdjustmentController {
                 "        },\n" +
                 "        {\n" +
                 "          \"survey\": \"023\",\n" +
-                "          \"perioddate\": \"20190321\",\n" +
+                "          \"tradingdate\": \"20190321\",\n" +
                 "          \"domain\": 1,\n" +
                 "          \"weight\": 0.14,\n" +
                 "          \"period\": \"201903\",\n" +
@@ -252,7 +252,7 @@ public class DateAdjustmentController {
                 "        },\n" +
                 "        {\n" +
                 "          \"survey\": \"023\",\n" +
-                "          \"perioddate\": \"20190322\",\n" +
+                "          \"tradingdate\": \"20190322\",\n" +
                 "          \"domain\": 1,\n" +
                 "          \"weight\": 0.15,\n" +
                 "          \"period\": \"201903\",\n" +
@@ -261,7 +261,7 @@ public class DateAdjustmentController {
                 "        },\n" +
                 "        {\n" +
                 "          \"survey\": \"023\",\n" +
-                "          \"perioddate\": \"20190323\",\n" +
+                "          \"tradingdate\": \"20190323\",\n" +
                 "          \"domain\": 1,\n" +
                 "          \"weight\": 0.15,\n" +
                 "          \"period\": \"201903\",\n" +
@@ -270,7 +270,7 @@ public class DateAdjustmentController {
                 "        },\n" +
                 "        {\n" +
                 "          \"survey\": \"023\",\n" +
-                "          \"perioddate\": \"20190324\",\n" +
+                "          \"tradingdate\": \"20190324\",\n" +
                 "          \"domain\": 1,\n" +
                 "          \"weight\": 0.14,\n" +
                 "          \"period\": \"201903\",\n" +
@@ -279,7 +279,7 @@ public class DateAdjustmentController {
                 "        },\n" +
                 "        {\n" +
                 "          \"survey\": \"023\",\n" +
-                "          \"perioddate\": \"20190325\",\n" +
+                "          \"tradingdate\": \"20190325\",\n" +
                 "          \"domain\": 1,\n" +
                 "          \"weight\": 0.13,\n" +
                 "          \"period\": \"201903\",\n" +
@@ -288,7 +288,7 @@ public class DateAdjustmentController {
                 "        },\n" +
                 "        {\n" +
                 "          \"survey\": \"023\",\n" +
-                "          \"perioddate\": \"20190326\",\n" +
+                "          \"tradingdate\": \"20190326\",\n" +
                 "          \"domain\": 1,\n" +
                 "          \"weight\": 0.14,\n" +
                 "          \"period\": \"201903\",\n" +
@@ -297,7 +297,7 @@ public class DateAdjustmentController {
                 "        },\n" +
                 "        {\n" +
                 "          \"survey\": \"023\",\n" +
-                "          \"perioddate\": \"20190327\",\n" +
+                "          \"tradingdate\": \"20190327\",\n" +
                 "          \"domain\": 1,\n" +
                 "          \"weight\": 0.16,\n" +
                 "          \"period\": \"201903\",\n" +
@@ -306,7 +306,7 @@ public class DateAdjustmentController {
                 "        },\n" +
                 "        {\n" +
                 "          \"survey\": \"023\",\n" +
-                "          \"perioddate\": \"20190328\",\n" +
+                "          \"tradingdate\": \"20190328\",\n" +
                 "          \"domain\": 1,\n" +
                 "          \"weight\": 0.15,\n" +
                 "          \"period\": \"201903\",\n" +
@@ -315,7 +315,7 @@ public class DateAdjustmentController {
                 "        },\n" +
                 "        {\n" +
                 "          \"survey\": \"023\",\n" +
-                "          \"perioddate\": \"20190329\",\n" +
+                "          \"tradingdate\": \"20190329\",\n" +
                 "          \"domain\": 1,\n" +
                 "          \"weight\": 0.13,\n" +
                 "          \"period\": \"201903\",\n" +
@@ -324,7 +324,7 @@ public class DateAdjustmentController {
                 "        },\n" +
                 "        {\n" +
                 "          \"survey\": \"023\",\n" +
-                "          \"perioddate\": \"20190330\",\n" +
+                "          \"tradingdate\": \"20190330\",\n" +
                 "          \"domain\": 1,\n" +
                 "          \"weight\": 0.16,\n" +
                 "          \"period\": \"201903\",\n" +
@@ -333,7 +333,7 @@ public class DateAdjustmentController {
                 "        },\n" +
                 "        {\n" +
                 "          \"survey\": \"023\",\n" +
-                "          \"perioddate\": \"20190331\",\n" +
+                "          \"tradingdate\": \"20190331\",\n" +
                 "          \"domain\": 1,\n" +
                 "          \"weight\": 0.13,\n" +
                 "          \"period\": \"201903\",\n" +
