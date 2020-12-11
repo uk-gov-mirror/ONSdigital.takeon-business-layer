@@ -37,8 +37,8 @@ public class DateAdjustmentController {
                 "  \"period\": \"201904\",\n" +
                 "  \"survey\": \"023\",\n" +
                 "  \"formid\": \"6\",\n" +
-                "  \"periodstart\": \"20190401\",\n" +
-                "  \"periodend\": \"20190430\",\n" +
+                "  \"periodstart\": \"20190304\",\n" +
+                "  \"periodend\": \"20190331\",\n" +
                 "  \"frozensic\": \"41100\",\n" +
                 "  \"domain\": 1,\n" +
                 "  \"cellnumber\": 1,\n" +
@@ -86,7 +86,261 @@ public class DateAdjustmentController {
                 "      \"response\": \"200\",\n" +
                 "      \"instance\": \"0\"\n" +
                 "    }\n" +
-                "  ]\n" +
+                "  ],\n" +
+                "  \"weights\": [\n" +
+                "        {\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"perioddate\": \"20190304\",\n" +
+                "          \"domain\": 1,\n" +
+                "          \"weight\": 0.1,\n" +
+                "          \"period\": \"201903\",\n" +
+                "          \"periodstart\": \"20190304\",\n" +
+                "          \"periodend\": \"20190331\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"perioddate\": \"20190305\",\n" +
+                "          \"domain\": 1,\n" +
+                "          \"weight\": 0.15,\n" +
+                "          \"period\": \"201903\",\n" +
+                "          \"periodstart\": \"20190304\",\n" +
+                "          \"periodend\": \"20190331\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"perioddate\": \"20190306\",\n" +
+                "          \"domain\": 1,\n" +
+                "          \"weight\": 0.12,\n" +
+                "          \"period\": \"201903\",\n" +
+                "          \"periodstart\": \"20190304\",\n" +
+                "          \"periodend\": \"20190331\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"perioddate\": \"20190307\",\n" +
+                "          \"domain\": 1,\n" +
+                "          \"weight\": 0.17,\n" +
+                "          \"period\": \"201903\",\n" +
+                "          \"periodstart\": \"20190304\",\n" +
+                "          \"periodend\": \"20190331\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"perioddate\": \"20190308\",\n" +
+                "          \"domain\": 1,\n" +
+                "          \"weight\": 0.23,\n" +
+                "          \"period\": \"201903\",\n" +
+                "          \"periodstart\": \"20190304\",\n" +
+                "          \"periodend\": \"20190331\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"perioddate\": \"20190309\",\n" +
+                "          \"domain\": 1,\n" +
+                "          \"weight\": 0.1,\n" +
+                "          \"period\": \"201903\",\n" +
+                "          \"periodstart\": \"20190304\",\n" +
+                "          \"periodend\": \"20190331\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"perioddate\": \"20190310\",\n" +
+                "          \"domain\": 1,\n" +
+                "          \"weight\": 0.13,\n" +
+                "          \"period\": \"201903\",\n" +
+                "          \"periodstart\": \"20190304\",\n" +
+                "          \"periodend\": \"20190331\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"perioddate\": \"20190311\",\n" +
+                "          \"domain\": 1,\n" +
+                "          \"weight\": 0.145,\n" +
+                "          \"period\": \"201903\",\n" +
+                "          \"periodstart\": \"20190304\",\n" +
+                "          \"periodend\": \"20190331\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"perioddate\": \"20190312\",\n" +
+                "          \"domain\": 1,\n" +
+                "          \"weight\": 0.105,\n" +
+                "          \"period\": \"201903\",\n" +
+                "          \"periodstart\": \"20190304\",\n" +
+                "          \"periodend\": \"20190331\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"perioddate\": \"20190313\",\n" +
+                "          \"domain\": 1,\n" +
+                "          \"weight\": 0.15,\n" +
+                "          \"period\": \"201903\",\n" +
+                "          \"periodstart\": \"20190304\",\n" +
+                "          \"periodend\": \"20190331\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"perioddate\": \"20190314\",\n" +
+                "          \"domain\": 1,\n" +
+                "          \"weight\": 0.17,\n" +
+                "          \"period\": \"201903\",\n" +
+                "          \"periodstart\": \"20190304\",\n" +
+                "          \"periodend\": \"20190331\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"perioddate\": \"20190315\",\n" +
+                "          \"domain\": 1,\n" +
+                "          \"weight\": 0.18,\n" +
+                "          \"period\": \"201903\",\n" +
+                "          \"periodstart\": \"20190304\",\n" +
+                "          \"periodend\": \"20190331\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"perioddate\": \"20190316\",\n" +
+                "          \"domain\": 1,\n" +
+                "          \"weight\": 0.17,\n" +
+                "          \"period\": \"201903\",\n" +
+                "          \"periodstart\": \"20190304\",\n" +
+                "          \"periodend\": \"20190331\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"perioddate\": \"20190317\",\n" +
+                "          \"domain\": 1,\n" +
+                "          \"weight\": 0.08,\n" +
+                "          \"period\": \"201903\",\n" +
+                "          \"periodstart\": \"20190304\",\n" +
+                "          \"periodend\": \"20190331\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"perioddate\": \"20190318\",\n" +
+                "          \"domain\": 1,\n" +
+                "          \"weight\": 0.14,\n" +
+                "          \"period\": \"201903\",\n" +
+                "          \"periodstart\": \"20190304\",\n" +
+                "          \"periodend\": \"20190331\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"perioddate\": \"20190319\",\n" +
+                "          \"domain\": 1,\n" +
+                "          \"weight\": 0.14,\n" +
+                "          \"period\": \"201903\",\n" +
+                "          \"periodstart\": \"20190304\",\n" +
+                "          \"periodend\": \"20190331\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"perioddate\": \"20190320\",\n" +
+                "          \"domain\": 1,\n" +
+                "          \"weight\": 0.14,\n" +
+                "          \"period\": \"201903\",\n" +
+                "          \"periodstart\": \"20190304\",\n" +
+                "          \"periodend\": \"20190331\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"perioddate\": \"20190321\",\n" +
+                "          \"domain\": 1,\n" +
+                "          \"weight\": 0.14,\n" +
+                "          \"period\": \"201903\",\n" +
+                "          \"periodstart\": \"20190304\",\n" +
+                "          \"periodend\": \"20190331\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"perioddate\": \"20190322\",\n" +
+                "          \"domain\": 1,\n" +
+                "          \"weight\": 0.15,\n" +
+                "          \"period\": \"201903\",\n" +
+                "          \"periodstart\": \"20190304\",\n" +
+                "          \"periodend\": \"20190331\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"perioddate\": \"20190323\",\n" +
+                "          \"domain\": 1,\n" +
+                "          \"weight\": 0.15,\n" +
+                "          \"period\": \"201903\",\n" +
+                "          \"periodstart\": \"20190304\",\n" +
+                "          \"periodend\": \"20190331\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"perioddate\": \"20190324\",\n" +
+                "          \"domain\": 1,\n" +
+                "          \"weight\": 0.14,\n" +
+                "          \"period\": \"201903\",\n" +
+                "          \"periodstart\": \"20190304\",\n" +
+                "          \"periodend\": \"20190331\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"perioddate\": \"20190325\",\n" +
+                "          \"domain\": 1,\n" +
+                "          \"weight\": 0.13,\n" +
+                "          \"period\": \"201903\",\n" +
+                "          \"periodstart\": \"20190304\",\n" +
+                "          \"periodend\": \"20190331\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"perioddate\": \"20190326\",\n" +
+                "          \"domain\": 1,\n" +
+                "          \"weight\": 0.14,\n" +
+                "          \"period\": \"201903\",\n" +
+                "          \"periodstart\": \"20190304\",\n" +
+                "          \"periodend\": \"20190331\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"perioddate\": \"20190327\",\n" +
+                "          \"domain\": 1,\n" +
+                "          \"weight\": 0.16,\n" +
+                "          \"period\": \"201903\",\n" +
+                "          \"periodstart\": \"20190304\",\n" +
+                "          \"periodend\": \"20190331\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"perioddate\": \"20190328\",\n" +
+                "          \"domain\": 1,\n" +
+                "          \"weight\": 0.15,\n" +
+                "          \"period\": \"201903\",\n" +
+                "          \"periodstart\": \"20190304\",\n" +
+                "          \"periodend\": \"20190331\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"perioddate\": \"20190329\",\n" +
+                "          \"domain\": 1,\n" +
+                "          \"weight\": 0.13,\n" +
+                "          \"period\": \"201903\",\n" +
+                "          \"periodstart\": \"20190304\",\n" +
+                "          \"periodend\": \"20190331\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"perioddate\": \"20190330\",\n" +
+                "          \"domain\": 1,\n" +
+                "          \"weight\": 0.16,\n" +
+                "          \"period\": \"201903\",\n" +
+                "          \"periodstart\": \"20190304\",\n" +
+                "          \"periodend\": \"20190331\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"survey\": \"023\",\n" +
+                "          \"perioddate\": \"20190331\",\n" +
+                "          \"domain\": 1,\n" +
+                "          \"weight\": 0.13,\n" +
+                "          \"period\": \"201903\",\n" +
+                "          \"periodstart\": \"20190304\",\n" +
+                "          \"periodend\": \"20190331\"\n" +
+                "        }\n" +
+                "      ]\n" +
                 "}";
 
         log.info("API Complete!! --> /dateadjustment/loadconfigdata");
