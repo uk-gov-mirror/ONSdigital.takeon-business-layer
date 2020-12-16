@@ -46,7 +46,7 @@ public class DateAdjustmentController {
                 "  \"returnedenddate\": \"20190430\",\n" +
                 "  \"longperiodparameter\": 35,\n" +
                 "  \"shortperiodparameter\": 27,\n" +
-                "  \"averagewweekly\": true,\n" +
+                "  \"averageweekly\": true,\n" +
                 "  \"settomidpoint\": false,\n" +
                 "  \"settoequalweighted\": false,\n" +
                 "  \"usecalendardays\": false,\n" +
