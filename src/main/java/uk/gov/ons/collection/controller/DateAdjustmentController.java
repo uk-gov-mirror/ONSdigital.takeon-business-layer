@@ -32,6 +32,7 @@ public class DateAdjustmentController {
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful retrieval of selective editing data", response = String.class)})
     public String loadDateAdjustmentData(@MatrixVariable Map<String, String> params) {
         log.info("API CALL!! --> /dateadjustment/loadconfigdata/{vars} :: " + params);
+
         String response = "{\n" +
                 "  \"reference\": \"49900613746\",\n" +
                 "  \"period\": \"201903\",\n" +

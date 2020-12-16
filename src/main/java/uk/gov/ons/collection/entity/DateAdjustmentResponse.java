@@ -1,0 +1,168 @@
+package uk.gov.ons.collection.entity;
+
+import lombok.extern.log4j.Log4j2;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import uk.gov.ons.collection.exception.InvalidJsonException;
+
+@Log4j2
+public class DateAdjustmentResponse {
+
+    private JSONObject jsonQlResponse;
+    private static final String REFERENCE = "reference";
+    private static final String PERIOD = "period";
+    private static final String SURVEY = "survey";
+    private static final String RESULTS_CELL_NUMBER = "cellnumber";
+    private static final String DOMAIN = "domain";
+    private static final String QUESTION_CODE = "questioncode";
+    private static final String RESPONSE = "response";
+    private static final String RESPONSES = "responses";
+    private static final String INSTANCE = "instance";
+    private static final String WEIGHT_CONFIG = "weights";
+    private static final String FROZENSIC = "frozensic";
+    private static final String PERIOD_START = "periodstart";
+    private static final String PERIOD_END   = "periodend";
+    private static final String TRADING_DATE = "tradingdate";
+    private static final String WEIGHT = "weight";
+    private static final String RETURNED_START_DATE = "returnedstartdate";
+    private static final String RETURNED_END_DATE = "returnedenddate";
+    private static final String LONG_PERIOD_PARAMETER = "longperiodparameter";
+    private static final String SHORT_PERIOD_PARAMETER = "shortperiodparameter";
+    private static final String AVERAGE_WEEKLY = "averageweekly";
+    private static final String SET_MID_POINT = "settomidpoint";
+    private static final String SET_EQUAL_WEIGHTED = "settoequalweighted";
+    private static final String USE_CALENDAR_DAYS = "usecalendardays";
+
+
+    private static final String EMPTY_RESPONSE = "";
+
+    public DateAdjustmentResponse(String inputJson) throws InvalidJsonException {
+        try {
+            jsonQlResponse = new JSONObject(inputJson);
+        } catch (JSONException e) {
+            log.error("Error in processing Date Adjustment Config Response: " + e.getMessage());
+            throw new InvalidJsonException("Given string could not be converted/processed: " + e);
+        }
+    }
+
+    public String parseDateAdjustmentQueryResponse() throws InvalidJsonException {
+        JSONArray contribArray;
+        JSONObject dateAdjustmentResultObj = new JSONObject();
+        int domain = 0;
+        int cellNumber = 0;
+        try {
+            contribArray = jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes");
+            if (contribArray.length() > 0) {
+                JSONObject contributorObject = contribArray.getJSONObject(0);
+                dateAdjustmentResultObj.put(REFERENCE, contributorObject.getString(REFERENCE));
+                dateAdjustmentResultObj.put(PERIOD, contributorObject.getString(PERIOD));
+                dateAdjustmentResultObj.put(SURVEY, contributorObject.getString(SURVEY));
+                dateAdjustmentResultObj.put(FROZENSIC, contributorObject.get(FROZENSIC));
+                log.info("Domain Object for a given contributor : " + contributorObject.get(DOMAIN));
+                log.info("Results Cell Number Object for a given contributor: " + contributorObject.get(RESULTS_CELL_NUMBER));
+
+                if (contributorObject.get(DOMAIN).toString().equals("null") || contributorObject.get(RESULTS_CELL_NUMBER).toString().equals("null")) {
+                    log.info("Into domain null");
+                    throw new InvalidJsonException("Either Domain or Results Cell Number is null in Contributor table. Please verify");
+                }
+                domain = contributorObject.getInt(DOMAIN);
+                cellNumber = contributorObject.getInt(RESULTS_CELL_NUMBER);
+                log.info("Domain for a given contributor: " + domain);
+                log.info("Results Cell Number for a given contributor: " + cellNumber);
+                dateAdjustmentResultObj.put(RESULTS_CELL_NUMBER, cellNumber);
+                dateAdjustmentResultObj.put(DOMAIN, domain);
+                processDateAdjustmentWeightConfiguration(domain, dateAdjustmentResultObj);
+                processContributorDateAdjustmentConfiguration(dateAdjustmentResultObj);
+                processResponses(contributorObject, dateAdjustmentResultObj);
+
+            } else {
+                throw new InvalidJsonException("There is no contributor for a given survey, reference and periods. Please verify");
+            }
+
+        } catch (Exception e) {
+            throw new InvalidJsonException("Problem in parsing Selective Editing GraphQL responses " + e.getMessage(), e);
+        }
+        return dateAdjustmentResultObj.toString();
+    }
+
+
+    private void processResponses(JSONObject contributorObject, JSONObject selectiveEditingResultObj) throws InvalidJsonException {
+
+        JSONArray responseResultArr = new JSONArray();
+        JSONArray formDefinitionArray = contributorObject.getJSONObject("formByFormid").getJSONObject("formdefinitionsByFormid").getJSONArray("nodes");
+        JSONArray responseArray = contributorObject.getJSONObject("responsesByReferenceAndPeriodAndSurvey").getJSONArray("nodes");
+        if (formDefinitionArray.length() > 0) {
+            for (int i = 0; i < formDefinitionArray.length(); i++) {
+                JSONObject eachFormDefinitionObject = formDefinitionArray.getJSONObject(i);
+                String questionCode = eachFormDefinitionObject.getString(QUESTION_CODE);
+                var eachResponseObject = new JSONObject();
+                eachResponseObject.put(QUESTION_CODE, questionCode);
+                eachResponseObject.put(RESPONSE, EMPTY_RESPONSE);
+                eachResponseObject.put(INSTANCE, EMPTY_RESPONSE);
+                for (int j = 0; j< responseArray.length(); j++) {
+                    String response = responseArray.getJSONObject(j).getString(RESPONSE);
+                    if(questionCode.equals(responseArray.getJSONObject(j).getString(QUESTION_CODE))) {
+                        eachResponseObject.put(RESPONSE, response);
+                        eachResponseObject.put(INSTANCE, responseArray.getJSONObject(j).getString(INSTANCE));
+                    }
+                }
+                responseResultArr.put(eachResponseObject);
+            }
+            selectiveEditingResultObj.put(RESPONSES, responseResultArr);
+
+        } else {
+            throw new InvalidJsonException("There is no FormDefinition for a given survey. Please verify");
+        }
+
+    }
+
+    private void processDateAdjustmentWeightConfiguration(int domain, JSONObject selectiveEditingResultObj) throws InvalidJsonException {
+
+        JSONArray tradingConfigResultArr = new JSONArray();
+        JSONArray tradingWeightConfigArray = jsonQlResponse.getJSONObject("data").getJSONObject("allDateadjustmentweightconfigs").getJSONArray("nodes");
+        if (tradingWeightConfigArray.length() > 0) {
+            for (int i = 0; i < tradingWeightConfigArray.length(); i++) {
+                JSONObject eachTradingConfigObject = tradingWeightConfigArray.getJSONObject(i);
+                if (eachTradingConfigObject.getInt(DOMAIN) == domain) {
+                    //Match Found
+                    var eachResultTradingObject = new JSONObject();
+                    eachResultTradingObject.put(SURVEY, eachTradingConfigObject.getString(SURVEY));
+                    eachResultTradingObject.put(TRADING_DATE, eachTradingConfigObject.getString(TRADING_DATE));
+                    eachResultTradingObject.put(DOMAIN, eachTradingConfigObject.getInt(DOMAIN));
+                    eachResultTradingObject.put(WEIGHT, eachTradingConfigObject.get(WEIGHT));
+                    eachResultTradingObject.put(PERIOD, eachTradingConfigObject.getString(PERIOD));
+                    selectiveEditingResultObj.put(PERIOD_START, eachTradingConfigObject.get(PERIOD_START));
+                    selectiveEditingResultObj.put(PERIOD_END, eachTradingConfigObject.get(PERIOD_END));
+                    tradingConfigResultArr.put(eachResultTradingObject);
+                }
+            }
+            if (tradingConfigResultArr.length() > 0) {
+                selectiveEditingResultObj.put(WEIGHT_CONFIG, tradingConfigResultArr);
+            } else {
+                throw new InvalidJsonException("There are no trading weights for a given survey, period and domain in the trading weight contributor. Please verify");
+            }
+        } else {
+            throw new InvalidJsonException("There is no trading weight configuration. Please verify");
+        }
+
+    }
+
+    private void processContributorDateAdjustmentConfiguration(JSONObject selectiveEditingResultObj) throws InvalidJsonException {
+        JSONArray contributorDateAdjustmentConfigArray = jsonQlResponse.getJSONObject("data").getJSONObject("allContributordateadjustmentconfigs").getJSONArray("nodes");
+        if (contributorDateAdjustmentConfigArray.length() > 0) {
+            JSONObject contributorConfigObject = contributorDateAdjustmentConfigArray.getJSONObject(0);
+            selectiveEditingResultObj.put(RETURNED_START_DATE, contributorConfigObject.getString(RETURNED_START_DATE));
+            selectiveEditingResultObj.put(RETURNED_END_DATE, contributorConfigObject.getString(RETURNED_END_DATE));
+            selectiveEditingResultObj.put(LONG_PERIOD_PARAMETER, contributorConfigObject.get(LONG_PERIOD_PARAMETER));
+            selectiveEditingResultObj.put(SHORT_PERIOD_PARAMETER, contributorConfigObject.get(SHORT_PERIOD_PARAMETER));
+            selectiveEditingResultObj.put(AVERAGE_WEEKLY, contributorConfigObject.get(AVERAGE_WEEKLY));
+            selectiveEditingResultObj.put(SET_MID_POINT, contributorConfigObject.get(SET_MID_POINT));
+            selectiveEditingResultObj.put(SET_EQUAL_WEIGHTED, contributorConfigObject.get(SET_EQUAL_WEIGHTED));
+            selectiveEditingResultObj.put(USE_CALENDAR_DAYS, contributorConfigObject.get(USE_CALENDAR_DAYS));
+        } else {
+            throw new InvalidJsonException("There is no domain configuration. Please verify");
+        }
+
+    }
+}
