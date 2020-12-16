@@ -15,7 +15,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.MatrixVariable;
 
+import uk.gov.ons.collection.entity.DateAdjustmentQuery;
+import uk.gov.ons.collection.entity.DateAdjustmentResponse;
 import uk.gov.ons.collection.service.GraphQlService;
+
+import java.util.List;
 import java.util.Map;
 
 @Log4j2
@@ -32,317 +36,23 @@ public class DateAdjustmentController {
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful retrieval of selective editing data", response = String.class)})
     public String loadDateAdjustmentData(@MatrixVariable Map<String, String> params) {
         log.info("API CALL!! --> /dateadjustment/loadconfigdata/{vars} :: " + params);
+        String response = "";
+        DateAdjustmentQuery dateAdjustmentQuery = null;
 
-        String response = "{\n" +
-                "  \"reference\": \"49900613746\",\n" +
-                "  \"period\": \"201903\",\n" +
-                "  \"survey\": \"023\",\n" +
-                "  \"formid\": \"6\",\n" +
-                "  \"periodstart\": \"20190304\",\n" +
-                "  \"periodend\": \"20190331\",\n" +
-                "  \"frozensic\": \"41100\",\n" +
-                "  \"domain\": 1,\n" +
-                "  \"cellnumber\": 1,\n" +
-                "  \"returnedstartdate\": \"20190401\",\n" +
-                "  \"returnedenddate\": \"20190430\",\n" +
-                "  \"longperiodparameter\": 35,\n" +
-                "  \"shortperiodparameter\": 27,\n" +
-                "  \"averageweekly\": true,\n" +
-                "  \"settomidpoint\": false,\n" +
-                "  \"settoequalweighted\": false,\n" +
-                "  \"usecalendardays\": false,\n" +
-                "  \"responses\": [\n" +
-                "    {\n" +
-                "      \"questioncode\": \"20\",\n" +
-                "      \"response\": \"10000\",\n" +
-                "      \"instance\": \"0\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"questioncode\": \"21\",\n" +
-                "      \"response\": \"500\",\n" +
-                "      \"instance\": \"0\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"questioncode\": \"22\",\n" +
-                "      \"response\": \"1000\",\n" +
-                "      \"instance\": \"0\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"questioncode\": \"23\",\n" +
-                "      \"response\": \"300\",\n" +
-                "      \"instance\": \"0\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"questioncode\": \"24\",\n" +
-                "      \"response\": \"900\",\n" +
-                "      \"instance\": \"0\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"questioncode\": \"25\",\n" +
-                "      \"response\": \"800\",\n" +
-                "      \"instance\": \"0\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"questioncode\": \"26\",\n" +
-                "      \"response\": \"200\",\n" +
-                "      \"instance\": \"0\"\n" +
-                "    }\n" +
-                "  ],\n" +
-                "  \"weights\": [\n" +
-                "        {\n" +
-                "          \"survey\": \"023\",\n" +
-                "          \"tradingdate\": \"20190304\",\n" +
-                "          \"domain\": 1,\n" +
-                "          \"weight\": 0.1,\n" +
-                "          \"period\": \"201903\",\n" +
-                "          \"periodstart\": \"20190304\",\n" +
-                "          \"periodend\": \"20190331\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"survey\": \"023\",\n" +
-                "          \"tradingdate\": \"20190305\",\n" +
-                "          \"domain\": 1,\n" +
-                "          \"weight\": 0.15,\n" +
-                "          \"period\": \"201903\",\n" +
-                "          \"periodstart\": \"20190304\",\n" +
-                "          \"periodend\": \"20190331\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"survey\": \"023\",\n" +
-                "          \"tradingdate\": \"20190306\",\n" +
-                "          \"domain\": 1,\n" +
-                "          \"weight\": 0.12,\n" +
-                "          \"period\": \"201903\",\n" +
-                "          \"periodstart\": \"20190304\",\n" +
-                "          \"periodend\": \"20190331\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"survey\": \"023\",\n" +
-                "          \"tradingdate\": \"20190307\",\n" +
-                "          \"domain\": 1,\n" +
-                "          \"weight\": 0.17,\n" +
-                "          \"period\": \"201903\",\n" +
-                "          \"periodstart\": \"20190304\",\n" +
-                "          \"periodend\": \"20190331\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"survey\": \"023\",\n" +
-                "          \"tradingdate\": \"20190308\",\n" +
-                "          \"domain\": 1,\n" +
-                "          \"weight\": 0.23,\n" +
-                "          \"period\": \"201903\",\n" +
-                "          \"periodstart\": \"20190304\",\n" +
-                "          \"periodend\": \"20190331\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"survey\": \"023\",\n" +
-                "          \"tradingdate\": \"20190309\",\n" +
-                "          \"domain\": 1,\n" +
-                "          \"weight\": 0.1,\n" +
-                "          \"period\": \"201903\",\n" +
-                "          \"periodstart\": \"20190304\",\n" +
-                "          \"periodend\": \"20190331\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"survey\": \"023\",\n" +
-                "          \"tradingdate\": \"20190310\",\n" +
-                "          \"domain\": 1,\n" +
-                "          \"weight\": 0.13,\n" +
-                "          \"period\": \"201903\",\n" +
-                "          \"periodstart\": \"20190304\",\n" +
-                "          \"periodend\": \"20190331\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"survey\": \"023\",\n" +
-                "          \"tradingdate\": \"20190311\",\n" +
-                "          \"domain\": 1,\n" +
-                "          \"weight\": 0.145,\n" +
-                "          \"period\": \"201903\",\n" +
-                "          \"periodstart\": \"20190304\",\n" +
-                "          \"periodend\": \"20190331\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"survey\": \"023\",\n" +
-                "          \"tradingdate\": \"20190312\",\n" +
-                "          \"domain\": 1,\n" +
-                "          \"weight\": 0.105,\n" +
-                "          \"period\": \"201903\",\n" +
-                "          \"periodstart\": \"20190304\",\n" +
-                "          \"periodend\": \"20190331\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"survey\": \"023\",\n" +
-                "          \"tradingdate\": \"20190313\",\n" +
-                "          \"domain\": 1,\n" +
-                "          \"weight\": 0.15,\n" +
-                "          \"period\": \"201903\",\n" +
-                "          \"periodstart\": \"20190304\",\n" +
-                "          \"periodend\": \"20190331\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"survey\": \"023\",\n" +
-                "          \"tradingdate\": \"20190314\",\n" +
-                "          \"domain\": 1,\n" +
-                "          \"weight\": 0.17,\n" +
-                "          \"period\": \"201903\",\n" +
-                "          \"periodstart\": \"20190304\",\n" +
-                "          \"periodend\": \"20190331\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"survey\": \"023\",\n" +
-                "          \"tradingdate\": \"20190315\",\n" +
-                "          \"domain\": 1,\n" +
-                "          \"weight\": 0.18,\n" +
-                "          \"period\": \"201903\",\n" +
-                "          \"periodstart\": \"20190304\",\n" +
-                "          \"periodend\": \"20190331\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"survey\": \"023\",\n" +
-                "          \"tradingdate\": \"20190316\",\n" +
-                "          \"domain\": 1,\n" +
-                "          \"weight\": 0.17,\n" +
-                "          \"period\": \"201903\",\n" +
-                "          \"periodstart\": \"20190304\",\n" +
-                "          \"periodend\": \"20190331\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"survey\": \"023\",\n" +
-                "          \"tradingdate\": \"20190317\",\n" +
-                "          \"domain\": 1,\n" +
-                "          \"weight\": 0.08,\n" +
-                "          \"period\": \"201903\",\n" +
-                "          \"periodstart\": \"20190304\",\n" +
-                "          \"periodend\": \"20190331\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"survey\": \"023\",\n" +
-                "          \"tradingdate\": \"20190318\",\n" +
-                "          \"domain\": 1,\n" +
-                "          \"weight\": 0.14,\n" +
-                "          \"period\": \"201903\",\n" +
-                "          \"periodstart\": \"20190304\",\n" +
-                "          \"periodend\": \"20190331\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"survey\": \"023\",\n" +
-                "          \"tradingdate\": \"20190319\",\n" +
-                "          \"domain\": 1,\n" +
-                "          \"weight\": 0.14,\n" +
-                "          \"period\": \"201903\",\n" +
-                "          \"periodstart\": \"20190304\",\n" +
-                "          \"periodend\": \"20190331\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"survey\": \"023\",\n" +
-                "          \"tradingdate\": \"20190320\",\n" +
-                "          \"domain\": 1,\n" +
-                "          \"weight\": 0.14,\n" +
-                "          \"period\": \"201903\",\n" +
-                "          \"periodstart\": \"20190304\",\n" +
-                "          \"periodend\": \"20190331\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"survey\": \"023\",\n" +
-                "          \"tradingdate\": \"20190321\",\n" +
-                "          \"domain\": 1,\n" +
-                "          \"weight\": 0.14,\n" +
-                "          \"period\": \"201903\",\n" +
-                "          \"periodstart\": \"20190304\",\n" +
-                "          \"periodend\": \"20190331\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"survey\": \"023\",\n" +
-                "          \"tradingdate\": \"20190322\",\n" +
-                "          \"domain\": 1,\n" +
-                "          \"weight\": 0.15,\n" +
-                "          \"period\": \"201903\",\n" +
-                "          \"periodstart\": \"20190304\",\n" +
-                "          \"periodend\": \"20190331\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"survey\": \"023\",\n" +
-                "          \"tradingdate\": \"20190323\",\n" +
-                "          \"domain\": 1,\n" +
-                "          \"weight\": 0.15,\n" +
-                "          \"period\": \"201903\",\n" +
-                "          \"periodstart\": \"20190304\",\n" +
-                "          \"periodend\": \"20190331\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"survey\": \"023\",\n" +
-                "          \"tradingdate\": \"20190324\",\n" +
-                "          \"domain\": 1,\n" +
-                "          \"weight\": 0.14,\n" +
-                "          \"period\": \"201903\",\n" +
-                "          \"periodstart\": \"20190304\",\n" +
-                "          \"periodend\": \"20190331\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"survey\": \"023\",\n" +
-                "          \"tradingdate\": \"20190325\",\n" +
-                "          \"domain\": 1,\n" +
-                "          \"weight\": 0.13,\n" +
-                "          \"period\": \"201903\",\n" +
-                "          \"periodstart\": \"20190304\",\n" +
-                "          \"periodend\": \"20190331\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"survey\": \"023\",\n" +
-                "          \"tradingdate\": \"20190326\",\n" +
-                "          \"domain\": 1,\n" +
-                "          \"weight\": 0.14,\n" +
-                "          \"period\": \"201903\",\n" +
-                "          \"periodstart\": \"20190304\",\n" +
-                "          \"periodend\": \"20190331\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"survey\": \"023\",\n" +
-                "          \"tradingdate\": \"20190327\",\n" +
-                "          \"domain\": 1,\n" +
-                "          \"weight\": 0.16,\n" +
-                "          \"period\": \"201903\",\n" +
-                "          \"periodstart\": \"20190304\",\n" +
-                "          \"periodend\": \"20190331\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"survey\": \"023\",\n" +
-                "          \"tradingdate\": \"20190328\",\n" +
-                "          \"domain\": 1,\n" +
-                "          \"weight\": 0.15,\n" +
-                "          \"period\": \"201903\",\n" +
-                "          \"periodstart\": \"20190304\",\n" +
-                "          \"periodend\": \"20190331\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"survey\": \"023\",\n" +
-                "          \"tradingdate\": \"20190329\",\n" +
-                "          \"domain\": 1,\n" +
-                "          \"weight\": 0.13,\n" +
-                "          \"period\": \"201903\",\n" +
-                "          \"periodstart\": \"20190304\",\n" +
-                "          \"periodend\": \"20190331\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"survey\": \"023\",\n" +
-                "          \"tradingdate\": \"20190330\",\n" +
-                "          \"domain\": 1,\n" +
-                "          \"weight\": 0.16,\n" +
-                "          \"period\": \"201903\",\n" +
-                "          \"periodstart\": \"20190304\",\n" +
-                "          \"periodend\": \"20190331\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"survey\": \"023\",\n" +
-                "          \"tradingdate\": \"20190331\",\n" +
-                "          \"domain\": 1,\n" +
-                "          \"weight\": 0.13,\n" +
-                "          \"period\": \"201903\",\n" +
-                "          \"periodstart\": \"20190304\",\n" +
-                "          \"periodend\": \"20190331\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "}";
+        try {
+            dateAdjustmentQuery = new DateAdjustmentQuery(params);
+            String queryStr = dateAdjustmentQuery.buildDateAdjustmentConfigQuery();
+            log.info("Date Adjustment configuration GraphQL query: " + queryStr);
+            String dateAdjustmentQueryOutput = qlService.qlSearch(queryStr);
+            log.info("Date Adjustment Query Output: " + dateAdjustmentQueryOutput);
+            DateAdjustmentResponse dateAdjustmentResponse = new DateAdjustmentResponse(dateAdjustmentQueryOutput);
+            response = dateAdjustmentResponse.parseDateAdjustmentQueryResponse();
+            log.info("Date Adjustment Response before sending to lambda: " + response);
+        } catch (Exception err) {
+            log.error("Exception found in Date Adjustment: " + err.getMessage());
+            String message = processJsonErrorMessage(err);
+            response = "{\"error\":\"Unable to load DateAdjustment config data " + message + "\"}";
+        }
 
         log.info("API Complete!! --> /dateadjustment/loadconfigdata");
 
