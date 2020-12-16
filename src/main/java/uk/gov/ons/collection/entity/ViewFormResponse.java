@@ -90,7 +90,7 @@ public class ViewFormResponse {
             for(int j = 0; j < responseArray.length(); j++){
                 if(outputFormArray.getJSONObject(i).getString("questioncode").equals(responseArray.getJSONObject(j).getString("questioncode"))) {
                     outputFormArray.getJSONObject(i).put("response", responseArray.getJSONObject(j).getString("response"));
-                    if(responseArray.getJSONObject(j).getString("adjustedresponse") == null){
+                    if(responseArray.getJSONObject(j).isNull("adjustedresponse")){
                         outputFormArray.getJSONObject(i).put("adjustedresponse", "");
                     }
                     else{
