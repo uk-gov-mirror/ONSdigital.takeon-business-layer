@@ -13,7 +13,9 @@ public class DateAdjustmentResponse {
     private static final String REFERENCE = "reference";
     private static final String PERIOD = "period";
     private static final String SURVEY = "survey";
-    private static final String RESULTS_CELL_NUMBER = "cellnumber";
+    private static final String RESULTS_CELL_NUMBER = "resultscellnumber";
+    private static final String CELL_NUMBER = "cellnumber";
+
     private static final String DOMAIN = "domain";
     private static final String QUESTION_CODE = "questioncode";
     private static final String RESPONSE = "response";
@@ -70,7 +72,7 @@ public class DateAdjustmentResponse {
                 cellNumber = contributorObject.getInt(RESULTS_CELL_NUMBER);
                 log.info("Domain for a given contributor: " + domain);
                 log.info("Results Cell Number for a given contributor: " + cellNumber);
-                dateAdjustmentResultObj.put(RESULTS_CELL_NUMBER, cellNumber);
+                dateAdjustmentResultObj.put(CELL_NUMBER, cellNumber);
                 dateAdjustmentResultObj.put(DOMAIN, domain);
                 processDateAdjustmentWeightConfiguration(domain, dateAdjustmentResultObj);
                 processContributorDateAdjustmentConfiguration(dateAdjustmentResultObj);
@@ -104,7 +106,7 @@ public class DateAdjustmentResponse {
                     String response = responseArray.getJSONObject(j).getString(RESPONSE);
                     if(questionCode.equals(responseArray.getJSONObject(j).getString(QUESTION_CODE))) {
                         eachResponseObject.put(RESPONSE, response);
-                        eachResponseObject.put(INSTANCE, responseArray.getJSONObject(j).getString(INSTANCE));
+                        eachResponseObject.put(INSTANCE, responseArray.getJSONObject(j).get(INSTANCE));
                     }
                 }
                 responseResultArr.put(eachResponseObject);
