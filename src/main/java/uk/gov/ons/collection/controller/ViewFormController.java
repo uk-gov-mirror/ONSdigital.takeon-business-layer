@@ -39,6 +39,7 @@ GraphQlService qlService;
         var response = new ViewFormResponse(qlService.qlSearch(qlQuery));
         responseText = response.combineFormAndResponseData();
     } catch (Exception e) {
+        log.error("Exception caught: " + e.getMessage());
         responseText = "{\"error\":\"Invalid response from graphQL\"}";
     }
     log.info("Query sent to service: " + qlQuery);     
