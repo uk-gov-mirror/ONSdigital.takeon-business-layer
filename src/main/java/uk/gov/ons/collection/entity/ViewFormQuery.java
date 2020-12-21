@@ -22,7 +22,7 @@ public class ViewFormQuery{
         viewFormQuery.append("{\"query\": \"query responsecontributorformdefinition($period: String, $reference: String, $survey: String) " +
         "{ allContributors(condition: {reference: $reference, period: $period, survey: $survey}) {" +
             "nodes {formByFormid {formdefinitionsByFormid (orderBy: DISPLAYORDER_ASC){nodes {questioncode type derivedformula displaytext displayquestionnumber displayorder}}}" +
-            "responsesByReferenceAndPeriodAndSurvey {nodes {instance questioncode response}}}}}\"," +
+            "responsesByReferenceAndPeriodAndSurvey {nodes {instance questioncode response adjustedresponse}}}}}\"," +
             "\"variables\": {");
 
         viewFormQuery.append(buildVariables());
