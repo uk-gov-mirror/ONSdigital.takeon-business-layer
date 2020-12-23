@@ -148,7 +148,7 @@ public class HistoryDetailsResponse {
             for (int l = 0; l < responseArray.length(); l++) {
                 if (viewFormResponsesArray.getJSONObject(k).getString("questioncode").equals(responseArray.getJSONObject(l)
                         .getString("questioncode"))) {
-                    viewFormResponsesArray.getJSONObject(k).put("response", responseArray.getJSONObject(l).getString("response"));
+                    viewFormResponsesArray.getJSONObject(k).put("response", responseArray.getJSONObject(l).get("response"));
                     viewFormResponsesArray.getJSONObject(k).put("instance", responseArray.getJSONObject(l).getInt("instance"));
                 }
             }
