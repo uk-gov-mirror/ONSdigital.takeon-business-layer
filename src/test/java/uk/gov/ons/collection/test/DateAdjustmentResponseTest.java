@@ -486,7 +486,6 @@ public class DateAdjustmentResponseTest {
             System.out.println("Reference: "+ responseObject.getString("reference"));
             System.out.println("Period: "+ responseObject.getString("period"));
             System.out.println("Survey: "+ responseObject.getString("survey"));
-            System.out.println("Errorflag: "+ responseObject.get("errorflag"));
             String dateAdjustmentSaveQuery = dateAdjustmentResponse.buildSaveDateAdjustmentQuery();
             System.out.println("Save Query: " + dateAdjustmentSaveQuery);
         } catch (Exception e) {
