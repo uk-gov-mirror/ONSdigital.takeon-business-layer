@@ -1,9 +1,62 @@
 package uk.gov.ons.collection.test;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import uk.gov.ons.collection.entity.DateAdjustmentResponse;
 
 public class DateAdjustmentResponseTest {
+
+
+    String lambdaOutput = "{\n" +
+            "  \"reference\": \"49900613746\",\n" +
+            "  \"period\": \"201903\",\n" +
+            "  \"survey\": \"023\",\n" +
+            "  \"errorflag\": \"E\",\n" +
+            "  \"dateadjustmenterrorflag\": \"E\",\n" +
+            "  \"daysreturnedperiod\": 25,\n" +
+            "  \"sumtradingweightsoverreturnedperiod\": 29.1,\n" +
+            "  \"actualdaysreturnedperiod\": 25,\n" +
+            "  \"sumtradingweightsoveractualreturnedperiod\": 30.1,\n" +
+            "  \"dateadjustments\": [\n" +
+            "    {\n" +
+            "      \"questioncode\": \"20\",\n" +
+            "      \"adjusted_value\": \"10000\",\n" +
+            "      \"average_weekly_value\": \"25000\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "      \"questioncode\": \"21\",\n" +
+            "      \"adjusted_value\": \"10000\",\n" +
+            "      \"average_weekly_value\": \"25000\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "      \"questioncode\": \"22\",\n" +
+            "      \"adjusted_value\": \"10000\",\n" +
+            "      \"average_weekly_value\": \"25000\"\n" +
+            "      \n" +
+            "    },\n" +
+            "    {\n" +
+            "      \"questioncode\": \"23\",\n" +
+            "      \"adjusted_value\": \"10000\",\n" +
+            "      \"average_weekly_value\": \"25000\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "      \"questioncode\": \"24\",\n" +
+            "      \"adjusted_value\": \"10000\",\n" +
+            "      \"average_weekly_value\": \"25000\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "      \"questioncode\": \"25\",\n" +
+            "      \"adjusted_value\": \"10000\",\n" +
+            "      \"average_weekly_value\": \"25000\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "      \"questioncode\": \"26\",\n" +
+            "      \"adjusted_value\": \"10000\",\n" +
+            "      \"average_weekly_value\": \"25000\"\n" +
+            "    }\n" +
+            "  ]\n" +
+            "}";
     String graphQLOutput = "{\n" +
             "  \"data\": {\n" +
             "    \"allContributors\": {\n" +
@@ -417,6 +470,25 @@ public class DateAdjustmentResponseTest {
             DateAdjustmentResponse dateAdjustmentResponse = new DateAdjustmentResponse(graphQLOutput);
             String output = dateAdjustmentResponse.parseDateAdjustmentQueryResponse();
             System.out.println(output);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    void date_adjustment_verify_save_query(){
+        try {
+            DateAdjustmentResponse dateAdjustmentResponse = new DateAdjustmentResponse(lambdaOutput);
+
+            JSONArray dateAdjustmentsArray = dateAdjustmentResponse.getDateAdjustments();
+            System.out.println(dateAdjustmentsArray.toString());
+            JSONObject responseObject = dateAdjustmentResponse.getJsonQlResponse();
+            System.out.println("Reference: "+ responseObject.getString("reference"));
+            System.out.println("Period: "+ responseObject.getString("period"));
+            System.out.println("Survey: "+ responseObject.getString("survey"));
+            System.out.println("Errorflag: "+ responseObject.get("errorflag"));
+            String dateAdjustmentSaveQuery = dateAdjustmentResponse.buildSaveDateAdjustmentQuery();
+            System.out.println("Save Query: " + dateAdjustmentSaveQuery);
         } catch (Exception e) {
             e.printStackTrace();
         }

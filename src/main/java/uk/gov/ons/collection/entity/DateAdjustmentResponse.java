@@ -6,8 +6,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import uk.gov.ons.collection.exception.InvalidJsonException;
 
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.StringJoiner;
+
 @Log4j2
 public class DateAdjustmentResponse {
+
+
 
     private JSONObject jsonQlResponse;
     private static final String REFERENCE = "reference";
@@ -38,6 +44,7 @@ public class DateAdjustmentResponse {
 
 
     private static final String EMPTY_RESPONSE = "";
+    private final Timestamp time = new Timestamp(new Date().getTime());
 
     public DateAdjustmentResponse(String inputJson) throws InvalidJsonException {
         try {
@@ -45,6 +52,82 @@ public class DateAdjustmentResponse {
         } catch (JSONException e) {
             log.error("Error in processing Date Adjustment Config Response: " + e.getMessage());
             throw new InvalidJsonException("Given string could not be converted/processed: " + e);
+        }
+    }
+
+
+
+    public JSONArray getDateAdjustments() throws JSONException {
+
+        return jsonQlResponse.getJSONArray("dateadjustments");
+
+    }
+
+    public String buildSaveDateAdjustmentQuery() throws InvalidJsonException {
+        var queryJson = new StringBuilder();
+        queryJson.append("{\"query\": \"mutation upsertDateAdjustment{savedateadjustment(input: {arg0:");
+        queryJson.append("[" + getDateAdjustmentResponses() + "], arg1:");
+        queryJson.append("[{" + extractContributorDateAdjustment() + "}]");
+        queryJson.append("}){clientMutationId}}\"}");
+        log.info("Upsert And DeleteQuery " + queryJson.toString());
+        return queryJson.toString();
+    }
+
+    private String getDateAdjustmentResponses() throws InvalidJsonException {
+        JSONArray dateAdjustmentArray = getDateAdjustments();
+        StringJoiner joiner = new StringJoiner(",");
+        for (int i = 0; i < dateAdjustmentArray.length(); i++) {
+            JSONObject eachQuestionDateAdjustment = dateAdjustmentArray.getJSONObject(i);
+            joiner.add("{" + extractDateAdjustmentRowForSave(eachQuestionDateAdjustment) + "}");
+        }
+        return joiner.toString();
+    }
+
+
+    // Convert a row for the given index and provide it in graphQL desired format
+    private String extractDateAdjustmentRowForSave(JSONObject data) throws InvalidJsonException {
+        StringJoiner joiner = new StringJoiner(",");
+        try {
+
+            joiner.add("reference: \\\"" + jsonQlResponse.getString("reference") + "\\\"");
+            joiner.add("period: \\\"" + jsonQlResponse.getString("period") + "\\\"");
+            joiner.add("survey: \\\"" + jsonQlResponse.getString("survey") + "\\\"");
+            joiner.add("questioncode: \\\"" + data.getString("questioncode") + "\\\"");
+            joiner.add("instance: 0");
+            joiner.add("adjustedresponse: \\\"" + data.get("adjusted_value") + "\\\"");
+            joiner.add("averageweeklyadjustedresponse: \\\"" + data.get("average_weekly_value") + "\\\"");
+            joiner.add("createdby: \\\"fisdba\\\"");
+            joiner.add("createddate: \\\"" + time.toString() + "\\\"");
+            joiner.add("lastupdatedby: \\\"fisdba\\\"");
+            joiner.add("lastupdateddate: \\\"" +   time.toString() + "\\\"");
+            return joiner.toString();
+
+        } catch (Exception err) {
+            throw new InvalidJsonException("Error processing validation output json structure: " + err + " JSON: ", err);
+        }
+    }
+
+    // Convert a row for the given index and provide it in graphQL desired format
+    private String extractContributorDateAdjustment() throws InvalidJsonException {
+        StringJoiner joiner = new StringJoiner(",");
+        try {
+
+            joiner.add("reference: \\\"" + jsonQlResponse.getString("reference") + "\\\"");
+            joiner.add("period: \\\"" + jsonQlResponse.getString("period") + "\\\"");
+            joiner.add("survey: \\\"" + jsonQlResponse.getString("survey") + "\\\"");
+            joiner.add("errorflag: \\\"" + jsonQlResponse.getString("errorflag") + "\\\"");
+            joiner.add("dateadjustmenterrorflag: \\\"" + jsonQlResponse.getString("dateadjustmenterrorflag") + "\\\"");
+            joiner.add("daysreturnedperiod: " + jsonQlResponse.get("daysreturnedperiod"));
+            joiner.add("sumtradingweightsoverreturnedperiod: " + jsonQlResponse.get("actualdaysreturnedperiod"));
+            joiner.add("sumtradingweightsoveractualreturnedperiod: " + jsonQlResponse.get("sumtradingweightsoveractualreturnedperiod"));
+            joiner.add("createdby: \\\"fisdba\\\"");
+            joiner.add("createddate: \\\"" + time.toString() + "\\\"");
+            joiner.add("lastupdatedby: \\\"fisdba\\\"");
+            joiner.add("lastupdateddate: \\\"" +   time.toString() + "\\\"");
+            return joiner.toString();
+
+        } catch (Exception err) {
+            throw new InvalidJsonException("Error processing validation output json structure: " + err + " JSON: ", err);
         }
     }
 
@@ -117,6 +200,10 @@ public class DateAdjustmentResponse {
             throw new InvalidJsonException("There is no FormDefinition for a given survey. Please verify");
         }
 
+    }
+
+    public JSONObject getJsonQlResponse() {
+        return jsonQlResponse;
     }
 
     private void processDateAdjustmentWeightConfiguration(int domain, JSONObject selectiveEditingResultObj) throws InvalidJsonException {

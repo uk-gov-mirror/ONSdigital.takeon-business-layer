@@ -19,7 +19,6 @@ import uk.gov.ons.collection.entity.DateAdjustmentQuery;
 import uk.gov.ons.collection.entity.DateAdjustmentResponse;
 import uk.gov.ons.collection.service.GraphQlService;
 
-import java.util.List;
 import java.util.Map;
 
 @Log4j2
@@ -68,7 +67,12 @@ public class DateAdjustmentController {
 
         try {
             log.info("API CALL!! --> /dateadjustment/saveOutput :: " + jsonString);
-
+            DateAdjustmentResponse dateAdjustmentResponse = new DateAdjustmentResponse(jsonString);
+            String saveQuery = dateAdjustmentResponse.buildSaveDateAdjustmentQuery();
+            log.info("GraphQL query for Date Adjustment save {}", saveQuery);
+            String saveResponseOutput = qlService.qlSearch(saveQuery);
+            log.info("Output after saving the Date Adjustment outputs {}", saveResponseOutput);
+            log.info("API Complete!! --> /selectiveediting/saveOutput");
         } catch (Exception err) {
             log.error("Exception found in Date Adjustment: " + err.getMessage());
             String message = processJsonErrorMessage(err);
