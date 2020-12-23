@@ -117,6 +117,7 @@ public class DateAdjustmentResponse {
             joiner.add("survey: \\\"" + jsonQlResponse.getString("survey") + "\\\"");
             joiner.add("errorflag: \\\"" + jsonQlResponse.getString("errorflag") + "\\\"");
             joiner.add("dateadjustmenterrorflag: \\\"" + jsonQlResponse.getString("dateadjustmenterrorflag") + "\\\"");
+            joiner.add("actualdaysreturnedperiod: " + jsonQlResponse.get("actualdaysreturnedperiod"));
             joiner.add("daysreturnedperiod: " + jsonQlResponse.get("daysreturnedperiod"));
             joiner.add("sumtradingweightsoverreturnedperiod: " + jsonQlResponse.get("actualdaysreturnedperiod"));
             joiner.add("sumtradingweightsoveractualreturnedperiod: " + jsonQlResponse.get("sumtradingweightsoveractualreturnedperiod"));
