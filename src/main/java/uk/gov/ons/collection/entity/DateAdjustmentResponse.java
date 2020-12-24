@@ -241,8 +241,8 @@ public class DateAdjustmentResponse {
         JSONArray contributorDateAdjustmentConfigArray = jsonQlResponse.getJSONObject("data").getJSONObject("allContributordateadjustmentconfigs").getJSONArray("nodes");
         if (contributorDateAdjustmentConfigArray.length() > 0) {
             JSONObject contributorConfigObject = contributorDateAdjustmentConfigArray.getJSONObject(0);
-            selectiveEditingResultObj.put(RETURNED_START_DATE, contributorConfigObject.getString(RETURNED_START_DATE));
-            selectiveEditingResultObj.put(RETURNED_END_DATE, contributorConfigObject.getString(RETURNED_END_DATE));
+            //selectiveEditingResultObj.put(RETURNED_START_DATE, contributorConfigObject.getString(RETURNED_START_DATE));
+            //selectiveEditingResultObj.put(RETURNED_END_DATE, contributorConfigObject.getString(RETURNED_END_DATE));
             selectiveEditingResultObj.put(LONG_PERIOD_PARAMETER, contributorConfigObject.get(LONG_PERIOD_PARAMETER));
             selectiveEditingResultObj.put(SHORT_PERIOD_PARAMETER, contributorConfigObject.get(SHORT_PERIOD_PARAMETER));
             selectiveEditingResultObj.put(AVERAGE_WEEKLY, contributorConfigObject.get(AVERAGE_WEEKLY));
