@@ -41,6 +41,7 @@ public class DateAdjustmentResponse {
     private static final String SET_MID_POINT = "settomidpoint";
     private static final String SET_EQUAL_WEIGHTED = "settoequalweighted";
     private static final String USE_CALENDAR_DAYS = "usecalendardays";
+    private static final String RETURNED_DATE_TYPE = "returndatetype";
 
 
     private static final String EMPTY_RESPONSE = "";
@@ -212,8 +213,8 @@ public class DateAdjustmentResponse {
 
         if(returnedDateConfigArray.length() > 0 && responseArray.length() > 0) {
             for (int i = 0; i < returnedDateConfigArray.length(); i++) {
-                String returnQuestionCode = returnedDateConfigArray.getJSONObject(i).getString("questioncode");
-                String returnType = returnedDateConfigArray.getJSONObject(i).getString("returndatetype");
+                String returnQuestionCode = returnedDateConfigArray.getJSONObject(i).getString(QUESTION_CODE);
+                String returnType = returnedDateConfigArray.getJSONObject(i).getString(RETURNED_DATE_TYPE);
                 for (int j = 0; j < responseArray.length(); j++) {
                     if(returnQuestionCode.equals(responseArray.getJSONObject(j).getString(QUESTION_CODE))) {
                         if (returnType.equals("S")) {
