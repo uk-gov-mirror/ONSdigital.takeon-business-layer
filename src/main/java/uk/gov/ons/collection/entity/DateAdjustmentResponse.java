@@ -158,7 +158,9 @@ public class DateAdjustmentResponse {
                 dateAdjustmentResultObj.put(CELL_NUMBER, cellNumber);
                 dateAdjustmentResultObj.put(DOMAIN, domain);
                 processDateAdjustmentWeightConfiguration(domain, dateAdjustmentResultObj);
+                JSONArray contributorDateAdjustmentConfigArray = jsonQlResponse.getJSONObject("data").getJSONObject("allContributordateadjustmentconfigs").getJSONArray("nodes");
                 processContributorDateAdjustmentConfiguration(dateAdjustmentResultObj);
+
                 processResponses(contributorObject, dateAdjustmentResultObj);
 
             } else {
@@ -176,28 +178,57 @@ public class DateAdjustmentResponse {
 
         JSONArray responseResultArr = new JSONArray();
         JSONArray formDefinitionArray = contributorObject.getJSONObject("formByFormid").getJSONObject("formdefinitionsByFormid").getJSONArray("nodes");
+        JSONArray returnedDateConfigArray = contributorObject.getJSONObject("formByFormid").getJSONObject("dateadjustmentreturndateconfigsByFormid").getJSONArray("nodes");
         JSONArray responseArray = contributorObject.getJSONObject("responsesByReferenceAndPeriodAndSurvey").getJSONArray("nodes");
         if (formDefinitionArray.length() > 0) {
             for (int i = 0; i < formDefinitionArray.length(); i++) {
                 JSONObject eachFormDefinitionObject = formDefinitionArray.getJSONObject(i);
                 String questionCode = eachFormDefinitionObject.getString(QUESTION_CODE);
                 var eachResponseObject = new JSONObject();
-                eachResponseObject.put(QUESTION_CODE, questionCode);
-                eachResponseObject.put(RESPONSE, EMPTY_RESPONSE);
-                eachResponseObject.put(INSTANCE, EMPTY_RESPONSE);
+                boolean dateAdjustmentFlag = eachFormDefinitionObject.getBoolean("dateadjustment");
+                boolean matchFound = false;
                 for (int j = 0; j< responseArray.length(); j++) {
                     String response = responseArray.getJSONObject(j).getString(RESPONSE);
-                    if(questionCode.equals(responseArray.getJSONObject(j).getString(QUESTION_CODE))) {
+                    if(questionCode.equals(responseArray.getJSONObject(j).getString(QUESTION_CODE)) && dateAdjustmentFlag) {
+                        eachResponseObject.put(QUESTION_CODE, questionCode);
                         eachResponseObject.put(RESPONSE, response);
                         eachResponseObject.put(INSTANCE, responseArray.getJSONObject(j).get(INSTANCE));
+                        responseResultArr.put(eachResponseObject);
+                        matchFound = true;
                     }
                 }
-                responseResultArr.put(eachResponseObject);
+                if(!matchFound && dateAdjustmentFlag) {
+                    eachResponseObject.put(QUESTION_CODE, questionCode);
+                    eachResponseObject.put(RESPONSE, EMPTY_RESPONSE);
+                    eachResponseObject.put(INSTANCE, EMPTY_RESPONSE);
+                    responseResultArr.put(eachResponseObject);
+                }
             }
             selectiveEditingResultObj.put(RESPONSES, responseResultArr);
 
         } else {
             throw new InvalidJsonException("There is no FormDefinition for a given survey. Please verify");
+        }
+
+        if(returnedDateConfigArray.length() > 0 && responseArray.length() > 0) {
+            for (int i = 0; i < returnedDateConfigArray.length(); i++) {
+                String returnQuestionCode = returnedDateConfigArray.getJSONObject(i).getString("questioncode");
+                String returnType = returnedDateConfigArray.getJSONObject(i).getString("returndatetype");
+                for (int j = 0; j < responseArray.length(); j++) {
+                    if(returnQuestionCode.equals(responseArray.getJSONObject(j).getString(QUESTION_CODE))) {
+                        if (returnType.equals("S")) {
+                            selectiveEditingResultObj.put(RETURNED_START_DATE, responseArray.getJSONObject(j).getString(RESPONSE));
+
+                        } else if (returnType.equals("E")) {
+                            selectiveEditingResultObj.put(RETURNED_END_DATE, responseArray.getJSONObject(j).getString(RESPONSE));
+                        }
+                        break;
+                    }
+                }
+            }
+
+        } else {
+            throw new InvalidJsonException("There is no Returned Start Date and End date configuration. Please verify");
         }
 
     }
