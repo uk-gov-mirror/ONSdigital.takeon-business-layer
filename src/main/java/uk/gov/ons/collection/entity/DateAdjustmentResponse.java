@@ -95,8 +95,10 @@ public class DateAdjustmentResponse {
             joiner.add("survey: \\\"" + jsonQlResponse.getString("survey") + "\\\"");
             joiner.add("questioncode: \\\"" + data.getString("questioncode") + "\\\"");
             joiner.add("instance: 0");
-            joiner.add("adjustedresponse: \\\"" + data.get("adjusted_value") + "\\\"");
-            joiner.add("averageweeklyadjustedresponse: \\\"" + data.get("average_weekly_value") + "\\\"");
+            joiner = (data.get("adjusted_value") == null) ? (joiner.add("adjustedresponse: " + null))
+                    : (joiner.add("adjustedresponse: \\\"" + data.get("adjusted_value") + "\\\""));
+            joiner = (data.get("average_weekly_value") == null) ? (joiner.add("averageweeklyadjustedresponse: " + null))
+                    : (joiner.add("averageweeklyadjustedresponse: \\\"" + data.get("average_weekly_value") + "\\\""));
             joiner.add("createdby: \\\"fisdba\\\"");
             joiner.add("createddate: \\\"" + time.toString() + "\\\"");
             joiner.add("lastupdatedby: \\\"fisdba\\\"");
@@ -117,6 +119,7 @@ public class DateAdjustmentResponse {
             joiner.add("period: \\\"" + jsonQlResponse.getString("period") + "\\\"");
             joiner.add("survey: \\\"" + jsonQlResponse.getString("survey") + "\\\"");
             joiner.add("dateadjustmenterrorflag: \\\"" + jsonQlResponse.get("dateadjustmenterrorflag") + "\\\"");
+            joiner.add("dateadjustmentlengthflag: \\\"" + jsonQlResponse.get("dateadjustmentlengthflag") + "\\\"");
             joiner.add("actualdaysreturnedperiod: " + jsonQlResponse.get("actualdaysreturnedperiod"));
             joiner.add("daysreturnedperiod: " + jsonQlResponse.get("daysreturnedperiod"));
             joiner.add("sumtradingweightsoverreturnedperiod: " + jsonQlResponse.get("actualdaysreturnedperiod"));
