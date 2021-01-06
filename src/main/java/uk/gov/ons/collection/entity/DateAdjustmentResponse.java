@@ -287,7 +287,7 @@ public class DateAdjustmentResponse {
             selectiveEditingResultObj.put(SET_EQUAL_WEIGHTED, contributorConfigObject.get(SET_EQUAL_WEIGHTED));
             selectiveEditingResultObj.put(USE_CALENDAR_DAYS, contributorConfigObject.get(USE_CALENDAR_DAYS));
         } else {
-            throw new InvalidJsonException("There is no domain configuration. Please verify");
+            throw new InvalidJsonException("There is no contributor date adjustment configuration. Please verify");
         }
 
     }

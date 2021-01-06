@@ -107,11 +107,9 @@ public class UpsertResponse {
             response.setQuestionCode(outputArray.getJSONObject(i).getString("questioncode"));
             if(outputArray.getJSONObject(i).isNull("response")){
                 response.setResponse("");
-            }
-            else{
+            } else {
                 response.setResponse(outputArray.getJSONObject(i).getString("response"));
             }
-            //response.setResponse(outputArray.getJSONObject(i).getString("response"));
             response.setCreatedBy(outputArray.getJSONObject(i).getString("createdby"));
             response.setCreatedDate(outputArray.getJSONObject(i).getString("createddate"));
             response.setInstance(outputArray.getJSONObject(i).getInt("instance"));

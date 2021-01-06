@@ -1,7 +1,5 @@
 package uk.gov.ons.collection.test;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import uk.gov.ons.collection.entity.DateAdjustmentResponse;
 
@@ -67,6 +65,405 @@ public class DateAdjustmentResponseTest {
             "    }\n" +
             "  }\n" +
             "}";
+
+    String noDomainGraphQl = "{\n" +
+            "  \"data\": {\n" +
+            "    \"allContributors\": {\n" +
+            "      \"nodes\": [\n" +
+            "        {\n" +
+            "          \"survey\": \"023\",\n" +
+            "          \"period\": \"201903\",\n" +
+            "          \"reference\": \"49900534932\",\n" +
+            "          \"formid\": 5,\n" +
+            "          \"status\": \"Form saved\",\n" +
+            "          \"frozensic\": \"41100\",\n" +
+            "          \"resultscellnumber\": 1,\n" +
+            "          \"domain\": null}]\n" +
+            "    }\n" +
+            "  }\n" +
+            "}";
+    String invalidJson = "{\n" +
+            "  \"data\": {\n" +
+            "    \"allContributors\": {\n" +
+            "      \"nodes\": [\n" +
+            "        {\n" +
+            "          \"survey\": \"023\",\n" +
+            "          \"period\": \"201903\",\n" +
+            "          \"reference\": \"49900534932\",\n" +
+            "          \"formid\": 5,\n" +
+            "          \"status\": \"Form saved\",\n" +
+            "          \"frozensic\": \"41100\",\n" +
+            "          \"resultscellnumber\": 1,\n" +
+            "          \"domain\": 1]\n" +
+            "    }\n" +
+            "  }\n" +
+            "}";
+    String noCellNumberGraphQl = "{\n" +
+            "  \"data\": {\n" +
+            "    \"allContributors\": {\n" +
+            "      \"nodes\": [\n" +
+            "        {\n" +
+            "          \"survey\": \"023\",\n" +
+            "          \"period\": \"201903\",\n" +
+            "          \"reference\": \"49900534932\",\n" +
+            "          \"formid\": 5,\n" +
+            "          \"status\": \"Form saved\",\n" +
+            "          \"frozensic\": \"41100\",\n" +
+            "          \"resultscellnumber\": null,\n" +
+            "          \"domain\": 1}]\n" +
+            "    }\n" +
+            "  }\n" +
+            "}";
+
+    String noFormDefinition = "{\n" +
+            "  \"data\": {\n" +
+            "    \"allContributors\": {\n" +
+            "      \"nodes\": [\n" +
+            "        {\n" +
+            "          \"survey\": \"023\",\n" +
+            "          \"period\": \"201903\",\n" +
+            "          \"reference\": \"49900534932\",\n" +
+            "          \"formid\": 5,\n" +
+            "          \"status\": \"Form saved\",\n" +
+            "          \"frozensic\": \"41100\",\n" +
+            "          \"resultscellnumber\": 1,\n" +
+            "          \"domain\": 1,\n" +
+            "          \"formByFormid\": {\n" +
+            "            \"survey\": \"023\",\n" +
+            "            \"formid\": 5,\n" +
+            "            \"formdefinitionsByFormid\": {\n" +
+            "              \"nodes\": []\n" +
+            "            },\n" +
+            "            \"dateadjustmentreturndateconfigsByFormid\": {\n" +
+            "              \"nodes\": [\n" +
+            "                {\n" +
+            "                  \"formid\": 5,\n" +
+            "                  \"questioncode\": \"11\",\n" +
+            "                  \"returndatetype\": \"S\"\n" +
+            "                },\n" +
+            "                {\n" +
+            "                  \"formid\": 5,\n" +
+            "                  \"questioncode\": \"12\",\n" +
+            "                  \"returndatetype\": \"E\"\n" +
+            "                }\n" +
+            "              ]\n" +
+            "            }\n" +
+            "          },\n" +
+            "          \"responsesByReferenceAndPeriodAndSurvey\": {\n" +
+            "            \"nodes\": [\n" +
+            "              {\n" +
+            "                \"reference\": \"49900534932\",\n" +
+            "                \"period\": \"201903\",\n" +
+            "                \"survey\": \"023\",\n" +
+            "                \"questioncode\": \"11\",\n" +
+            "                \"instance\": 0,\n" +
+            "                \"response\": \"20190401\"\n" +
+            "              },\n" +
+            "              {\n" +
+            "                \"reference\": \"49900534932\",\n" +
+            "                \"period\": \"201903\",\n" +
+            "                \"survey\": \"023\",\n" +
+            "                \"questioncode\": \"12\",\n" +
+            "                \"instance\": 0,\n" +
+            "                \"response\": \"20190501\"\n" +
+            "              }\n" +
+            "            ]\n" +
+            "          }\n" +
+            "        }\n" +
+            "      ]\n" +
+            "    },\n" +
+            "    \"allDateadjustmentweightconfigs\": {\n" +
+            "      \"nodes\": [\n" +
+            "        {\n" +
+            "          \"survey\": \"023\",\n" +
+            "          \"period\": \"201903\",\n" +
+            "          \"tradingdate\": \"20190301\",\n" +
+            "          \"domain\": 1,\n" +
+            "          \"weight\": 0.1,\n" +
+            "          \"periodstart\": \"20190301\",\n" +
+            "          \"periodend\": \"20190331\"\n" +
+            "        }\n" +
+            "      ]\n" +
+            "    },\n" +
+            "    \"allContributordateadjustmentconfigs\": {\n" +
+            "      \"nodes\": [\n" +
+            "        {\n" +
+            "          \"reference\": \"49900534932\",\n" +
+            "          \"period\": \"201903\",\n" +
+            "          \"survey\": \"023\",\n" +
+            "          \"longperiodparameter\": 35,\n" +
+            "          \"shortperiodparameter\": 27,\n" +
+            "          \"averageweekly\": true,\n" +
+            "          \"settomidpoint\": false,\n" +
+            "          \"settoequalweighted\": false,\n" +
+            "          \"usecalendardays\": false\n" +
+            "        }\n" +
+            "      ]\n" +
+            "    }\n" +
+            "  }\n" +
+            "}";
+
+    String noReturnDateConfig = "{\n" +
+            "  \"data\": {\n" +
+            "    \"allContributors\": {\n" +
+            "      \"nodes\": [\n" +
+            "        {\n" +
+            "          \"survey\": \"023\",\n" +
+            "          \"period\": \"201903\",\n" +
+            "          \"reference\": \"49900534932\",\n" +
+            "          \"formid\": 5,\n" +
+            "          \"status\": \"Form saved\",\n" +
+            "          \"frozensic\": \"41100\",\n" +
+            "          \"resultscellnumber\": 1,\n" +
+            "          \"domain\": 1,\n" +
+            "          \"formByFormid\": {\n" +
+            "            \"survey\": \"023\",\n" +
+            "            \"formid\": 5,\n" +
+            "            \"formdefinitionsByFormid\": {\n" +
+            "              \"nodes\": [\n" +
+            "                {\n" +
+            "                  \"questioncode\": \"11\",\n" +
+            "                  \"dateadjustment\": false\n" +
+            "                },\n" +
+            "                {\n" +
+            "                  \"questioncode\": \"12\",\n" +
+            "                  \"dateadjustment\": false\n" +
+            "                }\n" +
+            "              ]\n" +
+            "            },\n" +
+            "            \"dateadjustmentreturndateconfigsByFormid\": {\n" +
+            "              \"nodes\": []\n" +
+            "            }\n" +
+            "          },\n" +
+            "          \"responsesByReferenceAndPeriodAndSurvey\": {\n" +
+            "            \"nodes\": [\n" +
+            "              {\n" +
+            "                \"reference\": \"49900534932\",\n" +
+            "                \"period\": \"201903\",\n" +
+            "                \"survey\": \"023\",\n" +
+            "                \"questioncode\": \"11\",\n" +
+            "                \"instance\": 0,\n" +
+            "                \"response\": \"20190401\"\n" +
+            "              },\n" +
+            "              {\n" +
+            "                \"reference\": \"49900534932\",\n" +
+            "                \"period\": \"201903\",\n" +
+            "                \"survey\": \"023\",\n" +
+            "                \"questioncode\": \"12\",\n" +
+            "                \"instance\": 0,\n" +
+            "                \"response\": \"20190501\"\n" +
+            "              }\n" +
+            "            ]\n" +
+            "          }\n" +
+            "        }\n" +
+            "      ]\n" +
+            "    },\n" +
+            "    \"allDateadjustmentweightconfigs\": {\n" +
+            "      \"nodes\": [\n" +
+            "        {\n" +
+            "          \"survey\": \"023\",\n" +
+            "          \"period\": \"201903\",\n" +
+            "          \"tradingdate\": \"20190301\",\n" +
+            "          \"domain\": 1,\n" +
+            "          \"weight\": 0.1,\n" +
+            "          \"periodstart\": \"20190301\",\n" +
+            "          \"periodend\": \"20190331\"\n" +
+            "        }\n" +
+            "      ]\n" +
+            "    },\n" +
+            "    \"allContributordateadjustmentconfigs\": {\n" +
+            "      \"nodes\": [\n" +
+            "        {\n" +
+            "          \"reference\": \"49900534932\",\n" +
+            "          \"period\": \"201903\",\n" +
+            "          \"survey\": \"023\",\n" +
+            "          \"longperiodparameter\": 35,\n" +
+            "          \"shortperiodparameter\": 27,\n" +
+            "          \"averageweekly\": true,\n" +
+            "          \"settomidpoint\": false,\n" +
+            "          \"settoequalweighted\": false,\n" +
+            "          \"usecalendardays\": false\n" +
+            "        }\n" +
+            "      ]\n" +
+            "    }\n" +
+            "  }\n" +
+            "}";
+
+
+    String noTradingWeightsConfig = "{\n" +
+            "  \"data\": {\n" +
+            "    \"allContributors\": {\n" +
+            "      \"nodes\": [\n" +
+            "        {\n" +
+            "          \"survey\": \"023\",\n" +
+            "          \"period\": \"201903\",\n" +
+            "          \"reference\": \"49900534932\",\n" +
+            "          \"formid\": 5,\n" +
+            "          \"status\": \"Form saved\",\n" +
+            "          \"frozensic\": \"41100\",\n" +
+            "          \"resultscellnumber\": 1,\n" +
+            "          \"domain\": 1,\n" +
+            "          \"formByFormid\": {\n" +
+            "            \"survey\": \"023\",\n" +
+            "            \"formid\": 5,\n" +
+            "            \"formdefinitionsByFormid\": {\n" +
+            "              \"nodes\": [\n" +
+            "                {\n" +
+            "                  \"questioncode\": \"11\",\n" +
+            "                  \"dateadjustment\": false\n" +
+            "                },\n" +
+            "                {\n" +
+            "                  \"questioncode\": \"12\",\n" +
+            "                  \"dateadjustment\": false\n" +
+            "                }\n" +
+            "              ]\n" +
+            "            },\n" +
+            "            \"dateadjustmentreturndateconfigsByFormid\": {\n" +
+            "              \"nodes\": [\n" +
+            "                {\n" +
+            "                  \"formid\": 5,\n" +
+            "                  \"questioncode\": \"11\",\n" +
+            "                  \"returndatetype\": \"S\"\n" +
+            "                },\n" +
+            "                {\n" +
+            "                  \"formid\": 5,\n" +
+            "                  \"questioncode\": \"12\",\n" +
+            "                  \"returndatetype\": \"E\"\n" +
+            "                }\n" +
+            "              ]\n" +
+            "            }\n" +
+            "          },\n" +
+            "          \"responsesByReferenceAndPeriodAndSurvey\": {\n" +
+            "            \"nodes\": [\n" +
+            "              {\n" +
+            "                \"reference\": \"49900534932\",\n" +
+            "                \"period\": \"201903\",\n" +
+            "                \"survey\": \"023\",\n" +
+            "                \"questioncode\": \"11\",\n" +
+            "                \"instance\": 0,\n" +
+            "                \"response\": \"20190401\"\n" +
+            "              },\n" +
+            "              {\n" +
+            "                \"reference\": \"49900534932\",\n" +
+            "                \"period\": \"201903\",\n" +
+            "                \"survey\": \"023\",\n" +
+            "                \"questioncode\": \"12\",\n" +
+            "                \"instance\": 0,\n" +
+            "                \"response\": \"20190501\"\n" +
+            "              }\n" +
+            "            ]\n" +
+            "          }\n" +
+            "        }\n" +
+            "      ]\n" +
+            "    },\n" +
+            "    \"allDateadjustmentweightconfigs\": {\n" +
+            "      \"nodes\": []\n" +
+            "    },\n" +
+            "    \"allContributordateadjustmentconfigs\": {\n" +
+            "      \"nodes\": [\n" +
+            "        {\n" +
+            "          \"reference\": \"49900534932\",\n" +
+            "          \"period\": \"201903\",\n" +
+            "          \"survey\": \"023\",\n" +
+            "          \"longperiodparameter\": 35,\n" +
+            "          \"shortperiodparameter\": 27,\n" +
+            "          \"averageweekly\": true,\n" +
+            "          \"settomidpoint\": false,\n" +
+            "          \"settoequalweighted\": false,\n" +
+            "          \"usecalendardays\": false\n" +
+            "        }\n" +
+            "      ]\n" +
+            "    }\n" +
+            "  }\n" +
+            "}";
+
+    String noContribDateAdjustmentConfig = "{\n" +
+            "  \"data\": {\n" +
+            "    \"allContributors\": {\n" +
+            "      \"nodes\": [\n" +
+            "        {\n" +
+            "          \"survey\": \"023\",\n" +
+            "          \"period\": \"201903\",\n" +
+            "          \"reference\": \"49900534932\",\n" +
+            "          \"formid\": 5,\n" +
+            "          \"status\": \"Form saved\",\n" +
+            "          \"frozensic\": \"41100\",\n" +
+            "          \"resultscellnumber\": 1,\n" +
+            "          \"domain\": 1,\n" +
+            "          \"formByFormid\": {\n" +
+            "            \"survey\": \"023\",\n" +
+            "            \"formid\": 5,\n" +
+            "            \"formdefinitionsByFormid\": {\n" +
+            "              \"nodes\": [\n" +
+            "                {\n" +
+            "                  \"questioncode\": \"11\",\n" +
+            "                  \"dateadjustment\": false\n" +
+            "                },\n" +
+            "                {\n" +
+            "                  \"questioncode\": \"12\",\n" +
+            "                  \"dateadjustment\": false\n" +
+            "                }\n" +
+            "                \n" +
+            "              ]\n" +
+            "            },\n" +
+            "            \"dateadjustmentreturndateconfigsByFormid\": {\n" +
+            "              \"nodes\": [\n" +
+            "                {\n" +
+            "                  \"formid\": 5,\n" +
+            "                  \"questioncode\": \"11\",\n" +
+            "                  \"returndatetype\": \"S\"\n" +
+            "                },\n" +
+            "                {\n" +
+            "                  \"formid\": 5,\n" +
+            "                  \"questioncode\": \"12\",\n" +
+            "                  \"returndatetype\": \"E\"\n" +
+            "                }\n" +
+            "              ]\n" +
+            "            }\n" +
+            "          },\n" +
+            "          \"responsesByReferenceAndPeriodAndSurvey\": {\n" +
+            "            \"nodes\": [\n" +
+            "              {\n" +
+            "                \"reference\": \"49900534932\",\n" +
+            "                \"period\": \"201903\",\n" +
+            "                \"survey\": \"023\",\n" +
+            "                \"questioncode\": \"11\",\n" +
+            "                \"instance\": 0,\n" +
+            "                \"response\": \"20190401\"\n" +
+            "              },\n" +
+            "              {\n" +
+            "                \"reference\": \"49900534932\",\n" +
+            "                \"period\": \"201903\",\n" +
+            "                \"survey\": \"023\",\n" +
+            "                \"questioncode\": \"12\",\n" +
+            "                \"instance\": 0,\n" +
+            "                \"response\": \"20190501\"\n" +
+            "              }\n" +
+            "            ]\n" +
+            "          }\n" +
+            "        }\n" +
+            "      ]\n" +
+            "    },\n" +
+            "    \"allDateadjustmentweightconfigs\": {\n" +
+            "      \"nodes\": [\n" +
+            "        {\n" +
+            "          \"survey\": \"023\",\n" +
+            "          \"period\": \"201903\",\n" +
+            "          \"tradingdate\": \"20190301\",\n" +
+            "          \"domain\": 1,\n" +
+            "          \"weight\": 0.1,\n" +
+            "          \"periodstart\": \"20190301\",\n" +
+            "          \"periodend\": \"20190331\"\n" +
+            "        }\n" +
+            "      ]\n" +
+            "    },\n" +
+            "    \"allContributordateadjustmentconfigs\": {\n" +
+            "      \"nodes\": ["+
+            "      ]\n" +
+            "    }\n" +
+            "  }\n" +
+            "}";
+
     String graphQLOutput = "{\n" +
             "  \"data\": {\n" +
             "    \"allContributors\": {\n" +
@@ -493,6 +890,92 @@ public class DateAdjustmentResponseTest {
             "    }\n" +
             "  }\n" +
             "}";
+
+    String noWeightsConfig = "{\n" +
+            "  \"data\": {\n" +
+            "    \"allContributors\": {\n" +
+            "      \"nodes\": [\n" +
+            "        {\n" +
+            "          \"survey\": \"023\",\n" +
+            "          \"period\": \"201903\",\n" +
+            "          \"reference\": \"49900534932\",\n" +
+            "          \"formid\": 5,\n" +
+            "          \"status\": \"Form saved\",\n" +
+            "          \"frozensic\": \"41100\",\n" +
+            "          \"resultscellnumber\": 1,\n" +
+            "          \"domain\": 1,\n" +
+            "          \"formByFormid\": {\n" +
+            "            \"survey\": \"023\",\n" +
+            "            \"formid\": 5,\n" +
+            "            \"formdefinitionsByFormid\": {\n" +
+            "              \"nodes\": [\n" +
+            "                {\n" +
+            "                  \"questioncode\": \"11\",\n" +
+            "                  \"dateadjustment\": false\n" +
+            "                },\n" +
+            "                {\n" +
+            "                  \"questioncode\": \"12\",\n" +
+            "                  \"dateadjustment\": false\n" +
+            "                }\n" +
+            "              ]\n" +
+            "            },\n" +
+            "            \"dateadjustmentreturndateconfigsByFormid\": {\n" +
+            "              \"nodes\": []\n" +
+            "            }\n" +
+            "          },\n" +
+            "          \"responsesByReferenceAndPeriodAndSurvey\": {\n" +
+            "            \"nodes\": [\n" +
+            "              {\n" +
+            "                \"reference\": \"49900534932\",\n" +
+            "                \"period\": \"201903\",\n" +
+            "                \"survey\": \"023\",\n" +
+            "                \"questioncode\": \"11\",\n" +
+            "                \"instance\": 0,\n" +
+            "                \"response\": \"20190401\"\n" +
+            "              },\n" +
+            "              {\n" +
+            "                \"reference\": \"49900534932\",\n" +
+            "                \"period\": \"201903\",\n" +
+            "                \"survey\": \"023\",\n" +
+            "                \"questioncode\": \"12\",\n" +
+            "                \"instance\": 0,\n" +
+            "                \"response\": \"20190501\"\n" +
+            "              }\n" +
+            "            ]\n" +
+            "          }\n" +
+            "        }\n" +
+            "      ]\n" +
+            "    },\n" +
+            "    \"allDateadjustmentweightconfigs\": {\n" +
+            "      \"nodes\": [\n" +
+            "        {\n" +
+            "          \"survey\": \"023\",\n" +
+            "          \"period\": \"201903\",\n" +
+            "          \"tradingdate\": \"20190301\",\n" +
+            "          \"domain\": 2,\n" +
+            "          \"weight\": 0.1,\n" +
+            "          \"periodstart\": \"20190301\",\n" +
+            "          \"periodend\": \"20190331\"\n" +
+            "        }\n" +
+            "      ]\n" +
+            "    },\n" +
+            "    \"allContributordateadjustmentconfigs\": {\n" +
+            "      \"nodes\": [\n" +
+            "        {\n" +
+            "          \"reference\": \"49900534932\",\n" +
+            "          \"period\": \"201903\",\n" +
+            "          \"survey\": \"023\",\n" +
+            "          \"longperiodparameter\": 35,\n" +
+            "          \"shortperiodparameter\": 27,\n" +
+            "          \"averageweekly\": true,\n" +
+            "          \"settomidpoint\": false,\n" +
+            "          \"settoequalweighted\": false,\n" +
+            "          \"usecalendardays\": false\n" +
+            "        }\n" +
+            "      ]\n" +
+            "    }\n" +
+            "  }\n" +
+            "}";
     @Test
     void date_adjustment_ExpectedJSONDataEqualsActualJSONData_ParsedData(){
         try {
@@ -523,15 +1006,128 @@ public class DateAdjustmentResponseTest {
     @Test
     void dateAdjustmentConfigDetails_ThrowsAnException__when_domain_is_null(){
 
-        String expectedErrorMessage = "Problem in parsing Selective Editing GraphQL responses There is no contributor for a given survey, reference and periods. Please verify";
+        String expectedErrorMessage = "Problem in parsing Selective Editing GraphQL responses Either Domain or Results Cell Number is null in Contributor table. Please verify";
         try {
-            DateAdjustmentResponse dateAdjustmentResponse = new DateAdjustmentResponse(noContributorGraphQLOutput);
+            DateAdjustmentResponse dateAdjustmentResponse = new DateAdjustmentResponse(noDomainGraphQl);
             dateAdjustmentResponse.parseDateAdjustmentQueryResponse();
         } catch (Exception e) {
             String actualMessage = e.getMessage();
             assertEquals(expectedErrorMessage, actualMessage);
             assertTrue(true);
 
+        }
+    }
+
+    @Test
+    void dateAdjustmentConfigDetails_ThrowsAnException__when_cell_number_is_null(){
+
+        String expectedErrorMessage = "Problem in parsing Selective Editing GraphQL responses Either Domain or Results Cell Number is null in Contributor table. Please verify";
+        try {
+            DateAdjustmentResponse dateAdjustmentResponse = new DateAdjustmentResponse(noCellNumberGraphQl);
+            dateAdjustmentResponse.parseDateAdjustmentQueryResponse();
+        } catch (Exception e) {
+            String actualMessage = e.getMessage();
+            assertEquals(expectedErrorMessage, actualMessage);
+            assertTrue(true);
+
+        }
+    }
+
+    @Test
+    void dateAdjustmentConfigDetails_ThrowsAnException__when_invalid_json(){
+
+        String expectedErrorMessage = "Given string could not be converted/processed: org.json.JSONException:";
+        try {
+            DateAdjustmentResponse dateAdjustmentResponse = new DateAdjustmentResponse(invalidJson);
+            dateAdjustmentResponse.parseDateAdjustmentQueryResponse();
+        } catch (Exception e) {
+            String actualMessage = e.getMessage();
+            assertTrue(actualMessage.contains(expectedErrorMessage));
+            assertTrue(true);
+        }
+    }
+
+
+
+    @Test
+    void dateAdjustmentConfigDetails_ThrowsAnException__when_no_trading_weights_for_a_given_contributor_domain(){
+
+        String expectedErrorMessage = "Problem in parsing Selective Editing GraphQL responses There are no trading weights for a given survey, period and domain in the trading weight contributor. Please verify";
+        try {
+            DateAdjustmentResponse dateAdjustmentResponse = new DateAdjustmentResponse(noWeightsConfig);
+            dateAdjustmentResponse.parseDateAdjustmentQueryResponse();
+        } catch (Exception e) {
+            String actualMessage = e.getMessage();
+            assertEquals(expectedErrorMessage, actualMessage);
+            assertTrue(true);
+
+        }
+    }
+
+
+
+    @Test
+    void dateAdjustmentConfigDetails_ThrowsAnException__when_no_contributor_date_adjustment_config(){
+
+        String expectedErrorMessage = "Problem in parsing Selective Editing GraphQL responses There is no contributor date adjustment configuration. Please verify";
+        try {
+            DateAdjustmentResponse dateAdjustmentResponse = new DateAdjustmentResponse(noContribDateAdjustmentConfig);
+            dateAdjustmentResponse.parseDateAdjustmentQueryResponse();
+        } catch (Exception e) {
+            String actualMessage = e.getMessage();
+            assertEquals(expectedErrorMessage, actualMessage);
+            assertTrue(true);
+
+        }
+    }
+
+
+
+    @Test
+    void dateAdjustmentConfigDetails_ThrowsAnException__when_no_trading_weights_config(){
+
+        String expectedErrorMessage = "Problem in parsing Selective Editing GraphQL responses There is no trading weight configuration. Please verify";
+        try {
+            DateAdjustmentResponse dateAdjustmentResponse = new DateAdjustmentResponse(noTradingWeightsConfig);
+            dateAdjustmentResponse.parseDateAdjustmentQueryResponse();
+        } catch (Exception e) {
+            String actualMessage = e.getMessage();
+            assertEquals(expectedErrorMessage, actualMessage);
+            assertTrue(true);
+
+        }
+    }
+
+
+
+    @Test
+    void dateAdjustmentConfigDetails_ThrowsAnException__when_no_return_date_config(){
+
+        String expectedErrorMessage = "Problem in parsing Selective Editing GraphQL responses There is no Returned Start Date and End date configuration. Please verify";
+        try {
+            DateAdjustmentResponse dateAdjustmentResponse = new DateAdjustmentResponse(noReturnDateConfig);
+            dateAdjustmentResponse.parseDateAdjustmentQueryResponse();
+        } catch (Exception e) {
+            String actualMessage = e.getMessage();
+            assertEquals(expectedErrorMessage, actualMessage);
+            assertTrue(true);
+
+        }
+    }
+
+
+
+    @Test
+    void dateAdjustmentConfigDetails_ThrowsAnException__when_no_form_defintion(){
+        String expectedErrorMessage = "Problem in parsing Selective Editing GraphQL responses There is no FormDefinition for a given survey. Please verify";
+        try {
+            DateAdjustmentResponse dateAdjustmentResponse = new DateAdjustmentResponse(noFormDefinition);
+            dateAdjustmentResponse.parseDateAdjustmentQueryResponse();
+        } catch (Exception e) {
+            String actualMessage = e.getMessage();
+            System.out.println(actualMessage);
+            assertEquals(expectedErrorMessage, actualMessage);
+            assertTrue(true);
         }
     }
 
