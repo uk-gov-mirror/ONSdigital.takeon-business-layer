@@ -148,7 +148,15 @@ public class HistoryDetailsResponse {
             for (int l = 0; l < responseArray.length(); l++) {
                 if (viewFormResponsesArray.getJSONObject(k).getString("questioncode").equals(responseArray.getJSONObject(l)
                         .getString("questioncode"))) {
-                    viewFormResponsesArray.getJSONObject(k).put("response", responseArray.getJSONObject(l).get("response"));
+                    //Add null check
+                    if(responseArray.getJSONObject(l).isNull("response")){
+                        viewFormResponsesArray.getJSONObject(k).put("response", "");
+                    }
+                    else{
+                        viewFormResponsesArray.getJSONObject(k).put("response", responseArray.getJSONObject(l).get("response"));
+                    }
+                    //End of Adding
+                    //viewFormResponsesArray.getJSONObject(k).put("response", responseArray.getJSONObject(l).get("response"));
                     viewFormResponsesArray.getJSONObject(k).put("instance", responseArray.getJSONObject(l).getInt("instance"));
                 }
             }
