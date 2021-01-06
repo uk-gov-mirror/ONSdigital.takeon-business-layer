@@ -97,12 +97,12 @@ public class DateAdjustmentResponse {
             joiner.add("questioncode: \\\"" + data.getString("questioncode") + "\\\"");
             joiner.add("instance: 0");
 
-            joiner = (data.get("adjusted_value") == null || data.get("adjusted_value").toString().equals("null") ) ?
-                    (joiner.add("adjustedresponse: \\\"" + EMPTY_SPACE + "\\\"")) :
-                    (joiner.add("adjustedresponse: \\\"" + data.get("adjusted_value") + "\\\""));
-            joiner = (data.get("average_weekly_value") == null || data.get("average_weekly_value").toString().equals("null") ) ?
-                    (joiner.add("averageweeklyadjustedresponse: \\\"" + EMPTY_SPACE + "\\\"")) :
-                    (joiner.add("averageweeklyadjustedresponse: \\\"" + data.get("average_weekly_value") + "\\\""));
+            joiner = (data.get("adjusted_value") == null || data.get("adjusted_value").toString().equals("null"))
+                    ? (joiner.add("adjustedresponse: \\\"" + EMPTY_SPACE + "\\\""))
+                    : (joiner.add("adjustedresponse: \\\"" + data.get("adjusted_value") + "\\\""));
+            joiner = (data.get("average_weekly_value") == null || data.get("average_weekly_value").toString().equals("null"))
+                    ? (joiner.add("averageweeklyadjustedresponse: \\\"" + EMPTY_SPACE + "\\\""))
+                    : (joiner.add("averageweeklyadjustedresponse: \\\"" + data.get("average_weekly_value") + "\\\""));
             joiner.add("createdby: \\\"fisdba\\\"");
             joiner.add("createddate: \\\"" + time.toString() + "\\\"");
             joiner.add("lastupdatedby: \\\"fisdba\\\"");
@@ -166,17 +166,20 @@ public class DateAdjustmentResponse {
                 dateAdjustmentResultObj.put(CELL_NUMBER, cellNumber);
                 dateAdjustmentResultObj.put(DOMAIN, domain);
                 processDateAdjustmentWeightConfiguration(domain, dateAdjustmentResultObj);
-                JSONArray contributorDateAdjustmentConfigArray = jsonQlResponse.getJSONObject("data").getJSONObject("allContributordateadjustmentconfigs").getJSONArray("nodes");
+                JSONArray contributorDateAdjustmentConfigArray = jsonQlResponse.getJSONObject("data")
+                        .getJSONObject("allContributordateadjustmentconfigs").getJSONArray("nodes");
                 processContributorDateAdjustmentConfiguration(dateAdjustmentResultObj);
 
                 processResponses(contributorObject, dateAdjustmentResultObj);
 
             } else {
-                throw new InvalidJsonException("There is no contributor for a given survey, reference and periods. Please verify");
+                throw new InvalidJsonException("There is no contributor for a given survey, " +
+                        "reference and periods. Please verify");
             }
 
         } catch (Exception e) {
-            throw new InvalidJsonException("Problem in parsing Selective Editing GraphQL responses " + e.getMessage(), e);
+            throw new InvalidJsonException("Problem in parsing Selective Editing " +
+                    "GraphQL responses " + e.getMessage(), e);
         }
         return dateAdjustmentResultObj.toString();
     }
@@ -186,7 +189,8 @@ public class DateAdjustmentResponse {
 
         JSONArray responseResultArr = new JSONArray();
         JSONArray formDefinitionArray = contributorObject.getJSONObject("formByFormid").getJSONObject("formdefinitionsByFormid").getJSONArray("nodes");
-        JSONArray returnedDateConfigArray = contributorObject.getJSONObject("formByFormid").getJSONObject("dateadjustmentreturndateconfigsByFormid").getJSONArray("nodes");
+        JSONArray returnedDateConfigArray = contributorObject.getJSONObject("formByFormid")
+                .getJSONObject("dateadjustmentreturndateconfigsByFormid").getJSONArray("nodes");
         JSONArray responseArray = contributorObject.getJSONObject("responsesByReferenceAndPeriodAndSurvey").getJSONArray("nodes");
         if (formDefinitionArray.length() > 0) {
             for (int i = 0; i < formDefinitionArray.length(); i++) {
@@ -195,9 +199,9 @@ public class DateAdjustmentResponse {
                 var eachResponseObject = new JSONObject();
                 boolean dateAdjustmentFlag = eachFormDefinitionObject.getBoolean("dateadjustment");
                 boolean matchFound = false;
-                for (int j = 0; j< responseArray.length(); j++) {
+                for (int j = 0; j < responseArray.length(); j++) {
                     String response = responseArray.getJSONObject(j).getString(RESPONSE);
-                    if(questionCode.equals(responseArray.getJSONObject(j).getString(QUESTION_CODE)) && dateAdjustmentFlag) {
+                    if (questionCode.equals(responseArray.getJSONObject(j).getString(QUESTION_CODE)) && dateAdjustmentFlag) {
                         eachResponseObject.put(QUESTION_CODE, questionCode);
                         eachResponseObject.put(RESPONSE, response);
                         eachResponseObject.put(INSTANCE, responseArray.getJSONObject(j).get(INSTANCE));
@@ -205,7 +209,7 @@ public class DateAdjustmentResponse {
                         matchFound = true;
                     }
                 }
-                if(!matchFound && dateAdjustmentFlag) {
+                if (!matchFound && dateAdjustmentFlag) {
                     eachResponseObject.put(QUESTION_CODE, questionCode);
                     eachResponseObject.put(RESPONSE, EMPTY_RESPONSE);
                     eachResponseObject.put(INSTANCE, EMPTY_RESPONSE);
@@ -218,12 +222,12 @@ public class DateAdjustmentResponse {
             throw new InvalidJsonException("There is no FormDefinition for a given survey. Please verify");
         }
 
-        if(returnedDateConfigArray.length() > 0 && responseArray.length() > 0) {
+        if (returnedDateConfigArray.length() > 0 && responseArray.length() > 0) {
             for (int i = 0; i < returnedDateConfigArray.length(); i++) {
                 String returnQuestionCode = returnedDateConfigArray.getJSONObject(i).getString(QUESTION_CODE);
                 String returnType = returnedDateConfigArray.getJSONObject(i).getString(RETURNED_DATE_TYPE);
                 for (int j = 0; j < responseArray.length(); j++) {
-                    if(returnQuestionCode.equals(responseArray.getJSONObject(j).getString(QUESTION_CODE))) {
+                    if (returnQuestionCode.equals(responseArray.getJSONObject(j).getString(QUESTION_CODE))) {
                         if (returnType.equals("S")) {
                             selectiveEditingResultObj.put(RETURNED_START_DATE, responseArray.getJSONObject(j).getString(RESPONSE));
 
@@ -268,7 +272,8 @@ public class DateAdjustmentResponse {
             if (tradingConfigResultArr.length() > 0) {
                 selectiveEditingResultObj.put(WEIGHT_CONFIG, tradingConfigResultArr);
             } else {
-                throw new InvalidJsonException("There are no trading weights for a given survey, period and domain in the trading weight contributor. Please verify");
+                throw new InvalidJsonException("There are no trading weights for a given survey, " +
+                        "period and domain in the trading weight contributor. Please verify");
             }
         } else {
             throw new InvalidJsonException("There is no trading weight configuration. Please verify");
@@ -277,7 +282,8 @@ public class DateAdjustmentResponse {
     }
 
     private void processContributorDateAdjustmentConfiguration(JSONObject selectiveEditingResultObj) throws InvalidJsonException {
-        JSONArray contributorDateAdjustmentConfigArray = jsonQlResponse.getJSONObject("data").getJSONObject("allContributordateadjustmentconfigs").getJSONArray("nodes");
+        JSONArray contributorDateAdjustmentConfigArray = jsonQlResponse.getJSONObject("data")
+                .getJSONObject("allContributordateadjustmentconfigs").getJSONArray("nodes");
         if (contributorDateAdjustmentConfigArray.length() > 0) {
             JSONObject contributorConfigObject = contributorDateAdjustmentConfigArray.getJSONObject(0);
             selectiveEditingResultObj.put(LONG_PERIOD_PARAMETER, contributorConfigObject.get(LONG_PERIOD_PARAMETER));

@@ -20,26 +20,27 @@ public class DateAdjustmentQuery {
 
     public String buildDateAdjustmentConfigQuery() {
 
-        StringBuilder selectiveEditingQuery = new StringBuilder();
-        selectiveEditingQuery.append("{\"query\": \"query dateadjustmentconfig { allContributors(filter: ");
-        selectiveEditingQuery.append(buildFilterCondition());
-        selectiveEditingQuery.append("}) {");
-        selectiveEditingQuery.append("nodes { survey period reference formid status frozensic resultscellnumber domain ");
-        selectiveEditingQuery.append("formByFormid {survey formid formdefinitionsByFormid {");
-        selectiveEditingQuery.append(" nodes { questioncode dateadjustment }}");
-        selectiveEditingQuery.append(" dateadjustmentreturndateconfigsByFormid {");
-        selectiveEditingQuery.append(" nodes { formid questioncode returndatetype }}");
-        selectiveEditingQuery.append("}");
-        selectiveEditingQuery.append(" responsesByReferenceAndPeriodAndSurvey ");
-        selectiveEditingQuery.append("{ nodes { reference period survey questioncode instance response }}}} ");
-        selectiveEditingQuery.append("allDateadjustmentweightconfigs(filter: ");
-        selectiveEditingQuery.append(buildFilerConditionForSurveyAndPeriod());
-        selectiveEditingQuery.append("{ nodes { survey period tradingdate domain weight periodstart periodend }} ");
-        selectiveEditingQuery.append("allContributordateadjustmentconfigs(filter: ");
-        selectiveEditingQuery.append(buildFilterCondition());
-        selectiveEditingQuery.append("}) ");
-        selectiveEditingQuery.append("{ nodes { reference period survey longperiodparameter shortperiodparameter averageweekly settomidpoint settoequalweighted usecalendardays }}}\"}");
-        return selectiveEditingQuery.toString();
+        StringBuilder dateAdjustmentQuery = new StringBuilder();
+        dateAdjustmentQuery.append("{\"query\": \"query dateadjustmentconfig { allContributors(filter: ");
+        dateAdjustmentQuery.append(buildFilterCondition());
+        dateAdjustmentQuery.append("}) {");
+        dateAdjustmentQuery.append("nodes { survey period reference formid status frozensic resultscellnumber domain ");
+        dateAdjustmentQuery.append("formByFormid {survey formid formdefinitionsByFormid {");
+        dateAdjustmentQuery.append(" nodes { questioncode dateadjustment }}");
+        dateAdjustmentQuery.append(" dateadjustmentreturndateconfigsByFormid {");
+        dateAdjustmentQuery.append(" nodes { formid questioncode returndatetype }}");
+        dateAdjustmentQuery.append("}");
+        dateAdjustmentQuery.append(" responsesByReferenceAndPeriodAndSurvey ");
+        dateAdjustmentQuery.append("{ nodes { reference period survey questioncode instance response }}}} ");
+        dateAdjustmentQuery.append("allDateadjustmentweightconfigs(filter: ");
+        dateAdjustmentQuery.append(buildFilerConditionForSurveyAndPeriod());
+        dateAdjustmentQuery.append("{ nodes { survey period tradingdate domain weight periodstart periodend }} ");
+        dateAdjustmentQuery.append("allContributordateadjustmentconfigs(filter: ");
+        dateAdjustmentQuery.append(buildFilterCondition());
+        dateAdjustmentQuery.append("}) ");
+        dateAdjustmentQuery.append("{ nodes { reference period survey longperiodparameter ");
+        dateAdjustmentQuery.append("shortperiodparameter averageweekly settomidpoint settoequalweighted usecalendardays }}}\"}");
+        return dateAdjustmentQuery.toString();
     }
 
 
