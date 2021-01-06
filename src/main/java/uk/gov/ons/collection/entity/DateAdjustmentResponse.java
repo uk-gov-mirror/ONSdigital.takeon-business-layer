@@ -42,6 +42,7 @@ public class DateAdjustmentResponse {
     private static final String SET_EQUAL_WEIGHTED = "settoequalweighted";
     private static final String USE_CALENDAR_DAYS = "usecalendardays";
     private static final String RETURNED_DATE_TYPE = "returndatetype";
+    private static final String EMPTY_SPACE = "";
 
 
     private static final String EMPTY_RESPONSE = "";
@@ -95,10 +96,13 @@ public class DateAdjustmentResponse {
             joiner.add("survey: \\\"" + jsonQlResponse.getString("survey") + "\\\"");
             joiner.add("questioncode: \\\"" + data.getString("questioncode") + "\\\"");
             joiner.add("instance: 0");
-            joiner = (data.get("adjusted_value") == null) ? (joiner.add("adjustedresponse: " + null))
-                    : (joiner.add("adjustedresponse: \\\"" + data.get("adjusted_value") + "\\\""));
-            joiner = (data.get("average_weekly_value") == null) ? (joiner.add("averageweeklyadjustedresponse: " + null))
-                    : (joiner.add("averageweeklyadjustedresponse: \\\"" + data.get("average_weekly_value") + "\\\""));
+
+            joiner = (data.get("adjusted_value") == null || data.get("adjusted_value").toString().equals("null") ) ?
+                    (joiner.add("adjustedresponse: \\\"" + EMPTY_SPACE + "\\\"")) :
+                    (joiner.add("adjustedresponse: \\\"" + data.get("adjusted_value") + "\\\""));
+            joiner = (data.get("average_weekly_value") == null || data.get("average_weekly_value").toString().equals("null") ) ?
+                    (joiner.add("averageweeklyadjustedresponse: \\\"" + EMPTY_SPACE + "\\\"")) :
+                    (joiner.add("averageweeklyadjustedresponse: \\\"" + data.get("average_weekly_value") + "\\\""));
             joiner.add("createdby: \\\"fisdba\\\"");
             joiner.add("createddate: \\\"" + time.toString() + "\\\"");
             joiner.add("lastupdatedby: \\\"fisdba\\\"");
