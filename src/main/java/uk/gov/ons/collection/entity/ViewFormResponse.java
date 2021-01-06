@@ -89,7 +89,15 @@ public class ViewFormResponse {
         for(int i = 0; i < outputFormArray.length(); i++){
             for(int j = 0; j < responseArray.length(); j++){
                 if(outputFormArray.getJSONObject(i).getString("questioncode").equals(responseArray.getJSONObject(j).getString("questioncode"))) {
-                    outputFormArray.getJSONObject(i).put("response", responseArray.getJSONObject(j).getString("response"));
+                    //Adding
+                    if(responseArray.getJSONObject(j).isNull("response")){
+                        outputFormArray.getJSONObject(i).put("response", "");
+                    }
+                    else{
+                        outputFormArray.getJSONObject(i).put("response", responseArray.getJSONObject(j).getString("response"));
+                    }
+                    //End of Adding
+                    //outputFormArray.getJSONObject(i).put("response", responseArray.getJSONObject(j).getString("response"));
                     if(responseArray.getJSONObject(j).isNull("adjustedresponse")){
                         outputFormArray.getJSONObject(i).put("adjustedresponse", "");
                     }

@@ -5,6 +5,9 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import uk.gov.ons.collection.entity.DateAdjustmentResponse;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class DateAdjustmentResponseTest {
 
 
@@ -12,7 +15,7 @@ public class DateAdjustmentResponseTest {
             "  \"reference\": \"49900613746\",\n" +
             "  \"period\": \"201903\",\n" +
             "  \"survey\": \"023\",\n" +
-            "  \"errorflag\": \"E\",\n" +
+            "  \"dateadjustmentlengthflag\": \"S\",\n" +
             "  \"dateadjustmenterrorflag\": \"E\",\n" +
             "  \"daysreturnedperiod\": 25,\n" +
             "  \"sumtradingweightsoverreturnedperiod\": 29.1,\n" +
@@ -56,6 +59,13 @@ public class DateAdjustmentResponseTest {
             "      \"average_weekly_value\": \"25000\"\n" +
             "    }\n" +
             "  ]\n" +
+            "}";
+    String noContributorGraphQLOutput = "{\n" +
+            "  \"data\": {\n" +
+            "    \"allContributors\": {\n" +
+            "      \"nodes\": []\n" +
+            "    }\n" +
+            "  }\n" +
             "}";
     String graphQLOutput = "{\n" +
             "  \"data\": {\n" +
@@ -487,10 +497,41 @@ public class DateAdjustmentResponseTest {
     void date_adjustment_ExpectedJSONDataEqualsActualJSONData_ParsedData(){
         try {
             DateAdjustmentResponse dateAdjustmentResponse = new DateAdjustmentResponse(graphQLOutput);
-            String output = dateAdjustmentResponse.parseDateAdjustmentQueryResponse();
-            System.out.println(output);
+            String expectedConfig = "{\"usecalendardays\":false,\"returnedenddate\":\"20190501\",\"period\":\"201903\",\"weights\":[{\"period\":\"201903\",\"domain\":1,\"survey\":\"023\",\"tradingdate\":\"20190301\",\"weight\":0.1},{\"period\":\"201903\",\"domain\":1,\"survey\":\"023\",\"tradingdate\":\"20190302\",\"weight\":0.1},{\"period\":\"201903\",\"domain\":1,\"survey\":\"023\",\"tradingdate\":\"20190303\",\"weight\":0.1},{\"period\":\"201903\",\"domain\":1,\"survey\":\"023\",\"tradingdate\":\"20190304\",\"weight\":0.1},{\"period\":\"201903\",\"domain\":1,\"survey\":\"023\",\"tradingdate\":\"20190305\",\"weight\":0.15},{\"period\":\"201903\",\"domain\":1,\"survey\":\"023\",\"tradingdate\":\"20190306\",\"weight\":0.12},{\"period\":\"201903\",\"domain\":1,\"survey\":\"023\",\"tradingdate\":\"20190307\",\"weight\":0.17},{\"period\":\"201903\",\"domain\":1,\"survey\":\"023\",\"tradingdate\":\"20190308\",\"weight\":0.23},{\"period\":\"201903\",\"domain\":1,\"survey\":\"023\",\"tradingdate\":\"20190309\",\"weight\":0.1},{\"period\":\"201903\",\"domain\":1,\"survey\":\"023\",\"tradingdate\":\"20190310\",\"weight\":0.13},{\"period\":\"201903\",\"domain\":1,\"survey\":\"023\",\"tradingdate\":\"20190311\",\"weight\":0.145},{\"period\":\"201903\",\"domain\":1,\"survey\":\"023\",\"tradingdate\":\"20190312\",\"weight\":0.105},{\"period\":\"201903\",\"domain\":1,\"survey\":\"023\",\"tradingdate\":\"20190313\",\"weight\":0.15},{\"period\":\"201903\",\"domain\":1,\"survey\":\"023\",\"tradingdate\":\"20190314\",\"weight\":0.17},{\"period\":\"201903\",\"domain\":1,\"survey\":\"023\",\"tradingdate\":\"20190315\",\"weight\":0.18},{\"period\":\"201903\",\"domain\":1,\"survey\":\"023\",\"tradingdate\":\"20190316\",\"weight\":0.17},{\"period\":\"201903\",\"domain\":1,\"survey\":\"023\",\"tradingdate\":\"20190317\",\"weight\":0.08},{\"period\":\"201903\",\"domain\":1,\"survey\":\"023\",\"tradingdate\":\"20190318\",\"weight\":0.14},{\"period\":\"201903\",\"domain\":1,\"survey\":\"023\",\"tradingdate\":\"20190319\",\"weight\":0.14},{\"period\":\"201903\",\"domain\":1,\"survey\":\"023\",\"tradingdate\":\"20190320\",\"weight\":0.14},{\"period\":\"201903\",\"domain\":1,\"survey\":\"023\",\"tradingdate\":\"20190321\",\"weight\":0.14},{\"period\":\"201903\",\"domain\":1,\"survey\":\"023\",\"tradingdate\":\"20190322\",\"weight\":0.15},{\"period\":\"201903\",\"domain\":1,\"survey\":\"023\",\"tradingdate\":\"20190323\",\"weight\":0.15},{\"period\":\"201903\",\"domain\":1,\"survey\":\"023\",\"tradingdate\":\"20190324\",\"weight\":0.14},{\"period\":\"201903\",\"domain\":1,\"survey\":\"023\",\"tradingdate\":\"20190325\",\"weight\":0.13},{\"period\":\"201903\",\"domain\":1,\"survey\":\"023\",\"tradingdate\":\"20190326\",\"weight\":0.14},{\"period\":\"201903\",\"domain\":1,\"survey\":\"023\",\"tradingdate\":\"20190327\",\"weight\":0.16},{\"period\":\"201903\",\"domain\":1,\"survey\":\"023\",\"tradingdate\":\"20190328\",\"weight\":0.15},{\"period\":\"201903\",\"domain\":1,\"survey\":\"023\",\"tradingdate\":\"20190329\",\"weight\":0.13},{\"period\":\"201903\",\"domain\":1,\"survey\":\"023\",\"tradingdate\":\"20190330\",\"weight\":0.16},{\"period\":\"201903\",\"domain\":1,\"survey\":\"023\",\"tradingdate\":\"20190331\",\"weight\":0.13}],\"reference\":\"49900534932\",\"longperiodparameter\":35,\"returnedstartdate\":\"20190401\",\"settomidpoint\":false,\"cellnumber\":1,\"settoequalweighted\":false,\"domain\":1,\"survey\":\"023\",\"responses\":[{\"instance\":0,\"response\":\"20000\",\"questioncode\":\"20\"},{\"instance\":0,\"response\":\"10000\",\"questioncode\":\"21\"}],\"shortperiodparameter\":27,\"averageweekly\":true,\"frozensic\":\"41100\",\"periodstart\":\"20190301\",\"periodend\":\"20190331\"}";
+            String actualConfig = dateAdjustmentResponse.parseDateAdjustmentQueryResponse();
+            assertEquals(expectedConfig, actualConfig);
         } catch (Exception e) {
-            e.printStackTrace();
+            assertTrue(false);
+        }
+    }
+
+    @Test
+    void dateAdjustmentConfigDetails_ThrowsAnException_when_no_contributor(){
+
+        String expectedErrorMessage = "Problem in parsing Selective Editing GraphQL responses There is no contributor for a given survey, reference and periods. Please verify";
+        try {
+            DateAdjustmentResponse dateAdjustmentResponse = new DateAdjustmentResponse(noContributorGraphQLOutput);
+            dateAdjustmentResponse.parseDateAdjustmentQueryResponse();
+        } catch (Exception e) {
+            String actualMessage = e.getMessage();
+            assertEquals(expectedErrorMessage, actualMessage);
+            assertTrue(true);
+
+        }
+    }
+
+    @Test
+    void dateAdjustmentConfigDetails_ThrowsAnException__when_domain_is_null(){
+
+        String expectedErrorMessage = "Problem in parsing Selective Editing GraphQL responses There is no contributor for a given survey, reference and periods. Please verify";
+        try {
+            DateAdjustmentResponse dateAdjustmentResponse = new DateAdjustmentResponse(noContributorGraphQLOutput);
+            dateAdjustmentResponse.parseDateAdjustmentQueryResponse();
+        } catch (Exception e) {
+            String actualMessage = e.getMessage();
+            assertEquals(expectedErrorMessage, actualMessage);
+            assertTrue(true);
+
         }
     }
 
@@ -499,16 +540,11 @@ public class DateAdjustmentResponseTest {
         try {
             DateAdjustmentResponse dateAdjustmentResponse = new DateAdjustmentResponse(lambdaOutput);
 
-            JSONArray dateAdjustmentsArray = dateAdjustmentResponse.getDateAdjustments();
-            System.out.println(dateAdjustmentsArray.toString());
-            JSONObject responseObject = dateAdjustmentResponse.getJsonQlResponse();
-            System.out.println("Reference: "+ responseObject.getString("reference"));
-            System.out.println("Period: "+ responseObject.getString("period"));
-            System.out.println("Survey: "+ responseObject.getString("survey"));
-            String dateAdjustmentSaveQuery = dateAdjustmentResponse.buildSaveDateAdjustmentQuery();
-            System.out.println("Save Query: " + dateAdjustmentSaveQuery);
+            String expectedOutput = "{\"query\": \"mutation upsertDateAdjustment{savedateadjustment(input: {arg0:[{reference: \\\"49900613746\\\",period: \\\"201903\\\",survey: \\\"023\\\",questioncode: \\\"20\\\",instance: 0,adjustedresponse: \\\"10000\\\",averageweeklyadjustedresponse: \\\"25000\\\",createdby: \\\"fisdba\\\"";
+            String actualOutput = dateAdjustmentResponse.buildSaveDateAdjustmentQuery();
+            assertTrue(actualOutput.contains(expectedOutput));
         } catch (Exception e) {
-            e.printStackTrace();
+            assertTrue(false);
         }
     }
 }
