@@ -105,7 +105,11 @@ public class UpsertResponse {
             response.setSurvey(outputArray.getJSONObject(i).getString("survey"));
             response.setPeriod(outputArray.getJSONObject(i).getString("period"));
             response.setQuestionCode(outputArray.getJSONObject(i).getString("questioncode"));
-            response.setResponse(outputArray.getJSONObject(i).getString("response"));
+            if(outputArray.getJSONObject(i).isNull("response")){
+                response.setResponse("");
+            } else {
+                response.setResponse(outputArray.getJSONObject(i).getString("response"));
+            }
             response.setCreatedBy(outputArray.getJSONObject(i).getString("createdby"));
             response.setCreatedDate(outputArray.getJSONObject(i).getString("createddate"));
             response.setInstance(outputArray.getJSONObject(i).getInt("instance"));
