@@ -72,6 +72,8 @@ public class FullDataExport {
         snapshotQuery.append("query dbExport {  allSurveys");
         snapshotQuery.append(buildMultipleSurveysFilterCondition(surveyList));
         snapshotQuery.append("{nodes {survey description periodicity createdby createddate lastupdatedby lastupdateddate ");
+        snapshotQuery.append("idbrformtypesBySurvey { ");
+        snapshotQuery.append("nodes { survey formid  formtype periodstart periodend }}");
         snapshotQuery.append("formsBySurvey {nodes { formid survey description periodstart periodend createdby createddate ");
         snapshotQuery.append("lastupdatedby lastupdateddate ");
         snapshotQuery.append("formdefinitionsByFormid {nodes {");
@@ -87,6 +89,10 @@ public class FullDataExport {
         snapshotQuery.append("questionsBySurvey");
         snapshotQuery.append(buildMultipleSurveysFilterCondition(surveyList));
         snapshotQuery.append("{ nodes {survey questioncode createdby createddate lastupdatedby lastupdateddate}}");
+        snapshotQuery.append("contributordateadjustmentsBySurvey");
+        snapshotQuery.append(buildMultipleSurveysFilterCondition(surveyList));
+        snapshotQuery.append("{ nodes {survey period  reference dateadjustmenterrorflag dateadjustmenterrorflag actualdaysreturnedperiod ");
+        snapshotQuery.append("sumtradingweightsoverreturnedperiod sumtradingweightsoveractualreturnedperiod createdby createddate lastupdatedby lastupdateddate}}");
         snapshotQuery.append("contributorsBySurvey");
         snapshotQuery.append(buildMultipleSurveyAndPeriodFilterCondition(surveyPeriodsMap));
         snapshotQuery.append("{ nodes {");
@@ -97,7 +103,7 @@ public class FullDataExport {
         snapshotQuery.append("reportingunitmarker region birthdate enterprisename referencename referenceaddress referencepostcode tradingstyle ");
         snapshotQuery.append("contact telephone fax selectiontype inclusionexclusion createdby createddate lastupdatedby lastupdateddate ");
         snapshotQuery.append("responsesByReferenceAndPeriodAndSurvey {nodes {");
-        snapshotQuery.append("reference period survey questioncode instance response createdby createddate lastupdatedby lastupdateddate}}}}");
+        snapshotQuery.append("reference period survey questioncode instance response adjustedresponse averageweeklyadjustedresponse createdby createddate lastupdatedby lastupdateddate}}}}");
         snapshotQuery.append("validationoutputsBySurvey");
         snapshotQuery.append(buildMultipleSurveyAndPeriodFilterCondition(surveyPeriodsMap));
         snapshotQuery.append("{nodes {");
