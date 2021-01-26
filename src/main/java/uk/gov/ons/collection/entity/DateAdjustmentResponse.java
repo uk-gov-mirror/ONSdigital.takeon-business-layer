@@ -200,7 +200,9 @@ public class DateAdjustmentResponse {
                 boolean dateAdjustmentFlag = eachFormDefinitionObject.getBoolean("dateadjustment");
                 boolean matchFound = false;
                 for (int j = 0; j < responseArray.length(); j++) {
-                    String response = responseArray.getJSONObject(j).getString(RESPONSE);
+                    // Performed null check
+                    String response = (responseArray.getJSONObject(j).isNull(RESPONSE))
+                            ? EMPTY_SPACE : responseArray.getJSONObject(j).getString(RESPONSE);
                     if (questionCode.equals(responseArray.getJSONObject(j).getString(QUESTION_CODE)) && dateAdjustmentFlag) {
                         eachResponseObject.put(QUESTION_CODE, questionCode);
                         eachResponseObject.put(RESPONSE, response);
