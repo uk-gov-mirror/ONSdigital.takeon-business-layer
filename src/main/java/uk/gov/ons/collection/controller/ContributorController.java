@@ -95,7 +95,6 @@ public class ContributorController {
         try {
             SelectionFileQuery fileQuery =  new SelectionFileQuery(selectionData, qlService);
             String loadQuery = fileQuery.buildSaveSelectionFileQuery();
-            log.info("Load Selection Query: " + loadQuery);
             String  response = qlService.qlSearch(loadQuery);
             log.info("Load Selection File response: " + response);
             //Process if any GraphQL exception
