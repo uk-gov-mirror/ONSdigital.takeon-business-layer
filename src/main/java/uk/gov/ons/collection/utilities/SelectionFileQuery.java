@@ -189,9 +189,12 @@ public class SelectionFileQuery {
             JSONArray errorArray = graphQlObject.getJSONArray("errors");
             log.info("Complete GraphQL error message: "+errorArray.toString());
             for(int i=0; i< errorArray.length(); i++) {
+
                 String message = errorArray.getJSONObject(i).getString("message");
                 if (message.contains("duplicate key value violates unique constraint")) {
                     sbErrorMessage.append("Contributor already exists in the database");
+                } else {
+                    sbErrorMessage.append(" There is a problem in Graph QL ").append(message);
                 }
                 log.info("Graph QL Error Message after parsing: "+message);
             }
