@@ -43,14 +43,12 @@ public class ContributorController {
     public String searchContributor(@MatrixVariable Map<String, String> searchParameters) {
         final String qlQuery = new QlQueryBuilder(searchParameters).buildContributorSearchQuery();
         String responseText;
-        log.info("Query sent to service: " + qlQuery);
         try {
             final QlQueryResponse response = new QlQueryResponse(qlService.qlSearch(qlQuery));
             responseText = response.parse();
         } catch (Exception e) {
             responseText = "{\"error\":\"Invalid response from graphQL\"}";
         }
-        log.info("Query sent to service: " + qlQuery);
         return responseText;
     }
 
@@ -142,10 +140,8 @@ public class ContributorController {
             SelectionFileQuery fileQuery =  new SelectionFileQuery(selectionData, qlService);
             String loadQuery = fileQuery.buildSaveSelectionFileQuery();
             String  response = qlService.qlSearch(loadQuery);
-            log.info("Load Selection File response: " + response);
             //Process if any GraphQL exception
             String message = fileQuery.processGraphQlErrorMessage(response);
-            log.info("GraphQL response message: " + response);
             if (message != null && message.length() > 0) {
                 return "{\"error\":\"Failed to load Selection File " + message + " \"}";
             }
@@ -163,19 +159,17 @@ public class ContributorController {
             @ApiResponse(code = 200, message = "Successful retrieval of Survey/Period details")})
         public String delayResponse() {
         String delayResponseQuery = new QlQueryBuilder().buildDelayResponseQuery();
-        log.info("GraphQL Query sent to service: " + delayResponseQuery);
+        //log.info("GraphQL Query sent to service: " + delayResponseQuery);
         JSONObject responseText;
         String response;
         String output;
         try {
             response = qlService.qlSearch(delayResponseQuery);
-            log.info("Response from GraphQL Query: " + response);
             responseText = new QlQueryResponse().buildDelayResponseOutput(response);
             output = responseText.toString();
         } catch (Exception e) {
             output = "{\"error\":\"Invalid response from graphQL\"}";
         }
-        log.info("Response output before sending to Lambda: " + output);
         return output;
     }
 }
