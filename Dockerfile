@@ -30,4 +30,6 @@ WORKDIR /takeonbl
 COPY --from=maven target/business-1.0-SNAPSHOT.jar  ./takeonbl/
 
 # set the startup command to run your binary
-CMD ["java", "-jar", "./takeonbl/business-1.0-SNAPSHOT.jar"]
+# CMD ["java", "-jar", "./takeonbl/business-1.0-SNAPSHOT.jar"]
+# set the startup command to run your binary
+CMD ["java", "-Xmx1024m", "-Xms1024m", "-jar", "./takeonbl/business-1.0-SNAPSHOT.jar"]

@@ -92,7 +92,14 @@ public class ContributorController {
             if (uniqueSurveyList != null ) {
                 uniqueSurveyList.clear();
             }
-            dataExport = null;
+
+            if (dataExport != null) {
+                JSONObject jsonObject = dataExport.getJsonSurveySnapshotInput();
+                if(jsonObject != null) {
+                    jsonObject = null;
+                }
+                dataExport = null;
+            }
 
             log.info("-------Start Memory Details after calling snapshot-----");
             try {
