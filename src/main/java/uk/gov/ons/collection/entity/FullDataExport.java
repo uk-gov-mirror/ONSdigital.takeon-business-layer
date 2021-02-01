@@ -18,6 +18,8 @@ import java.util.StringJoiner;
 @Log4j2
 public class FullDataExport {
 
+
+
     private JSONObject jsonSurveySnapshotInput;
 
     public FullDataExport(String inputJsonString) throws InvalidJsonException {
@@ -160,6 +162,14 @@ public class FullDataExport {
         if (masterSurveySnapshotArray.length() == 0) {
             throw new JSONException("There is no snapshot available for a given survey period combinations");
         }
+    }
+
+    public JSONObject getJsonSurveySnapshotInput() {
+        return jsonSurveySnapshotInput;
+    }
+
+    public void setJsonSurveySnapshotInput(JSONObject jsonSurveySnapshotInput) {
+        this.jsonSurveySnapshotInput = jsonSurveySnapshotInput;
     }
 
 
