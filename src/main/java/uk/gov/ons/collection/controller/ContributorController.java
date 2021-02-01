@@ -63,16 +63,21 @@ public class ContributorController {
     public String fullDataExport(@RequestBody String snapshotInputJson) {
         String response = "";
         log.info("API CALL!! --> /contributor/dbExport:: " + snapshotInputJson);
+        Map<String, List<String>> snapshotMap = null;
+        FullDataExport dataExport = null;
+        Set<String> uniqueSurveyList = null;
+        String snapshotQuery = null;
         try {
-            FullDataExport dataExport = new FullDataExport(snapshotInputJson);
-            Set<String> uniqueSurveyList = dataExport.getUniqueSurveyList();
+            log.info("-------Start Memory Details before calling snapshot-----");
+            verifyMemoryFootPrint();
+            log.info("-------End Memory Details before calling snapshot-----");
+            dataExport = new FullDataExport(snapshotInputJson);
+            uniqueSurveyList = dataExport.getUniqueSurveyList();
             log.info("Unique Survey List: " + uniqueSurveyList.toString());
-            Map<String, List<String>> snapshotMap = dataExport.retrieveSurveyAndPeriodListFromSnapshotInput(uniqueSurveyList);
+            snapshotMap = dataExport.retrieveSurveyAndPeriodListFromSnapshotInput(uniqueSurveyList);
             log.info("Hash Map containing survey and period list: " + snapshotMap.toString());
-            String snapshotQuery = dataExport.buildMultipleSurveyPeriodSnapshotQuery(uniqueSurveyList, snapshotMap);
-            log.info("Final Snapshot Query for all surveys and periods: " + snapshotQuery);
+            snapshotQuery = dataExport.buildMultipleSurveyPeriodSnapshotQuery(uniqueSurveyList, snapshotMap);
             response = qlService.qlSearch(snapshotQuery);
-            log.info("Final Snapshot output for all surveys and periods: " + response);
             dataExport.verifyEmptySnapshot(response);
 
         } catch (Exception e) {
@@ -80,8 +85,49 @@ public class ContributorController {
             String message = e.getMessage() != null ? e.getMessage().replace("\"","'") : "";
             log.info("Error message after parsing:" + message);
             response =  "{\"error\":\"Error loading data for db Export " + message + "\"}";
+        } finally {
+
+            snapshotQuery = null;
+            if (snapshotMap != null) {
+                snapshotMap.clear();
+            }
+            if (uniqueSurveyList != null ) {
+                uniqueSurveyList.clear();
+            }
+            dataExport = null;
+
+            log.info("-------Start Memory Details after calling snapshot-----");
+            try {
+                verifyMemoryFootPrint();
+            } catch (Exception exceptionmemoryprint) {
+                log.error(exceptionmemoryprint.getMessage());
+            }
+            log.info("-------End Memory Details after calling snapshot-----");
+
         }
         return response;
+    }
+
+    private void verifyMemoryFootPrint() throws Exception {
+        int mb = 1024 * 1024;
+
+        // get Runtime instance
+        Runtime instance = Runtime.getRuntime();
+
+        log.info("***** Heap utilization statistics [MB] *****\n");
+
+        // available memory
+        log.info("Total Memory: " + instance.totalMemory() / mb);
+
+        // free memory
+        log.info("Free Memory: " + instance.freeMemory() / mb);
+
+        // used memory
+        log.info("Used Memory: "
+                + (instance.totalMemory() - instance.freeMemory()) / mb);
+
+        // Maximum available memory
+        log.info("Max Memory: " + instance.maxMemory() / mb);
     }
 
 
