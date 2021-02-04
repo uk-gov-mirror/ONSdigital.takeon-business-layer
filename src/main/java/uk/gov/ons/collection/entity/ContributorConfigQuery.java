@@ -4,6 +4,8 @@ import uk.gov.ons.collection.exception.InvalidJsonException;
 import uk.gov.ons.collection.service.ServiceInterface;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.extern.log4j.Log4j2;
+@Log4j2
 
 /**
  * This class is responsible for constructing valid graphQL JSON queries to obtain contributor configuration data.
@@ -46,6 +48,7 @@ public class ContributorConfigQuery {
         var configResponses = new ArrayList<String>();
         for (int i = 0; i < periods.size(); i++) {
             var period = periods.get(i);
+            log.info("ContributorConfigQuery: " + this.buildLoadQuery(period));
             var response = service.runQuery(this.buildLoadQuery(period));
             configResponses.add(response);
         }
