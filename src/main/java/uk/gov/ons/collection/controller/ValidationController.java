@@ -55,6 +55,7 @@ public class ValidationController {
             response = "{\"error\":\"Unable to determine or construct configuration data\"}";
         }
         log.info("API Complete!! --> /validation/getAllConfiguration/{vars}");
+        log.info("getAllConfiguration response: " + response);
         return response;
     }
 
