@@ -60,12 +60,12 @@ public class SelectiveEditingResponse  {
                 log.info("Domain Object for a given contributor : " + contributorObject.get(DOMAIN));
                 log.info("Results Cell Number Object for a given contributor: " + contributorObject.get(RESULTS_CELL_NUMBER));
 
-                if (contributorObject.get(DOMAIN) == null ||
-                        contributorObject.get(DOMAIN).toString().equals("null") ||
-                        contributorObject.get(DOMAIN).toString().equals(EMPTY) ||
-                        contributorObject.get(RESULTS_CELL_NUMBER) == null ||
-                        contributorObject.get(RESULTS_CELL_NUMBER).toString().equals("null") ||
-                        contributorObject.get(RESULTS_CELL_NUMBER).toString().equals(EMPTY)
+                if (contributorObject.get(DOMAIN) == null
+                        || contributorObject.get(DOMAIN).toString().equals("null")
+                        || contributorObject.get(DOMAIN).toString().equals(EMPTY)
+                        || contributorObject.get(RESULTS_CELL_NUMBER) == null
+                        || contributorObject.get(RESULTS_CELL_NUMBER).toString().equals("null")
+                        || contributorObject.get(RESULTS_CELL_NUMBER).toString().equals(EMPTY)
 
                 ) {
                     log.info("Into domain null");
