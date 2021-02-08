@@ -60,8 +60,6 @@ public class SelectiveEditingResponseTest {
         try {
             SelectiveEditingResponse response = new SelectiveEditingResponse(responseJSON);
             String actualOutput = response.parseSelectiveEditingQueryResponse();
-            System.out.println("Expected output: "+expectedOutput);
-            System.out.println("Actual output: "+actualOutput);
             assertEquals(expectedOutput, actualOutput);
 
         } catch (Exception e) {
@@ -83,7 +81,6 @@ public class SelectiveEditingResponseTest {
             response.parseSelectiveEditingQueryResponse();
         } catch (Exception e) {
             String actualMessage = e.getMessage();
-            System.out.println("Error Message: "+actualMessage);
             assertEquals(expectedErrorMessage, actualMessage);
             assertTrue(true);
 
@@ -98,7 +95,6 @@ public class SelectiveEditingResponseTest {
             response.parseSelectiveEditingQueryResponse();
         } catch (Exception e) {
             String actualMessage = e.getMessage();
-            System.out.println("Error Message: "+actualMessage);
             assertTrue(actualMessage.contains(expectedErrorMessage));
             assertTrue(true);
         }
@@ -112,7 +108,6 @@ public class SelectiveEditingResponseTest {
             response.buildUpsertQuery();
         } catch (Exception e) {
             String actualMessage = e.getMessage();
-            System.out.println("Error Message: "+actualMessage);
             assertTrue(actualMessage.contains(expectedErrorMessage));
             assertTrue(true);
         }
@@ -130,8 +125,6 @@ public class SelectiveEditingResponseTest {
             response.parseSelectiveEditingQueryResponse();
         } catch (Exception e) {
             String actualMessage = e.getMessage();
-            System.out.println(actualMessage);
-            System.out.println(expectedErrorMessage);
             assertEquals(expectedErrorMessage, actualMessage);
             assertTrue(true);
 
@@ -150,8 +143,6 @@ public class SelectiveEditingResponseTest {
         } catch (Exception e) {
             e.printStackTrace();
             String actualMessage = e.getMessage();
-            System.out.println(actualMessage);
-            System.out.println(expectedErrorMessage);
             assertEquals(expectedErrorMessage, actualMessage);
             assertTrue(true);
 
@@ -186,7 +177,6 @@ public class SelectiveEditingResponseTest {
             response.parseSelectiveEditingQueryResponse();
         } catch (Exception e) {
             String actualMessage = e.getMessage();
-            System.out.println("Error Message: "+actualMessage);
             assertEquals(expectedErrorMessage, actualMessage);
             assertTrue(true);
 
@@ -204,7 +194,6 @@ public class SelectiveEditingResponseTest {
             response.parseSelectiveEditingQueryResponse();
         } catch (Exception e) {
             String actualMessage = e.getMessage();
-            System.out.println("Error Message: "+actualMessage);
             assertEquals(expectedErrorMessage, actualMessage);
             assertTrue(true);
 
