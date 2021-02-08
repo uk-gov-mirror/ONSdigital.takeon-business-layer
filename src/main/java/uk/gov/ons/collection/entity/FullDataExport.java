@@ -103,7 +103,7 @@ public class FullDataExport {
         snapshotQuery.append("fteemployment frozenturnover turnover enterprisereference wowenterprisereference cellnumber currency vatreference ");
         snapshotQuery.append("payereference companyregistrationnumber numberlivelocalunits numberlivevat numberlivepaye legalstatus ");
         snapshotQuery.append("reportingunitmarker region birthdate enterprisename referencename referenceaddress referencepostcode tradingstyle ");
-        snapshotQuery.append("contact telephone fax selectiontype inclusionexclusion createdby createddate lastupdatedby lastupdateddate ");
+        snapshotQuery.append("contact telephone fax selectiontype inclusionexclusion createdby createddate lastupdatedby lastupdateddate domain resultscellnumber ");
         snapshotQuery.append("responsesByReferenceAndPeriodAndSurvey {nodes {");
         snapshotQuery.append("reference period survey questioncode instance response adjustedresponse averageweeklyadjustedresponse createdby createddate lastupdatedby lastupdateddate}}}}");
         snapshotQuery.append("validationoutputsBySurvey");
