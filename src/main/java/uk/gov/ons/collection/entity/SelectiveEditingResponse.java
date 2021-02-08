@@ -28,6 +28,7 @@ public class SelectiveEditingResponse  {
     private static final String CURRENT_RESPONSE = "currentresponse";
     private static final String PREVIOUS_RESPONSE = "previousresponse";
     private static final String FROZEN_TURNOVER = "frozenturnover";
+    private static final String EMPTY = "";
     private static final int INDEX_ONE = 1;
     private static final int INDEX_TWO = 2;
 
@@ -38,6 +39,7 @@ public class SelectiveEditingResponse  {
         try {
             jsonQlResponse = new JSONObject(inputJson);
         } catch (JSONException e) {
+            e.printStackTrace();
             log.error("Error in processing Selective Editing Response: " + e.getMessage());
             throw new InvalidJsonException("Given string could not be converted/processed: " + e);
         }
@@ -46,8 +48,8 @@ public class SelectiveEditingResponse  {
     public String parseSelectiveEditingQueryResponse() throws InvalidJsonException {
         JSONArray contribArray;
         JSONObject selectiveEditingResultObj = new JSONObject();
-        int domain = 0;
-        int cellNumber = 0;
+        String domain = "";
+        String cellNumber = "";
         try {
             contribArray = jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes");
             if (contribArray.length() > 0) {
@@ -59,12 +61,19 @@ public class SelectiveEditingResponse  {
                 log.info("Domain Object for a given contributor : " + contributorObject.get(DOMAIN));
                 log.info("Results Cell Number Object for a given contributor: " + contributorObject.get(RESULTS_CELL_NUMBER));
 
-                if (contributorObject.get(DOMAIN).toString().equals("null") || contributorObject.get(RESULTS_CELL_NUMBER).toString().equals("null")) {
+                if (contributorObject.get(DOMAIN) == null ||
+                        contributorObject.get(DOMAIN).toString().equals("null") ||
+                        contributorObject.get(DOMAIN).toString().equals(EMPTY) ||
+                        contributorObject.get(RESULTS_CELL_NUMBER) == null ||
+                        contributorObject.get(RESULTS_CELL_NUMBER).toString().equals("null") ||
+                        contributorObject.get(RESULTS_CELL_NUMBER).toString().equals(EMPTY)
+
+                ) {
                     log.info("Into domain null");
                     throw new InvalidJsonException("Either Domain or Results Cell Number is null in Contributor table. Please verify");
                 }
-                domain = contributorObject.getInt(DOMAIN);
-                cellNumber = contributorObject.getInt(RESULTS_CELL_NUMBER);
+                domain = contributorObject.getString(DOMAIN);
+                cellNumber = contributorObject.getString(RESULTS_CELL_NUMBER);
                 log.info("Domain for a given contributor: " + domain);
                 log.info("Results Cell Number for a given contributor: " + cellNumber);
                 selectiveEditingResultObj.put(RESULTS_CELL_NUMBER, cellNumber);
@@ -126,13 +135,13 @@ public class SelectiveEditingResponse  {
         }
     }
 
-    private void processCellDetailConfiguration(int cellNumber, JSONObject selectiveEditingResultObj) throws InvalidJsonException {
+    private void processCellDetailConfiguration(String cellNumber, JSONObject selectiveEditingResultObj) throws InvalidJsonException {
         JSONArray cellDetailConfigArray = jsonQlResponse.getJSONObject("data").getJSONObject("allCelldetails").getJSONArray("nodes");
         if (cellDetailConfigArray.length() > 0) {
             boolean isCellNumberFound = false;
             for (int i = 0; i < cellDetailConfigArray.length(); i++) {
                 JSONObject eachDomainConfigObject = cellDetailConfigArray.getJSONObject(i);
-                if (eachDomainConfigObject.getInt(CELL_NUMBER) == cellNumber) {
+                if (eachDomainConfigObject.getString(CELL_NUMBER).equals(cellNumber)) {
                     //Match Found
                     selectiveEditingResultObj.put(DESIGN_WEIGHT, eachDomainConfigObject.get(DESIGN_WEIGHT));
                     isCellNumberFound = true;
@@ -147,14 +156,14 @@ public class SelectiveEditingResponse  {
         }
     }
 
-    private void processDomainConfiguration(int domain, JSONObject contributorObject, JSONArray contribArray,
+    private void processDomainConfiguration(String domain, JSONObject contributorObject, JSONArray contribArray,
                                             JSONObject selectiveEditingResultObj) throws InvalidJsonException {
         JSONArray domainConfigResultArr = new JSONArray();
         JSONArray domainConfigArray = jsonQlResponse.getJSONObject("data").getJSONObject("allSelectiveeditingconfigs").getJSONArray("nodes");
         if (domainConfigArray.length() > 0) {
             for (int i = 0; i < domainConfigArray.length(); i++) {
                 JSONObject eachDomainConfigObject = domainConfigArray.getJSONObject(i);
-                if (eachDomainConfigObject.getInt(DOMAIN) == domain) {
+                if (eachDomainConfigObject.getString(DOMAIN).equals(domain)) {
                     //Match Found
                     var eachResultDomainObject = new JSONObject();
                     String questionCode = eachDomainConfigObject.getString(QUESTION_CODE);
