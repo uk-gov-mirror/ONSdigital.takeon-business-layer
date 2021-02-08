@@ -31,7 +31,6 @@ public class SelectiveEditingResponse  {
     private static final String EMPTY = "";
     private static final int INDEX_ONE = 1;
     private static final int INDEX_TWO = 2;
-
     private static final String EMPTY_RESPONSE = "";
     private final Timestamp time = new Timestamp(new Date().getTime());
 
