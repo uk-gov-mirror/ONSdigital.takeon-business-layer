@@ -16,6 +16,9 @@ import org.json.JSONObject;
 public class ContributorConfig {
 
     private final List<String> responses;
+    private static final String QUESTION_CODE = "questioncode";
+    private static final String RESPONSE = "response";
+    private static final String EMPTY_SPACE = "";
 
     public ContributorConfig(List<String> responses) {
         this.responses = responses;
@@ -42,6 +45,8 @@ public class ContributorConfig {
         var contributors = new JSONArray();
         var forms = new JSONArray();
 
+        JSONArray responseResultArr = new JSONArray();
+
         for (String config : jsonList) {
             var contributor = new JSONObject(config).getJSONObject("data").optJSONObject("contributorByReferenceAndPeriodAndSurvey");
 
@@ -67,6 +72,31 @@ public class ContributorConfig {
                 forms.put(formArray.getJSONObject(j));
             }
 
+            if (formArray.length() > 0) {
+                for (int i = 0; i < formArray.length(); i++) {
+                    JSONObject eachFormDefinitionObject = formArray.getJSONObject(i);
+                    String questionCode = eachFormDefinitionObject.getString(QUESTION_CODE);
+                    var eachResponseObject = new JSONObject();
+                    boolean dateAdjustmentFlag = eachFormDefinitionObject.getBoolean("dateadjustment");
+                    for (int j = 0; j < responseArray.length(); j++) {
+                        // Performed null check
+//                        String response = (responseArray.getJSONObject(j).isNull(RESPONSE))
+//                                ? EMPTY_SPACE : responseArray.getJSONObject(j).getString(RESPONSE);
+                        if (questionCode.equals(responseArray.getJSONObject(j).getString(QUESTION_CODE))) {
+                            eachResponseObject.put("reference", responseArray.getJSONObject(j).getString("reference"));
+                            eachResponseObject.put("period", responseArray.getJSONObject(j).getString("period"));
+                            eachResponseObject.put("survey", responseArray.getJSONObject(j).getString("survey"));
+                            eachResponseObject.put(QUESTION_CODE, questionCode);
+                            eachResponseObject.put(RESPONSE, responseArray.getJSONObject(j).getString(RESPONSE));
+                            eachResponseObject.put("instance", responseArray.getJSONObject(j).get("instance"));
+                            eachResponseObject.put("dateadjustment", dateAdjustmentFlag);
+                            eachResponseObject.put("adjustedresponse", responseArray.getJSONObject(j).getString("adjustedresponse"));
+                            responseResultArr.put(eachResponseObject);
+                        }
+                    }
+                }
+            }
+
             // Remove any sub-array data brought in with the graphQL query. Retain everything else for the contributor
             contributor.remove("surveyBySurvey");
             contributor.remove("responsesByReferenceAndPeriodAndSurvey");
@@ -78,7 +108,7 @@ public class ContributorConfig {
             throw new InvalidJsonException("Error processing responses within contributor json: " + jsonList);
         }
         var parsedConfig = new JSONObject().put("contributor",contributors)
-                                           .put("response",responses)
+                                           .put("response",responseResultArr)
                                            .put("question_schema",forms);
 
         return parsedConfig.toString();

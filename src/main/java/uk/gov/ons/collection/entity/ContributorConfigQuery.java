@@ -27,8 +27,8 @@ public class ContributorConfigQuery {
                 "companyregistrationnumber numberlivelocalunits numberlivevat numberlivepaye legalstatus " +
                 "reportingunitmarker region birthdate tradingstyle contact telephone fax selectiontype inclusionexclusion " +
                 "createdby createddate lastupdatedby lastupdateddate " +
-                "formByFormid {survey formdefinitionsByFormid {nodes {questioncode type}}}" +
-                "responsesByReferenceAndPeriodAndSurvey {nodes {reference period survey instance questioncode response }}}}";
+                "formByFormid {survey formdefinitionsByFormid {nodes {questioncode type dateadjustment}}}" +
+                "responsesByReferenceAndPeriodAndSurvey {nodes {reference period survey instance questioncode response adjustedresponse}}}}";
 
     public ContributorConfigQuery(String reference, List<String> idbrPeriods, String survey, ServiceInterface service) {
         this.reference = reference;
