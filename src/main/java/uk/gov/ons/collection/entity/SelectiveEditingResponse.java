@@ -48,7 +48,7 @@ public class SelectiveEditingResponse  {
         JSONArray contribArray;
         JSONObject selectiveEditingResultObj = new JSONObject();
         String domain = "";
-        String cellNumber = "";
+        int cellNumber = 0;
         try {
             contribArray = jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes");
             if (contribArray.length() > 0) {
@@ -72,7 +72,7 @@ public class SelectiveEditingResponse  {
                     throw new InvalidJsonException("Either Domain or Results Cell Number is null in Contributor table. Please verify");
                 }
                 domain = contributorObject.getString(DOMAIN);
-                cellNumber = contributorObject.getString(RESULTS_CELL_NUMBER);
+                cellNumber = contributorObject.getInt(RESULTS_CELL_NUMBER);
                 log.info("Domain for a given contributor: " + domain);
                 log.info("Results Cell Number for a given contributor: " + cellNumber);
                 selectiveEditingResultObj.put(RESULTS_CELL_NUMBER, cellNumber);
@@ -134,13 +134,13 @@ public class SelectiveEditingResponse  {
         }
     }
 
-    private void processCellDetailConfiguration(String cellNumber, JSONObject selectiveEditingResultObj) throws InvalidJsonException {
+    private void processCellDetailConfiguration(int cellNumber, JSONObject selectiveEditingResultObj) throws InvalidJsonException {
         JSONArray cellDetailConfigArray = jsonQlResponse.getJSONObject("data").getJSONObject("allCelldetails").getJSONArray("nodes");
         if (cellDetailConfigArray.length() > 0) {
             boolean isCellNumberFound = false;
             for (int i = 0; i < cellDetailConfigArray.length(); i++) {
                 JSONObject eachDomainConfigObject = cellDetailConfigArray.getJSONObject(i);
-                if (eachDomainConfigObject.getString(CELL_NUMBER).equals(cellNumber)) {
+                if (eachDomainConfigObject.getInt(CELL_NUMBER) == cellNumber) {
                     //Match Found
                     selectiveEditingResultObj.put(DESIGN_WEIGHT, eachDomainConfigObject.get(DESIGN_WEIGHT));
                     isCellNumberFound = true;
