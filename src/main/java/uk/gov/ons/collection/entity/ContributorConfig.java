@@ -80,14 +80,14 @@ public class ContributorConfig {
                     boolean dateAdjustmentFlag = eachFormDefinitionObject.getBoolean("dateadjustment");
                     for (int j = 0; j < responseArray.length(); j++) {
                         // Performed null check
-//                        String response = (responseArray.getJSONObject(j).isNull(RESPONSE))
-//                                ? EMPTY_SPACE : responseArray.getJSONObject(j).getString(RESPONSE);
+                        String response = (responseArray.getJSONObject(j).isNull(RESPONSE))
+                                ? EMPTY_SPACE : responseArray.getJSONObject(j).getString(RESPONSE);
                         if (questionCode.equals(responseArray.getJSONObject(j).getString(QUESTION_CODE))) {
                             eachResponseObject.put("reference", responseArray.getJSONObject(j).getString("reference"));
                             eachResponseObject.put("period", responseArray.getJSONObject(j).getString("period"));
                             eachResponseObject.put("survey", responseArray.getJSONObject(j).getString("survey"));
                             eachResponseObject.put(QUESTION_CODE, questionCode);
-                            eachResponseObject.put(RESPONSE, responseArray.getJSONObject(j).getString(RESPONSE));
+                            eachResponseObject.put(RESPONSE, response);
                             eachResponseObject.put("instance", responseArray.getJSONObject(j).get("instance"));
                             eachResponseObject.put("dateadjustment", dateAdjustmentFlag);
                             eachResponseObject.put("adjustedresponse", responseArray.getJSONObject(j).getString("adjustedresponse"));
