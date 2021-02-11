@@ -72,6 +72,9 @@ public class ContributorConfig {
                 forms.put(formArray.getJSONObject(j));
             }
 
+            log.info("formArray count: " + formArray.length());
+            log.info("responseArray count: " + responseArray.length());
+
             if (formArray.length() > 0) {
                 for (int i = 0; i < formArray.length(); i++) {
                     log.info("formArray " + i);
@@ -82,32 +85,38 @@ public class ContributorConfig {
                     boolean dateAdjustmentFlag = eachFormDefinitionObject.getBoolean("dateadjustment");
                     log.info("dateAdjustmentFlag:: " );
                     log.info(dateAdjustmentFlag);
-                    for (int j = 0; j < responseArray.length(); j++) {
-                        // Performed null check
-                        log.info("responseArray " + j);
-                        String response = (responseArray.getJSONObject(j).isNull(RESPONSE))
-                                ? EMPTY_SPACE : responseArray.getJSONObject(j).getString(RESPONSE);
-                        if (questionCode.equals(responseArray.getJSONObject(j).getString(QUESTION_CODE))) {
-                            log.info("Questions Equal");
-                            eachResponseObject.put("reference", responseArray.getJSONObject(j).getString("reference"));
-                            log.info(responseArray.getJSONObject(j).getString("reference"));
-                            eachResponseObject.put("period", responseArray.getJSONObject(j).getString("period"));
-                            log.info(responseArray.getJSONObject(j).getString("period"));
-                            eachResponseObject.put("survey", responseArray.getJSONObject(j).getString("survey"));
-                            log.info(responseArray.getJSONObject(j).getString("survey"));
-                            eachResponseObject.put(QUESTION_CODE, questionCode);
-                            log.info(questionCode);
-                            eachResponseObject.put(RESPONSE, response);
-                            log.info(response);
-                            eachResponseObject.put("instance", responseArray.getJSONObject(j).get("instance"));
-                            log.info(responseArray.getJSONObject(j).get("instance"));
-                            eachResponseObject.put("dateadjustment", dateAdjustmentFlag);
-                            log.info( dateAdjustmentFlag);
-                            eachResponseObject.put("adjustedresponse", responseArray.getJSONObject(j).getString("adjustedresponse"));
-                            log.info(responseArray.getJSONObject(j).getString("adjustedresponse"));
-                            responseResultArr.put(eachResponseObject);
-                            log.info("Done responseResultArr.put(eachResponseObject)");
+                    try {
+                        for (int j = 0; j < responseArray.length(); j++) {
+                            // Performed null check
+                            log.info("responseArray " + j);
+                            String response = (responseArray.getJSONObject(j).isNull(RESPONSE))
+                                    ? EMPTY_SPACE : responseArray.getJSONObject(j).getString(RESPONSE);
+                            if (questionCode.equals(responseArray.getJSONObject(j).getString(QUESTION_CODE))) {
+                                log.info("Questions Equal");
+                                eachResponseObject.put("reference", responseArray.getJSONObject(j).getString("reference"));
+                                log.info(responseArray.getJSONObject(j).getString("reference"));
+                                eachResponseObject.put("period", responseArray.getJSONObject(j).getString("period"));
+                                log.info(responseArray.getJSONObject(j).getString("period"));
+                                eachResponseObject.put("survey", responseArray.getJSONObject(j).getString("survey"));
+                                log.info(responseArray.getJSONObject(j).getString("survey"));
+                                eachResponseObject.put(QUESTION_CODE, questionCode);
+                                log.info(questionCode);
+                                eachResponseObject.put(RESPONSE, response);
+                                log.info(response);
+                                eachResponseObject.put("instance", responseArray.getJSONObject(j).get("instance"));
+                                log.info(responseArray.getJSONObject(j).get("instance"));
+                                eachResponseObject.put("dateadjustment", dateAdjustmentFlag);
+                                log.info( dateAdjustmentFlag);
+                                eachResponseObject.put("adjustedresponse", responseArray.getJSONObject(j).getString("adjustedresponse"));
+                                log.info(responseArray.getJSONObject(j).getString("adjustedresponse"));
+                                responseResultArr.put(eachResponseObject);
+                                log.info("Done responseResultArr.put(eachResponseObject)");
+                            }
                         }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        log.error(e.getMessage());
                     }
                 }
             }
