@@ -112,8 +112,7 @@ public class ContributorConfig {
             throw new InvalidJsonException("Error processing responses within contributor json: " + jsonList);
         }
         var parsedConfig = new JSONObject().put("contributor",contributors)
-                                           .put("question_schema",responses)
-//                                           .put("response",responseResultArr)
+                                           .put("response",responseResultArr)
                                            .put("question_schema",forms);
 
         return parsedConfig.toString();
