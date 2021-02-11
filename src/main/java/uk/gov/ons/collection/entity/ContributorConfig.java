@@ -107,8 +107,9 @@ public class ContributorConfig {
                                 log.info(responseArray.getJSONObject(j).get("instance"));
                                 eachResponseObject.put("dateadjustment", dateAdjustmentFlag);
                                 log.info( dateAdjustmentFlag);
-                                eachResponseObject.put("adjustedresponse", responseArray.getJSONObject(j).getString("adjustedresponse"));
-                                log.info(responseArray.getJSONObject(j).getString("adjustedresponse"));
+                                String adjustedResponse = (responseArray.getJSONObject(j).isNull("adjustedresponse"))
+                                        ? EMPTY_SPACE : responseArray.getJSONObject(j).getString("adjustedresponse");
+                                eachResponseObject.put("adjustedresponse", adjustedResponse);
                                 responseResultArr.put(eachResponseObject);
                                 log.info("Done responseResultArr.put(eachResponseObject)");
                             }
