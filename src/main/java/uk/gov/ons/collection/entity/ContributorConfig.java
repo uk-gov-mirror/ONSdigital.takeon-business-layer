@@ -19,6 +19,12 @@ public class ContributorConfig {
     private static final String QUESTION_CODE = "questioncode";
     private static final String RESPONSE = "response";
     private static final String EMPTY_SPACE = "";
+    private static final String DATE_ADJUSTMENT = "dateadjustment";
+    private static final String REFERENCE = "reference";
+    private static final String PERIOD = "period";
+    private static final String SURVEY = "survey";
+    private static final String INSTANCE = "instance";
+    private static final String ADJUSTED_RESPONSE = "adjustedresponse";
 
     public ContributorConfig(List<String> responses) {
         this.responses = responses;
@@ -67,51 +73,36 @@ public class ContributorConfig {
             }
 
             for (int j = 0; j < formArray.length(); j++) {
-                formArray.getJSONObject(j).put("survey",contributor.getString("survey"))
-                                          .put("period",contributor.getString("period"));
+                formArray.getJSONObject(j).put(SURVEY,contributor.getString(SURVEY))
+                                          .put(PERIOD,contributor.getString(PERIOD));
                 forms.put(formArray.getJSONObject(j));
             }
 
-            log.info("formArray count: " + formArray.length());
-            log.info("responseArray count: " + responseArray.length());
-
+            // Generate responses including dateAdjustmentFlag by getting it from formArray
+            // and other fields from responseArray
             if (formArray.length() > 0) {
                 for (int i = 0; i < formArray.length(); i++) {
-                    log.info("formArray " + i);
                     JSONObject eachFormDefinitionObject = formArray.getJSONObject(i);
                     String questionCode = eachFormDefinitionObject.getString(QUESTION_CODE);
-                    log.info("questionCode:: " + questionCode);
                     var eachResponseObject = new JSONObject();
-                    boolean dateAdjustmentFlag = eachFormDefinitionObject.getBoolean("dateadjustment");
-                    log.info("dateAdjustmentFlag:: " );
-                    log.info(dateAdjustmentFlag);
+                    boolean dateAdjustmentFlag = eachFormDefinitionObject.getBoolean(DATE_ADJUSTMENT);
                     try {
                         for (int j = 0; j < responseArray.length(); j++) {
                             // Performed null check
-                            log.info("responseArray " + j);
                             String response = (responseArray.getJSONObject(j).isNull(RESPONSE))
                                     ? EMPTY_SPACE : responseArray.getJSONObject(j).getString(RESPONSE);
                             if (questionCode.equals(responseArray.getJSONObject(j).getString(QUESTION_CODE))) {
-                                log.info("Questions Equal");
-                                eachResponseObject.put("reference", responseArray.getJSONObject(j).getString("reference"));
-                                log.info(responseArray.getJSONObject(j).getString("reference"));
-                                eachResponseObject.put("period", responseArray.getJSONObject(j).getString("period"));
-                                log.info(responseArray.getJSONObject(j).getString("period"));
-                                eachResponseObject.put("survey", responseArray.getJSONObject(j).getString("survey"));
-                                log.info(responseArray.getJSONObject(j).getString("survey"));
+                                eachResponseObject.put(REFERENCE, responseArray.getJSONObject(j).getString(REFERENCE));
+                                eachResponseObject.put(PERIOD, responseArray.getJSONObject(j).getString(PERIOD));
+                                eachResponseObject.put(SURVEY, responseArray.getJSONObject(j).getString(SURVEY));
                                 eachResponseObject.put(QUESTION_CODE, questionCode);
-                                log.info(questionCode);
                                 eachResponseObject.put(RESPONSE, response);
-                                log.info(response);
-                                eachResponseObject.put("instance", responseArray.getJSONObject(j).get("instance"));
-                                log.info(responseArray.getJSONObject(j).get("instance"));
-                                eachResponseObject.put("dateadjustment", dateAdjustmentFlag);
-                                log.info( dateAdjustmentFlag);
-                                String adjustedResponse = (responseArray.getJSONObject(j).isNull("adjustedresponse"))
-                                        ? EMPTY_SPACE : responseArray.getJSONObject(j).getString("adjustedresponse");
-                                eachResponseObject.put("adjustedresponse", adjustedResponse);
+                                eachResponseObject.put(INSTANCE, responseArray.getJSONObject(j).get(INSTANCE));
+                                eachResponseObject.put(DATE_ADJUSTMENT, dateAdjustmentFlag);
+                                String adjustedResponse = (responseArray.getJSONObject(j).isNull(ADJUSTED_RESPONSE))
+                                        ? EMPTY_SPACE : responseArray.getJSONObject(j).getString(ADJUSTED_RESPONSE);
+                                eachResponseObject.put(ADJUSTED_RESPONSE, adjustedResponse);
                                 responseResultArr.put(eachResponseObject);
-                                log.info("Done responseResultArr.put(eachResponseObject)");
                             }
                         }
 
@@ -122,7 +113,6 @@ public class ContributorConfig {
                 }
             }
 
-            log.info("Done formArray.length()");
 
             // Remove any sub-array data brought in with the graphQL query. Retain everything else for the contributor
             contributor.remove("surveyBySurvey");
@@ -135,7 +125,6 @@ public class ContributorConfig {
             throw new InvalidJsonException("Error processing responses within contributor json: " + jsonList);
         }
 
-        log.info("Going to put parsedConfig");
         var parsedConfig = new JSONObject().put("contributor",contributors)
                                            .put("response",responseResultArr)
                                            .put("question_schema",forms);
