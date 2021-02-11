@@ -72,30 +72,30 @@ public class ContributorConfig {
                 forms.put(formArray.getJSONObject(j));
             }
 
-            if (formArray.length() > 0) {
-                for (int i = 0; i < formArray.length(); i++) {
-                    JSONObject eachFormDefinitionObject = formArray.getJSONObject(i);
-                    String questionCode = eachFormDefinitionObject.getString(QUESTION_CODE);
-                    var eachResponseObject = new JSONObject();
-                    boolean dateAdjustmentFlag = eachFormDefinitionObject.getBoolean("dateadjustment");
-                    for (int j = 0; j < responseArray.length(); j++) {
-                        // Performed null check
-                        String response = (responseArray.getJSONObject(j).isNull(RESPONSE))
-                                ? EMPTY_SPACE : responseArray.getJSONObject(j).getString(RESPONSE);
-                        if (questionCode.equals(responseArray.getJSONObject(j).getString(QUESTION_CODE))) {
-                            eachResponseObject.put("reference", responseArray.getJSONObject(j).getString("reference"));
-                            eachResponseObject.put("period", responseArray.getJSONObject(j).getString("period"));
-                            eachResponseObject.put("survey", responseArray.getJSONObject(j).getString("survey"));
-                            eachResponseObject.put(QUESTION_CODE, questionCode);
-                            eachResponseObject.put(RESPONSE, response);
-                            eachResponseObject.put("instance", responseArray.getJSONObject(j).get("instance"));
-                            eachResponseObject.put("dateadjustment", dateAdjustmentFlag);
-                            eachResponseObject.put("adjustedresponse", responseArray.getJSONObject(j).getString("adjustedresponse"));
-                            responseResultArr.put(eachResponseObject);
-                        }
-                    }
-                }
-            }
+//            if (formArray.length() > 0) {
+//                for (int i = 0; i < formArray.length(); i++) {
+//                    JSONObject eachFormDefinitionObject = formArray.getJSONObject(i);
+//                    String questionCode = eachFormDefinitionObject.getString(QUESTION_CODE);
+//                    var eachResponseObject = new JSONObject();
+//                    boolean dateAdjustmentFlag = eachFormDefinitionObject.getBoolean("dateadjustment");
+//                    for (int j = 0; j < responseArray.length(); j++) {
+//                        // Performed null check
+//                        String response = (responseArray.getJSONObject(j).isNull(RESPONSE))
+//                                ? EMPTY_SPACE : responseArray.getJSONObject(j).getString(RESPONSE);
+//                        if (questionCode.equals(responseArray.getJSONObject(j).getString(QUESTION_CODE))) {
+//                            eachResponseObject.put("reference", responseArray.getJSONObject(j).getString("reference"));
+//                            eachResponseObject.put("period", responseArray.getJSONObject(j).getString("period"));
+//                            eachResponseObject.put("survey", responseArray.getJSONObject(j).getString("survey"));
+//                            eachResponseObject.put(QUESTION_CODE, questionCode);
+//                            eachResponseObject.put(RESPONSE, response);
+//                            eachResponseObject.put("instance", responseArray.getJSONObject(j).get("instance"));
+//                            eachResponseObject.put("dateadjustment", dateAdjustmentFlag);
+//                            eachResponseObject.put("adjustedresponse", responseArray.getJSONObject(j).getString("adjustedresponse"));
+//                            responseResultArr.put(eachResponseObject);
+//                        }
+//                    }
+//                }
+//            }
 
             // Remove any sub-array data brought in with the graphQL query. Retain everything else for the contributor
             contributor.remove("surveyBySurvey");
@@ -108,7 +108,8 @@ public class ContributorConfig {
             throw new InvalidJsonException("Error processing responses within contributor json: " + jsonList);
         }
         var parsedConfig = new JSONObject().put("contributor",contributors)
-                                           .put("response",responseResultArr)
+                                           .put("question_schema",responses)
+//                                           .put("response",responseResultArr)
                                            .put("question_schema",forms);
 
         return parsedConfig.toString();
