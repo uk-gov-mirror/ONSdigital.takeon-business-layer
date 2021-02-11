@@ -74,6 +74,7 @@ public class ContributorConfig {
 
             if (formArray.length() > 0) {
                 for (int i = 0; i < formArray.length(); i++) {
+                    log.info("formArray " + i);
                     JSONObject eachFormDefinitionObject = formArray.getJSONObject(i);
                     String questionCode = eachFormDefinitionObject.getString(QUESTION_CODE);
                     log.info("questionCode:: " + questionCode);
@@ -83,6 +84,7 @@ public class ContributorConfig {
                     log.info(dateAdjustmentFlag);
                     for (int j = 0; j < responseArray.length(); j++) {
                         // Performed null check
+                        log.info("responseArray " + j);
                         String response = (responseArray.getJSONObject(j).isNull(RESPONSE))
                                 ? EMPTY_SPACE : responseArray.getJSONObject(j).getString(RESPONSE);
                         if (questionCode.equals(responseArray.getJSONObject(j).getString(QUESTION_CODE))) {
@@ -104,10 +106,13 @@ public class ContributorConfig {
                             eachResponseObject.put("adjustedresponse", responseArray.getJSONObject(j).getString("adjustedresponse"));
                             log.info(responseArray.getJSONObject(j).getString("adjustedresponse"));
                             responseResultArr.put(eachResponseObject);
+                            log.info("Done responseResultArr.put(eachResponseObject)");
                         }
                     }
                 }
             }
+
+            log.info("Done formArray.length()");
 
             // Remove any sub-array data brought in with the graphQL query. Retain everything else for the contributor
             contributor.remove("surveyBySurvey");
@@ -119,6 +124,8 @@ public class ContributorConfig {
         if (contributors.isEmpty()) {
             throw new InvalidJsonException("Error processing responses within contributor json: " + jsonList);
         }
+
+        log.info("Going to put parsedConfig");
         var parsedConfig = new JSONObject().put("contributor",contributors)
                                            .put("response",responseResultArr)
                                            .put("question_schema",forms);
