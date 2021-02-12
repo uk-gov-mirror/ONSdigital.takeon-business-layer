@@ -94,7 +94,8 @@ public class FullDataExport {
         snapshotQuery.append("contributordateadjustmentsBySurvey");
         snapshotQuery.append(buildMultipleSurveysFilterCondition(surveyList));
         snapshotQuery.append("{ nodes {survey period  reference dateadjustmenterrorflag dateadjustmenterrorflag actualdaysreturnedperiod ");
-        snapshotQuery.append("sumtradingweightsoverreturnedperiod sumtradingweightsoveractualreturnedperiod createdby createddate lastupdatedby lastupdateddate}}");
+        snapshotQuery.append("sumtradingweightsoverreturnedperiod sumtradingweightsoveractualreturnedperiod createdby createddate ");
+        snapshotQuery.append("lastupdatedby lastupdateddate}}");
         snapshotQuery.append("contributorsBySurvey");
         snapshotQuery.append(buildMultipleSurveyAndPeriodFilterCondition(surveyPeriodsMap));
         snapshotQuery.append("{ nodes {");
@@ -103,9 +104,11 @@ public class FullDataExport {
         snapshotQuery.append("fteemployment frozenturnover turnover enterprisereference wowenterprisereference cellnumber currency vatreference ");
         snapshotQuery.append("payereference companyregistrationnumber numberlivelocalunits numberlivevat numberlivepaye legalstatus ");
         snapshotQuery.append("reportingunitmarker region birthdate enterprisename referencename referenceaddress referencepostcode tradingstyle ");
-        snapshotQuery.append("contact telephone fax selectiontype inclusionexclusion createdby createddate lastupdatedby lastupdateddate ");
+        snapshotQuery.append("contact telephone fax selectiontype inclusionexclusion createdby createddate lastupdatedby ");
+        snapshotQuery.append("lastupdateddate domain resultscellnumber ");
         snapshotQuery.append("responsesByReferenceAndPeriodAndSurvey {nodes {");
-        snapshotQuery.append("reference period survey questioncode instance response adjustedresponse averageweeklyadjustedresponse createdby createddate lastupdatedby lastupdateddate}}}}");
+        snapshotQuery.append("reference period survey questioncode instance response adjustedresponse averageweeklyadjustedresponse ");
+        snapshotQuery.append("createdby createddate lastupdatedby lastupdateddate}}}}");
         snapshotQuery.append("validationoutputsBySurvey");
         snapshotQuery.append(buildMultipleSurveyAndPeriodFilterCondition(surveyPeriodsMap));
         snapshotQuery.append("{nodes {");
