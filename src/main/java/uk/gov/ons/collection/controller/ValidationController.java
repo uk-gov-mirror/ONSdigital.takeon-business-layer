@@ -150,6 +150,7 @@ public class ValidationController {
             ValidationOverrideService validationService = new ValidationOverrideService(jsonString, qlService);
             validationService.processValidationDataAndSave();
             // Add a new GraphQL query to retrieve the additional parameters related to SE Override status and flag
+            // New graphQL Query
 
         } catch (Exception err) {
             err.printStackTrace();
