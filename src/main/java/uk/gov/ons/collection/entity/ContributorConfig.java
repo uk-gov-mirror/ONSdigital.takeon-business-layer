@@ -109,7 +109,7 @@ public class ContributorConfig {
                     } catch (Exception e) {
                         e.printStackTrace();
                         log.error("Error in processing responses for Validation Date Adjustment: " + e.getMessage());
-                        throw new InvalidJsonException( "Error in processing responses for Validation Date Adjustment: " + e.getMessage());
+                        throw new InvalidJsonException("Error in processing responses for Validation Date Adjustment: " + e.getMessage());
                     }
                 }
             }

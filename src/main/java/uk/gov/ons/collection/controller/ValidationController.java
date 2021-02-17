@@ -84,17 +84,22 @@ public class ValidationController {
             log.info("Output from Validation Output table " + qlResponse);
             List<ValidationOutputData> validationOutputData = outputs.extractValidationDataFromDatabase(qlResponse);
             List<ValidationOutputData> lambdaValidationOutputData = outputs.extractValidationDataFromLambda();
-            List<ValidationOutputData> validationOutputInsertData = outputs.getValidationOutputInsertList(lambdaValidationOutputData, validationOutputData);
-            List<ValidationOutputData> validationOutputModifiedData = outputs.getValidationOutputModifiedList(lambdaValidationOutputData, validationOutputData);
-            List<ValidationOutputData> validationOutputUpsertData = outputs.getValidationOutputUpsertList(validationOutputModifiedData, validationOutputInsertData);
-            int overriddenTrueCount = outputs.getOverriddenTrueCount(lambdaValidationOutputData, validationOutputData);
+            int overriddenTrueCount =
+                    outputs.getOverriddenTrueCount(lambdaValidationOutputData, validationOutputData);
             log.info("Override True Count " + overriddenTrueCount);
             int triggeredTrueCount = outputs.getTriggerTrueCount();
             log.info("Triggered True Count " + triggeredTrueCount);
             statusText = outputs.getStatusText(triggeredTrueCount, overriddenTrueCount);
             log.info("Status Text after evaluation of trigger count and overridden count" + statusText);
 
-            List<ValidationOutputData> validationOutputDeleteData = outputs.getDeleteValidationOutputList(lambdaValidationOutputData, validationOutputData);
+            List<ValidationOutputData> validationOutputDeleteData =
+                    outputs.getDeleteValidationOutputList(lambdaValidationOutputData, validationOutputData);
+            List<ValidationOutputData> validationOutputInsertData =
+                    outputs.getValidationOutputInsertList(lambdaValidationOutputData, validationOutputData);
+            List<ValidationOutputData> validationOutputModifiedData =
+                    outputs.getValidationOutputModifiedList(lambdaValidationOutputData, validationOutputData);
+            List<ValidationOutputData> validationOutputUpsertData =
+                    outputs.getValidationOutputUpsertList(validationOutputModifiedData, validationOutputInsertData);
             String upsertAndDeleteQuery = outputs.buildUpsertByArrayQuery(validationOutputUpsertData, validationOutputDeleteData);
             qlResponse = qlService.qlSearch(upsertAndDeleteQuery);
             log.info("Upsert Query response " + qlResponse);
