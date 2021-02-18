@@ -180,7 +180,7 @@ public class ContributorController {
         return output;
     }
 
-    @GetMapping(value = "/statuses", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/statuses/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful retrieval of Contributor statuses")})
     public String getContributorStatuses(@MatrixVariable Map<String, String> searchParameters) {
