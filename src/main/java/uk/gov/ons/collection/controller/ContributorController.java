@@ -179,4 +179,23 @@ public class ContributorController {
         }
         return output;
     }
+
+    @GetMapping(value = "/statuses", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of Contributor statuses")})
+    public String getContributorStatuses(@MatrixVariable Map<String, String> searchParameters) {
+
+        //To be removed later
+        String skeletonOutput = "{\n" +
+                "  \"reference\": \"12000534932\",\n" +
+                "  \"BPMvalidationCallID\": \"0\",\n" +
+                "  \"survey\": \"023\",\n" +
+                "  \"period\": \"201904\",\n" +
+                "  \"status\": \"CLEAR\",\n" +
+                "  \"validationPassed\": true,\n" +
+                "  \"selective_editing_flag\": \"PASSED\"\n" +
+                "}";
+        return skeletonOutput;
+
+    }
 }
