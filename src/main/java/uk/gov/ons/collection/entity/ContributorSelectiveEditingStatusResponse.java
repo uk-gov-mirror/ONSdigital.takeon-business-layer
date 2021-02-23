@@ -15,7 +15,8 @@ public class ContributorSelectiveEditingStatusResponse {
     private static final String SURVEY = "survey";
     private static final String STATUS = "status";
     private static final String VALIDATION_PASSED = "validationPassed";
-    private static final String FLAG = "selective_editing_flag";
+    private static final String SELECTIVE_EDITING_FLAG = "selective_editing_flag";
+    private static final String FLAG = "flag";
     private static final String DC_CHECK_NEEDED = "Check needed";
     private static final String DC_CLEAR = "Clear";
     private static final String DC_CLEAR_OVERRIDDEN = "Clear - overridden";
@@ -77,7 +78,7 @@ public class ContributorSelectiveEditingStatusResponse {
                         : ((contributorStatus.equals(DC_FORM_SENT_OUT)) ? BPM_FORM_SENT_OUT : EMPTY)))));
                 contributorStatusResultObj.put(STATUS, contributorStatus);
                 log.info("Contributor status after processing :" + contributorStatus);
-                contributorStatusResultObj.put(FLAG, EMPTY);
+                contributorStatusResultObj.put(SELECTIVE_EDITING_FLAG, EMPTY);
 
                 JSONObject selectiveEditingObject = contributorObject.getJSONObject("contributorselectiveeditingByReferenceAndPeriodAndSurvey");
                 if (selectiveEditingObject != null) {
@@ -88,7 +89,7 @@ public class ContributorSelectiveEditingStatusResponse {
                                     ((contributorStatus.equals(DC_SE_MISSING)) ? (BPM_SE_MISSING) :
                                             (EMPTY)));
                     log.info("Selective Editing Flag after processing :" + flag);
-                    contributorStatusResultObj.put(FLAG, flag);
+                    contributorStatusResultObj.put(SELECTIVE_EDITING_FLAG, flag);
                 }
             } else {
                 throw new InvalidJsonException("There is no contributor for a given survey, " +
