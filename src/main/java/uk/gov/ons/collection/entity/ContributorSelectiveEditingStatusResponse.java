@@ -15,7 +15,7 @@ public class ContributorSelectiveEditingStatusResponse {
     private static final String SURVEY = "survey";
     private static final String STATUS = "status";
     private static final String VALIDATION_PASSED = "validationPassed";
-    private static final String FLAG = "flag";
+    private static final String FLAG = "selective_editing_flag";
     private static final String DC_CHECK_NEEDED = "Check needed";
     private static final String DC_CLEAR = "Clear";
     private static final String DC_CLEAR_OVERRIDDEN = "Clear - overridden";
