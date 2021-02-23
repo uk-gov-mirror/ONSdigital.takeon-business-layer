@@ -59,8 +59,13 @@ public class ValidationOverrideService {
             String qlStatusOutput = qlService.qlSearch(contributorStatusQuery);
             log.info("Output after updating the Override form status {}", qlStatusOutput);
         }
+        log.info("Before Processing BMP contract ");
+        log.info("Reference: {}", overrideObject.getReference());
+        log.info("Period: {}", overrideObject.getPeriod());
+        log.info("Survey: {}", overrideObject.getSurvey());
         //Process BPM Contract
         Map<String, String> variables = new HashMap<String, String>();
+
         variables.put(REFERENCE, overrideObject.getReference());
         variables.put(PERIOD, overrideObject.getPeriod());
         variables.put(SURVEY, overrideObject.getSurvey());
