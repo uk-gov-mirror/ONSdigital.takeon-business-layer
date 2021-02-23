@@ -36,6 +36,8 @@ public class ContributorSelectiveEditingStatusResponse {
     private static final String BPM_SE_FAILED = "FAILED";
     private static final String BPM_SE_MISSING = "MISSING";
     private static final String EMPTY = "";
+    private static final String BPM_VALIDATION_CALL_ID = "BPMvalidationCallID";
+    private static final String ZERO = "0";
 
 
 
@@ -60,6 +62,8 @@ public class ContributorSelectiveEditingStatusResponse {
                 contributorStatusResultObj.put(REFERENCE, contributorObject.getString(REFERENCE));
                 contributorStatusResultObj.put(PERIOD, contributorObject.getString(PERIOD));
                 contributorStatusResultObj.put(SURVEY, contributorObject.getString(SURVEY));
+                contributorStatusResultObj.put(BPM_VALIDATION_CALL_ID, ZERO);
+
                 // Setting dummy value and BPM transform Lambda will replace with actual value in looping Validation Outputs
                 // containing trigger count
                 contributorStatusResultObj.put(VALIDATION_PASSED, true);
