@@ -145,20 +145,18 @@ public class ValidationController {
     public String saveOverrides(@RequestBody String jsonString)  {
 
         log.info("API CALL!! --> /saveOverrides :: Save Validation overrides" + jsonString);
+        String response = "";
         try {
 
             ValidationOverrideService validationService = new ValidationOverrideService(jsonString, qlService);
-            validationService.processValidationDataAndSave();
-            // Add a new GraphQL query to retrieve the additional parameters related to SE Override status and flag
-            // New graphQL Query
-
+            response = validationService.processValidationDataAndSave();
         } catch (Exception err) {
             err.printStackTrace();
             log.error("Failed to save validation overrides: " + err);
             return "{\"error\":\"Error in saving validation overrides\"}";
         }
         //To be removed later
-        String skeletonOutput = "{\n" +
+        /*String skeletonOutput = "{\n" +
                 "  \"reference\": \"12000534932\",\n" +
                 "  \"BPMvalidationCallID\": \"0\",\n" +
                 "  \"survey\": \"023\",\n" +
@@ -166,9 +164,9 @@ public class ValidationController {
                 "  \"status\": \"CLEAR\",\n" +
                 "  \"validationPassed\": true,\n" +
                 "  \"selective_editing_flag\": \"PASSED\"\n" +
-                "}";
+                "}";*/
         //return "{\"Success\":\"Validation overrides saved successfully\"}";
-        return skeletonOutput;
+        return response;
     }
 
 }

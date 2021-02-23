@@ -17,6 +17,7 @@ public class ValidationOverride {
 
     private JSONArray validationOutputArray;
     private JSONObject validationOutputOverrideObject;
+
     private String reference;
     private String period;
     private String survey;
@@ -24,7 +25,10 @@ public class ValidationOverride {
     private final Timestamp time = new Timestamp(new Date().getTime());
 
     private static final String STATUS_CLEAR_OVERRIDDEN = "Clear - overridden";
+    private static final String BPM_STATUS_CLEAR_OVERRIDDEN = "OVERRIDDEN";
     private static final String STATUS_CHECK_NEEDED = "Check needed";
+    private static final String BPM_STATUS_CHECK_NEEDED = "CHECK_NEEDED";
+    private static final String EMPTY = "";
 
 
     public ValidationOverride(String jsonString) throws InvalidJsonException {
@@ -101,6 +105,14 @@ public class ValidationOverride {
         return statusText;
     }
 
+    public String processBPMStatusMessage(String status) {
+        String statusText = (status != null && status.equals(STATUS_CLEAR_OVERRIDDEN))
+                ? BPM_STATUS_CLEAR_OVERRIDDEN : (status.equals(STATUS_CHECK_NEEDED)
+                ? (BPM_STATUS_CHECK_NEEDED) : (EMPTY));
+        log.info("Status Text {}", statusText);
+        return statusText;
+    }
+
     public String buildContributorStatusQuery(String statusText) {
         ContributorStatus status = new ContributorStatus(reference,period,survey,statusText);
         return status.buildUpdateQuery();
@@ -152,6 +164,18 @@ public class ValidationOverride {
         joiner.add("lastupdatedby: \\\"" + validationData.getLastupdatedBy() + "\\\"");
         joiner.add("lastupdateddate: \\\"" + validationData.getLastupdatedDate() + "\\\"");
         return joiner.toString();
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public String getPeriod() {
+        return period;
+    }
+
+    public String getSurvey() {
+        return survey;
     }
 
 
