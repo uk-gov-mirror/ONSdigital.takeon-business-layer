@@ -91,13 +91,13 @@ public class ContributorController {
             if (snapshotMap != null) {
                 snapshotMap.clear();
             }
-            if (uniqueSurveyList != null ) {
+            if (uniqueSurveyList != null) {
                 uniqueSurveyList.clear();
             }
 
             if (dataExport != null) {
                 JSONObject jsonObject = dataExport.getJsonSurveySnapshotInput();
-                if(jsonObject != null) {
+                if (jsonObject != null) {
                     jsonObject = null;
                 }
                 dataExport = null;

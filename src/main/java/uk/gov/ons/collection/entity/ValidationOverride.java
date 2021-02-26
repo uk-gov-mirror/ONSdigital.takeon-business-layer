@@ -105,7 +105,7 @@ public class ValidationOverride {
         return statusText;
     }
 
-    public String processBPMStatusMessage(String status) {
+    public String processBpmStatusMessage(String status) {
         String statusText = (status != null && status.equals(STATUS_CLEAR_OVERRIDDEN))
                 ? BPM_STATUS_CLEAR_OVERRIDDEN : (status.equals(STATUS_CHECK_NEEDED)
                 ? (BPM_STATUS_CHECK_NEEDED) : (EMPTY));

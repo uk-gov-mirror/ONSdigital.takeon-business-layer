@@ -163,6 +163,28 @@ public class ValidationOverrideTest {
     }
 
     @Test
+    void test_BpmContract_All_formStatuses() {
+
+        try {
+            ValidationOverride overrideObject = new ValidationOverride(inputJson1);
+            String actualStatusText = overrideObject.processBpmStatusMessage("Clear - overridden");
+            //check Form Status - Overridden
+            assertEquals("OVERRIDDEN", actualStatusText);
+
+            //check Form Status - Check needed
+            actualStatusText = overrideObject.processBpmStatusMessage("Check needed");
+            assertEquals("CHECK_NEEDED", actualStatusText);
+
+            //check Form Status - Empty
+            actualStatusText = overrideObject.processBpmStatusMessage("Clear");
+            assertEquals("", actualStatusText);
+
+        } catch (Exception exp) {
+            assertTrue(false);
+        }
+    }
+
+    @Test
     void test_validationOverride_formStatus_checkNeeded() {
 
         try {

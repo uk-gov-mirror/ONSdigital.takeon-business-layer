@@ -155,17 +155,6 @@ public class ValidationController {
             log.error("Failed to save validation overrides: " + err);
             return "{\"error\":\"Error in saving validation overrides\"}";
         }
-        //To be removed later
-        /*String skeletonOutput = "{\n" +
-                "  \"reference\": \"12000534932\",\n" +
-                "  \"BPMvalidationCallID\": \"0\",\n" +
-                "  \"survey\": \"023\",\n" +
-                "  \"period\": \"201904\",\n" +
-                "  \"status\": \"CLEAR\",\n" +
-                "  \"validationPassed\": true,\n" +
-                "  \"selective_editing_flag\": \"PASSED\"\n" +
-                "}";*/
-        //return "{\"Success\":\"Validation overrides saved successfully\"}";
         return response;
     }
 

@@ -82,7 +82,7 @@ public class ValidationOverrideService {
             ContributorSelectiveEditingStatusResponse contributorStatusResponse =
                     new ContributorSelectiveEditingStatusResponse(contributorstatusQueryOutput);
             JSONObject contributorJsonObject = contributorStatusResponse.parseContributorStatusQueryResponse();
-            contributorJsonObject.put(STATUS, overrideObject.processBPMStatusMessage(statusText));
+            contributorJsonObject.put(STATUS, overrideObject.processBpmStatusMessage(statusText));
             response = contributorJsonObject.toString();
             log.info("BAW contract before sending to UI: " + response);
         } catch (Exception err) {
