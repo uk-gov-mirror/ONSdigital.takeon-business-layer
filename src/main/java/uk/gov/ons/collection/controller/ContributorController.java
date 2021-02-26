@@ -209,17 +209,6 @@ public class ContributorController {
         }
 
         log.info("API Complete!! --> /contributor/statuses/{vars}");
-
-        /*//To be removed later
-        String skeletonOutput = "{\n" +
-                "  \"reference\": \"12000534932\",\n" +
-                "  \"BPMvalidationCallID\": \"0\",\n" +
-                "  \"survey\": \"023\",\n" +
-                "  \"period\": \"201904\",\n" +
-                "  \"status\": \"CLEAR\",\n" +
-                "  \"validationPassed\": true,\n" +
-                "  \"selective_editing_flag\": \"PASSED\"\n" +
-                "}";*/
         return response;
 
     }
