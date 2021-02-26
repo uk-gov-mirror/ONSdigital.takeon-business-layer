@@ -105,6 +105,14 @@ public class ValidationOverride {
         return statusText;
     }
 
+    public boolean processValidationPassedMessage(int triggerCount) {
+        boolean validationPassedFlag = (triggerCount == overrideCount) ? true : false;
+        log.info("Trigger Count ", triggerCount);
+        log.info("Overridden Count", overrideCount);
+        log.info("Validation Passed Flag Text ", validationPassedFlag);
+        return validationPassedFlag;
+    }
+
     public String processBpmStatusMessage(String status) {
         String statusText = (status != null && status.equals(STATUS_CLEAR_OVERRIDDEN))
                 ? BPM_STATUS_CLEAR_OVERRIDDEN : (status.equals(STATUS_CHECK_NEEDED)

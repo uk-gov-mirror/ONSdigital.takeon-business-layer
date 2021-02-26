@@ -21,7 +21,7 @@ public class ValidationOverrideService {
     private static final String PERIOD = "period";
     private static final String SURVEY = "survey";
     private static final String STATUS = "status";
-    private static final String FLAG = "flag";
+    private static final String VALIDATION_PASSED = "validationPassed";
 
 
     public ValidationOverrideService(String validationOutputStr, GraphQlService qlGraphService) {
@@ -83,6 +83,7 @@ public class ValidationOverrideService {
                     new ContributorSelectiveEditingStatusResponse(contributorstatusQueryOutput);
             JSONObject contributorJsonObject = contributorStatusResponse.parseContributorStatusQueryResponse();
             contributorJsonObject.put(STATUS, overrideObject.processBpmStatusMessage(statusText));
+            contributorJsonObject.put(VALIDATION_PASSED, overrideObject.processValidationPassedMessage(triggerCount));
             response = contributorJsonObject.toString();
             log.info("BAW contract before sending to UI: " + response);
         } catch (Exception err) {
