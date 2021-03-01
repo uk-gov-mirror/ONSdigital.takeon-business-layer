@@ -187,9 +187,5 @@ public class ValidationOverride {
         return survey;
     }
 
-    public int getOverrideCount() {
-        return overrideCount;
-    }
-
 
 }
