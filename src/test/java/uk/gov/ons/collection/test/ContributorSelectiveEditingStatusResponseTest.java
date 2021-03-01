@@ -21,8 +21,15 @@ public class ContributorSelectiveEditingStatusResponseTest {
             String graphQLOutput = "{\"data\":{\"allContributors\":{\"nodes\":[{\"survey\":\"023\",\"period\":\"201903\",\"reference\":\"12000534932\",\"formid\":5,\"status\":\"Check needed\",\"contributorselectiveeditingByReferenceAndPeriodAndSurvey\":{\"reference\":\"12000534932\",\"period\":\"201903\",\"survey\":\"023\",\"flag\":\"P\"}}]}}}";
             ContributorSelectiveEditingStatusResponse contributorStatusResponse = new ContributorSelectiveEditingStatusResponse(graphQLOutput);
             String expectedBpmContract = "{\"reference\":\"12000534932\",\"period\":\"201903\",\"survey\":\"023\",\"validationPassed\":true,\"BPMvalidationCallID\":\"0\",\"status\":\"CHECK_NEEDED\",\"selective_editing_flag\":\"PASSED\"}";
+            String expectedBpmContractNoSelectiveEditingFlag = "{\"reference\":\"12000567891\",\"period\":\"201904\",\"survey\":\"023\",\"validationPassed\":true,\"BPMvalidationCallID\":\"0\",\"status\":\"OVERRIDDEN\",\"selective_editing_flag\":\"\"}";
+            String noSelectiveEditingResponse = "{\"data\":{\"allContributors\":{\"nodes\":[{\"survey\":\"023\",\"period\":\"201904\",\"reference\":\"12000567891\",\"formid\":5,\"status\":\"Clear - overridden\",\"contributorselectiveeditingByReferenceAndPeriodAndSurvey\":null}]}}}";
             String actualBpmContract = contributorStatusResponse.parseContributorStatusQueryResponse().toString();
             assertEquals(expectedBpmContract, actualBpmContract);
+
+            ContributorSelectiveEditingStatusResponse contributorNoSelectiveEditingResponse = new ContributorSelectiveEditingStatusResponse(noSelectiveEditingResponse);
+            String actualBPMContractWithEmptyFlag = contributorNoSelectiveEditingResponse.parseContributorStatusQueryResponse().toString();
+            assertEquals(expectedBpmContractNoSelectiveEditingFlag, actualBPMContractWithEmptyFlag);
+
         } catch (Exception e) {
             e.printStackTrace();
             assertTrue(false);

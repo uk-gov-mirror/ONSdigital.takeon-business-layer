@@ -21,6 +21,7 @@ public class ValidationOverride {
     private String reference;
     private String period;
     private String survey;
+
     private int overrideCount;
     private final Timestamp time = new Timestamp(new Date().getTime());
 
@@ -184,6 +185,10 @@ public class ValidationOverride {
 
     public String getSurvey() {
         return survey;
+    }
+
+    public int getOverrideCount() {
+        return overrideCount;
     }
 
 

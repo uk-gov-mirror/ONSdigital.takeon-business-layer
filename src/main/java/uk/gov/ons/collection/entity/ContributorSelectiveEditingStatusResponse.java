@@ -78,19 +78,24 @@ public class ContributorSelectiveEditingStatusResponse {
                         : ((contributorStatus.equals(DC_FORM_SENT_OUT)) ? BPM_FORM_SENT_OUT : EMPTY)))));
                 contributorStatusResultObj.put(STATUS, contributorStatus);
                 log.info("Contributor status after processing :" + contributorStatus);
-                contributorStatusResultObj.put(SELECTIVE_EDITING_FLAG, EMPTY);
 
-                JSONObject selectiveEditingObject = contributorObject.getJSONObject("contributorselectiveeditingByReferenceAndPeriodAndSurvey");
-                if (selectiveEditingObject != null) {
-                    flag = selectiveEditingObject.getString(FLAG);
-                    log.info("Selective Editing Flag before processing :" + flag);
-                    flag = (flag != null && flag.equals(DC_SE_PASSED)) ? (BPM_SE_PASSED) :
-                            ((contributorStatus.equals(DC_SE_FAILED)) ? (BPM_SE_FAILED) :
-                                    ((contributorStatus.equals(DC_SE_MISSING)) ? (BPM_SE_MISSING) :
-                                            (EMPTY)));
-                    log.info("Selective Editing Flag after processing :" + flag);
-                    contributorStatusResultObj.put(SELECTIVE_EDITING_FLAG, flag);
+                Object selectiveEditingMainObject =  contributorObject.get("contributorselectiveeditingByReferenceAndPeriodAndSurvey");
+                if (selectiveEditingMainObject == null || selectiveEditingMainObject.toString().equals("null")) {
+                    contributorStatusResultObj.put(SELECTIVE_EDITING_FLAG, EMPTY);
+                } else {
+                    JSONObject selectiveEditingObject = contributorObject.getJSONObject("contributorselectiveeditingByReferenceAndPeriodAndSurvey");
+                    if (selectiveEditingObject != null) {
+                        flag = selectiveEditingObject.getString(FLAG);
+                        log.info("Selective Editing Flag before processing :" + flag);
+                        flag = (flag != null && flag.equals(DC_SE_PASSED)) ? (BPM_SE_PASSED) :
+                                ((contributorStatus.equals(DC_SE_FAILED)) ? (BPM_SE_FAILED) :
+                                        ((contributorStatus.equals(DC_SE_MISSING)) ? (BPM_SE_MISSING) :
+                                                (EMPTY)));
+                        log.info("Selective Editing Flag after processing :" + flag);
+                        contributorStatusResultObj.put(SELECTIVE_EDITING_FLAG, flag);
+                    }
                 }
+
             } else {
                 throw new InvalidJsonException("There is no contributor for a given survey, " +
                         "reference and periods. Please verify");

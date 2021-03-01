@@ -185,6 +185,23 @@ public class ValidationOverrideTest {
     }
 
     @Test
+    void test_BpmContract_ValidationPassedFlag() {
+
+        try {
+            ValidationOverride overrideObject = new ValidationOverride(inputJson1);
+            List<ValidationData> databaseList = overrideObject.extractValidationDataFromDatabase(graphQlOutput);
+            List<ValidationData> uiList = overrideObject.extractValidationDataFromUI();
+            overrideObject.extractUpdatedValidationOutputData(uiList, databaseList);
+            int triggerCount = databaseList.size();
+            boolean actualValidationPassed = overrideObject.processValidationPassedMessage(triggerCount);
+            assertTrue(actualValidationPassed);
+
+        } catch (Exception exp) {
+            assertTrue(false);
+        }
+    }
+
+    @Test
     void test_validationOverride_formStatus_checkNeeded() {
 
         try {
