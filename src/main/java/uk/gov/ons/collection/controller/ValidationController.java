@@ -151,17 +151,17 @@ public class ValidationController {
     public String saveOverrides(@RequestBody String jsonString)  {
 
         log.info("API CALL!! --> /saveOverrides :: Save Validation overrides" + jsonString);
+        String response = "";
         try {
 
             ValidationOverrideService validationService = new ValidationOverrideService(jsonString, qlService);
-            validationService.processValidationDataAndSave();
-
+            response = validationService.processValidationDataAndSave();
         } catch (Exception err) {
             err.printStackTrace();
             log.error("Failed to save validation overrides: " + err);
             return "{\"error\":\"Error in saving validation overrides\"}";
         }
-        return "{\"Success\":\"Validation overrides saved successfully\"}";
+        return response;
     }
 
 }

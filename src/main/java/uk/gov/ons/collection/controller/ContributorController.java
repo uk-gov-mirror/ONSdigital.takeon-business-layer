@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import uk.gov.ons.collection.entity.ContributorSelectiveEditingStatusQuery;
+import uk.gov.ons.collection.entity.ContributorSelectiveEditingStatusResponse;
 import uk.gov.ons.collection.entity.FullDataExport;
 import uk.gov.ons.collection.service.GraphQlService;
 import uk.gov.ons.collection.utilities.QlQueryBuilder;
@@ -178,5 +180,42 @@ public class ContributorController {
             output = "{\"error\":\"Invalid response from graphQL\"}";
         }
         return output;
+    }
+
+    @GetMapping(value = "/statuses/{vars}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of Contributor statuses")})
+    public String getContributorStatuses(@MatrixVariable Map<String, String> params) {
+
+        log.info("API CALL!! --> /contributor/statuses/{vars} :: " + params);
+        String response = "";
+        ContributorSelectiveEditingStatusQuery contributorStatusQuery = null;
+
+        try {
+            contributorStatusQuery = new ContributorSelectiveEditingStatusQuery(params);
+            String queryStr = contributorStatusQuery.buildContributorSelectiveEditingStatusQuery();
+            log.info("ContributorstatusQuery GraphQL query: " + queryStr);
+            String contributorstatusQueryOutput = qlService.qlSearch(queryStr);
+            log.info("Contributor Status Query Output: " + contributorstatusQueryOutput);
+            ContributorSelectiveEditingStatusResponse contributorStatusResponse =
+                    new ContributorSelectiveEditingStatusResponse(contributorstatusQueryOutput);
+            JSONObject contributorJsonObject = contributorStatusResponse.parseContributorStatusQueryResponse();
+            response = contributorJsonObject.toString();
+            log.info("Contributor Status before sending to lambda: " + response);
+        } catch (Exception err) {
+            log.error("Exception found in Contributor Status API: " + err.getMessage());
+            String message = processJsonErrorMessage(err);
+            response = "{\"error\":\"Unable to Contributor Status data " + message + "\"}";
+        }
+
+        log.info("API Complete!! --> /contributor/statuses/{vars}");
+        return response;
+
+    }
+
+    private String processJsonErrorMessage(Exception err) {
+
+        String message = err.getMessage() != null ? err.getMessage().replace("\"","'") : "";
+        return message;
     }
 }
