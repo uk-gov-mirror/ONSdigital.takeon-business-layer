@@ -1,5 +1,6 @@
 package uk.gov.ons.collection;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -9,7 +10,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
-//@EnableDiscoveryClient
+@Log4j2
 @EnableFeignClients
 @SpringBootApplication
 @EnableDiscoveryClient
@@ -18,12 +19,23 @@ import org.springframework.web.client.RestTemplate;
 public class BusinessLayer {
     
     public static void main(String[] args) {
-        SpringApplication.run(BusinessLayer.class, args);
+        try {
+            SpringApplication.run(BusinessLayer.class, args);
+        } catch (Exception exp) {
+            log.fatal("There is a problem in running Business Layer Spring Boot application");
+        }
     }
 
     @Bean
-    public RestTemplate getRestTemplate() { 
-        return new RestTemplate(); 
+    public RestTemplate getRestTemplate() {
+        RestTemplate template = null;
+        try {
+            template = new RestTemplate();
+        } catch (Exception exp) {
+            log.fatal("There is a problem in instantiating SpringBoot RestTemplate which is important " +
+                    "of Webservice API calls");
+        }
+        return template;
     }
 
 }

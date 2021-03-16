@@ -41,9 +41,9 @@ public class DateAdjustmentController {
         try {
             dateAdjustmentQuery = new DateAdjustmentQuery(params);
             String queryStr = dateAdjustmentQuery.buildDateAdjustmentConfigQuery();
-            log.info("Date Adjustment configuration GraphQL query: " + queryStr);
+            log.debug("Date Adjustment configuration GraphQL query: " + queryStr);
             String dateAdjustmentQueryOutput = qlService.qlSearch(queryStr);
-            log.info("Date Adjustment Query Output: " + dateAdjustmentQueryOutput);
+            log.debug("Date Adjustment Query Output: " + dateAdjustmentQueryOutput);
             DateAdjustmentResponse dateAdjustmentResponse = new DateAdjustmentResponse(dateAdjustmentQueryOutput);
             response = dateAdjustmentResponse.parseDateAdjustmentQueryResponse();
             log.info("Date Adjustment Response before sending to lambda: " + response);
@@ -69,9 +69,9 @@ public class DateAdjustmentController {
             log.info("API CALL!! --> /dateadjustment/saveOutput :: " + jsonString);
             DateAdjustmentResponse dateAdjustmentResponse = new DateAdjustmentResponse(jsonString);
             String saveQuery = dateAdjustmentResponse.buildSaveDateAdjustmentQuery();
-            log.info("GraphQL query for Date Adjustment save {}", saveQuery);
+            log.debug("GraphQL query for Date Adjustment save {}", saveQuery);
             String saveResponseOutput = qlService.qlSearch(saveQuery);
-            log.info("Output after saving the Date Adjustment outputs {}", saveResponseOutput);
+            log.debug("Output after saving the Date Adjustment outputs {}", saveResponseOutput);
             log.info("API Complete!! --> /selectiveediting/saveOutput");
         } catch (Exception err) {
             log.error("Exception found in Date Adjustment: " + err.getMessage());
