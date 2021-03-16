@@ -19,8 +19,11 @@ import org.springframework.web.client.RestTemplate;
 public class BusinessLayer {
     
     public static void main(String[] args) {
+
         try {
+            log.info("Before instantiating Spring Boot application");
             SpringApplication.run(BusinessLayer.class, args);
+            log.info("Successfully instantiated the Spring Boot application");
         } catch (Exception exp) {
             log.fatal("There is a problem in running Business Layer Spring Boot application");
         }
