@@ -26,6 +26,7 @@ public class BusinessLayer {
             log.info("Successfully instantiated the Spring Boot application");
         } catch (Exception exp) {
             log.fatal("There is a problem in running Business Layer Spring Boot application");
+            log.error("The cause of the problem is {} ", exp.getMessage());
         }
     }
 
@@ -36,7 +37,8 @@ public class BusinessLayer {
             template = new RestTemplate();
         } catch (Exception exp) {
             log.fatal("There is a problem in instantiating SpringBoot RestTemplate which is important " +
-                    "of Webservice API calls");
+                    "for Webservice API calls");
+            log.error("The cause of the problem is {} ", exp.getMessage());
         }
         return template;
     }
