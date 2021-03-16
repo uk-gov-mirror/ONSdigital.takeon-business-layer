@@ -2,9 +2,9 @@
 <!--Configure logger levels ALL here
 <Configuration status="ALL" monitorInterval="30">
 -->
-<!--Configure logger levels DEBUG here
+<!--Configure logger levels DEBUG here-->
 <Configuration status="DEBUG" monitorInterval="30">
--->
+
 <!--Configure logger levels WARN here
 <Configuration status="WARN" monitorInterval="30">
 -->
@@ -24,7 +24,7 @@
 <!--Decide which level you want and based on that comment and uncomment one of them above-->
 <!--At any time only one level to be included and it maintains an hierarchy -->
 <!-- hierarchy - ALL < DEBUG < INFO < WARN < ERROR < FATAL < OFF -->
-<Configuration status="INFO" monitorInterval="30">
+<!--<Configuration status="INFO" monitorInterval="30">-->
   <Properties>
     <Property name="LOG_PATTERN">
       %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n
