@@ -29,7 +29,6 @@ public class UpdatedFormData {
         String[] atoms;
         Map<String, String> atomMap = new HashMap<>();
         parts = key.split("\\|");
-        System.out.println(key);
         for (String part: parts) {
             atoms = part.split(":");
             atomMap.put(atoms[0], atoms[1]);

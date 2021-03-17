@@ -47,7 +47,6 @@ public class QlQueryResponse {
     public JSONObject parseValidationOutputs() {
         var outputArray = new JSONArray();
         var valOutputArray = new JSONArray();
-        System.out.println("Output from Validation Query before parsing: " + jsonQlResponse.toString());
         if (jsonQlResponse.getJSONObject("data").getJSONObject("allValidationoutputs").getJSONArray("nodes").length() > 0) {
             outputArray = jsonQlResponse.getJSONObject("data").getJSONObject("allValidationoutputs").getJSONArray("nodes");
         }

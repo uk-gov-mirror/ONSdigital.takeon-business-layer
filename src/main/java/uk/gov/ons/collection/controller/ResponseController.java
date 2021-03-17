@@ -204,7 +204,6 @@ public class ResponseController {
             derivedRequest.apiPostParameters();
 
         } catch (Exception e) {
-            e.printStackTrace();
             log.error("Error in saving :: " + e.getMessage());
             return "{\"error\":\"Failed to save Question responses\"}";
         }

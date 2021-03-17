@@ -70,7 +70,7 @@ GraphQlService qlService;
             currentPeriod = detailsQuery.retrieveCurrentPeriod();
             log.debug("Current Period from UI: " + currentPeriod);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Problem in View Form {} ", e.getMessage());
             responseText = "{\"error\":\"Problem in getting Periodicity " + e.getMessage() + "\"}";
         }
         try {

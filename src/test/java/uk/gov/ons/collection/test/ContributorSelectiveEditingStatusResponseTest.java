@@ -31,7 +31,6 @@ public class ContributorSelectiveEditingStatusResponseTest {
             assertEquals(expectedBpmContractNoSelectiveEditingFlag, actualBPMContractWithEmptyFlag);
 
         } catch (Exception e) {
-            e.printStackTrace();
             assertTrue(false);
         }
     }
