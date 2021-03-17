@@ -1,9 +1,11 @@
 package uk.gov.ons.collection.utilities;
 
+import lombok.extern.log4j.Log4j2;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+@Log4j2
 public class QlQueryResponse {
 
     private JSONObject jsonQlResponse;
@@ -13,6 +15,7 @@ public class QlQueryResponse {
         try {
             jsonQlResponse = new JSONObject(jsonString);
         } catch (Exception e) {
+            log.error("Problem in parsing responses {} " + e.getMessage());
             jsonString = "{}";
             jsonQlResponse = new JSONObject(jsonString);
         }
@@ -35,6 +38,7 @@ public class QlQueryResponse {
             parsedJsonQlResponse.put("data", jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes"));
             parsedJsonQlResponse.put("pageInfo", pageInfo.getJSONObject("pageInfo"));
         } catch (JSONException e) {
+            log.error("Problem in parsing Page Objects {} " + e.getMessage());
             return "{\"error\":\"Invalid response from graphQL\"}";
         }
         return parsedJsonQlResponse.toString().replaceAll(":", ": ");

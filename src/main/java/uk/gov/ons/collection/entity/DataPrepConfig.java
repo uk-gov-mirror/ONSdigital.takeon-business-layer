@@ -55,9 +55,9 @@ public class DataPrepConfig {
         try {
             return new RelativePeriod(this.periodicity).getIdbrPeriods(offsets, this.period);
         } catch (InvalidPeriodicityException e) {
-            log.info("Error determining periods to load contributor data (bad periodicity) :: " + e, e);
+            log.error("Error determining periods to load contributor data (bad periodicity) {} ", e.getMessage());
         } catch (InvalidIdbrPeriodException e) {
-            log.info("Error determining periods to load contributor data (invalid IDBR period) :: " + e, e);
+            log.error("Error determining periods to load contributor data (invalid IDBR period) {} " , e.getMessage());
         }
         return new ArrayList<String>();
     }
@@ -83,6 +83,7 @@ public class DataPrepConfig {
                       .put("question_schema",contributorResponseConfig.getJSONArray("question_schema"));
             return outputJson.toString();
         } catch (JSONException e) {
+            log.error("Error in loading and combining of the necessary configuration data {}", e.getMessage());
             throw new InvalidJsonException("Error building data prep JSON: ", e);
         }
     }

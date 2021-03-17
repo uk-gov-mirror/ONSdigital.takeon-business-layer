@@ -55,8 +55,8 @@ public class ContributorSelectiveEditingStatusQuery {
     }
 
     public String buildFilterCondition() {
-        log.info("Reference : " + retrieveCurrentReference());
-        log.info("Survey : " + retrieveSurvey());
+        log.debug("Reference : " + retrieveCurrentReference());
+        log.debug("Survey : " + retrieveSurvey());
         StringBuilder sbFilter = new StringBuilder();
         sbFilter.append("{");
         sbFilter.append("reference: {equalTo: ");

@@ -40,14 +40,15 @@ public class DateAdjustmentQuery {
         dateAdjustmentQuery.append("}) ");
         dateAdjustmentQuery.append("{ nodes { reference period survey longperiodparameter ");
         dateAdjustmentQuery.append("shortperiodparameter averageweekly settomidpoint settoequalweighted usecalendardays }}}\"}");
+        log.debug("DateAdjustment GraphQL Query {} ", dateAdjustmentQuery.toString());
         return dateAdjustmentQuery.toString();
     }
 
 
 
     public String buildFilterCondition() {
-        log.info("Reference : " + retrieveCurrentReference());
-        log.info("Survey : " + retrieveSurvey());
+        log.debug("Reference : " + retrieveCurrentReference());
+        log.debug("Survey : " + retrieveSurvey());
         StringBuilder sbFilter = new StringBuilder();
         sbFilter.append("{");
         sbFilter.append("reference: {equalTo: ");

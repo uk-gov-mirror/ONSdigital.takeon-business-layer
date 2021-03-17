@@ -19,6 +19,7 @@ public class BatchDataQuery {
         try {
             inputKey = new JSONObject(variables);
         } catch (JSONException e) {
+            log.error("Problem in parsing Batch Data {} " + e.getMessage());
             throw new InvalidJsonException("Can't build Query for checking if reference/period/survey exists for Batch ingest of data: " + inputKey, e);
         }
     }
@@ -35,8 +36,9 @@ public class BatchDataQuery {
             referenceQuery.append(inputKey.getString("derivedformula") + "\\\"");
             referenceQuery.append("}){nodes {questioncode}}}");
             referenceQuery.append("}}}\"}");
-            log.info("Output of checking reference exists for batch data query {}", referenceQuery.toString());
+            log.debug("Output of checking reference exists for batch data query {}", referenceQuery.toString());
         } catch (JSONException e) {
+            log.error("Problem in building reference exists graphql query {} " + e.getMessage());
             throw new InvalidJsonException("Can't build Query for checking if reference/period/survey exists for Batch ingest of data: " + inputKey, e);
         }
         return referenceQuery.toString();

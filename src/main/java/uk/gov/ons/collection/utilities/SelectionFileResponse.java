@@ -14,6 +14,7 @@ public class SelectionFileResponse {
         try {
             jsonQlResponse = new JSONObject(jsonString);
         } catch (Exception e) {
+            log.error("Problem in parsing SelectionFile responses {} " + e.getMessage());
             jsonString = "{}";
             jsonQlResponse = new JSONObject(jsonString);
         }
@@ -22,22 +23,22 @@ public class SelectionFileResponse {
     public int parseFormidResponse(int period) throws InvalidJsonException {
         var outputArray = new JSONArray();
         int formId = 0;
-        log.info("Output from checkIDBR Table: " + jsonQlResponse.toString());
-        log.info("Period from Lambda: " + period);
+        log.debug("Output from checkIDBR Table: " + jsonQlResponse.toString());
+        log.debug("Period from Lambda: " + period);
         outputArray = jsonQlResponse.getJSONObject("data").getJSONObject("allIdbrformtypes").getJSONArray("nodes");
         if (outputArray.length() > 0) {
             int countNumberOfMatchingRecords = 0;
             for (int i = 0; i < outputArray.length(); i++) {
                 int periodStart = Integer.parseInt(outputArray.getJSONObject(i).getString("periodstart"));
-                log.info("Period start: "+periodStart);
+                log.debug("Period start: "+periodStart);
                 int periodEnd = Integer.parseInt(outputArray.getJSONObject(i).getString("periodend"));
-                log.info("Period End: "+periodEnd);
+                log.debug("Period End: "+periodEnd);
                 if(period >= periodStart && period <= periodEnd) {
                     formId = outputArray.getJSONObject(i).getInt("formid");
                     countNumberOfMatchingRecords++;
                 }
             }
-            log.info("No of Matching Records: " + countNumberOfMatchingRecords);
+            log.debug("No of Matching Records: " + countNumberOfMatchingRecords);
             //Exception handling when more than 1 match and this is an error
             if (countNumberOfMatchingRecords > 1) {
                 throw new InvalidJsonException(" There is more than one mapping between IDBR form type (on selection file) and the form ID held in database ");

@@ -34,10 +34,10 @@ public class ContributorConfig {
         try {
             return parseJsonResponses(responses);
         } catch (JSONException e) {
-            log.info("Error parsing contributor config JSON: " + responses);
+            log.error("Error parsing contributor config JSON: " + e.getMessage());
             throw new InvalidJsonException("Error processing responses within contributor json: " + responses, e);
         } catch (NullPointerException e) {
-            log.info("Error parsing contributor config JSON: " + responses);
+            log.error("Error parsing contributor config JSON: " + e.getMessage());
             throw new InvalidJsonException("Error processing responses within contributor json: " + responses, e);
         }
     }
@@ -107,7 +107,6 @@ public class ContributorConfig {
                         }
 
                     } catch (Exception e) {
-                        e.printStackTrace();
                         log.error("Error in processing responses for Validation Date Adjustment: " + e.getMessage());
                         throw new InvalidJsonException("Error in processing responses for Validation Date Adjustment: " + e.getMessage());
                     }

@@ -29,7 +29,7 @@ public class CalculateDerivedValuesQuery {
         formDefintionQuery.append("{\"query\":\"query formDefinitionByReference {allContributors(condition: {");
         formDefintionQuery.append(getReferencePeriodAndSurvey());
         formDefintionQuery.append("}){nodes {formByFormid {formdefinitionsByFormid {nodes {questioncode,derivedformula}}}}}}\"}");
-        log.info("Output of form definition query {}", formDefintionQuery.toString());
+        log.debug("Output of form definition query {}", formDefintionQuery.toString());
         return formDefintionQuery.toString();
     }
 
@@ -39,7 +39,7 @@ public class CalculateDerivedValuesQuery {
         responseQuery.append("allResponses(condition: {");
         responseQuery.append(getReferencePeriodAndSurvey());
         responseQuery.append("}){nodes {response questioncode instance}}}\"}");
-        log.info("Output of derived response query {}", responseQuery.toString());
+        log.debug("Output of derived response query {}", responseQuery.toString());
         return responseQuery.toString();
     }
 

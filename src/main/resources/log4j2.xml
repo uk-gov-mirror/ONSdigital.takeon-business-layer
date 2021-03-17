@@ -3,7 +3,7 @@
 <Configuration status="ALL" monitorInterval="30">
 -->
 <!--Configure logger levels DEBUG here-->
-<Configuration status="DEBUG" monitorInterval="30">
+<Configuration status="INFO" monitorInterval="30">
 
 <!--Configure logger levels WARN here
 <Configuration status="WARN" monitorInterval="30">
@@ -36,7 +36,8 @@
     </Console>
   </Appenders>
   <Loggers>
-    <Root level="DEBUG">
+    <!-- Change the level here accordingly based on level of Log above -->
+    <Root level="INFO">
       <AppenderRef ref="Console"/>
     </Root>
   </Loggers>

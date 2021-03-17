@@ -110,6 +110,7 @@ public class DateAdjustmentResponse {
             return joiner.toString();
 
         } catch (Exception err) {
+            log.error("Error in processing DateAdjustment Save: {} ", err.getMessage());
             throw new InvalidJsonException("Error processing validation output json structure: " + err + " JSON: ", err);
         }
     }
@@ -135,6 +136,7 @@ public class DateAdjustmentResponse {
             return joiner.toString();
 
         } catch (Exception err) {
+            log.error("Error in processing DateAdjustment GraphQL: {} ", err.getMessage());
             throw new InvalidJsonException("Error processing validation output json structure: " + err + " JSON: ", err);
         }
     }
@@ -178,6 +180,7 @@ public class DateAdjustmentResponse {
             }
 
         } catch (Exception e) {
+            log.error("Error in processing DateAdjustment Query responses: {} ", e.getMessage());
             throw new InvalidJsonException("Problem in parsing Selective Editing " +
                     "GraphQL responses " + e.getMessage(), e);
         }
