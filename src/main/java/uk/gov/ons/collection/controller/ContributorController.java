@@ -171,7 +171,7 @@ public class ContributorController {
     @GetMapping(value = "/delayResponse", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful retrieval of Survey/Period details")})
-        public String delayResponse() {
+    public String delayResponse() {
         String delayResponseQuery = new QlQueryBuilder().buildDelayResponseQuery();
         //log.info("GraphQL Query sent to service: " + delayResponseQuery);
         JSONObject responseText;
