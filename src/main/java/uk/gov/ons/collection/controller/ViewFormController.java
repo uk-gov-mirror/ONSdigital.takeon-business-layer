@@ -35,6 +35,7 @@ GraphQlService qlService;
     String qlQuery = new ViewFormQuery(searchParameters).buildViewFormQuery();
     String responseText;
     log.debug("Query sent to service: " + qlQuery);
+    log.info("Calling viewFormDetails API: " + searchParameters);
     try {
         var response = new ViewFormResponse(qlService.qlSearch(qlQuery));
         responseText = response.combineFormAndResponseData();
@@ -42,7 +43,8 @@ GraphQlService qlService;
         log.error("Exception caught: " + e.getMessage());
         responseText = "{\"error\":\"Invalid response from graphQL\"}";
     }
-    log.info("Query sent to service: " + qlQuery);     
+    log.debug("Query sent to service: " + qlQuery);
+    log.info("ViewFormDetails API Complete: ");
     return responseText;
     }
 
@@ -59,26 +61,26 @@ GraphQlService qlService;
         try {
             detailsQuery = new HistoryDetailsQuery(searchParameters);
             String qlPeriodicityQuery = detailsQuery.buildSurveyPeriodicityQuery();
-            log.info("Survey Periodicity Query: " + qlPeriodicityQuery);
+            log.debug("Survey Periodicity Query: " + qlPeriodicityQuery);
             String qlResponsePeriodicity = qlService.qlSearch(qlPeriodicityQuery);
-            log.info("Graph QL Response for periodicity: " + qlResponsePeriodicity);
+            log.debug("Graph QL Response for periodicity: " + qlResponsePeriodicity);
             responsePeriodicity = new HistoryDetailsResponse(qlResponsePeriodicity);
             periodicityStr = responsePeriodicity.parsePeriodicityFromSurvey();
-            log.info(" Periodicity from Survey table: " + periodicityStr);
+            log.debug(" Periodicity from Survey table: " + periodicityStr);
             currentPeriod = detailsQuery.retrieveCurrentPeriod();
-            log.info("Current Period from UI: " + currentPeriod);
+            log.debug("Current Period from UI: " + currentPeriod);
         } catch (Exception e) {
             e.printStackTrace();
             responseText = "{\"error\":\"Problem in getting Periodicity " + e.getMessage() + "\"}";
         }
         try {
             List<String> historyPeriodList = responsePeriodicity.getHistoryPeriods(currentPeriod, periodicityStr);
-            log.info("Final History Periods: " + historyPeriodList.toString());
+            log.debug("Final History Periods: " + historyPeriodList.toString());
             if (historyPeriodList.size() > 0) {
                 String historyQuery = detailsQuery.buildHistoryDetailsQuery(historyPeriodList);
-                log.info("History Details Query: " + historyQuery);
+                log.debug("History Details Query: " + historyQuery);
                 String historyDetailsResponse = qlService.qlSearch(historyQuery);
-                log.info("History Details Response: " + historyDetailsResponse);
+                log.debug("History Details Response: " + historyDetailsResponse);
                 responseText = responsePeriodicity.parseHistoryDataResponses(historyDetailsResponse);
             }
 
@@ -86,7 +88,8 @@ GraphQlService qlService;
             e.printStackTrace();
             responseText = "{\"error\":\"Problem in getting History data " + e.getMessage() + "\"}";
         }
-        log.info("History data before sending to UI: " + responseText);
+        log.debug("History data before sending to UI: " + responseText);
+        log.info("History details API Complete: " );
         return responseText;
     }
 
