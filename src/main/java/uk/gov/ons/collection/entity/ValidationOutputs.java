@@ -39,7 +39,7 @@ public class ValidationOutputs {
         referenceQuery.append(getReferencePeriodSurvey());
         referenceQuery.append("}){nodes {reference period survey formula validationid triggered overridden instance ");
         referenceQuery.append("}}}\"}");
-        log.info("Validation Output query {}", referenceQuery.toString());
+        log.debug("Validation Output query {}", referenceQuery.toString());
         return referenceQuery.toString();
     }
 
@@ -54,7 +54,7 @@ public class ValidationOutputs {
         queryJson.append("[" + getValidationOutputsForUpsertAndDelete(upsertData) + "], arg1:");
         queryJson.append("[" + getValidationOutputsForUpsertAndDelete(deleteData) + "]");
         queryJson.append("}){clientMutationId}}\"}");
-        log.info("Upsert And DeleteQuery " + queryJson.toString());
+        log.debug("Upsert And DeleteQuery " + queryJson.toString());
         return queryJson.toString();
     }
 
@@ -118,7 +118,7 @@ public class ValidationOutputs {
             log.error("Invalid JSON from validation output query response " + e);
             throw new InvalidJsonException("Invalid JSON from validation output query response: " + validationOutputResponse, e);
         }
-        log.info("ValidationOutput Data " + validationDataList.toString());
+        log.debug("ValidationOutput Data " + validationDataList.toString());
         return validationDataList;
     }
 
@@ -144,7 +144,7 @@ public class ValidationOutputs {
             log.error("Invalid JSON from validation output query response " + e);
             throw new InvalidJsonException("Invalid JSON from validation output query response: " + outputArray, e);
         }
-        log.info("Lambda Data " + validationLambdaList.toString());
+        log.debug("Lambda Data " + validationLambdaList.toString());
         return validationLambdaList;
     }
 
@@ -152,7 +152,7 @@ public class ValidationOutputs {
                                                                     List<ValidationOutputData> validationDataList) {
         List<ValidationOutputData> insertedList = validationLambdaList.stream().filter(lambdadata -> validationDataList.stream().noneMatch(validationdata ->
                 (validationdata.getValidationId().equals(lambdadata.getValidationId())))).collect(Collectors.toList());
-        log.info("Insert List :" + insertedList.toString());
+        log.debug("Insert List :" + insertedList.toString());
 
         return insertedList;
     }
@@ -166,7 +166,7 @@ public class ValidationOutputs {
             data.setLastupdatedBy("fisdba");
             data.setLastupdatedDate(time.toString());
         }
-        log.info("Modified List :" + modifiedList.toString());
+        log.debug("Modified List :" + modifiedList.toString());
         return modifiedList;
 
     }
@@ -177,7 +177,7 @@ public class ValidationOutputs {
                 (lambdadata.getValidationId().equals(validationdata.getValidationId())
                         && (lambdadata.getFormula().equals(validationdata.getFormula())) && (validationdata.isOverridden())))).collect(Collectors.toList());
 
-        log.info("No Modification List :" + overriddenTrueCountList.toString());
+        log.debug("No Modification List :" + overriddenTrueCountList.toString());
         return overriddenTrueCountList.size();
 
     }
@@ -185,7 +185,7 @@ public class ValidationOutputs {
     public List<ValidationOutputData> getValidationOutputUpsertList(List<ValidationOutputData> modifiedList,
                                                                     List<ValidationOutputData> insertedList) {
         modifiedList.addAll(insertedList);
-        log.info("Final List containing both update and insert :" + modifiedList.toString());
+        log.debug("Final List containing both update and insert :" + modifiedList.toString());
         return modifiedList;
     }
 
@@ -194,7 +194,7 @@ public class ValidationOutputs {
                                                                     List<ValidationOutputData> validationDataList) {
         List<ValidationOutputData> deletedList = validationDataList.stream().filter(validationdata -> validationLambdaList.stream().noneMatch(lambdadata ->
                 (lambdadata.getValidationId().equals(validationdata.getValidationId())))).collect(Collectors.toList());
-        log.info("Deleted List :" + deletedList.toString());
+        log.debug("Deleted List :" + deletedList.toString());
         return deletedList;
     }
 
