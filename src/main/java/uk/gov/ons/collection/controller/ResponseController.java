@@ -56,10 +56,13 @@ public class ResponseController {
         String qlResponsesResponse;
         JSONObject updatedResponses = new JSONObject();
 
+        log.info("API CALL!! --> /response/calculateDerivedQuestions/{vars} :: " + searchParameters);
         // Build queries
         try {
             formQuery = new CalculateDerivedValuesQuery(searchParameters).buildFormDefinitionQuery();
+            log.debug("Derived values calculation Query {} ", formQuery);
             responseQuery = new CalculateDerivedValuesQuery(searchParameters).buildGetResponsesQuery();
+            log.debug("Response from Derived value calculation {} ", responseQuery);
         } catch (Exception err) {
             log.error("Exception: " + err);
             return "{\"error\":\"Failed to build Form Defintion and/or Response Query for calculating derived values\"}";
@@ -70,7 +73,10 @@ public class ResponseController {
             qlFormResponse = qlService.qlSearch(formQuery);
             qlResponsesResponse = qlService.qlSearch(responseQuery);
             JSONObject qlFormResponseObject = new JSONObject(qlResponsesResponse);
-            log.info("qlFormResponseObject = " + qlFormResponseObject.toString());
+            if (qlFormResponseObject != null) {
+                log.debug("qlFormResponseObject = " + qlFormResponseObject.toString());
+            }
+
             if (qlFormResponseObject.getJSONObject("data").getJSONObject("allResponses").getJSONArray("nodes")
                     .isEmpty()) {
                 return "{\"error\":\"No response data for this Reference/Period/Survey combination\"}";
@@ -95,22 +101,23 @@ public class ResponseController {
         upsertResponses.put("period", searchParameters.get("period"));
         upsertResponses.put("survey", searchParameters.get("survey"));
         upsertResponses.put("responses", updatedResponses.getJSONArray("responses"));
-        log.info("Upsert Responses: " + upsertResponses.toString());
+        log.debug("Upsert Responses: " + upsertResponses.toString());
 
         try {
             // Call to save API to save updated derived responses
             InetAddress inetAddress = InetAddress.getLocalHost();
-            log.info("IP Address:" + inetAddress.getHostAddress());
+            log.debug("IP Address:" + inetAddress.getHostAddress());
             String businessLayerAddress = inetAddress.getHostAddress();
             StringBuilder url = new StringBuilder(protocol).append(businessLayerAddress).append(":")
                     .append(businessLayerServicePort).append("/response/saveResponses");
-            log.info("Request Url: " + url.toString());
+            log.debug("Request Url: " + url.toString());
             ApiRequest request = new ApiRequest(url.toString(), upsertResponses.toString());
             request.apiPostJson();
         } catch (Exception err) {
             log.error("Exception: " + err);
             return "{\"error\":\"Failed to save derived Question responses\"}";
         }
+        log.info("API Complete!! --> /response/calculateDerivedQuestions/{vars}");
         return "{\"Success\":\"Successfully saved derived Question responses\"}";
     }
 
@@ -121,16 +128,18 @@ public class ResponseController {
             @ApiResponse(code = 200, message = "Successful save of all question responses", response = String.class) })
     @ResponseBody
     public String saveResponses(@RequestBody String jsonString) throws ResponsesNotSavedException {
+        log.info("API CALL!! --> /response/saveResponses :: ");
         try {
             var upsertSaveResponse = new UpsertResponse(jsonString);
             var saveQuery = upsertSaveResponse.buildUpsertByArrayQuery();
-            log.info("GraphQL query for save {}", saveQuery);
+            log.debug("GraphQL query for save {}", saveQuery);
             String saveResponseOutput = qlService.qlSearch(saveQuery);
-            log.info("Output after saving the responses {}", saveResponseOutput);
+            log.debug("Output after saving the responses {}", saveResponseOutput);
         } catch (Exception err) {
             log.error("Failed to save responses: " + err);
             throw new ResponsesNotSavedException("Failed to save responses" + err);
         }
+        log.info("API Complete!! --> /response/saveResponses");
         return "{\"Success\":\"Question responses saved successfully\"}";
     }
 
@@ -150,14 +159,14 @@ public class ResponseController {
         try {
             var upsertResponse = new UpsertResponse(updatedResponses);
             var currentResponseQuery = upsertResponse.buildRetrieveOldResponseQuery();
-            log.info("GraphQL Query for getting old responses:: " + currentResponseQuery);
+            log.debug("GraphQL Query for getting old responses:: " + currentResponseQuery);
             String qlResponseOutput = qlService.qlSearch(currentResponseQuery);
-            log.info("Old Responses from GraphQL after database execution  :: " + qlResponseOutput);
+            log.debug("Old Responses from GraphQL after database execution  :: " + qlResponseOutput);
             JSONObject qlResponseOutputJson = new JSONObject(qlResponseOutput);
             var outputArray = new JSONArray();
             outputArray = qlResponseOutputJson.getJSONObject("data").getJSONObject("allResponses")
                     .getJSONArray("nodes");
-            log.info("Old Responses JSON Array :: " + outputArray);
+            log.debug("Old Responses JSON Array :: " + outputArray);
             currentResponseEntities = upsertResponse.buildCurrentResponseEntities(outputArray);
 
             // Call Compare Responses
@@ -171,19 +180,19 @@ public class ResponseController {
             }
             // Calling common Save
             InetAddress inetAddress = InetAddress.getLocalHost();
-            log.info("IP Address:" + inetAddress.getHostAddress());
+            log.debug("IP Address:" + inetAddress.getHostAddress());
             String businessLayerAddress = inetAddress.getHostAddress();
             StringBuilder url = new StringBuilder(protocol).append(businessLayerAddress).append(":")
                     .append(businessLayerServicePort).append("/response/saveResponses");
-            log.info("Request Url: " + url.toString());
+            log.debug("Request Url: " + url.toString());
             ApiRequest request = new ApiRequest(url.toString(),
                     upsertResponse.processConsolidatedJsonList(responsesToPassToDatabase, updatedResponses));
             request.apiPostJson();
             // Updating the Form Status
             var contributorStatusQuery = upsertResponse.updateContributorStatus();
-            log.info("GraphQL Query for updating Form Status {}", contributorStatusQuery);
+            log.debug("GraphQL Query for updating Form Status {}", contributorStatusQuery);
             String qlStatusOutput = qlService.qlSearch(contributorStatusQuery);
-            log.info("Output after updating the form status {}", qlStatusOutput);
+            log.debug("Output after updating the form status {}", qlStatusOutput);
             // Finally call to calculate derived values
             StringBuilder derivedUrl = new StringBuilder(protocol).append(businessLayerAddress).append(":")
                     .append(businessLayerServicePort).append("/response/calculateDerivedQuestions/")
@@ -191,7 +200,7 @@ public class ResponseController {
                     .append(updatedResponsesJson.getString("period")).append(";survey=")
                     .append(updatedResponsesJson.getString("survey")).append(";");
             ApiRequest derivedRequest = new ApiRequest(derivedUrl.toString());
-            log.info("Request Url: " + derivedUrl.toString());
+            log.debug("Request Url: " + derivedUrl.toString());
             derivedRequest.apiPostParameters();
 
         } catch (Exception e) {
@@ -199,6 +208,7 @@ public class ResponseController {
             log.error("Error in saving :: " + e.getMessage());
             return "{\"error\":\"Failed to save Question responses\"}";
         }
+        log.info("API Complete!! --> /response/save");
         return "{\"Success\":\"Question responses saved successfully\"}";
     }
 
@@ -212,14 +222,17 @@ public class ResponseController {
 
         var outcomesObj = new JSONObject();
         var outcomesArr = new JSONArray();
+        log.info("API CALL!! --> /response/saveBatchResponses :: ");
         try {
             BatchDataIngest batchData = new BatchDataIngest(batchResponses, qlService);
             batchData.processBatchData(outcomesArr);
         } catch (Exception e) {
-            log.info("Can't build Batch Data Query / Invalid Response from GraphQL: " + e);
+            log.error("Can't build Batch Data Query / Invalid Response from GraphQL: " + e.getMessage());
             return "{\"error\":\"Failed to save Batch Question responses\"}";
         }
+        log.info("API Complete!! --> /response/saveBatchResponses");
         outcomesObj.put("outcomes", outcomesArr);
+        log.debug("Outcomes object after saving batch responses {}", outcomesObj);
         return  outcomesObj.toString();
     }
 }
