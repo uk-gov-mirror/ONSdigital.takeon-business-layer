@@ -34,7 +34,7 @@ GraphQlService qlService;
     public String viewFormDetails(@MatrixVariable Map<String, String> searchParameters) {
     String qlQuery = new ViewFormQuery(searchParameters).buildViewFormQuery();
     String responseText;
-    log.info("Query sent to service: " + qlQuery);
+    log.debug("Query sent to service: " + qlQuery);
     try {
         var response = new ViewFormResponse(qlService.qlSearch(qlQuery));
         responseText = response.combineFormAndResponseData();
