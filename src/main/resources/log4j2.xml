@@ -38,7 +38,7 @@
   </Appenders>
   <Loggers>
     <!-- Change the level here accordingly based on level of Log above -->
-    <Root level="info">
+    <Root level="INFO">
       <AppenderRef ref="Console"/>
     </Root>
   </Loggers>
