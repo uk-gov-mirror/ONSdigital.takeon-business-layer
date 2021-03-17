@@ -135,7 +135,7 @@ public class ValidationOverride {
         referenceQuery.append(getReferencePeriodSurveyAndTriggered());
         referenceQuery.append("}){nodes {validationoutputid overridden ");
         referenceQuery.append("}}}\"}");
-        log.info("Output of validationoutputinformation query {}", referenceQuery.toString());
+        log.debug("Output of validationoutputinformation query {}", referenceQuery.toString());
         return referenceQuery.toString();
     }
 
