@@ -14,12 +14,12 @@ public class ViewFormResponse {
         try {
             jsonQlResponse = new JSONObject(inputJSON);
         } catch (JSONException e) {
-            log.info("exception" + e.toString());
+            log.error("Exception in parsing View Form Responses {} ", e.getMessage());
             throw new InvalidJsonException("Given string could not be converted/processed: " + e);
         }
     }
     public String parseViewForm() {
-        log.info("Form response" + jsonQlResponse.toString());
+        log.debug("Form response" + jsonQlResponse.toString());
         var outputObject = new JSONObject();
         var formArray = new JSONArray();
         if (jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").length() > 0){
@@ -27,13 +27,13 @@ public class ViewFormResponse {
                         .getJSONObject("formByFormid").getJSONObject("formdefinitionsByFormid").getJSONArray("nodes");             
         }   
         outputObject.put("form_data", formArray);
-        log.info("Form data object" + outputObject.toString());
+        log.debug("Form data object" + outputObject.toString());
         return outputObject.toString();
 
     }
 
     public String parseResponseData() {
-        log.info("Responses" + jsonQlResponse.toString());
+        log.debug("Responses" + jsonQlResponse.toString());
         var responseArray = new JSONArray();
         var outputObject = new JSONObject();
         if (jsonQlResponse.getJSONObject("data").getJSONObject("allContributors").getJSONArray("nodes").length() > 0){
@@ -41,7 +41,7 @@ public class ViewFormResponse {
             .getJSONObject("responsesByReferenceAndPeriodAndSurvey").getJSONArray("nodes"); 
         }
         outputObject.put("responses", responseArray);
-        log.info("Response data object" + outputObject.toString());
+        log.debug("Response data object" + outputObject.toString());
         return outputObject.toString();
     }
 
@@ -54,7 +54,7 @@ public class ViewFormResponse {
             inputObject = new JSONObject(inputString);
             formArray = inputObject.getJSONArray("form_data");
         } catch (JSONException e) {
-            log.info("exception" + e.toString());
+            log.error("Exception in parsing View Form Responses {} ", e.getMessage());
             throw new InvalidJsonException("Given string could not be converted/processed: " + e);
         }
         for(int i = 0; i < formArray.length(); i++){
@@ -83,7 +83,7 @@ public class ViewFormResponse {
             inputObject = new JSONObject(inputString);
             responseArray = inputObject.getJSONArray("responses");
         } catch (JSONException e) {
-            log.info("exception" + e.toString());
+            log.error("Exception in parsing View Form Responses {} ", e.getMessage());
             throw new InvalidJsonException("Given string could not be converted/processed: " + e);
         }
         for(int i = 0; i < outputFormArray.length(); i++){
@@ -107,7 +107,7 @@ public class ViewFormResponse {
         }
 
         outputObject.put("view_form_responses", outputFormArray);
-        log.info("view_form_responses.tostring" + outputObject.toString());
+        log.debug("view_form_responses to string" + outputObject.toString());
         return outputObject.toString();
     }
 }
