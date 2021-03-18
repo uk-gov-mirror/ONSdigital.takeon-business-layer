@@ -24,8 +24,8 @@
 <!--Decide which level you want and based on that comment and uncomment one of them above-->
 <!--At any time only one level to be included and it maintains an hierarchy -->
 <!-- hierarchy - ALL < DEBUG < INFO < WARN < ERROR < FATAL < OFF -->
-<!-- Default level INFO -->
-<Configuration status="INFO" monitorInterval="30">-->
+<!-- Default level INFO-->
+<Configuration status="INFO" monitorInterval="30">
   <Properties>
     <Property name="LOG_PATTERN">
       %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n
@@ -38,7 +38,8 @@
   </Appenders>
   <Loggers>
     <!-- Change the level here accordingly based on level of Log above -->
-    <Root level="INFO">
+    <!-- The level herte is lower case for example info, debug etc and it should not be upper case -->
+    <Root level="info">
       <AppenderRef ref="Console"/>
     </Root>
   </Loggers>
