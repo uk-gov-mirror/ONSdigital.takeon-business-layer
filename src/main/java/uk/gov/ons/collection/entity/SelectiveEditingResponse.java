@@ -38,7 +38,6 @@ public class SelectiveEditingResponse  {
         try {
             jsonQlResponse = new JSONObject(inputJson);
         } catch (JSONException e) {
-            e.printStackTrace();
             log.error("Error in processing Selective Editing Response: " + e.getMessage());
             throw new InvalidJsonException("Given string could not be converted/processed: " + e);
         }

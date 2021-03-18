@@ -39,6 +39,7 @@ public class SelectionFileQuery {
             contributorValuesArray = contributorObject.getJSONArray("attributes");
 
         } catch (JSONException err) {
+            log.error("Problem in parsing SelectionFile {} " + err.getMessage());
             throw new InvalidJsonException("Given string could not be converted/processed: " + jsonString, err);
         }
     }
@@ -109,11 +110,11 @@ public class SelectionFileQuery {
             vars.put("formtype", outputRow.getString("formtype"));
             vars.put("survey", periodSurvey.getString("survey"));
             String formIdQuery = new SelectionFileQuery(vars).buildCheckIdbrFormidQuery();
-            log.info("CheckIDBR Form ID Query : " + formIdQuery);
+            log.debug("CheckIDBR Form ID Query : " + formIdQuery);
             SelectionFileResponse formResponse = new SelectionFileResponse(qlService.qlSearch(formIdQuery));
             int period = Integer.parseInt(periodSurvey.getString("period"));
             Integer formId = formResponse.parseFormidResponse(period);
-            log.info("Form ID Output :: " + formId);
+            log.debug("Form ID Output :: " + formId);
             joiner.add("formid: " + formId);
             joiner.add("status: \\\"Form sent out\\\"");
             joiner.add("receiptdate: null");
@@ -168,6 +169,7 @@ public class SelectionFileQuery {
             joiner.add("lastupdateddate: null");
             return joiner.toString();
         } catch (Exception err) {
+            log.error("Problem in extracting contributor row {} " + err.getMessage());
             StringBuilder sbErrorMessage = new StringBuilder();
             sbErrorMessage.append("Error in processing selection file for Reference: ").append(reference).append(" Period: ");
             sbErrorMessage.append(periodStr);
@@ -185,9 +187,9 @@ public class SelectionFileQuery {
         StringBuilder sbErrorMessage = new StringBuilder();
         JSONObject graphQlObject = new JSONObject(graphQlResponse);
         if (graphQlObject.has("errors") ) {
-            log.info("Errors exists");
+            log.debug("Errors exists");
             JSONArray errorArray = graphQlObject.getJSONArray("errors");
-            log.info("Complete GraphQL error message: "+errorArray.toString());
+            log.debug("Complete GraphQL error message: "+errorArray.toString());
             for(int i=0; i< errorArray.length(); i++) {
 
                 String message = errorArray.getJSONObject(i).getString("message");
@@ -196,12 +198,12 @@ public class SelectionFileQuery {
                 } else {
                     sbErrorMessage.append(" There is a problem in Graph QL ").append(message);
                 }
-                log.info("Graph QL Error Message after parsing: "+message);
+                log.debug("Graph QL Error Message after parsing: "+message);
             }
 
         }
 
-        log.info("GraphQL error message if any after processing : " + sbErrorMessage.toString());
+        log.debug("GraphQL error message if any after processing : " + sbErrorMessage.toString());
         return sbErrorMessage.toString();
     }
 

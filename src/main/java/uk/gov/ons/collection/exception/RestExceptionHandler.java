@@ -20,7 +20,7 @@ public class RestExceptionHandler {
     @ExceptionHandler(value = { Exception.class })
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse unKnownException(Exception ex) {
-        log.error("Exception in Business Layer { }", ex);
+        log.error("Exception in Business Layer { }", ex.getMessage());
         return new ErrorResponse(HTTP_STATUS_NOT_FOUND, ERROR_MESSAGE, ex.getMessage());
     }
 

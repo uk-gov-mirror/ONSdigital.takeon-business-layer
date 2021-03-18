@@ -104,7 +104,6 @@ public class BatchDataIngest {
                 errorArray.put(errorJsonObject);
                 outcomeObject.put(OUTCOME, FAILURE);
                 outcomeObject.put(ERRORS, errorArray);
-                e.printStackTrace();
             }
             outcomesArray.put(outcomeObject);
 

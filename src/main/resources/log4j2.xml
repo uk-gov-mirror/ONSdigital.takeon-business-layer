@@ -1,12 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="INFO">
+<!--Configure logger levels ALL here
+<Configuration status="ALL" monitorInterval="30">
+-->
+<!--Configure logger levels DEBUG here
+<Configuration status="DEBUG" monitorInterval="30">
+-->
+<!--Configure logger levels WARN here
+<Configuration status="WARN" monitorInterval="30">
+-->
+<!--Configure logger levels ERROR here
+<Configuration status="ERROR" monitorInterval="30">
+-->
+<!--Configure logger levels FATAL here
+<Configuration status="FATAL" monitorInterval="30">
+-->
+<!--Configure logger to switch off the whole logger
+<Configuration status="OFF" monitorInterval="30">
+-->
+<!--Configure logger levels TRACE here
+<Configuration status="TRACE" monitorInterval="30">
+-->
+<!--Configure logger levels here-->
+<!--Decide which level you want and based on that comment and uncomment one of them above-->
+<!--At any time only one level to be included and it maintains an hierarchy -->
+<!-- hierarchy - ALL < DEBUG < INFO < WARN < ERROR < FATAL < OFF -->
+<!-- Default level INFO-->
+<Configuration status="INFO" monitorInterval="30">
+  <Properties>
+    <Property name="LOG_PATTERN">
+      %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n
+    </Property>
+  </Properties>
   <Appenders>
-    <Console name="Console" target="SYSTEM_OUT">
-      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+    <Console name="Console" target="SYSTEM_OUT" follow="true">
+      <PatternLayout pattern="${LOG_PATTERN}"/>
     </Console>
   </Appenders>
   <Loggers>
-    <Root level="INFO">
+    <!-- Change the level here accordingly based on level of Log above -->
+    <!-- The level herte is lower case for example info, debug etc and it should not be upper case -->
+    <Root level="info">
       <AppenderRef ref="Console"/>
     </Root>
   </Loggers>

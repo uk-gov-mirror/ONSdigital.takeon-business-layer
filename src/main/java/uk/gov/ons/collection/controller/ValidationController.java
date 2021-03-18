@@ -51,11 +51,11 @@ public class ValidationController {
         try {
             response = new DataPrepConfig(params.get("reference"), params.get("period"), params.get("survey"), qlService).load();
         } catch (InvalidJsonException err) {
-            log.info("Exception found: " + err);
+            log.error("Exception found: " + err.getMessage());
             response = "{\"error\":\"Unable to determine or construct configuration data\"}";
         }
+        log.debug("getAllConfiguration response: " + response);
         log.info("API Complete!! --> /validation/getAllConfiguration/{vars}");
-        log.info("getAllConfiguration response: " + response);
         return response;
     }
 
@@ -81,16 +81,16 @@ public class ValidationController {
             survey = outputs.getSurvey();
             String validationOutputQuery = outputs.buildValidationOutputQuery();
             qlResponse = qlService.qlSearch(validationOutputQuery);
-            log.info("Output from Validation Output table " + qlResponse);
+            log.debug("Output from Validation Output table " + qlResponse);
             List<ValidationOutputData> validationOutputData = outputs.extractValidationDataFromDatabase(qlResponse);
             List<ValidationOutputData> lambdaValidationOutputData = outputs.extractValidationDataFromLambda();
             int overriddenTrueCount =
                     outputs.getOverriddenTrueCount(lambdaValidationOutputData, validationOutputData);
-            log.info("Override True Count " + overriddenTrueCount);
+            log.debug("Override True Count " + overriddenTrueCount);
             int triggeredTrueCount = outputs.getTriggerTrueCount();
-            log.info("Triggered True Count " + triggeredTrueCount);
+            log.debug("Triggered True Count " + triggeredTrueCount);
             statusText = outputs.getStatusText(triggeredTrueCount, overriddenTrueCount);
-            log.info("Status Text after evaluation of trigger count and overridden count" + statusText);
+            log.debug("Status Text after evaluation of trigger count and overridden count" + statusText);
 
             List<ValidationOutputData> validationOutputDeleteData =
                     outputs.getDeleteValidationOutputList(lambdaValidationOutputData, validationOutputData);
@@ -102,7 +102,7 @@ public class ValidationController {
                     outputs.getValidationOutputUpsertList(validationOutputModifiedData, validationOutputInsertData);
             String upsertAndDeleteQuery = outputs.buildUpsertByArrayQuery(validationOutputUpsertData, validationOutputDeleteData);
             qlResponse = qlService.qlSearch(upsertAndDeleteQuery);
-            log.info("Upsert Query response " + qlResponse);
+            log.debug("Upsert Query response " + qlResponse);
         } catch (Exception e) {
             log.error("Exception caught: " + e.getMessage());
             return "{\"error\":\"Unable to save ValidationOutputs\"}";
@@ -113,7 +113,7 @@ public class ValidationController {
         try {
             updateStatusQuery = new ContributorStatus(reference, period, survey, statusText).buildUpdateQuery();
             qlResponse = qlService.qlSearch(updateStatusQuery);
-            log.info("Update Status Query response " + qlResponse);
+            log.debug("Update Status Query response " + qlResponse);
         } catch (Exception e) {
             log.error("Exception: " + e.getMessage());
             return "{\"error\":\"Error updating contributor status\"}";
@@ -130,16 +130,17 @@ public class ValidationController {
     public String validationoutput(@MatrixVariable Map<String, String> searchParameters) {
         String validationOutputsQuery = "";
         JSONObject validationOutputs = new JSONObject();
+        log.info("API CALL!! --> /validation/validationoutput :: ");
         try {
             validationOutputsQuery = new QlQueryBuilder(searchParameters).buildValidationOutputQuery();
+            log.debug("Validation Outputs Query: " + validationOutputsQuery);
             QlQueryResponse response = new QlQueryResponse(qlService.qlSearch(validationOutputsQuery));
             validationOutputs = response.parseValidationOutputs();
         } catch (Exception e) {
-            log.info("Exception: " + e);
-            log.info("Validation Outputs Query: " + validationOutputsQuery);
+            log.error("Exception in Validation Output: " + e.getMessage());
             return "{\"error\":\"Error building Validation Outputs Query\"}";
         }
-        log.info("Validation Outputs Query: " + validationOutputs.toString());
+        log.info("API CALL!! --> /validation/validationoutput :: Complete");
         return validationOutputs.toString();
     }
 
@@ -150,17 +151,18 @@ public class ValidationController {
     @ResponseBody
     public String saveOverrides(@RequestBody String jsonString)  {
 
-        log.info("API CALL!! --> /saveOverrides :: Save Validation overrides" + jsonString);
+        log.info("API CALL!! --> /validation/saveOverrides :: Save Validation overrides" + jsonString);
         String response = "";
         try {
 
             ValidationOverrideService validationService = new ValidationOverrideService(jsonString, qlService);
             response = validationService.processValidationDataAndSave();
+            log.debug("Response after saving Overrides {} ", response);
         } catch (Exception err) {
-            err.printStackTrace();
-            log.error("Failed to save validation overrides: " + err);
+            log.error("Failed to save validation overrides: " + err.getMessage());
             return "{\"error\":\"Error in saving validation overrides\"}";
         }
+        log.info("API CALL!! --> /validation/saveOverrides :: Complete");
         return response;
     }
 

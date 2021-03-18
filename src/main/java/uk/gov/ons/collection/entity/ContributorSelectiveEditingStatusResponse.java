@@ -69,7 +69,7 @@ public class ContributorSelectiveEditingStatusResponse {
                 // containing trigger count
                 contributorStatusResultObj.put(VALIDATION_PASSED, true);
                 String contributorStatus = contributorObject.getString(STATUS);
-                log.info("Contributor status before processing :" + contributorStatus);
+                log.debug("Contributor status before processing :" + contributorStatus);
                 contributorStatus = (contributorStatus != null && contributorStatus.equals(DC_CHECK_NEEDED)) ? (BPM_CHECK_NEEDED)
                         : ((contributorStatus.equals(DC_CLEAR)) ? (BPM_CLEAR)
                         : ((contributorStatus.equals(DC_CLEAR_OVERRIDDEN))
@@ -77,7 +77,7 @@ public class ContributorSelectiveEditingStatusResponse {
                         ? (BPM_CLEAR_OVERRIDDEN_SE) : ((contributorStatus.equals(DC_FORM_SAVED)) ? (BPM_FORM_SAVED)
                         : ((contributorStatus.equals(DC_FORM_SENT_OUT)) ? BPM_FORM_SENT_OUT : EMPTY)))));
                 contributorStatusResultObj.put(STATUS, contributorStatus);
-                log.info("Contributor status after processing :" + contributorStatus);
+                log.debug("Contributor status after processing :" + contributorStatus);
 
                 Object selectiveEditingMainObject =  contributorObject.get("contributorselectiveeditingByReferenceAndPeriodAndSurvey");
                 if (selectiveEditingMainObject == null || selectiveEditingMainObject.toString().equals("null")) {
@@ -86,12 +86,12 @@ public class ContributorSelectiveEditingStatusResponse {
                     JSONObject selectiveEditingObject = contributorObject.getJSONObject("contributorselectiveeditingByReferenceAndPeriodAndSurvey");
                     if (selectiveEditingObject != null) {
                         flag = selectiveEditingObject.getString(FLAG);
-                        log.info("Selective Editing Flag before processing :" + flag);
+                        log.debug("Selective Editing Flag before processing :" + flag);
                         flag = (flag != null && flag.equals(DC_SE_PASSED)) ? (BPM_SE_PASSED) :
                                 ((contributorStatus.equals(DC_SE_FAILED)) ? (BPM_SE_FAILED) :
                                         ((contributorStatus.equals(DC_SE_MISSING)) ? (BPM_SE_MISSING) :
                                                 (EMPTY)));
-                        log.info("Selective Editing Flag after processing :" + flag);
+                        log.debug("Selective Editing Flag after processing :" + flag);
                         contributorStatusResultObj.put(SELECTIVE_EDITING_FLAG, flag);
                     }
                 }

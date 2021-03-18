@@ -46,9 +46,13 @@ public class ContributorController {
         final String qlQuery = new QlQueryBuilder(searchParameters).buildContributorSearchQuery();
         String responseText;
         try {
+            log.info("API CALL!! --> /contributor/qlSearch/{vars} :: " + searchParameters);
             final QlQueryResponse response = new QlQueryResponse(qlService.qlSearch(qlQuery));
             responseText = response.parse();
+            log.debug("Contributor search response before sending to UI {} ", responseText);
+            log.info("API Complete!! --> /contributor/qlSearch/{vars}");
         } catch (Exception e) {
+            log.error("There is a problem in contributor search and the cause is {} ", e.getMessage());
             responseText = "{\"error\":\"Invalid response from graphQL\"}";
         }
         return responseText;
@@ -73,9 +77,9 @@ public class ContributorController {
             log.info("-------End Memory Details before calling snapshot-----");
             dataExport = new FullDataExport(snapshotInputJson);
             uniqueSurveyList = dataExport.getUniqueSurveyList();
-            log.info("Unique Survey List: " + uniqueSurveyList.toString());
+            log.debug("Unique Survey List: " + uniqueSurveyList.toString());
             snapshotMap = dataExport.retrieveSurveyAndPeriodListFromSnapshotInput(uniqueSurveyList);
-            log.info("Hash Map containing survey and period list: " + snapshotMap.toString());
+            log.debug("Hash Map containing survey and period list: " + snapshotMap.toString());
             snapshotQuery = dataExport.buildMultipleSurveyPeriodSnapshotQuery(uniqueSurveyList, snapshotMap);
             response = qlService.qlSearch(snapshotQuery);
             dataExport.verifyEmptySnapshot(response);
@@ -83,7 +87,7 @@ public class ContributorController {
         } catch (Exception e) {
             log.error("Exception in loading data for db Export " + e.getMessage());
             String message = e.getMessage() != null ? e.getMessage().replace("\"","'") : "";
-            log.info("Error message after parsing:" + message);
+            log.debug("Error message after parsing:" + message);
             response =  "{\"error\":\"Error loading data for db Export " + message + "\"}";
         } finally {
 
@@ -154,6 +158,7 @@ public class ContributorController {
             if (message != null && message.length() > 0) {
                 return "{\"error\":\"Failed to load Selection File " + message + " \"}";
             }
+            log.info("API Complete!! --> /contributor/loadSelectionFile");
 
         } catch (Exception e) {
             log.error("Can't build Batch Selection Load Query / Invalid Response from GraphQL: " + e.getMessage());
@@ -166,16 +171,19 @@ public class ContributorController {
     @GetMapping(value = "/delayResponse", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful retrieval of Survey/Period details")})
-        public String delayResponse() {
+    public String delayResponse() {
         String delayResponseQuery = new QlQueryBuilder().buildDelayResponseQuery();
         //log.info("GraphQL Query sent to service: " + delayResponseQuery);
         JSONObject responseText;
         String response;
         String output;
         try {
+            log.info("API CALL!! --> /contributor/delayResponse:: ");
             response = qlService.qlSearch(delayResponseQuery);
             responseText = new QlQueryResponse().buildDelayResponseOutput(response);
             output = responseText.toString();
+            log.debug("Output - Survey Period details {}", output);
+            log.info("API Complete!! --> /contributor/delayResponse");
         } catch (Exception e) {
             output = "{\"error\":\"Invalid response from graphQL\"}";
         }
@@ -194,14 +202,14 @@ public class ContributorController {
         try {
             contributorStatusQuery = new ContributorSelectiveEditingStatusQuery(params);
             String queryStr = contributorStatusQuery.buildContributorSelectiveEditingStatusQuery();
-            log.info("ContributorstatusQuery GraphQL query: " + queryStr);
+            log.debug("ContributorstatusQuery GraphQL query: " + queryStr);
             String contributorstatusQueryOutput = qlService.qlSearch(queryStr);
-            log.info("Contributor Status Query Output: " + contributorstatusQueryOutput);
+            log.debug("Contributor Status Query Output: " + contributorstatusQueryOutput);
             ContributorSelectiveEditingStatusResponse contributorStatusResponse =
                     new ContributorSelectiveEditingStatusResponse(contributorstatusQueryOutput);
             JSONObject contributorJsonObject = contributorStatusResponse.parseContributorStatusQueryResponse();
             response = contributorJsonObject.toString();
-            log.info("Contributor Status before sending to lambda: " + response);
+            log.debug("Contributor Status before sending to lambda: " + response);
         } catch (Exception err) {
             log.error("Exception found in Contributor Status API: " + err.getMessage());
             String message = processJsonErrorMessage(err);

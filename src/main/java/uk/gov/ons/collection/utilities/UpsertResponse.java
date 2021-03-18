@@ -1,5 +1,6 @@
 package uk.gov.ons.collection.utilities;
 
+import lombok.extern.log4j.Log4j2;
 import uk.gov.ons.collection.entity.ResponseData;
 import uk.gov.ons.collection.exception.InvalidJsonException;
 import uk.gov.ons.collection.entity.ContributorStatus;
@@ -14,11 +15,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+@Log4j2
 public class UpsertResponse {
 
     private JSONArray responseArray;
     private JSONObject responseObject;
     private final Timestamp time = new Timestamp(new Date().getTime());
+
 
     public UpsertResponse(String jsonString) throws InvalidJsonException {
         try {
@@ -26,6 +29,7 @@ public class UpsertResponse {
             responseArray = responseObject.getJSONArray("responses");
 
         } catch (JSONException err) {
+            log.error("Problem in Upsert responses {} " + err.getMessage());
             throw new InvalidJsonException("Given string could not be converted/processed: " + jsonString, err);
         }
     }
@@ -62,6 +66,7 @@ public class UpsertResponse {
 
             return joiner.toString();
         } catch (Exception err) {
+            log.error("Problem in extracting old responses {} " + err.getMessage());
             throw new InvalidJsonException("Error processing response json structure: " + responseArray, err);
         }
     }
@@ -79,6 +84,7 @@ public class UpsertResponse {
             ContributorStatus status = new ContributorStatus(reference,period,survey,statusText);
             return status.buildUpdateQuery();
         } catch (Exception err) {
+            log.error("Problem in updating Contributor Status {} " + err.getMessage());
             throw new InvalidJsonException("Error processing update status json structure: " + responseObject, err);
         }
 
@@ -155,6 +161,7 @@ public class UpsertResponse {
             joiner.add("lastupdateddate: \\\"" + time.toString() + "\\\"");
             return joiner.toString();
         } catch (Exception err) {
+            log.error("Problem in extracting validation outputs {} " + err.getMessage());
             throw new InvalidJsonException("Error processing response json structure: " + responseArray, err);
         }
     }
@@ -184,6 +191,7 @@ public class UpsertResponse {
             upsertResponses.put("responses", updatedDerivedResponses.getJSONArray("responses"));
 
         } catch (Exception err) {
+            log.error("Problem in building consolidated responses {} " + err.getMessage());
             throw new InvalidJsonException("Error processing response json structure: " + updatedResponseArray, err);
         }
 

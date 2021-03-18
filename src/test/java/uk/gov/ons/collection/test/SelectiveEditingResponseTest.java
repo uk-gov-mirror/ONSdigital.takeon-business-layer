@@ -63,7 +63,6 @@ public class SelectiveEditingResponseTest {
             assertEquals(expectedOutput, actualOutput);
 
         } catch (Exception e) {
-            e.printStackTrace();
             assertTrue(false);
         }
     }
@@ -141,7 +140,6 @@ public class SelectiveEditingResponseTest {
             SelectiveEditingResponse response = new SelectiveEditingResponse(responseJSON);
             response.parseSelectiveEditingQueryResponse();
         } catch (Exception e) {
-            e.printStackTrace();
             String actualMessage = e.getMessage();
             assertEquals(expectedErrorMessage, actualMessage);
             assertTrue(true);

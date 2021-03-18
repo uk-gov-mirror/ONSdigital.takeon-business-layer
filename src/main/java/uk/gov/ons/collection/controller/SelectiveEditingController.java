@@ -48,14 +48,14 @@ public class SelectiveEditingController {
             historyDetailsQuery = new HistoryDetailsQuery(params);
             //periodicity
             String periodicityQuery = historyDetailsQuery.buildSurveyPeriodicityQuery();
-            log.info(" Periodicity GraphQL Query: " + periodicityQuery);
+            log.debug(" Periodicity GraphQL Query: " + periodicityQuery);
             String periodicityQueryOutput = qlService.qlSearch(periodicityQuery);
-            log.info(" GraphQL Output for Periodicity: " + periodicityQueryOutput);
+            log.debug(" GraphQL Output for Periodicity: " + periodicityQueryOutput);
             responsePeriodicity = new HistoryDetailsResponse(periodicityQueryOutput);
             periodicityStr = responsePeriodicity.parsePeriodicityFromSurvey();
-            log.info(" Periodicity from Survey table: " + periodicityStr);
+            log.debug(" Periodicity from Survey table: " + periodicityStr);
             currentPeriod = historyDetailsQuery.retrieveCurrentPeriod();
-            log.info("Current Period from UI: " + currentPeriod);
+            log.debug("Current Period from UI: " + currentPeriod);
         } catch (Exception err) {
             log.error("Exception found in loading Periodicity: " + err.getMessage());
             String message = processJsonErrorMessage(err);
@@ -65,13 +65,13 @@ public class SelectiveEditingController {
         try {
 
             List<String> historyPeriodList = responsePeriodicity.getCurrentAndPreviousHistoryPeriod(currentPeriod, periodicityStr);
-            log.info("Final History Periods: " + historyPeriodList.toString());
+            log.debug("Final History Periods: " + historyPeriodList.toString());
             if (historyPeriodList.size() > 0) {
                 selectiveEditingQuery = new SelectiveEditingQuery(params);
                 String queryStr = selectiveEditingQuery.buildSelectiveEditingLoadConfigQuery(historyPeriodList);
-                log.info("Selective Editing configuration GraphQL query: " + queryStr);
+                log.debug("Selective Editing configuration GraphQL query: " + queryStr);
                 String selectiveEditingQueryOutput = qlService.qlSearch(queryStr);
-                log.info("Selective Editing Query Output: " + selectiveEditingQueryOutput);
+                log.debug("Selective Editing Query Output: " + selectiveEditingQueryOutput);
                 SelectiveEditingResponse selectiveEditingResponse = new SelectiveEditingResponse(selectiveEditingQueryOutput);
                 response = selectiveEditingResponse.parseSelectiveEditingQueryResponse();
                 log.info("Selective Editing Response before sending to lambda: " + response);
@@ -98,10 +98,10 @@ public class SelectiveEditingController {
             log.info("API CALL!! --> /selectiveediting/saveOutput :: " + jsonString);
             SelectiveEditingResponse selectiveEditingResponse = new SelectiveEditingResponse(jsonString);
             String saveQuery = selectiveEditingResponse.buildUpsertQuery();
-            log.info("GraphQL query for selective editing save {}", saveQuery);
+            log.debug("GraphQL query for selective editing save {}", saveQuery);
             String saveResponseOutput = qlService.qlSearch(saveQuery);
+            log.debug("Output after saving the selective editing outputs {}", saveResponseOutput);
             log.info("API Complete!! --> /selectiveediting/saveOutput");
-            log.info("Output after saving the selective editing outputs {}", saveResponseOutput);
         } catch (Exception err) {
             log.error("Exception found in Selective Editing: " + err.getMessage());
             String message = processJsonErrorMessage(err);

@@ -48,7 +48,7 @@ public class ContributorConfigQuery {
         var configResponses = new ArrayList<String>();
         for (int i = 0; i < periods.size(); i++) {
             var period = periods.get(i);
-            log.info("ContributorConfigQuery: " + this.buildLoadQuery(period));
+            log.debug("ContributorConfigQuery: " + this.buildLoadQuery(period));
             var response = service.runQuery(this.buildLoadQuery(period));
             configResponses.add(response);
         }

@@ -633,7 +633,6 @@ public class ValidationOutputsTest {
 
 
         } catch (Exception exp) {
-            exp.printStackTrace();
             assertTrue(false);
         }
     }
@@ -690,7 +689,6 @@ public class ValidationOutputsTest {
             assertEquals(expectedGraphQlQuery, graphQLQuery);
 
         } catch (Exception exp) {
-            exp.printStackTrace();
             assertTrue(false);
         }
     }

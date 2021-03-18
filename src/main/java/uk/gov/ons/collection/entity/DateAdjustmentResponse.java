@@ -71,7 +71,7 @@ public class DateAdjustmentResponse {
         queryJson.append("[" + getDateAdjustmentResponses() + "], arg1:");
         queryJson.append("[{" + extractContributorDateAdjustment() + "}]");
         queryJson.append("}){clientMutationId}}\"}");
-        log.info("Upsert And DeleteQuery " + queryJson.toString());
+        log.debug("Upsert And DeleteQuery " + queryJson.toString());
         return queryJson.toString();
     }
 
@@ -110,6 +110,7 @@ public class DateAdjustmentResponse {
             return joiner.toString();
 
         } catch (Exception err) {
+            log.error("Error in processing DateAdjustment Save: {} ", err.getMessage());
             throw new InvalidJsonException("Error processing validation output json structure: " + err + " JSON: ", err);
         }
     }
@@ -135,6 +136,7 @@ public class DateAdjustmentResponse {
             return joiner.toString();
 
         } catch (Exception err) {
+            log.error("Error in processing DateAdjustment GraphQL: {} ", err.getMessage());
             throw new InvalidJsonException("Error processing validation output json structure: " + err + " JSON: ", err);
         }
     }
@@ -152,17 +154,17 @@ public class DateAdjustmentResponse {
                 dateAdjustmentResultObj.put(PERIOD, contributorObject.getString(PERIOD));
                 dateAdjustmentResultObj.put(SURVEY, contributorObject.getString(SURVEY));
                 dateAdjustmentResultObj.put(FROZENSIC, contributorObject.get(FROZENSIC));
-                log.info("Domain Object for a given contributor : " + contributorObject.get(DOMAIN));
-                log.info("Results Cell Number Object for a given contributor: " + contributorObject.get(RESULTS_CELL_NUMBER));
+                log.debug("Domain Object for a given contributor : " + contributorObject.get(DOMAIN));
+                log.debug("Results Cell Number Object for a given contributor: " + contributorObject.get(RESULTS_CELL_NUMBER));
 
                 if (contributorObject.get(DOMAIN).toString().equals("null") || contributorObject.get(RESULTS_CELL_NUMBER).toString().equals("null")) {
-                    log.info("Into domain null");
+                    log.debug("Into domain null");
                     throw new InvalidJsonException("Either Domain or Results Cell Number is null in Contributor table. Please verify");
                 }
                 domain = contributorObject.getInt(DOMAIN);
                 cellNumber = contributorObject.getInt(RESULTS_CELL_NUMBER);
-                log.info("Domain for a given contributor: " + domain);
-                log.info("Results Cell Number for a given contributor: " + cellNumber);
+                log.debug("Domain for a given contributor: " + domain);
+                log.debug("Results Cell Number for a given contributor: " + cellNumber);
                 dateAdjustmentResultObj.put(CELL_NUMBER, cellNumber);
                 dateAdjustmentResultObj.put(DOMAIN, domain);
                 processDateAdjustmentWeightConfiguration(domain, dateAdjustmentResultObj);
@@ -178,6 +180,7 @@ public class DateAdjustmentResponse {
             }
 
         } catch (Exception e) {
+            log.error("Error in processing DateAdjustment Query responses: {} ", e.getMessage());
             throw new InvalidJsonException("Problem in parsing Selective Editing " +
                     "GraphQL responses " + e.getMessage(), e);
         }
