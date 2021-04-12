@@ -37,7 +37,7 @@ public class DateAdjustmentController {
         log.info("API CALL!! --> /dateadjustment/loadconfigdata/{vars} :: " + params);
         String response = "";
         DateAdjustmentQuery dateAdjustmentQuery = null;
-
+        //Few enhancements
         try {
             dateAdjustmentQuery = new DateAdjustmentQuery(params);
             String queryStr = dateAdjustmentQuery.buildDateAdjustmentConfigQuery();
